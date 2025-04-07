@@ -1,0 +1,19 @@
+.ui.button {
+	cursor: pointer;
+	outline: none;
+
+	border-radius: var(--button-radius); // var(--radius-md);
+	box-shadow: var(--button-box-shadow);
+	font-weight: var(--button-font-weight);
+	padding-left: var(--button-padding-x); 
+	padding-right: var(--button-padding-x);
+	padding-top: var(--button-padding-y);
+	padding-bottom: var(--button-padding-y);
+	
+	a {
+		color:inherit;
+		&:hover {
+			color:inherit !important;
+		}
+	}
+}

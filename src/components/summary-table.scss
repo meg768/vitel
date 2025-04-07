@@ -1,0 +1,17 @@
+.summary-table {
+	& tr {
+		& td {
+			& > label {
+				color: var(--color-none-400);
+				font-weight: normal;
+				font-size: smaller;
+			}
+			& > p {
+				font-size: larger;
+				margin-top: 0;
+				margin-bottom: 0;
+				font-weight: normal;
+			}
+		}
+	}
+}
