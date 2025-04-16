@@ -1,8 +1,11 @@
 import React from 'react';
 
 import SummaryTable from './summary-table';
+import Avatar from './avatar';
 
 function computeStatistics({ player, matches }) {
+	console.log(matches);
+
 	let career = {
 		wins: 0,
 		losses: 0,
@@ -36,7 +39,7 @@ function computeStatistics({ player, matches }) {
 	for (let match of matches) {
 		career.matches++;
 
-		let date = new Date(match.date);
+		let date = new Date(match.event_date);
 		let matchYear = date.getFullYear();
 
 		if (true) {
@@ -51,43 +54,19 @@ function computeStatistics({ player, matches }) {
 			lastActiveYear = Math.max(matchYear, lastActiveYear);
 		}
 
-		// Rank
-		if (1 == 1) {
-			function updateRank(stats) {
-				let rank = match.winner == player.name ? match.wrk : match.lrk;
-
-				if (rank != null) {
-					if (stats.rank == 0) {
-						stats.rank = rank;
-						stats.rankDate = match.date;
-					} else {
-						if (rank < stats.rank) {
-							stats.rank = rank;
-							stats.rankDate = match.date;
-						}
-					}
-				}
-			}
-
-			updateRank(career);
-			if (matchYear == currentYear) {
-				updateRank(ytd);
-			}
-		}
-
 		if (matchYear == currentYear) {
 			ytd.matches++;
 
-			if (match.winner == player.name) {
+			if (match.winner_id == player.id) {
 				if (match.round == 'F') {
 					ytd.titles++;
-					if (match.level == 'Grand Slam') {
+					if (match.event_type == 'Grand Slam') {
 						ytd.slams++;
 					}
-					if (match.level == 'ATP-500') {
+					if (match.event_type == 'ATP-500') {
 						ytd.atp500++;
 					}
-					if (match.level == 'Masters') {
+					if (match.event_type == 'Masters') {
 						ytd.masters++;
 					}
 				}
@@ -96,16 +75,16 @@ function computeStatistics({ player, matches }) {
 				ytd.losses++;
 			}
 		}
-		if (match.winner == player.name) {
+		if (match.winner_id == player.id) {
 			if (match.round == 'F') {
 				career.titles++;
-				if (match.level == 'Grand Slam') {
+				if (match.event_type == 'Grand Slam') {
 					career.slams++;
 				}
-				if (match.level == 'ATP-500') {
+				if (match.event_type == 'ATP-500') {
 					career.atp500++;
 				}
-				if (match.level == 'Masters') {
+				if (match.event_type == 'Masters') {
 					career.masters++;
 				}
 			}
@@ -115,14 +94,26 @@ function computeStatistics({ player, matches }) {
 		}
 	}
 
+	career.type = 'Karriär';
+	career.title = `${firstActiveYear} - ${lastActiveYear}`;
+	career.rank = player.highest_rank;
+	career.rankDate = player.highest_rank_date;
+	career.wins = player.career_wins;
+	career.losses = player.career_losses;
+	career.titles = player.career_titles;
+
+	ytd.type = 'YTD';
+	ytd.title = `${currentYear}`;
+	ytd.rank = player.rank;
+	ytd.rankDate = null;
+	ytd.wins = player.ytd_wins;
+	ytd.losses = player.ytd_losses;
+	ytd.titles = player.ytd_titles;
+
 	career.active = [firstActiveYear, lastActiveYear];
 
-	career.foo = `${firstActiveYear} - ${lastActiveYear}`;
-	ytd.foo = `${currentYear}`;
-	ytd.type = 'YTD';
-	career.type = 'Karriär';
-
 	let stats = { career: career, ytd: ytd };
+	console.log(stats);
 	return stats;
 }
 
@@ -172,7 +163,7 @@ function Component({ player, matches }) {
 			}
 
 			let value = stats.rank == 0 ? '-' : stats.rank;
-			return <SummaryTable.Cell name={name} value={value} />;
+			return <SummaryTable.Cell name={name} value={value ? value : '-'} />;
 		}
 
 		function GrandSlams({ stats }) {
@@ -184,7 +175,7 @@ function Component({ player, matches }) {
 		}
 
 		function Type({ stats }) {
-			return <SummaryTable.Cell name={stats.type} value={stats.foo} />;
+			return <SummaryTable.Cell name={stats.type} value={stats.title} />;
 		}
 
 		return (
@@ -204,10 +195,24 @@ function Component({ player, matches }) {
 
 	function render() {
 		let stats = computeStatistics({ player, matches });
+		let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
 
 		return (
 			<>
 				<SummaryTable>
+					<SummaryTable.Row>
+						<SummaryTable.Cell rowSpan='3'>
+							<div className='flex items-center justify-center'>
+								<Avatar src={src} className='bg-primary-900 w-30 h-30' />
+							</div>
+						</SummaryTable.Cell>
+						<SummaryTable.Cell name='Ålder' value={player.age} />
+						<SummaryTable.Cell name='Längd (cm)' value={player.height} />
+						<SummaryTable.Cell name='Vikt (kg)' value={player.weight} />
+						<SummaryTable.Cell colSpan='2' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
+						<SummaryTable.Cell colSpan='2' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
+						<SummaryTable.Cell colSpan='2' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
+					</SummaryTable.Row>
 					<StatisticsRow stats={stats.ytd} />
 					<StatisticsRow stats={stats.career} />
 				</SummaryTable>

@@ -1,6 +1,15 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+
 :root {
+	color-scheme: light dark;
 
 	/* Buttons */
 	--button-radius: 0.3em;
@@ -17,17 +26,19 @@
 @theme {
 	--color-background: white;
 	--color-foreground: black;
-	--color-border: var(--color-gray-300);
+	--color-border: var(--color-gray-500);
 
-	--color-none-100: var(--color-gray-100);
-	--color-none-200: var(--color-gray-200);
-	--color-none-300: var(--color-gray-300);
-	--color-none-400: var(--color-gray-400);
-	--color-none-500: var(--color-gray-500);
-	--color-none-600: var(--color-gray-600);
-	--color-none-700: var(--color-gray-700);
-	--color-none-800: var(--color-gray-800);
-	--color-none-900: var(--color-gray-900);
+	--color-none-50: var(--color-stone-50);
+	--color-none-100: var(--color-stone-100);
+	--color-none-200: var(--color-stone-200);
+	--color-none-300: var(--color-stone-300);
+	--color-none-400: var(--color-stone-400);
+	--color-none-500: var(--color-stone-500);
+	--color-none-600: var(--color-stone-600);
+	--color-none-700: var(--color-stone-700);
+	--color-none-800: var(--color-stone-800);
+	--color-none-900: var(--color-stone-900);
+	--color-none-950: var(--color-stone-950);
 
 	--color-link-100: var(--color-green-100);
 	--color-link-200: var(--color-green-200);
@@ -49,6 +60,7 @@
 	--color-primary-700: var(--color-sky-700);
 	--color-primary-800: var(--color-sky-800);
 	--color-primary-900: var(--color-sky-900);
+	--color-primary-950: #031F31;
 
 	--color-secondary-100: var(--color-green-100);
 	--color-secondary-200: var(--color-green-200);
@@ -67,6 +79,12 @@
 		color: var(--color-foreground);
 		border-color: var(--color-border);
 	}
+	body * {
+		background-color: inherit;
+		color: inherit;
+		border-color: inherit;
+	}
+
 }
 
 @layer components {

@@ -2,22 +2,22 @@ import './index.scss';
 
 import React from 'react';
 import Request from '../../js/request';
+import mysql from '../../js/mysql-express';
 import { Link } from 'react-router';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Container } from '../../components/ui';
 
-
 import Page from '../../components/page';
 import PlayerSummary from '../../components/player-summary';
+import PlayerOverview from '../../components/player-overview';
 import Menu from '../../components/menu';
 
 import Matches from '../../components/matches';
 import Flag from '../../components/flag';
 import Tabs from '../../components/ui/tabs';
 
-import {PlayerRankingChart}  from '../../components/player-ranking-charts';
-
+import { PlayerRankingChart } from '../../components/player-ranking-charts';
 
 function PlayerMatches({ matches, player }) {
 	return (
@@ -29,23 +29,23 @@ function PlayerMatches({ matches, player }) {
 
 function PlayerMatchTabs({ matches, player }) {
 	let grandSlamsWins = matches.filter((match) => {
-		return match.round == 'F' && match.level == 'Grand Slam' && match.winner == player.name;
+		return match.round == 'F' && match.event_type == 'Grand Slam' && match.winner == player.name;
 	});
 
 	let mastersWins = matches.filter((match) => {
-		return match.round == 'F' && match.level == 'Masters' && match.winner == player.name;
+		return match.round == 'F' && match.event_type == 'Masters' && match.winner == player.name;
 	});
 
 	let atp500Wins = matches.filter((match) => {
-		return match.round == 'F' && match.level == 'ATP-500' && match.winner == player.name;
+		return match.round == 'F' && match.event_type == 'ATP-500' && match.winner == player.name;
 	});
 
 	let atp250Wins = matches.filter((match) => {
-		return match.round == 'F' && match.level == 'ATP-250' && match.winner == player.name;
+		return match.round == 'F' && match.event_type == 'ATP-250' && match.winner == player.name;
 	});
 
 	let titles = matches.filter((match) => {
-		return match.round == 'F' && match.winner == player.name;
+		return match.round == 'F' && match.winner_id == player.id;
 	});
 
 	let finals = matches.filter((match) => {
@@ -74,32 +74,32 @@ function PlayerMatchTabs({ matches, player }) {
 				<MatchTab title='ATP-250' matches={atp250Wins} />
 			</Tabs.List>
 
-			<Tabs.Content value='Finaler'>
-				<Matches player={player} matches={finals} owner={player.name} />
+			<Tabs.Content value='Finaler' className='overflow-x-auto'>
+				<Matches player={player} matches={finals} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='Karriär'>
-				<Matches player={player} matches={matches} owner={player.name} />
+			<Tabs.Content value='Karriär' className='overflow-x-auto'>
+				<Matches player={player} matches={matches} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='Titlar'>
-				<Matches player={player} matches={titles} owner={player.name} />
+			<Tabs.Content value='Titlar' className='overflow-x-auto'>
+				<Matches player={player} matches={titles} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='Grand Slams'>
-				<Matches player={player} matches={grandSlamsWins} owner={player.name} />
+			<Tabs.Content value='Grand Slams' className='overflow-x-auto'>
+				<Matches player={player} matches={grandSlamsWins} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='Masters'>
-				<Matches player={player} matches={mastersWins} owner={player.name} />
+			<Tabs.Content value='Masters' className='overflow-x-auto'>
+				<Matches player={player} matches={mastersWins} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='ATP-500'>
-				<Matches player={player} matches={atp500Wins} owner={player.name} />
+			<Tabs.Content value='ATP-500' className='overflow-x-auto'>
+				<Matches player={player} matches={atp500Wins} owner={player.id} />
 			</Tabs.Content>
 
-			<Tabs.Content value='ATP-250'>
-				<Matches player={player} matches={atp250Wins} owner={player.name} />
+			<Tabs.Content value='ATP-250' className='overflow-x-auto'>
+				<Matches player={player} matches={atp250Wins} owner={player.id} />
 			</Tabs.Content>
 		</Tabs.Root>
 	);
@@ -123,56 +123,74 @@ function PlayerFinals({ player, matches, level, title = 'Finals' }) {
 
 	return (
 		<>
-			<Matches matches={matches} owner={player.name} />
+			<Matches matches={matches} owner={player.id} />
 		</>
 	);
 }
+
+/*
+let PlayerOverview = ({player, matches}) => {
+		let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
+
+		return (
+			<div className='border-none-200 border-1 rounded-none flex p-0'>
+				<div className='w-30 self-center p-4'>
+					<img className='border-none-300	bg-primary-900 border-4 rounded-full' src={src} />
+				</div>
+				<div className='flex-1 p-3'>
+					<PlayerSummary player={player} matches={matches} />
+				</div>
+			</div>
+		);
+
+}
+*/
 let Component = () => {
 	const params = useParams();
 	const queryKey = `player/${JSON.stringify(useParams())}`;
 	const queryOptions = {};
-	const { data:response,  isPending, isError, error } = useQuery({queryKey:[queryKey], queryFn:fetch});
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
-
+		console.log('PARAMS', params);
 		let sql = '';
-		sql += `SELECT * FROM ?? `;
-		sql += `WHERE winner = ? `;
-		sql += `OR loser = ? `;
-		sql += `ORDER BY date DESC, `;
+		sql += `SELECT * FROM flatly `;
+		sql += `WHERE winner_id = ? `;
+		sql += `OR loser_id = ? `;
+		sql += `ORDER BY event_date DESC, `;
 		sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'BR'); `;
 
-		sql += `SELECT * FROM ?? `;
-		sql += `WHERE name = ?; `;
+		sql += `SELECT * FROM players `;
+		sql += `WHERE id = ?; `;
 
-		let format = ['matches', params.name, params.name, 'players', params.name];
+		let format = [params.id, params.id, params.id];
 
-		let request = new Request();
-		let result = await request.get('query', { database: 'atp', sql: sql, format: format });
+		let details = await mysql.query({ sql: sql, format: format });
 
-		let player = result[1][0];
-		let matches = result[0];
+		let matches = details[0];
+		let player = details[1][0];
 		let response = { matches: matches, player: player };
 
 		return response;
 	}
 
 	function Title() {
-
 		if (!response || !response.player.country) {
-			return <h1>{params.name}</h1>;
+			return <Page.Title>{params.name}</Page.Title>;
 		}
 
 		let { player } = response;
 
 		return (
-			<h1>
-				<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.atpid}/overview`}>
-					{player.name}
-				</Link>
-				{`, ${player.country} `} 
-				<Flag country={player.country}></Flag>
-			</h1>
+			<Page.Title className='flex justify-left items-center'>
+				<Flag className='mr-1 w-15! h-15!' country={player.country}></Flag>
+				<div className=''>
+					<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.id}/overview`}>
+						{player.name}
+					</Link>
+					{`, ${player.country} `}
+				</div>
+			</Page.Title>
 		);
 	}
 
@@ -183,10 +201,13 @@ let Component = () => {
 
 		return (
 			<Container>
-				<h2>Summering</h2>
-				<PlayerSummary player={response.player} matches={response.matches} />
+				<h2>Översikt</h2>
+				<div className='overflow-x-auto'>
+					<PlayerSummary player={response.player} matches={response.matches} />
+				</div>
+
 				<h2>Ranking</h2>
-				<PlayerRankingChart className='border-none-200 border-1' player={response.player} matches={response.matches} />
+				<PlayerRankingChart className='' player={response.player} matches={response.matches} />
 				<h2>Matcher</h2>
 				<PlayerMatchTabs params={params} player={response.player} matches={response.matches} />
 			</Container>
@@ -206,10 +227,10 @@ let Component = () => {
 		<>
 			<Page id='player-page'>
 				<Menu />
-				<Container className='px-15'>
-						<Title />
-						<Contents />
-				</Container>
+				<Page.Container>
+					<Title />
+					<Contents />
+				</Page.Container>
 			</Page>
 		</>
 	);

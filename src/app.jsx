@@ -16,10 +16,13 @@ import Page from './components/page';
 import LocalStorage from './js/local-storage';
 import { Info } from './components/icons';
 
+import atpTourSVG from './assets/atp-tour.svg';
+import atpTourPNG from './assets/atp-tour.png';
+
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import classNames from 'classnames';
 
-let locals = new LocalStorage({ key: 'AppPageX' });
+let locals = new LocalStorage({ key: 'AppPage-2	' });
 
 // Get all players sorted by rank/date
 async function getTopPlayers() {
@@ -36,8 +39,9 @@ async function getEvents() {
 async function getPlayer(name) {
 	let sql = `SELECT * FROM players WHERE name = ?`;
 	let format = [name];
+	let details = await mysql.query({ sql: sql, format: format });
 
-	return await mysql.query({ sql: sql, format: format });
+	return details[0];
 }
 
 async function getLatestEvent() {
@@ -46,9 +50,21 @@ async function getLatestEvent() {
 	return events[0];
 }
 
+async function getLatestImport() {
+	let sql = `SELECT * FROM settings WHERE ?? = ?`;
+	let format = ['key', 'import.status'];
+	let details = await mysql.query({ sql: sql, format: format });
+
+	try {
+		console.log(details[0].value);
+		return JSON.parse(details[0].value);
+	} catch (error) {
+		return undefined;
+	}
+}
+
 function App() {
-	const [playerList, setPlayerList] = React.useState(locals.get('player-list', {}));
-	const [checkmarks, setCheckmarks] = React.useState(locals.get('checkmarks', []));
+	const [playerList, setPlayerList] = React.useState(locals.get('player-list', null));
 
 	// Fetch data, cache for 60 minutes
 	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['main-page'], queryFn: fetch, gcTime: 60 * 60 * 1000 });
@@ -57,6 +73,7 @@ function App() {
 		if (playerList == null) {
 			let list = {};
 			list['A'] = await getPlayer('Jannik Sinner');
+			list['B'] = await getPlayer('Carlos Alcaraz');
 			setPlayerList(list);
 		}
 
@@ -64,8 +81,9 @@ function App() {
 			let players = await getTopPlayers();
 			let events = await getEvents();
 			let latestEvent = await getLatestEvent();
+			let latestImport = await getLatestImport();
 
-			return { players: players, events: events, latestEvent: latestEvent };
+			return { players: players, events: events, latestEvent: latestEvent, latestImport: latestImport };
 		} catch (error) {
 			console.log(error);
 			return { players: null, events: null, latestEvent: null };
@@ -79,7 +97,7 @@ function App() {
 		let url = '';
 
 		if (player) {
-			url = `/player/${player.name}`;
+			url = `/player/${player.id}`;
 		}
 
 		let className = '';
@@ -97,60 +115,35 @@ function App() {
 
 	function CompareButton() {
 		let url = '';
-		let playerA = {};
-		let playerB = {};
+		let playerA = playerList['A'];
+		let playerB = playerList['B'];
 
-		if (checkmarks.length == 2) {
-			playerA = playerList[checkmarks[0]];
-			playerB = playerList[checkmarks[1]];
-
-			if (playerA && playerB) {
-				url = `/head-to-head/${playerA.name}/${playerB.name}/`;
-			}
+		if (playerA && playerB) {
+			url = `/head-to-head/${playerA.id}/${playerB.id}/`;
 		}
 
 		return (
-			<div className='pt-2 text-center'>
-				<Button disabled={url == ''}>
-					<Link to={url}>Jämför</Link>
-				</Button>
-			</div>
+			<Button disabled={url == ''}>
+				<Link to={url}>Jämför</Link>
+			</Button>
 		);
 	}
 
 	function Player(properties) {
 		const { id, className, ...props } = properties;
 
-		function onCheckChange() {
-			let array = [...checkmarks];
-
-			if (array.indexOf(id) >= 0) {
-				array.splice(array.indexOf(id), 1);
-			} else {
-				array.unshift(id);
-				array = array.slice(0, 2);
-			}
-
-			locals.set('checkmarks', array);
-			setCheckmarks(array);
-		}
 		function onPlayerChange(player) {
 			let list = { ...playerList };
 			list[id] = player;
 			locals.set('player-list', list);
-			onCheckChange();
 			setPlayerList(list);
 		}
 
-		function isChecked() {
-			return checkmarks.indexOf(id) >= 0;
-		}
 		return (
 			<div className={className}>
 				<div className='flex justify-start gap-4 items-center pt-1 pb-1'>
-					<Checkbox className='' checked={isChecked()} onCheckedChange={onCheckChange} />
 					<div className='flex-1'>
-						<PlayerPicker className='' onClick={onCheckChange} onChange={onPlayerChange} players={response.players} player={playerList[id]} placeholder={'-'} />
+						<PlayerPicker className='' onChange={onPlayerChange} players={response.players} player={playerList[id]} placeholder={'-'} />
 					</div>
 					<div>
 						<GoButton id={id} />
@@ -160,34 +153,58 @@ function App() {
 		);
 	}
 
+	function Title() {
+		return (
+			<Page.Title className='flex items-center gap-5 '>
+				<div className=''>
+					<img className='h-15' src={atpTourPNG} />
+				</div>
+				<div>Statistik från ATP</div>
+			</Page.Title>
+		);
+	}
 	function Content() {
 		if (!response) {
 			return;
 		}
 
-		let { events, players, latestEvent } = response;
-		let latestUpdate = new Date(latestEvent.date).toLocaleDateString();
+		let { players } = response;
+
+		function LatestUpdate() {
+			let { latestImport } = response;
+			let date = '';
+
+			if (latestImport.date) {
+				date = new Date(latestImport.date).toLocaleDateString();
+			}
+
+			if (!date) {
+				return;
+			}
+			return `Statistiken senast uppdaterad ${date}.`;
+		}
 
 		return (
 			<>
-				<p className='pb-5'>
-					{`All data är baserad på `}
+				<p className='pt-5 pb-5'>
+					{`All data är baserad med hjälp från `}
 					<span className={'hover:text-link-500'}>
 						<Link target='_blank' to='https://www.jeffsackmann.com'>
 							Jeff Sackmanns
 						</Link>
 					</span>
-					{` arbete.`}
-					{` Senaste uppdatering från ${latestUpdate}.`}
+					{` arbete. `}
+					<LatestUpdate/>
 				</p>
-				<div className='pb-2 text-xl'>Välj spelare</div>
-				<div className='flex justify-left'>
-					<div className='flex flex-col  border-1 p-5 rounded-md border-none-300 w-full'>
-						<Player id='A' players={players} />
-						<Player id='B' players={players} />
-						<Player id='C' players={players} />
-						<Player id='D' players={players} />
-						<Player id='E' players={players} />
+				<div className='justify-center min-w-lg m-auto'>
+					<div className='pb-2 texxt-xl'>Välj två spelare nedanför och jämför deras matchstatistik.</div>
+					<div className='flex justify-center'>
+						<div className='border-1 p-5 rounded-md border-gray-300 dark:border-primary-700 w-full '>
+							<Player id='A' players={players} />
+							<Player id='B' players={players} />
+						</div>
+					</div>
+					<div className='flex justify-center p-2'>
 						<CompareButton />
 					</div>
 				</div>
@@ -199,10 +216,10 @@ function App() {
 		<Page>
 			<Menu />
 
-			<Container className='px-15'>
-				<h1>Statistik från ATP </h1>
+			<Page.Container>
+				<Title />
 				<Content />
-			</Container>
+			</Page.Container>
 		</Page>
 	);
 }

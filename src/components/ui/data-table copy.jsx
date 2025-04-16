@@ -7,6 +7,7 @@ class Column {
 	constructor(child, index) {
 		this.props = child.props;
 		this.value = this.findChildType(child.props.children, Table.Value);
+		this.sortValue = this.findChildType(child.props.children, Table.SortValue);
 		this.sort = this.findChildType(child.props.children, Table.Sort);
 		this.title = this.findChildType(child.props.children, Table.Title);
 		this.cell = this.findChildType(child.props.children, Table.Cell);
@@ -28,6 +29,9 @@ class Column {
 
 	isSortable() {
 		if (this.sort && this.sort.children && typeof this.sort.children == 'function') {
+			return true;
+		}
+		if (this.sortValue && this.sortValue.children && typeof this.sortValue.children == 'function') {
 			return true;
 		}
 		if (this.props.id) {
@@ -58,6 +62,21 @@ class Column {
 		let result = undefined;
 
 		if (this.value && this.value.props && this.value.props.children) {
+			result = this.value.props.children({ row });
+		} else if (this.props.id) {
+			result = row[this.props.id];
+		}
+
+		return result;
+	}
+
+	getSortValue({ row }) {
+		let result = undefined;
+
+		if (this.sortValue && this.sortValue.props && this.sortValue.props.children) {
+			result = this.sortValue.props.children({ row });
+		}
+		else if (this.value && this.value.props && this.value.props.children) {
 			result = this.value.props.children({ row });
 		} else if (this.props.id) {
 			result = row[this.props.id];
@@ -100,7 +119,6 @@ function Table({ rows, className, children, ...props }) {
 		function Arrow({ column }) {
 			let text = '▲';
 			let className = '';
-			let x = '';
 
 			if (!column.isSortable()) {
 				return;
@@ -147,9 +165,24 @@ function Table({ rows, className, children, ...props }) {
 
 	function Rows() {
 		if (sort) {
+			// Special compare, nulls are always last
+			function compare(A, B, reverse) {
+				if (A == B) {
+					return 0;
+				}
+				if (A == null) {
+					return 1;
+				}
+				if (B == null) {
+					return -1;
+				}
+				return reverse * (A < B ? -1 : 1);
+			}
+
 			rows = [...rows];
 
 			let column = columns[sort.index];
+			let reverse = sort.order == '▲' ? 1 : -1;
 
 			if (column.sort && column.sort.props && column.sort.props.children) {
 				let { children } = column.sort.props;
@@ -157,22 +190,29 @@ function Table({ rows, className, children, ...props }) {
 				rows.sort((A, B) => {
 					return children({ A: A, B: B });
 				});
+				if (sort.order != '▲') {
+					rows.reverse();
+				}
+			} else if (column.sortValue && column.sortValue.props && column.sortValue.props.children) {
+				rows.sort((A, B) => {
+					A = column.getSortValue({ row: A });
+					B = column.getSortValue({ row: B });
+					return compare(A, B, reverse);
+				});
+
 			} else if (column.value && column.value.props && column.value.props.children) {
 				rows.sort((A, B) => {
 					A = column.getValue({ row: A });
 					B = column.getValue({ row: B });
-					return A > B;
+					return compare(A, B, reverse);
 				});
 			} else if (column.props.id) {
 				let id = column.props.id;
-
 				rows.sort((A, B) => {
-					return A[id] > B[id];
+					A = A[id];
+					B = B[id];
+					return compare(A, B, reverse);
 				});
-			}
-
-			if (sort.order != '▲') {
-				rows.reverse();
 			}
 		}
 
@@ -204,6 +244,10 @@ Table.Text = function (props) {
 };
 
 Table.Sort = function (props) {
+	return props.children;
+};
+
+Table.SortValue = function (props) {
 	return props.children;
 };
 

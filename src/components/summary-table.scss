@@ -1,8 +1,9 @@
 .summary-table {
+
 	& tr {
 		& td {
 			& > label {
-				color: var(--color-none-400);
+				opacity: 50%;
 				font-weight: normal;
 				font-size: smaller;
 			}
@@ -11,6 +12,7 @@
 				margin-top: 0;
 				margin-bottom: 0;
 				font-weight: normal;
+				opacity: 95%;
 			}
 		}
 	}

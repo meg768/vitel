@@ -21,7 +21,7 @@ function getRankingPointsByMonth({ matches, player, since }) {
 			return true;
 		}
 
-		let date = new Date(match.date);
+		let date = new Date(match.event_date);
 
 		return date.getTime() >= since.getTime();
 	});
@@ -39,7 +39,7 @@ function getRankingPointsByMonth({ matches, player, since }) {
 
 	// Find out date span
 	for (let match of matches) {
-		let date = new Date(match.date);
+		let date = new Date(match.event_date);
 
 		if (minDate == undefined || date < minDate) {
 			minDate = date;
@@ -51,14 +51,14 @@ function getRankingPointsByMonth({ matches, player, since }) {
 
 	for (let match of matches) {
 		let rank = undefined;
-		let date = new Date(match.date);
+		let date = new Date(match.event_date);
 		let key = sprintf('%04d-%02d', date.getFullYear(), date.getMonth() + 1);
 
-		if (match.winner == player.name) {
-			rank = match.wrk;
+		if (match.winner_id == player.id) {
+			rank = match.winner_rank;
 		}
-		if (match.loser == player.name) {
-			rank = match.lrk;
+		if (match.loser_id == player.id) {
+			rank = match.loser_rank;
 		}
 
 		if (ranks[key] == undefined) {
@@ -101,11 +101,12 @@ function PlayerRankingChart({ className, style, player, matches, since, ...props
 		return data;
 	}
 
-	className = classNames('h-[12em] border-1 border-none-200 ', className);
+	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
+	className = classNames('dark:border-primary-800', className);
 
 	return (
 		<div className={className}>
-			<ResponsiveContainer height={'100%'} width={'100%'}>
+			<ResponsiveContainer>
 				<LineChart className={''} data={computeData()} margin={{ top: 20, right: 50, bottom: 0, left: 0 }}>
 					<XAxis dataKey='date' tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} />
 
@@ -153,7 +154,8 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, sinc
 		return data;
 	}
 
-	className = classNames('h-[12em] border-1 border-none-200 pb-2', className);
+	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
+	className = classNames('dark:border-primary-800', className);
 
 	return (
 		<div className={className}>

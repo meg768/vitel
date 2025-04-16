@@ -2,7 +2,7 @@ import './player-picker.scss';
 
 import React from 'react';
 import { Container, DropdownMenu, Input } from '../components/ui';
-import Flag from '../components/flag';
+import FlagIcon from '../components/flag-icon';
 import classNames from 'classnames';
 
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
@@ -44,8 +44,9 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 
 		return items.map((player, index) => {
 			let className = '';
-			className = className + 'px-2 py-1  rounded-sm ';
-			className = className + ' hover:bg-primary-500 ';
+			className = className + ' px-2 py-1  rounded-sm ';
+			className = className + '  hover:bg-primary-500! ';
+			
 			return (
 				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
 					{player.name}
@@ -61,7 +62,7 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 			return (
 				<div>
 					{`${player.name} `}
-					<Flag country={player.country} />
+					<FlagIcon country={player.country} />
 				</div>
 			);
 		}
@@ -71,13 +72,15 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 		setFilter(event.target.value);
 	}
 
-	function onClickX() {
-		console.log('----------------');
-	}
+	let triggerClassName = '';
+	triggerClassName = classNames(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
+	triggerClassName = classNames(triggerClassName, 'border-none-200 ');
+	triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 ');
+
 	return (
 		<DropdownMenu.Root >
 			<DropdownMenu.Trigger asChild>
-				<div className='flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit bg-gray-100 border-gray-200 border-2'>
+				<div className={triggerClassName}>
 					<div className=' flex-1  text-left '>
 						<TriggerTitle />
 					</div>
@@ -99,22 +102,6 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 		</DropdownMenu.Root>
 	);
 
-	return (
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>
-				<div className='w-3xs cursor-pointer text-left rounded-md py-1 px-2 text-inherit bg-gray-100 border-gray-200 border-2'>{!player ? placeholder : player.name}</div>
-			</DropdownMenu.Trigger>
-
-			<DropdownMenu.Portal>
-				<DropdownMenu.Content sideOffset={5}>
-					<div className=' '>
-						<Input className='my-2 mx-2' value={filter} autoFocus placeholder={'Type to search'} onChange={onFilterChange} />
-					</div>
-					<Items />
-				</DropdownMenu.Content>
-			</DropdownMenu.Portal>
-		</DropdownMenu.Root>
-	);
 }
 
 export default PlayerSelect;

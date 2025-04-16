@@ -7,7 +7,7 @@ $roundness: var(--radius-sm);
 .ui.tabs {
 
 	& div[role='tablist'] {
-		border-bottom: $lineThickness solid $lineColor;
+		//border-bottom: $lineThickness $lineThickness $lineColor;
 		margin-bottom: 1em;
 
 		& button[data-state='inactive'] {

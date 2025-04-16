@@ -1,11 +1,10 @@
 $stripeColor: var(--color-none-100);
 $hoverColor: var(--color-none-200);
-$borderColor: var(--color-none-200);
 $borderWidth: 0.1em;
 
 table.ui.table {
+	width:100% !important;
 	border-collapse: collapse;
-	width: 100%;
 
 	&.hover tbody tr:hover {
 		background-color: $hoverColor;
@@ -21,9 +20,9 @@ table.ui.table {
 		padding-top: calc(var(--spacing) * 1.5);
 		padding-bottom: calc(var(--spacing) * 1.5);
 
-		border-color: $borderColor;
 		border-width: $borderWidth;
 	}
+
 	& > thead tr th {
 
 		&:hover {
@@ -35,8 +34,6 @@ table.ui.table {
 		padding-top: calc(var(--spacing) * 1);
 		padding-bottom: calc(var(--spacing) * 1);
 
-		border-color: $borderColor;
-		border-width: $borderWidth;
 		
 		text-align: left;
 	}

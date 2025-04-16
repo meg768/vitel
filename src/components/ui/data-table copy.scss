@@ -1,11 +1,15 @@
-$stripeColor: var(--color-none-200);
-$hoverColor: var(--color-none-300);
-$borderColor: var(--color-none-400);
-$borderWidth: 0.05em;
+@use 'sass:color';
+
+$stripeColor: var(--color-none-100);
+$hoverColor: var(--color-none-200);
+$borderColor: var(--color-none-300);
+$borderWidth: 0.1em;
 
 table.ui.data-table {
-	border-collapse: collapse;
-	width: 100%;
+	border-collapse:collapse;
+	border-color: red;
+	width:100% !important;
+	
 	&.hover tbody tr:hover {
 		background-color: $hoverColor !important;
 	}
@@ -17,10 +21,10 @@ table.ui.data-table {
 	& > tbody tr td {
 		padding-left: calc(var(--spacing) * 2);
 		padding-right: calc(var(--spacing) * 2);
-		padding-top: calc(var(--spacing) * 1.5);
-		padding-bottom: calc(var(--spacing) * 1.5);
+		padding-top: calc(var(--spacing) * 1);
+		padding-bottom: calc(var(--spacing) * 1);
 
-		border-color: $borderColor;
+		border-color: inherit;
 		border-width: $borderWidth;
 	}
 	& > thead tr th {

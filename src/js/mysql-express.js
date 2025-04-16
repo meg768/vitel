@@ -54,7 +54,7 @@ class MySqlExpress {
 
 const mysql = new MySqlExpress({
 	url: 'http://router.egelberg.se:3002',
-	database: 'atp-ex',
+	database: 'atp',
 	authorization: 'JoAkIm'
 });
 

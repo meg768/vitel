@@ -24,7 +24,7 @@ Component.Cell = ({ children, name, value, ...props }) => {
 		}
 	}
 	return (
-		<Table.Cell {...props}>
+		<Table.Cell  {...props}>
 			<Label />
 			<Value />
 			{children}

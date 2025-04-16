@@ -1,15 +1,22 @@
 .page h1 {
 	font-size: 2em !important;
+	//border-bottom-color: var(--color-primary-600);
+	//border-bottom-width: calc(var(--spacing) * 0.5);
+	//padding-bottom: calc(var(--spacing) * 5);
+	//margin-bottom: calc(var(--spacing) * 0);
 }
 
 .page h2 {
 	padding-top: calc(var(--spacing) * 2);
 	padding-bottom: calc(var(--spacing) * 2);
-	font-size: 1.25em !important;
+	font-size: 1.3em !important;
+	//border-bottom-color: var(--color-primary-600);
+	//border-bottom-width: calc(var(--spacing) * 0.5);
+	//margin-bottom: calc(var(--spacing) * 5);
 }
 
 .page h3 {
-	font-size: 1.2em !important;
+	font-size: 1.1em !important;
 }
 
 .page {
