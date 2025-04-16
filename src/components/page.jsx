@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 
 function Component({ className, ...props }) {
-	className = classNames('page   min-w-2xl  dark:bg-primary-950 dark:text-none-300 min-h-full bg-white', className);
+	className = classNames('page darkx  min-w-2xl  dark:bg-primary-950	 dark:text-none-300 min-h-full bg-white', className);
 
 	return <div className={className} {...props}/>;
 }
@@ -13,8 +13,8 @@ Component.Title = function(props) {
 	let {className, ...other} = props;
 
 	
-	className = classNames('border rounded-sm border-none-300 bg-none-50  p-3', className);
-	className = classNames('dark:bg-primary-800 dark:border-primary-600 dark:text-primary-100', className);
+	className = classNames('border rounded-sm  bg-none-50  p-3', className);
+	className = classNames('dark:bg-primary-900 dark:text-primary-100 dark:border-primary-900 ', className);
 	return <h1 className={className} {...other}></h1>
 }
 

@@ -1,11 +1,11 @@
-import './table.scss';
+//import './table.scss';
 import React from 'react';
 import classNames from 'classnames';
 
 let Table = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui table dark:text-none-200', className);
+	className = classNames('', className);
 
 	return <table className={className} ref={ref} {...props} />;
 });
@@ -37,7 +37,7 @@ Table.Row = React.forwardRef((properties, ref) => {
 Table.Cell = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('border-none-300 dark:border-primary-900! dark:text-primary-100', className);
+	className = classNames('', className);
 
 	return <td className={className} ref={ref} {...props} />;
 });

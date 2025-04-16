@@ -95,7 +95,7 @@ function Table({ rows, className, children, ...props }) {
 	let [sort, setSort] = React.useState(null);
 	let [columns, setColumns] = React.useState(null);
 
-	className = classNames(className, 'ui data-table text-[90%] w-full border-1 border-none-300 dark:border-primary-700!');
+	className = classNames(className, 'ui data-table text-[90%] w-full border-1 border-none-300 dark:border-primary-900');
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
@@ -138,7 +138,7 @@ function Table({ rows, className, children, ...props }) {
 		}
 		let items = columns.map((column, index) => {
 			return (
-				<th key={index} className={'px-2 py-1 border-1'}>
+				<th key={index} className={'px-2 py-1 opacity-[50%] border-1 bg-none-100 dark:bg-primary-950'}>
 					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
 						<div {...column.title.props}></div>
 						<div>
@@ -159,8 +159,8 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-none-200 dark:hover:bg-primary-800');
-		className = classNames(className, 'even:bg-none-50	dark:even:bg-primary-900');
+		className = classNames(className, 'hover:bg-none-200 dark:hover:bg-primary-900');
+		className = classNames(className, 'even:bg-none-50	dark:even:bg-primary-950');
 		className = classNames(className, 'p-2');
 
 		let items = columns.map((column, index) => {

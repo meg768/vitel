@@ -82,14 +82,14 @@ let Component = () => {
 
 	function Summary({ matches, player }) {
 		return (
-			<>
-				<h2 className='flex items-center'>
+			<div className=''>
+				<h2 className='flex items-center mb-1 mt-1'>
 					<Flag className='mr-1 w-10! h-10!' country={player.country}></Flag>
 					<Link to={`/player/${player.id}`}>{player.name}</Link>
 					{`, ${player.country} `}
 				</h2>
 				<PlayerSummary player={player} matches={matches} />
-			</>
+			</div>
 		);
 	}
 

@@ -199,7 +199,7 @@ function App() {
 				<div className='justify-center min-w-lg m-auto'>
 					<div className='pb-2 texxt-xl'>Välj två spelare nedanför och jämför deras matchstatistik.</div>
 					<div className='flex justify-center'>
-						<div className='border-1 p-5 rounded-md border-gray-300 dark:border-primary-700 w-full '>
+						<div className='border-1 p-5 rounded-md border-gray-300 dark:border-primary-900 w-full '>
 							<Player id='A' players={players} />
 							<Player id='B' players={players} />
 						</div>

@@ -206,7 +206,7 @@ function Component({ player, matches }) {
 								<Avatar src={src} className='bg-primary-900 w-30 h-30' />
 							</div>
 						</SummaryTable.Cell>
-						<SummaryTable.Cell name='Ålder' value={player.age} />
+						<SummaryTable.Cell name='Ålder' value={player.age ? player.age : '-'} />
 						<SummaryTable.Cell name='Längd (cm)' value={player.height} />
 						<SummaryTable.Cell name='Vikt (kg)' value={player.weight} />
 						<SummaryTable.Cell colSpan='2' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
