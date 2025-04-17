@@ -6,6 +6,11 @@ import './menu.scss';
 let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
 function Component() {
+	function toggleDarkMode() {
+		var element = document.getElementById('root');
+		console.log(element);
+		element.classList.toggle('dark');
+	}
 	return (
 		<div id='menu' className='border-b-1 border-primary-800'>
 			<div className='flex  items-center bg-primary-900 p-2 gap-2 dark:bg-primary-900'>
@@ -35,8 +40,8 @@ function Component() {
 					</Button>
 				</div>
 				<div className='grow'></div>
-				<Button className={buttonClass}>
-					<Link to='/'>🎾</Link>
+				<Button className={buttonClass} onClick={toggleDarkMode}>
+					🎾
 				</Button>
 			</div>
 		</div>

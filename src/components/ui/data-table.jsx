@@ -95,7 +95,7 @@ function Table({ rows, className, children, ...props }) {
 	let [sort, setSort] = React.useState(null);
 	let [columns, setColumns] = React.useState(null);
 
-	className = classNames(className, 'ui data-table text-[90%] w-full border-1 border-none-300 dark:border-primary-900');
+	className = classNames(className, 'ui data-table text-[90%] w-full border-1');
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
@@ -138,7 +138,7 @@ function Table({ rows, className, children, ...props }) {
 		}
 		let items = columns.map((column, index) => {
 			return (
-				<th key={index} className={'px-2 py-1 opacity-[50%] border-1 bg-none-100 dark:bg-primary-950'}>
+				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-950'}>
 					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
 						<div {...column.title.props}></div>
 						<div>

@@ -2,22 +2,19 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-html, body, #root {
-  height: 100%;
-  margin: 0;
+.page {
+	@apply transition-colors duration-400;
 }
 
-
 :root {
+	color-scheme: light dark;
 
 	/* Buttons */
 	--button-radius: 0.3em;
-	--button-box-shadow: --var(--shadow-lg) ;
+	--button-box-shadow: --var(--shadow-lg);
 	--button-font-weight: var(--font-weight-semibold);
-	--button-border-color: red;
 	--button-padding-x: calc(var(--spacing) * 3.5);
 	--button-padding-y: calc(var(--spacing) * 2);
-
 }
 
 @theme {
@@ -57,7 +54,7 @@ html, body, #root {
 	--color-primary-700: var(--color-sky-700);
 	--color-primary-800: var(--color-sky-800);
 	--color-primary-900: var(--color-sky-900);
-	--color-primary-950: #031F31;
+	--color-primary-950: #031f31;
 
 	--color-secondary-100: var(--color-green-100);
 	--color-secondary-200: var(--color-green-200);
@@ -71,17 +68,20 @@ html, body, #root {
 }
 
 @layer base {
+	html,
+	body,
+	#root {
+		height: 100%;
+		margin: 0;
+	}
+
 	body {
-		background-color: var(--color-background);
-		color: var(--color-foreground);
-		border-color: var(--color-none-200);
 	}
 	body * {
 		background-color: inherit;
 		color: inherit;
 		border-color: inherit;
 	}
-
 }
 
 @layer components {

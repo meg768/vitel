@@ -74,8 +74,7 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 
 	let triggerClassName = '';
 	triggerClassName = classNames(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
-	triggerClassName = classNames(triggerClassName, 'border-none-200 ');
-	triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 ');
+	triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
 
 	return (
 		<DropdownMenu.Root >

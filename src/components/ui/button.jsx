@@ -6,7 +6,7 @@ import './button.scss';
 const Button = React.forwardRef((properties, ref) => {
 	let { className, disabled, ...props } = properties;
 
-	className = classNames('ui button text-white  bg-primary-500 hover:bg-primary-600', className);
+	className = classNames('ui button text-white  bg-primary-500 hover:bg-primary-600 dark:bg-primary-800', className);
 
 	if (disabled) {
 		className = classNames('opacity-50', className);

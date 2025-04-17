@@ -9,13 +9,8 @@ body {
 		}
 	}
 
-	// Make all links hover (except buttons)
-	aaaa:not(buttonx a) {
-		&:hover {
-			color: var(--color-link-500) !important;
-		}
-	}
 }
+
 
 // Remove focus-shadow
 *:focus {
