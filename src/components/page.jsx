@@ -17,7 +17,7 @@ Component.Title = function(props) {
 	
 	className = classNames('', className);
 	className = classNames('border rounded-sm  bg-none-50  text-primary-900 p-3', className);
-	className = classNames('dark:bg-primary-900 dark:text-primary-400  ', className);
+	className = classNames('dark:bg-primary-900 dark:text-primary-50', className);
 	return <h1 className={className} {...other}></h1>
 }
 

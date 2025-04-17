@@ -157,6 +157,7 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, sinc
 	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
 	className = classNames('dark:border-primary-800', className);
 
+
 	return (
 		<div className={className}>
 			<ResponsiveContainer height={'100%'} width={'100%'}>
@@ -165,8 +166,8 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, sinc
 
 					<YAxis tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} allowDecimals={false} />
 					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-none-400)'} />
-					<Line type='linear' dataKey={playerA.player.name} stroke={'var(--color-primary-500)'} strokeWidth={3} connectNulls={true} />
-					<Line type='linear' dataKey={playerB.player.name} stroke='var(--color-secondary-500)' strokeWidth={3} connectNulls={true} />
+					<Line type='linear' dataKey={playerA.player.name} stroke='var(--color-red-500)' strokeWidth={3} connectNulls={true} />
+					<Line type='linear' dataKey={playerB.player.name} stroke='var(--color-green-500)' strokeWidth={3} connectNulls={true} />
 					<Legend />
 				</LineChart>
 			</ResponsiveContainer>

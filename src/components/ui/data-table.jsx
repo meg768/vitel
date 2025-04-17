@@ -96,6 +96,7 @@ function Table({ rows, className, children, ...props }) {
 	let [columns, setColumns] = React.useState(null);
 
 	className = classNames(className, 'ui data-table text-[90%] w-full border-1');
+	className = classNames(className, 'dark:text-white/60 dark:border-primary-800');
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
