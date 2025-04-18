@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import Link from '../components/ui/link';
 import Table from './ui/data-table';
 import Flag from './flag';
 

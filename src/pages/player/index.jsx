@@ -1,9 +1,8 @@
-import './index.scss';
 
 import React from 'react';
 import Request from '../../js/request';
 import mysql from '../../js/mysql-express';
-import { Link } from 'react-router';
+import Link from '../../components/ui/link';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Container } from '../../components/ui';

@@ -33,7 +33,7 @@ Component.Title = function ({ className, level = 1, ...props }) {
 
 		}
 	}
-	return <p className={className} {...props}></p>;
+	return <div className={className} {...props}></div>;
 };
 
 Component.Container = function (props) {
