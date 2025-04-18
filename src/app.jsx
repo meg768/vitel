@@ -1,4 +1,3 @@
-import './app.scss';
 import React from 'react';
 import mysql from './js/mysql-express';
 

@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 let Component = ({ children }) => {
 	return (
-		<Table className='w-full border-1 dark:border-primary-900'>
+		<Table className='w-full border-1 dark:border-primary-700'>
 			<Table.Body className={''} >{children}</Table.Body>
 		</Table>
 	);
@@ -14,7 +14,7 @@ let Component = ({ children }) => {
 Component.Cell = ({ children, name, value, className, ...props }) => {
 	function Label() {
 		if (name) {
-			return <label className={'opacity-[50%] text-[80%] px-2'}>{name}</label>;
+			return <label className={'text-primary-700 dark:text-primary-700 text-[80%] px-2'}>{name}</label>;
 		}
 	}
 

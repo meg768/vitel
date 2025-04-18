@@ -16,9 +16,10 @@ function Component({ players }) {
 					<Table.Cell>
 						{({ row, value }) => {
 							return (
-								<>
+								<div className='flex items-center gap-2'>
+									<Flag className='w-5! h-5! border-1! border-primary-200' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
-								</>
+								</div >
 							);
 						}}
 					</Table.Cell>
@@ -114,7 +115,7 @@ function Component({ players }) {
 					<Table.Title className=''>Serve</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
-							return value != null? value : '-';
+							return value != null ? value : '-';
 						}}
 					</Table.Cell>
 				</Table.Column>

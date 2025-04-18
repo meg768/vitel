@@ -1,4 +1,3 @@
-import './player-ranking-charts.scss';
 
 import React from 'react';
 import sprintf from 'yow/sprintf';
@@ -102,17 +101,17 @@ function PlayerRankingChart({ className, style, player, matches, since, ...props
 	}
 
 	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
-	className = classNames('dark:border-primary-800', className);
+	className = classNames('dark:border-primary-700', className);
 
 	return (
 		<div className={className}>
 			<ResponsiveContainer>
 				<LineChart className={''} data={computeData()} margin={{ top: 20, right: 50, bottom: 0, left: 0 }}>
-					<XAxis dataKey='date' tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} />
+					<XAxis dataKey='date' tick={{ fill: 'var(--color-primary-500)', fontSize: 12 }} />
 
-					<YAxis tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} allowDecimals={false} />
-					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-none-300)'} />
-					<Line type='linear' dataKey='Rank' stroke={'var(--color-primary-300)'} strokeWidth={3} connectNulls={true} />
+					<YAxis tick={{ fill: 'var(--color-primary-500)', fontSize: 12 }} allowDecimals={false} />
+					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-primary-500)'} />
+					<Line type='linear' dataKey='Rank' stroke={'var(--color-success-500)'} strokeWidth={3} connectNulls={true} />
 				</LineChart>
 			</ResponsiveContainer>
 		</div>
@@ -155,19 +154,19 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, sinc
 	}
 
 	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
-	className = classNames('dark:border-primary-800', className);
+	className = classNames('dark:border-primary-700', className);
 
 
 	return (
 		<div className={className}>
 			<ResponsiveContainer height={'100%'} width={'100%'}>
 				<LineChart data={computeData()} margin={{ top: 20, right: 50, bottom: 0, left: 0 }}>
-					<XAxis dataKey='date' tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} />
+					<XAxis dataKey='date' tick={{ fill: 'var(--color-primary-500)', fontSize: 12 }} />
 
 					<YAxis tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} allowDecimals={false} />
-					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-none-400)'} />
-					<Line type='linear' dataKey={playerA.player.name} stroke='var(--color-red-500)' strokeWidth={3} connectNulls={true} />
-					<Line type='linear' dataKey={playerB.player.name} stroke='var(--color-green-500)' strokeWidth={3} connectNulls={true} />
+					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-primary-500)'} />
+					<Line type='linear' dataKey={playerA.player.name} stroke='var(--color-success-500)' strokeWidth={3} connectNulls={true} />
+					<Line type='linear' dataKey={playerB.player.name} stroke='var(--color-warning-500)' strokeWidth={3} connectNulls={true} />
 					<Legend />
 				</LineChart>
 			</ResponsiveContainer>

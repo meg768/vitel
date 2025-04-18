@@ -1,8 +1,8 @@
-import './player-picker.scss';
 
 import React from 'react';
 import { Container, DropdownMenu, Input } from '../components/ui';
 import FlagIcon from '../components/flag-icon';
+import Flag from '../components/flag';
 import classNames from 'classnames';
 
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
@@ -60,9 +60,9 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 			return placeholder;
 		} else {
 			return (
-				<div>
-					{`${player.name} `}
-					<FlagIcon country={player.country} />
+				<div className='flex items-center gap-2'>
+					<Flag country={player.country} className='border-1! w-8! h-8!' />
+					<div>{`${player.name} `}</div>
 				</div>
 			);
 		}

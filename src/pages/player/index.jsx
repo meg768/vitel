@@ -182,7 +182,7 @@ let Component = () => {
 		let { player } = response;
 
 		return (
-			<Page.Title className='flex justify-left items-center'>
+			<Page.Title className='flex justify-left items-center gap-2'>
 				<Flag className='mr-1 w-15! h-15!' country={player.country}></Flag>
 				<div className=''>
 					<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.id}/overview`}>
@@ -201,14 +201,15 @@ let Component = () => {
 
 		return (
 			<Container>
-				<h2>Översikt</h2>
+				<Page.Title level={2}>Översikt</Page.Title>
 				<div className='overflow-x-auto'>
 					<PlayerSummary player={response.player} matches={response.matches} />
 				</div>
 
-				<h2>Ranking</h2>
+				<Page.Title level={2}>Ranking</Page.Title>
 				<PlayerRankingChart className='' player={response.player} matches={response.matches} />
-				<h2>Matcher</h2>
+				
+				<Page.Title level={2}>Matcher</Page.Title>
 				<PlayerMatchTabs params={params} player={response.player} matches={response.matches} />
 			</Container>
 		);

@@ -81,7 +81,7 @@ class Column {
 
 		let { className, ...others } = props;
 
-		className = classNames(className, 'px-2 py-1 border-1');
+		className = classNames(className, 'px-2 py-1.5 border-1');
 
 		return (
 			<td className={className} {...others} key={index}>
@@ -95,8 +95,8 @@ function Table({ rows, className, children, ...props }) {
 	let [sort, setSort] = React.useState(null);
 	let [columns, setColumns] = React.useState(null);
 
-	className = classNames(className, 'ui data-table text-[90%] w-full border-1');
-	className = classNames(className, 'dark:text-white/60 dark:border-primary-800');
+	className = classNames(className, 'ui data-table text-primary-900 w-full border-1 text-[90%]');
+	className = classNames(className, 'dark:text-primary-200 dark:border-primary-800');
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
@@ -139,7 +139,7 @@ function Table({ rows, className, children, ...props }) {
 		}
 		let items = columns.map((column, index) => {
 			return (
-				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-950'}>
+				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-900'}>
 					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
 						<div {...column.title.props}></div>
 						<div>
@@ -160,9 +160,9 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-none-200 dark:hover:bg-primary-900');
-		className = classNames(className, 'even:bg-none-50	dark:even:bg-primary-950');
-		className = classNames(className, 'p-2');
+		className = classNames(className, 'hover:bg-primary-200 even:bg-primary-100 ');
+		className = classNames(className, 'dark:hover:bg-primary-800	dark:even:bg-primary-900');
+		className = classNames(className, '');
 
 		let items = columns.map((column, index) => {
 			return column.getCell({ row, index });

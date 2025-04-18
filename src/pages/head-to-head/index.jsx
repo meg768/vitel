@@ -83,11 +83,13 @@ let Component = () => {
 	function Summary({ matches, player }) {
 		return (
 			<div className=''>
-				<h2 className='flex items-center mb-1 mt-1'>
+				<Page.Title level={2} className='flex items-center mb-1 mt-1 gap-2'>
 					<Flag className='mr-1 w-10! h-10!' country={player.country}></Flag>
-					<Link to={`/player/${player.id}`}>{player.name}</Link>
-					{`, ${player.country} `}
-				</h2>
+					<div>
+						<Link to={`/player/${player.id}`}>{player.name}</Link>
+						{`, ${player.country} `}
+					</div>
+				</Page.Title>
 				<PlayerSummary player={player} matches={matches} />
 			</div>
 		);
@@ -100,7 +102,7 @@ let Component = () => {
 
 		return (
 			<>
-				<h2 >Ranking</h2>
+				<Page.Title level={2}>Ranking</Page.Title>
 				<PlayerRankingComparisonChart className='' playerA={{ player: playerOne, matches: playerOneMatches }} playerB={{ player: playerTwo, matches: playerTwoMatches }} />
 			</>
 		);
@@ -118,7 +120,7 @@ let Component = () => {
 					<Summary matches={playerOneMatches} player={playerOne} />
 					<Summary matches={playerTwoMatches} player={playerTwo} />
 					<HeadToHeadRankingChart />
-					<h2 >Matcher</h2>
+					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
 				</Container>
 			</Page.Container>

@@ -1,4 +1,3 @@
-import './index.scss';
 
 import React from 'react';
 import mysql from '../../js/mysql-express';
@@ -77,9 +76,9 @@ let Component = () => {
 			<Page.Container>
 				<Title />
 				<Container>
-					<h2>Översikt</h2>
+					<Page.Title level={2}>Översikt</Page.Title>
 					<EventSummary event={event} matches={matches} />
-					<h2>Matcher</h2>
+					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner={`${params.id}`}></Matches>
 				</Container>
 			</Page.Container>
