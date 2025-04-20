@@ -2,7 +2,8 @@
 import React from 'react';
 import mysql from '../../js/mysql-express';
 
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
+import Link from '../../components/ui/link';
 
 import { Container } from '../../components/ui';
 import Matches from '../../components/matches';

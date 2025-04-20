@@ -95,7 +95,7 @@ function computeStatistics({ player, matches }) {
 	}
 
 	career.type = 'Karriär';
-	career.title = `${firstActiveYear} - ${lastActiveYear}`;
+	career.title = `${player.pro ? player.pro : firstActiveYear} - ${lastActiveYear}`;
 	career.rank = player.highest_rank;
 	career.rankDate = player.highest_rank_date;
 	career.wins = player.career_wins;
@@ -193,6 +193,17 @@ function Component({ player, matches }) {
 		);
 	}
 
+	function cash(value) {
+		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+	}
+
+	function PrizeMoneyCareer() {
+		return <SummaryTable.Cell name={'Prispengar'} value={player.career_prize ? cash(player.career_prize) : '-'} />;
+	}
+	function PrizeMoneyYTD() {
+		return <SummaryTable.Cell name={'Prispengar (i år)'} value={player.ytd_prize ? cash(player.ytd_prize) : '-'} />;
+	}
+
 	function render() {
 		let stats = computeStatistics({ player, matches });
 		let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
@@ -208,10 +219,12 @@ function Component({ player, matches }) {
 						</SummaryTable.Cell>
 						<SummaryTable.Cell name='Ålder' value={player.age ? player.age : '-'} />
 						<SummaryTable.Cell name='Längd (cm)' value={player.height} />
-						<SummaryTable.Cell name='Vikt (kg)' value={player.weight} />
-						<SummaryTable.Cell colSpan='2' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
-						<SummaryTable.Cell colSpan='2' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
-						<SummaryTable.Cell colSpan='2' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
+						<SummaryTable.Cell colSpan='2' name='Vikt (kg)' value={player.weight} />
+						<PrizeMoneyCareer />
+						<PrizeMoneyYTD />
+						<SummaryTable.Cell colSpan='1' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
+						<SummaryTable.Cell colSpan='1' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
+						<SummaryTable.Cell colSpan='1' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
 					</SummaryTable.Row>
 					<StatisticsRow stats={stats.ytd} />
 					<StatisticsRow stats={stats.career} />

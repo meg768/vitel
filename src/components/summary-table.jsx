@@ -14,7 +14,7 @@ let Component = ({ children }) => {
 Component.Cell = ({ children, name, value, className, ...props }) => {
 	function Label() {
 		if (name) {
-			return <label className={'text-primary-700 dark:text-primary-700 text-[80%] px-2'}>{name}</label>;
+			return <label className={'text-primary-500 dark:text-primary-400 text-[80%] px-2'}>{name}</label>;
 		}
 	}
 

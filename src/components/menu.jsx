@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { Container, Button } from '../components';
-import './menu.scss';
 
 let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
@@ -36,12 +35,12 @@ function Component() {
 				</div>
 				<div className='grow-0'>
 					<Button className={buttonClass}>
-						<Link to='/trial'>Debug</Link>
+						<Link to='/trial'>Felsökning</Link>
 					</Button>
 				</div>
 				<div className='grow'></div>
 				<Button className={buttonClass} onClick={toggleDarkMode}>
-					🎾
+					🌓
 				</Button>
 			</div>
 		</div>

@@ -197,14 +197,14 @@ function App() {
 					<LatestUpdate />
 				</p>
 				<div className='justify-center min-w-lg m-auto'>
-					<div className='pb-2 texxt-xl'>Välj två spelare nedanför och jämför deras matchstatistik.</div>
+					<div className='pb-2 text-xl'>Välj två spelare och jämför deras matchstatistik.</div>
 					<div className='flex justify-center'>
 						<div className='border-1 p-5 rounded-md w-full '>
 							<Player id='A' players={players} />
 							<Player id='B' players={players} />
 						</div>
 					</div>
-					<div className='flex justify-center p-2'>
+					<div className='flex justify-center py-4'>
 						<CompareButton />
 					</div>
 				</div>
