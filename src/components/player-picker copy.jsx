@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Container, DropdownMenu, Input } from '../components/ui';
 import FlagIcon from '../components/flag-icon';
@@ -22,37 +23,30 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 			onChange(player);
 		}
 
-		let maxItems = 6;
 		let items = players;
 
 		if (filter) {
 			let words = filter.toLowerCase().split(' ');
 
-			items = [];
-
-			for (let index = 0; index < players.length && items.length < maxItems; index++) {
+			items = players.filter((player) => {
 				let matches = 0;
-				let player = players[index];
 
 				for (let word of words) {
 					if (player.name.toLowerCase().includes(word)) {
 						matches++;
 					}
 				}
-
-				if (matches == words.length) {
-					items.push(player);
-				}
-			}
+				return matches == words.length;
+			});
 		}
 
-		items = items.slice(0, maxItems);
+		items = items.slice(0, 7);
 
 		return items.map((player, index) => {
 			let className = '';
 			className = className + ' px-2 py-1  rounded-sm ';
 			className = className + '  hover:bg-primary-500! ';
-
+			
 			return (
 				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
 					{player.name}
@@ -83,7 +77,7 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 	triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
 
 	return (
-		<DropdownMenu.Root>
+		<DropdownMenu.Root >
 			<DropdownMenu.Trigger asChild>
 				<div className={triggerClassName}>
 					<div className=' flex-1  text-left '>
@@ -106,6 +100,7 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
 	);
+
 }
 
 export default PlayerSelect;

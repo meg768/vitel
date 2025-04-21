@@ -25,7 +25,8 @@ let locals = new LocalStorage({ key: 'AppPage-2	' });
 
 // Get all players sorted by rank/date
 async function getTopPlayers() {
-	let sql = `SELECT * FROM players WHERE rank > 0 ORDER BY rank ASC`;
+	let sql = `SELECT * FROM players ORDER BY ISNULL(rank), rank ASC`;
+	//let sql = `SELECT * FROM players `;
 	return await mysql.query({ sql });
 }
 
@@ -194,7 +195,6 @@ function App() {
 						</Link>
 					</span>
 					{` arbete. `}
-					<LatestUpdate />
 				</p>
 				<div className='justify-center min-w-lg m-auto'>
 					<div className='pb-2 text-xl'>Välj två spelare och jämför deras matchstatistik.</div>
