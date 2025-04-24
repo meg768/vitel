@@ -113,7 +113,14 @@ function Table({ rows, className, children, ...props }) {
 			if (!column.isSortable()) {
 				return;
 			}
+
 			let order = '▲';
+			let defaultSortOrder = column.props?.defaultSortOrder;
+
+			// Check default sort order
+			if (defaultSortOrder && defaultSortOrder.toUpperCase() == 'DSC') {
+				order = '▼';
+			}
 
 			if (sort && sort.index == column.index) {
 				order = sort.order == '▲' ? '▼' : '▲';
@@ -225,7 +232,7 @@ function Table({ rows, className, children, ...props }) {
 		<div className='overflow-auto'>
 			<table className={className} {...props}>
 				<Head />
-					<Body>
+				<Body>
 					<Rows />
 				</Body>
 			</table>

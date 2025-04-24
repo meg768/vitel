@@ -42,7 +42,7 @@ function Component({ players }) {
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='elo_rank' className=''>
+				<Table.Column id='elo_rank' defaultSortOrder='dsc' className=''>
 					<Table.Title>ELO</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
@@ -50,7 +50,6 @@ function Component({ players }) {
 						}}
 					</Table.Cell>
 				</Table.Column>
-
 
 				<Table.Column id='highest_rank' className=''>
 					<Table.Title>Högsta Ranking</Table.Title>
@@ -61,7 +60,7 @@ function Component({ players }) {
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='career_titles' className=''>
+				<Table.Column id='career_titles' defaultSortOrder='dsc' className=''>
 					<Table.Title className=''>Titlar</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
@@ -69,32 +68,12 @@ function Component({ players }) {
 						}}
 					</Table.Cell>
 				</Table.Column>
-				<Table.Column id='career_wins' className=''>
-					<Table.Title>Vinster</Table.Title>
-					<Table.Cell className='text-right'>
-						{({ row, value }) => {
-							if (value == 0) {
-								return value;
-							}
-							if (!row.career_wins && !row.career_losses) {
-								return '-';
-							}
-							return `${value} (${Math.round((100 * value) / (row.career_wins + row.career_losses))}%)`;
-						}}
-					</Table.Cell>
-				</Table.Column>
 
-				<Table.Column id='career_losses' className=''>
-					<Table.Title>Förluster</Table.Title>
-					<Table.Cell className='text-right'>
+				<Table.Column className=''>
+					<Table.Title>V/F</Table.Title>
+					<Table.Cell className='text-left'>
 						{({ row, value }) => {
-							if (value == 0) {
-								return value;
-							}
-							if (!row.career_wins && !row.career_losses) {
-								return '-';
-							}
-							return `${value} (${Math.round((100 * value) / (row.career_wins + row.career_losses))}%)`;
+							return `${row.career_wins}/${row.career_losses}`;
 						}}
 					</Table.Cell>
 				</Table.Column>
@@ -126,7 +105,7 @@ function Component({ players }) {
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='serve_rating' className=''>
+				<Table.Column id='serve_rating' defaultSortOrder='dsc' className=''>
 					<Table.Title className=''>Serve</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
@@ -134,7 +113,7 @@ function Component({ players }) {
 						}}
 					</Table.Cell>
 				</Table.Column>
-				<Table.Column id='return_rating' className=''>
+				<Table.Column id='return_rating' defaultSortOrder='dsc' className=''>
 					<Table.Title className=''>Retur</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
@@ -143,7 +122,7 @@ function Component({ players }) {
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='pressure_rating' className=''>
+				<Table.Column id='pressure_rating' defaultSortOrder='dsc' className=''>
 					<Table.Title className=''>Underläge</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {

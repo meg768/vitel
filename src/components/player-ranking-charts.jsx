@@ -60,9 +60,11 @@ function PlayerRankingChart({ className, style, player, matches, ...props }) {
 
 		let data = [];
 
-		for (let date = new Date(from); date.getTime() <= to.getTime(); date.setMonth(date.getMonth() + 1)) {
-			let key = sprintf('%04d-%02d', date.getFullYear(), date.getMonth() + 1);
-			data.push({ date: key, Rank: rankings[key] });
+		if (from && to) {
+			for (let date = new Date(from); date.getTime() <= to.getTime(); date.setMonth(date.getMonth() + 1)) {
+				let key = sprintf('%04d-%02d', date.getFullYear(), date.getMonth() + 1);
+				data.push({ date: key, Rank: rankings[key] });
+			}
 		}
 
 		return data;
