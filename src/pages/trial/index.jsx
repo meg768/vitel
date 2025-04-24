@@ -83,11 +83,9 @@ function Component() {
 	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
-		console.log('FETFCHING');
 		let fetcher = new LiveFetcher();
 
 		let details = await fetcher.fetch();
-		console.log(details);
 		return {details};
 	}
 

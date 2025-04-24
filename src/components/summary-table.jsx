@@ -1,36 +1,42 @@
 import React from 'react';
 
-import {Table}  from '../components/ui';
+import { Table } from '../components/ui';
 import classNames from 'classnames';
 
 let Component = ({ children }) => {
 	return (
-		<Table className='w-full border-1 dark:border-primary-700'>
-			<Table.Body className={''} >{children}</Table.Body>
-		</Table>
+		<div className='overflow-auto'>
+			<Table className='w-full border-1 dark:border-primary-700'>
+				<Table.Body className={''}>{children}</Table.Body>
+			</Table>
+		</div>
 	);
 };
 
 Component.Cell = ({ children, name, value, className, ...props }) => {
 	function Label() {
-		if (name) {
-			return <label className={'text-primary-500 dark:text-primary-400 text-[80%] px-2'}>{name}</label>;
-		}
+		return <div className={'text-primary-500 dark:text-primary-300 mt-1 text-[80%] px-2'}>{name == undefined ? '-' : name}</div>;
 	}
 
 	function Value() {
-		if (value) {
-			return <p className={' px-2 py-1'}>{value}</p>;
-		}
+		return <div className={' px-2 py-1'}>{value == undefined ? '-' : value}</div>;
 	}
 
 	className = classNames(className, 'border border-1');
 
+	if (children) {
+		return (
+			<Table.Cell className={className} {...props}>
+				{children}
+			</Table.Cell>
+		);
+	}
 	return (
-		<Table.Cell  className={className} {...props}>
-			<Label />
-			<Value />
-			{children}
+		<Table.Cell className={classNames(className, 'align-top text-left')} {...props}>
+			<div className='flex flex-col'>
+				<Label />
+				<Value />
+			</div>
 		</Table.Cell>
 	);
 };

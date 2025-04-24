@@ -4,7 +4,6 @@ import SummaryTable from './summary-table';
 import Avatar from './avatar';
 
 function computeStatistics({ player, matches }) {
-	console.log(matches);
 
 	let career = {
 		wins: 0,
@@ -113,7 +112,6 @@ function computeStatistics({ player, matches }) {
 	career.active = [firstActiveYear, lastActiveYear];
 
 	let stats = { career: career, ytd: ytd };
-	console.log(stats);
 	return stats;
 }
 
@@ -204,6 +202,10 @@ function Component({ player, matches }) {
 		return <SummaryTable.Cell name={'Prispengar (i år)'} value={player.ytd_prize ? cash(player.ytd_prize) : '-'} />;
 	}
 
+	function ELO() {
+		return <SummaryTable.Cell name={'ELO'} value={player.elo_rank}/>;
+
+	}
 	function render() {
 		let stats = computeStatistics({ player, matches });
 		let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
@@ -219,12 +221,13 @@ function Component({ player, matches }) {
 						</SummaryTable.Cell>
 						<SummaryTable.Cell name='Ålder' value={player.age ? player.age : '-'} />
 						<SummaryTable.Cell name='Längd (cm)' value={player.height} />
-						<SummaryTable.Cell colSpan='2' name='Vikt (kg)' value={player.weight} />
+						<SummaryTable.Cell colSpan='1' name='Vikt (kg)' value={player.weight} />
 						<PrizeMoneyCareer />
 						<PrizeMoneyYTD />
 						<SummaryTable.Cell colSpan='1' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
+						<ELO/>
 					</SummaryTable.Row>
 					<StatisticsRow stats={stats.ytd} />
 					<StatisticsRow stats={stats.career} />

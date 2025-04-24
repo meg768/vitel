@@ -42,6 +42,16 @@ function Component({ players }) {
 					</Table.Cell>
 				</Table.Column>
 
+				<Table.Column id='elo_rank' className=''>
+					<Table.Title>ELO</Table.Title>
+					<Table.Cell className='text-right'>
+						{({ row, value }) => {
+							return value;
+						}}
+					</Table.Cell>
+				</Table.Column>
+
+
 				<Table.Column id='highest_rank' className=''>
 					<Table.Title>Högsta Ranking</Table.Title>
 					<Table.Cell className='text-right'>

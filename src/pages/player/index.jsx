@@ -151,7 +151,7 @@ let Component = () => {
 	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
-		console.log('PARAMS', params);
+
 		let sql = '';
 		sql += `SELECT * FROM flatly `;
 		sql += `WHERE winner_id = ? `;

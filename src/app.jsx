@@ -56,7 +56,6 @@ async function getLatestImport() {
 	let details = await mysql.query({ sql: sql, format: format });
 
 	try {
-		console.log(details[0].value);
 		return JSON.parse(details[0].value);
 	} catch (error) {
 		return undefined;
@@ -195,6 +194,7 @@ function App() {
 						</Link>
 					</span>
 					{` arbete. `}
+					<LatestUpdate />
 				</p>
 				<div className='justify-center min-w-lg m-auto'>
 					<div className='pb-2 text-xl'>Välj två spelare och jämför deras matchstatistik.</div>

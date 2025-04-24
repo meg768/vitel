@@ -222,12 +222,14 @@ function Table({ rows, className, children, ...props }) {
 	}
 
 	return (
-		<table className={className} {...props}>
-			<Head />
-			<Body>
-				<Rows />
-			</Body>
-		</table>
+		<div className='overflow-auto'>
+			<table className={className} {...props}>
+				<Head />
+					<Body>
+					<Rows />
+				</Body>
+			</table>
+		</div>
 	);
 }
 

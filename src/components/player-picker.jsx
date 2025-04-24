@@ -99,7 +99,7 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content align='start' sideOffset={5}>
 					<div className=' '>
-						<Input className='my-2 mx-2' value={filter} autoFocus placeholder={'Type to search'} onChange={onFilterChange} />
+						<Input className='my-2 mx-2' value={filter} autoFocus spellCheck={false} placeholder={'Type to search'} onChange={onFilterChange} />
 					</div>
 					<Items />
 				</DropdownMenu.Content>
