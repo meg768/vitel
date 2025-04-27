@@ -99,6 +99,7 @@ function computeStatistics({ player, matches }) {
 	career.rankDate = player.highest_rank_date;
 	career.wins = player.career_wins;
 	career.losses = player.career_losses;
+	career.matches = career.losses + career.wins;
 	career.titles = player.career_titles;
 
 	ytd.type = 'YTD';
@@ -107,6 +108,7 @@ function computeStatistics({ player, matches }) {
 	ytd.rankDate = null;
 	ytd.wins = player.ytd_wins;
 	ytd.losses = player.ytd_losses;
+	ytd.matches = ytd.wins + ytd.losses;	
 	ytd.titles = player.ytd_titles;
 
 	career.active = [firstActiveYear, lastActiveYear];
