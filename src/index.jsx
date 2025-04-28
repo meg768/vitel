@@ -10,6 +10,7 @@ import Ranking from './pages/ranking';
 import Trial from './pages/trial';
 import Events from './pages/events';
 import Players from './pages/players';
+import Live from './pages/live';
 
 import App from './app.jsx';
 
@@ -24,7 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 				<Route path='/ranking' element={<Ranking />} />
 				<Route path='/events' element={<Events />} />
 				<Route path='/players' element={<Players />} />
-				<Route path='/trial' element={<Trial />} />
+				<Route path='/live' element={<Live />} />
 			</Routes>
 		</HashRouter>
 	</QueryClientProvider>

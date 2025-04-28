@@ -1,5 +1,6 @@
 import React from 'react';
 import mysql from './js/mysql-express';
+import atp from './js/atp-service';
 
 import { Button, Container } from './components/ui';
 import { useQuery } from '@tanstack/react-query';
@@ -27,33 +28,34 @@ let locals = new LocalStorage({ key: 'AppPage-2	' });
 async function getTopPlayers() {
 	let sql = `SELECT * FROM players ORDER BY ISNULL(rank), rank ASC`;
 	//let sql = `SELECT * FROM players `;
-	return await mysql.query({ sql });
+	return await atp.query({ sql });
 }
 
 async function getEvents() {
 	let sql = `SELECT * FROM events ORDER BY date DESC`;
-	let events = await mysql.query({ sql });
+	let events = await atp.query({ sql });
 	return events;
 }
 
 async function getPlayer(name) {
-	let sql = `SELECT * FROM players WHERE name = ?`;
-	let format = [name];
-	let details = await mysql.query({ sql: sql, format: format });
+	let sql = `SELECT * FROM players WHERE ?? = ?`;
+	let format = ['name', name];
+	let details = await atp.query({ sql: sql, format: format });
 
 	return details[0];
 }
 
 async function getLatestEvent() {
 	let sql = `SELECT * FROM events ORDER BY date DESC LIMIT 1`;
-	let events = await mysql.query({ sql: sql });
+	let events = await atp.query({ sql: sql });
 	return events[0];
 }
 
 async function getLatestImport() {
-	let sql = `SELECT * FROM settings WHERE ?? = ?`;
+	let sql = 'SELECT * FROM settings WHERE ?? = ?';
 	let format = ['key', 'import.status'];
-	let details = await mysql.query({ sql: sql, format: format });
+	let details = await atp.query({ sql: sql, format: format });
+	console.log('Latest import:', details);
 
 	try {
 		return JSON.parse(details[0].value);
@@ -88,7 +90,6 @@ function App() {
 			return { players: null, events: null, latestEvent: null };
 		}
 	}
-
 
 	function GoButton(properties) {
 		let { id } = properties;

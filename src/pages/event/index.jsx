@@ -1,6 +1,6 @@
 
 import React from 'react';
-import mysql from '../../js/mysql-express';
+import mysql from '../../js/atp-service';
 
 import { useParams } from 'react-router';
 import Link from '../../components/ui/link';

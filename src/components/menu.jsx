@@ -35,7 +35,7 @@ function Component() {
 				</div>
 				<div className='grow-0'>
 					<Button className={buttonClass}>
-						<Link to='/trial'>Felsökning</Link>
+						<Link to='/live'>Live</Link>
 					</Button>
 				</div>
 				<div className='grow'></div>
