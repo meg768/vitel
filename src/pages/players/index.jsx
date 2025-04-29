@@ -1,4 +1,3 @@
-import './index.scss';
 
 import React from 'react';
 import mysql from '../../js/atp-service';
@@ -21,7 +20,7 @@ let Component = () => {
 		try {
 			let sql = '';
 
-			sql += `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank `;
+			sql += `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
 
 			let players = await mysql.query({ sql });
 

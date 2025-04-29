@@ -18,6 +18,24 @@ class MySqlExpress {
 		}
 	}
 
+	async get(path, options) {
+		let url = `${this.url}/${path}`;
+
+		let response = await fetch(url, {
+			method: 'GET',
+			body: JSON.stringify(options),
+			headers: this.headers
+		});
+
+		if (!response.ok) {
+			throw new Error(`Error in get: ${response.statusText}`);
+		}
+
+		let json = await response.json();
+
+		return json;
+	}
+
 	async query(options) {
 		let url = `${this.url}/query`;
 
@@ -34,15 +52,13 @@ class MySqlExpress {
 		let json = await response.json();
 
 		try {
-			json = JSON.parse(json);	
-		}
-		catch (error) {
+			json = JSON.parse(json);
+		} catch (error) {
 			throw new Error('Failed to parse JSON response in query');
 		}
 
 		return json;
 	}
-
 
 	async upsert({ table, rows, row, ...other }) {
 		if (!table || (!rows && !row)) {

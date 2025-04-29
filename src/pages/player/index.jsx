@@ -158,7 +158,7 @@ let Component = () => {
 		sql += `WHERE winner_id = ? `;
 		sql += `OR loser_id = ? `;
 		sql += `ORDER BY event_date DESC, `;
-		sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'BR'); `;
+		sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR') ASC; `;
 
 		sql += `SELECT * FROM players `;
 		sql += `WHERE id = ?; `;

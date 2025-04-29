@@ -11,6 +11,7 @@ import Trial from './pages/trial';
 import Events from './pages/events';
 import Players from './pages/players';
 import Live from './pages/live';
+import Log from './pages/log';
 
 import App from './app.jsx';
 
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 				<Route path='/events' element={<Events />} />
 				<Route path='/players' element={<Players />} />
 				<Route path='/live' element={<Live />} />
+				<Route path='/log' element={<Log />} />
 			</Routes>
 		</HashRouter>
 	</QueryClientProvider>

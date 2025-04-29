@@ -95,6 +95,11 @@ function Table({ rows, className, children, ...props }) {
 	let [sort, setSort] = React.useState(null);
 	let [columns, setColumns] = React.useState(null);
 
+	// What?! No rows?
+	if (!rows) {
+		rows = [];
+	}
+
 	className = classNames(className, 'ui data-table text-primary-900 w-full border-1 text-[90%]');
 	className = classNames(className, 'dark:text-primary-200 dark:border-primary-800');
 
@@ -168,7 +173,7 @@ function Table({ rows, className, children, ...props }) {
 		let className = '';
 
 		className = classNames(className, 'hover:bg-primary-200 even:bg-primary-100 ');
-		className = classNames(className, 'dark:hover:bg-primary-800	dark:even:bg-primary-900');
+		className = classNames(className, 'dark:hover:bg-primary-700	dark:even:bg-primary-900');
 		className = classNames(className, '');
 
 		let items = columns.map((column, index) => {

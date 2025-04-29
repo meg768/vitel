@@ -1,5 +1,4 @@
 import React from 'react';
-import mysql from './js/mysql-express';
 import atp from './js/atp-service';
 
 import { Button, Container } from './components/ui';
@@ -68,7 +67,7 @@ function App() {
 	const [playerList, setPlayerList] = React.useState(locals.get('player-list', null));
 
 	// Fetch data, cache for 60 minutes
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['main-page'], queryFn: fetch, gcTime: 60 * 60 * 1000 });
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['main-page'], queryFn: fetch, cacheTime: 0 });
 
 	async function fetch() {
 		if (playerList == null) {
@@ -102,7 +101,7 @@ function App() {
 		}
 
 		let className = '';
-		className = classNames(className, 'w-[1.5em] h-[1.5em] fill-primary-500 hover:fill-primary-600 ');
+		className = classNames(className, 'w-[1.5em] h-[1.5em] fill-primary-500 hover:fill-primary-400 ');
 		className = classNames(className, url ? '' : 'opacity-50!');
 
 		return (
@@ -164,9 +163,22 @@ function App() {
 			</Page.Title>
 		);
 	}
+
+	function Spinner() {
+		return (
+			<div className='flex items-center gap-3 pt-5 pb-5'>
+				<span className='relative flex size-5'>
+					<span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75'></span>
+					<span className='relative inline-flex size-5 rounded-full bg-sky-500'></span>
+				</span>
+				<div>Läser in spelare...</div>
+			</div>
+		);
+	}
 	function Content() {
+
 		if (!response) {
-			return;
+			return <Spinner />;	
 		}
 
 		let { players } = response;

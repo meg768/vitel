@@ -20,7 +20,7 @@ let Component = () => {
 		try {
 			let sql = '';
 
-			sql += `SELECT * FROM events ORDER BY date DESC `;
+			sql += `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC`;
 
 			let events = await mysql.query({ sql });
 

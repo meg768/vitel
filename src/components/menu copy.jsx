@@ -12,48 +12,41 @@ function Component() {
 	}
 	return (
 		<div id='menu' className='border-b-1 border-primary-800'>
-			<div className='flex  justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900'>
-				<div className='flex space-x-1'>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/'>🎾</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/'>Jämför spelare</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/events'>Turneringar</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/players'>Spelare</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/live'>Live</Link>
-						</Button>
-					</div>
+			<div className='flex  items-center bg-primary-900 p-2 gap-2 dark:bg-primary-900'>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/'>🎾</Link>
+					</Button>
 				</div>
-				<div className='flex space-x-1'>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/log'>
-								<span className='text-[100%]'>🐞</span>
-							</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass} onClick={toggleDarkMode}>
-							🌓
-						</Button>
-					</div>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/'>Jämför spelare</Link>
+					</Button>
 				</div>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/events'>Turneringar</Link>
+					</Button>
+				</div>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/players'>Spelare</Link>
+					</Button>
+				</div>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/live'>Live</Link>
+					</Button>
+				</div>
+				<div className='grow-0'>
+					<Button className={buttonClass}>
+						<Link to='/log'>Logg</Link>
+					</Button>
+				</div>
+				<div className='grow'></div>
+				<Button className={buttonClass} onClick={toggleDarkMode}>
+					🌓
+				</Button>
 			</div>
 		</div>
 	);
