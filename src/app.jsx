@@ -209,7 +209,7 @@ function App() {
 					{` arbete. `}
 					<LatestUpdate />
 				</p>
-				<div className='justify-center min-w-lg m-auto'>
+				<div className='justify-center m-auto'>
 					<div className='pb-2 text-xl'>Välj två spelare och jämför deras matchstatistik.</div>
 					<div className='flex justify-center'>
 						<div className='border-1 p-5 rounded-md w-full '>
