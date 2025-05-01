@@ -27,7 +27,7 @@ Component.Title = function ({ className, level = 1, ...props }) {
 	switch (level) {
 		case 1: {
 			className = classNames('border rounded-sm  bg-primary-300/50!  text-primary-900 p-3', className);
-			className = classNames('text-[200%]', 'dark:bg-primary-500/50! dark:text-primary-100', className);
+			className = classNames('text-[200%]', 'dark:bg-primary-800/50! dark:text-primary-100', className);
 			break;
 		}
 		case 2: {
