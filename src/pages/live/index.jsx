@@ -14,7 +14,7 @@ function LiveTable({ rows }) {
 
 	function Players({ playerA, playerB }) {
 		return (
-			<div className='flex items-center gap-2'>
+			<div className='flex items-center gap-2 bg-transparent'>
 				<Flag className='w-5! h-5! border-1! border-primary-200' country={playerA.country}></Flag>
 				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
 				<span>{' vs '}</span>
