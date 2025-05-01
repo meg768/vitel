@@ -13,46 +13,28 @@ import Live from './pages/live';
 import Log from './pages/log';
 import App from './app.jsx';
 
-class Main {
-	constructor({ rootId = 'root' } = {}) {
-		this.rootElement = document.getElementById(rootId);
-		this.theme = this.getInitialTheme();
-		this.applyTheme();
-		this.root = ReactDOM.createRoot(this.rootElement); // Create root *after* theme is set
+function setLightDarkMode() {
+	const root = document.getElementById('root');
+	let theme = localStorage.getItem('theme');
+
+	if (!theme) {
+		theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+		localStorage.setItem('theme', theme);
 	}
 
-	getInitialTheme() {
-		let saved = localStorage.getItem('theme');
-		if (!saved) {
-			//saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-			saved = 'dark';
-			localStorage.setItem('theme', saved);
-		}
-		return saved;
-	}
-
-	applyTheme() {
-		if (this.theme === 'dark') {
-			this.rootElement.classList.add('dark');
-		} else {
-			this.rootElement.classList.remove('dark');
-		}
-	}
-
-	toggleTheme() {
-		this.theme = this.theme === 'dark' ? 'light' : 'dark';
-		localStorage.setItem('theme', this.theme);
-		this.applyTheme();
-	}
-
-	render(element) {
-		this.root.render(element);
+	if (theme === 'dark') {
+		root.classList.add('dark');
+	} else {
+		root.classList.remove('dark');
 	}
 }
 
-const main = new Main();
+setLightDarkMode();
 
-main.render(
+let foo = ReactDOM.createRoot(document.getElementById('root'));
+
+
+foo.render(
 	<QueryClientProvider client={new QueryClient()}>
 		<HashRouter>
 			<Routes>

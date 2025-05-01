@@ -64,8 +64,10 @@ async function getLatestImport() {
 	}
 }
 
+
 function App() {
 	const [playerList, setPlayerList] = React.useState(locals.get('player-list', null));
+
 
 	// Fetch data, cache for 60 minutes
 	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['main-page'], queryFn: fetch, cacheTime: 0 });
@@ -177,9 +179,8 @@ function App() {
 		);
 	}
 	function Content() {
-
 		if (!response) {
-			return <Spinner />;	
+			return <Spinner />;
 		}
 
 		let { players } = response;

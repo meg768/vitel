@@ -6,9 +6,11 @@ let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-9
 
 function Component() {
 	function toggleDarkMode() {
-		var element = document.getElementById('root');
-		console.log(element);
-		element.classList.toggle('dark');
+		var root = document.getElementById('root');
+
+		const isDark = root.classList.toggle('dark');
+		localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
 	}
 	return (
 		<div id='menu' className='border-b-1 border-primary-800'>
