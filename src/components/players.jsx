@@ -20,7 +20,7 @@ function Component({ players }) {
 					<Table.Cell>
 						{({ row, value }) => {
 							return (
-								<div className='flex items-center gap-2 whitespace-nowrap'>
+								<div className='flex items-center gap-2 whitespace-nowrap bg-transparent'>
 									<Flag className='w-5! h-5! border-1! border-primary-200' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
 								</div>

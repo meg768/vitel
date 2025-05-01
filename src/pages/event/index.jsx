@@ -51,16 +51,16 @@ let Component = () => {
 
 
 		return (
-			<Page.Title className='flex items-center'>
-				<div className='flex-none'>
+			<Page.Title className='flex items-center '>
+				<div className='flex-none bg-transparent'>
 					<Link target='_blank' to={event.url}>
 						{event.name}
 					</Link>
 					{` ${year}`}
 				</div>
 				<div className='flex-grow'></div>
-				<div className='flex-none'>
-					<EventLogo className='max-h-15' event={event} />
+				<div className='flex-none bg-transparent'>
+					<EventLogo className='max-h-15 ' event={event} />
 				</div>
 			</Page.Title>
 		);

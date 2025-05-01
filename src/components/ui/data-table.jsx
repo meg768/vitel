@@ -161,7 +161,7 @@ function Table({ rows, className, children, ...props }) {
 
 		let items = columns.map((column, index) => {
 			return (
-				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-900'}>
+				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-transparent dark:bg-primary-900'}>
 					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
 						<Title {...column.title.props}></Title>
 						<Arrow column={column} />
@@ -180,8 +180,8 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-primary-200 even:bg-primary-100 ');
-		className = classNames(className, 'dark:hover:bg-primary-700	dark:even:bg-primary-900');
+		className = classNames(className, 'hover:bg-primary-400/25 bg-primary-100/25 odd:bg-primary-200/25 ');
+		className = classNames(className, 'dark:hover:bg-primary-600/25	dark:bg-primary-900/25 dark:odd:bg-primary-800/25');
 		className = classNames(className, '');
 
 		let items = columns.map((column, index) => {

@@ -184,7 +184,7 @@ let Component = () => {
 		return (
 			<Page.Title className='flex justify-left items-center gap-2'>
 				<Flag className='mr-1 w-15! h-15!' country={player.country}></Flag>
-				<div className=''>
+				<div className='bg-transparent'>
 					<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.id}/overview`}>
 						{player.name}
 					</Link>

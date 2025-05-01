@@ -156,11 +156,11 @@ function App() {
 
 	function Title() {
 		return (
-			<Page.Title className='flex items-center gap-5 '>
-				<div className=''>
-					<img className='h-15' src={atpTourPNG} />
+			<Page.Title className='flex items-center gap-5'>
+				<div className='bg-transparent'>
+					<img className='h-15 ' src={atpTourPNG} />
 				</div>
-				<div>Statistik från ATP</div>
+				<div className='bg-transparent'>Statistik från ATP</div>
 			</Page.Title>
 		);
 	}

@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import Layout from './layout';
 
 function Component({ className, ...props }) {
-	className = classNames('page dasrk min-w-2xl min-h-full', className);
-	className = classNames('bg-primary-50 text-primary-900 border-black/10', className);
-	className = classNames('dark:bg-primary-950	 dark:text-none-300 dark:border-primary-700', className);
+	className = classNames('page min-w-2xl min-h-full', className);
+	className = classNames('bg-transparent text-primary-900 border-black/10', className);
+	className = classNames('dark:bg-transparent	 dark:text-none-300 dark:border-primary-700', className);
 
-	return <div className={className} {...props} />;
+	//return <div className={className} {...props} />;
 
 	return <Layout className={className} {...props} />;
 }
@@ -26,8 +26,8 @@ Component.Title = function ({ className, level = 1, ...props }) {
 
 	switch (level) {
 		case 1: {
-			className = classNames('border rounded-sm  bg-primary-100  text-primary-900 p-3', className);
-			className = classNames('text-[200%]', 'dark:bg-primary-900 dark:text-primary-100', className);
+			className = classNames('border rounded-sm  bg-primary-300/50!  text-primary-900 p-3', className);
+			className = classNames('text-[200%]', 'dark:bg-primary-500/50! dark:text-primary-100', className);
 			break;
 		}
 		case 2: {
