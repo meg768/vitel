@@ -67,7 +67,7 @@ function App() {
 	const [playerList, setPlayerList] = React.useState(locals.get('player-list', null));
 
 	// Fetch data, cache for 60 minutes
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['main-page'], queryFn: fetch, cacheTime: 0 });
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['appsdflk-page'], queryFn: fetch, cacheTime: 0 });
 
 	async function fetch() {
 		if (playerList == null) {
