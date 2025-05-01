@@ -81,7 +81,7 @@ class Column {
 
 		let { className, ...others } = props;
 
-		className = classNames(className, 'px-2 py-1.5 border-1 whitespace-nowrap');
+		className = classNames(className, 'px-2 py-1.5 border-1');
 
 		return (
 			<td className={className} {...others} key={index}>
@@ -147,24 +147,28 @@ function Table({ rows, className, children, ...props }) {
 				return <span className={className}>{sort.order}</span>;
 			}
 
-			return <div className={classNames(className, 'opacity-0')}>{'▲'}</div>;
+			return <span className={classNames(className, 'opacity-0')}>{'▲'}</span>;
 		}
 
 		function Title(props) {
-			let { className, ...other } = props;
-
-			// Add no wrap as default
+			let {className, ...other} = props;
 			className = classNames(className, 'whitespace-nowrap');
 
-			return <div className={className} {...other} />;
-		}
+			return (
+				<div className={className} {...props}>
 
+				</div>
+			);
+
+		}
 		let items = columns.map((column, index) => {
 			return (
 				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-900'}>
 					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
-						<Title {...column.title.props}></Title>
-						<Arrow column={column} />
+						<div {...column.title.props} className='whitespace-nowrap'></div>
+						<div>
+							<Arrow column={column} />
+						</div>
 					</div>
 				</th>
 			);

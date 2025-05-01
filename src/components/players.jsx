@@ -20,7 +20,7 @@ function Component({ players }) {
 					<Table.Cell>
 						{({ row, value }) => {
 							return (
-								<div className='flex items-center gap-2'>
+								<div className='flex items-center gap-2 whitespace-nowrap'>
 									<Flag className='w-5! h-5! border-1! border-primary-200' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
 								</div>
@@ -52,8 +52,8 @@ function Component({ players }) {
 				</Table.Column>
 
 				<Table.Column id='highest_rank' className=''>
-					<Table.Title>Högsta Ranking</Table.Title>
-					<Table.Cell className='text-right'>
+					<Table.Title className='whitespace-nowrap'>Högsta Ranking</Table.Title>
+					<Table.Cell className='text-right whitespace-nowrap'>
 						{({ row, value }) => {
 							return `${value} (${new Date(row.highest_rank_date).toLocaleDateString()})`;
 						}}
@@ -88,7 +88,7 @@ function Component({ players }) {
 				</Table.Column>
 
 				<Table.Column id='height' className=''>
-					<Table.Title>Längd (cm)</Table.Title>
+					<Table.Title className=''>Längd (cm)</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
 							return value ? value : '-';
@@ -97,7 +97,7 @@ function Component({ players }) {
 				</Table.Column>
 
 				<Table.Column id='weight' className=''>
-					<Table.Title>Vikt (kg)</Table.Title>
+					<Table.Title className=''>Vikt (kg)</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
 							return value ? value : '-';

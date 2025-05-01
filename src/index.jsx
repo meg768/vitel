@@ -15,6 +15,17 @@ import Log from './pages/log';
 
 import App from './app.jsx';
 
+// src/Layout.jsx
+function Layout({ children }) {
+  return (
+    <div className="bg-[url('/assets/bg.png')] bg-cover bg-center min-h-screen">
+      <div className="bg-black/50 min-h-screen">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<QueryClientProvider client={new QueryClient()}>
 		<HashRouter>

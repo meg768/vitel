@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 function LiveTable({ rows }) {
+
 	function Players({ playerA, playerB }) {
 		return (
 			<div className='flex items-center gap-2'>
@@ -23,13 +24,23 @@ function LiveTable({ rows }) {
 		);
 	}
 
+		function PlayersSimple({ playerA, playerB }) {
+			return (
+				<div className='flex items-center gap-2'>
+					<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
+					<span>{' vs '}</span>
+					<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
+				</div>
+			);
+		}
+
 	function Content() {
 		return (
 			<Table rows={rows} className=''>
 				<Table.Column id='name' className=''>
 					<Table.Title className=''>Tournering</Table.Title>
 
-					<Table.Cell>
+					<Table.Cell className=''>
 						{({ row, value }) => {
 							return (
 								<>
@@ -47,6 +58,11 @@ function LiveTable({ rows }) {
 							return <Players playerA={row.player} playerB={row.opponent} />;
 						}}
 					</Table.Value>
+					<Table.Cell className=''>
+						{({ row, value }) => {
+							return value;
+						}}
+					</Table.Cell>
 				</Table.Column>
 
 				<Table.Column id='score' className=''>

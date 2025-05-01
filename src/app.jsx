@@ -11,6 +11,7 @@ import Checkbox from './components/ui/checkbox';
 import PlayerPicker from './components/player-picker';
 import Menu from './components/menu';
 import Page from './components/page';
+import Layout from './components/layout';
 
 import LocalStorage from './js/local-storage';
 import { Info } from './components/icons';

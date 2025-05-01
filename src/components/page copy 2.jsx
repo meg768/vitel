@@ -1,14 +1,12 @@
 import classNames from 'classnames';
-import Layout from './layout';
 
 function Component({ className, ...props }) {
 	className = classNames('page dasrk min-w-2xl min-h-full', className);
 	className = classNames('bg-primary-50 text-primary-900 border-black/10', className);
 	className = classNames('dark:bg-primary-950	 dark:text-none-300 dark:border-primary-700', className);
+//	className = classNames("bg-[url('/assets/bg.png')] bg-cover bg-center h-screen", className);
 
 	return <div className={className} {...props} />;
-
-	return <Layout className={className} {...props} />;
 }
 
 class Styles {
@@ -33,6 +31,7 @@ Component.Title = function ({ className, level = 1, ...props }) {
 		case 2: {
 			className = classNames('py-2', className);
 			className = classNames('text-[150%]', className);
+
 		}
 	}
 	return <div className={className} {...props}></div>;

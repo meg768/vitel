@@ -7,6 +7,12 @@
 	box-shadow: none !important;
 }
 
+xbody {
+	background-image: url('/assets/bg.png');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+}
 :root {
 	color-scheme: light dark;
 }
