@@ -1,17 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { Container, Button } from '../components';
-
-let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
+import app from '../../src/index.jsx';
 
 function Component() {
+	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
+
 	function toggleDarkMode() {
-		var root = document.getElementById('root');
-
-		const isDark = root.classList.toggle('dark');
-		localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
+		app.toggleTheme();
 	}
+
 	return (
 		<div id='menu' className='border-b-1 border-primary-800'>
 			<div className='flex  justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900'>

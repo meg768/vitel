@@ -13,7 +13,7 @@ import Live from './pages/live';
 import Log from './pages/log';
 import App from './pages/app';
 
-class Main {
+class WebApp {
 	constructor({ rootId = 'root' } = {}) {
 		this.rootElement = document.getElementById(rootId);
 		this.theme = this.getInitialTheme();
@@ -48,24 +48,29 @@ class Main {
 	render(element) {
 		this.root.render(element);
 	}
+
+	run() {
+		this.render(
+			<QueryClientProvider client={new QueryClient()}>
+				<HashRouter>
+					<Routes>
+						<Route path='/' element={<App />} />
+						<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
+						<Route path='/event/:id' element={<Event />} />
+						<Route path='/player/:id' element={<Player />} />
+						<Route path='/ranking' element={<Ranking />} />
+						<Route path='/events' element={<Events />} />
+						<Route path='/players' element={<Players />} />
+						<Route path='/live' element={<Live />} />
+						<Route path='/log' element={<Log />} />
+					</Routes>
+				</HashRouter>
+			</QueryClientProvider>
+		);
+	}
 }
 
-const main = new Main();
+const app = new WebApp();
+app.run();
 
-main.render(
-	<QueryClientProvider client={new QueryClient()}>
-		<HashRouter>
-			<Routes>
-				<Route path='/' element={<App />} />
-				<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
-				<Route path='/event/:id' element={<Event />} />
-				<Route path='/player/:id' element={<Player />} />
-				<Route path='/ranking' element={<Ranking />} />
-				<Route path='/events' element={<Events />} />
-				<Route path='/players' element={<Players />} />
-				<Route path='/live' element={<Live />} />
-				<Route path='/log' element={<Log />} />
-			</Routes>
-		</HashRouter>
-	</QueryClientProvider>
-);
+export default app;

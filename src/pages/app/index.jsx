@@ -1,23 +1,22 @@
 import React from 'react';
-import atp from './js/atp-service';
+import atp from '../../js/atp-service';
 
-import { Button, Container } from './components/ui';
+import { Button, Container } from '../../components/ui';
 import { useQuery } from '@tanstack/react-query';
 
 import { useState, useRef } from 'react';
 import { NavLink, Link } from 'react-router';
 
-import Checkbox from './components/ui/checkbox';
-import PlayerPicker from './components/player-picker';
-import Menu from './components/menu';
-import Page from './components/page';
-import Layout from './components/layout';
+import PlayerPicker from '../../components/player-picker';
+import Menu from '../../components/menu';
+import Page from '../../components/page';
+import Layout from '../../components/layout';
 
-import LocalStorage from './js/local-storage';
-import { Info } from './components/icons';
+import LocalStorage from '../../js/local-storage';
+import { Info } from '../../components/icons';
 
-import atpTourSVG from './assets/atp-tour.svg';
-import atpTourPNG from './assets/atp-tour.png';
+import atpTourSVG from '../../assets/atp-tour.svg';
+import atpTourPNG from '../../assets/atp-tour.png';
 
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import classNames from 'classnames';
