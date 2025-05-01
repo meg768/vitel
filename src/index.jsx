@@ -11,7 +11,7 @@ import Events from './pages/events';
 import Players from './pages/players';
 import Live from './pages/live';
 import Log from './pages/log';
-import App from './app.jsx';
+import App from './pages/app';
 
 class Main {
 	constructor({ rootId = 'root' } = {}) {
