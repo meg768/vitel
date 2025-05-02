@@ -21,7 +21,7 @@ function Component() {
 					</div>
 					<div className=''>
 						<Button className={buttonClass}>
-							<Link to='/'>Jämför spelare</Link>
+							<Link to='/#'>Jämför spelare</Link>
 						</Button>
 					</div>
 					<div className=''>

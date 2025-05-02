@@ -64,18 +64,29 @@ async function getLatestImport() {
 }
 
 function App() {
-	const [playerList, setPlayerList] = React.useState(locals.get('player-list', null));
+	const [playerList, setPlayerList] = React.useState(null);
 
 	// Fetch data, cache for 60 minutes
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['appsdflk-page'], queryFn: fetch, cacheTime: 0 });
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['app-page'], queryFn: fetch });
 
-	async function fetch() {
-		if (playerList == null) {
-			let list = {};
-			list['A'] = await getPlayer('Jannik Sinner');
-			list['B'] = await getPlayer('Carlos Alcaraz');
+	
+	React.useEffect(() => {
+		async function getPlayerList() {
+			let list = locals.get('player-list', null);
+			if (list == null) {
+				list = {};
+				list['A'] = await getPlayer('Jannik Sinner');
+				list['B'] = await getPlayer('Carlos Alcaraz');
+				locals.set('player-list', list);
+			}
 			setPlayerList(list);
 		}
+		getPlayerList();
+
+
+	}, []);
+
+	async function fetch() {
 
 		try {
 			let players = await getTopPlayers();
@@ -114,6 +125,7 @@ function App() {
 	}
 
 	function CompareButton() {
+
 		let url = '';
 		let playerA = playerList['A'];
 		let playerB = playerList['B'];
@@ -176,7 +188,7 @@ function App() {
 		);
 	}
 	function Content() {
-		if (!response) {
+		if (!response || !playerList) {
 			return <Spinner />;
 		}
 
@@ -223,6 +235,8 @@ function App() {
 			</>
 		);
 	}
+
+
 
 	return (
 		<Page>

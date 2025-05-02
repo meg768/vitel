@@ -55,6 +55,7 @@ class WebApp {
 				<HashRouter>
 					<Routes>
 						<Route path='/' element={<App />} />
+						<Route path='/app' element={<App />} />
 						<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
 						<Route path='/event/:id' element={<Event />} />
 						<Route path='/player/:id' element={<Player />} />
