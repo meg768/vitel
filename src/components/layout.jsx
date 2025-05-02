@@ -4,7 +4,7 @@ export default function Layout(props) {
 
 
 	return (
-		<div className='relative min-h-screen'>
+		<div className='relative min-w-2xl min-h-screen'>
 			{/* Background image – fixed and behind everything */}
 			<div className="fixed inset-0 -z-10 bg-[url('/assets/atp-tour.svg')] opacity-99 bg-cover bg-center bg-no-repeat"></div>
 

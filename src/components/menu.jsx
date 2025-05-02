@@ -11,58 +11,27 @@ function Component(props) {
 		app.toggleTheme();
 	}
 
-	function Spinner() {
-		if (props.spinner) {
-			return (
-				<div className='flex items-center p-2'>
-					<div className='relative flex size-5'>
-						<div className='absolute inline-flex h-full w-full justify-items-center animate-ping rounded-full bg-sky-400/75 '></div>
-						<div className='relative inline-flex size-5 items-center  text-center justify-items-center rounded-full bg-sky-500'></div>
-					</div>
-				</div>
-			);
-		}
+	function TennisBall(props) {
 
-			return (
-				<div className='flex items-center p-2'>
-					<div className='relative flex size-5'>
-						<div className='absolute inline-flex h-full w-full justify-items-center animate-none rounded-full bg-sky-500 xopacity-75'></div>
-					</div>
-				</div>
-			);
+		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';
 
-		return <div className='flex  bg-transparent items-center p-2'>🎾</div>;
+		return (
+			<div className='relative flex items-center justify-center w-10 h-10'>
+				{/* Ping effect (behind) */}
+				<span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 ${animation}`}></span>
+
+				{/* Tennis Ball emoji */}
+				<span className='relative text-xl bg-transparent'>🎾</span>
+			</div>
+		);
 	}
 
-	function SpinnerX() {
-		let className = 'flex  bg-transparent items-center p-2';
-
-		if (!props.spinner) {
-			className = classNames(className, 'animate-none');
-		} else {
-			className = classNames(className, 'animate-spin');
-		}
-		return <div className={className}>🎾</div>;
-
-		if (props.spinner) {
-			return <div className='flex animate-spin bg-transparent items-center p-2'>🎾</div>;
-			return (
-				<div className='flex items-center p-2'>
-					<span className='relative flex size-5'>
-						<div className='absolute inline-flex h-full w-full justify-items-center animate-ping rounded-full bg-sky-400 opacity-75'></div>
-						<div className='relative inline-flex size-5 items-center  text-center justify-items-center rounded-full bg-sky-500'></div>
-					</span>
-				</div>
-			);
-		}
-		return <div className='flex  bg-transparent items-center p-2'>🎾</div>;
-	}
 
 	return (
 		<div id='menu' className='border-b-1 border-primary-800'>
 			<div className='flex  justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900'>
 				<div className='flex space-x-1'>
-					<Spinner />
+					<TennisBall ping={props.spinner} />
 					<div className='flex items-center '>
 						<Button className={buttonClass}>
 							<Link to='/#'>Jämför spelare</Link>

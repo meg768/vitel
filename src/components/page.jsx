@@ -2,11 +2,9 @@ import classNames from 'classnames';
 import Layout from './layout';
 
 function Component({ className, ...props }) {
-	className = classNames('page min-w-2xl min-h-full', className);
+	className = classNames('', className);
 	className = classNames('bg-transparent text-primary-900 border-black/10', className);
 	className = classNames('dark:bg-transparent	 dark:text-none-300 dark:border-primary-700', className);
-
-	//return <div className={className} {...props} />;
 
 	return <Layout className={className} {...props} />;
 }
