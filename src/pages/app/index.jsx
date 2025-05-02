@@ -10,7 +10,6 @@ import { NavLink, Link } from 'react-router';
 import PlayerPicker from '../../components/player-picker';
 import Menu from '../../components/menu';
 import Page from '../../components/page';
-import Layout from '../../components/layout';
 
 import LocalStorage from '../../js/local-storage';
 import { Info } from '../../components/icons';
@@ -66,10 +65,9 @@ async function getLatestImport() {
 function App() {
 	const [playerList, setPlayerList] = React.useState(null);
 
-	// Fetch data, cache for 60 minutes
+	// Fetch data
 	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['app-page'], queryFn: fetch });
 
-	
 	React.useEffect(() => {
 		async function getPlayerList() {
 			let list = locals.get('player-list', null);
@@ -82,12 +80,9 @@ function App() {
 			setPlayerList(list);
 		}
 		getPlayerList();
-
-
 	}, []);
 
 	async function fetch() {
-
 		try {
 			let players = await getTopPlayers();
 			let events = await getEvents();
@@ -125,7 +120,6 @@ function App() {
 	}
 
 	function CompareButton() {
-
 		let url = '';
 		let playerA = playerList['A'];
 		let playerB = playerList['B'];
@@ -176,20 +170,13 @@ function App() {
 		);
 	}
 
-	function Spinner() {
-		return (
-			<div className='flex items-center gap-3 pt-5 pb-5'>
-				<span className='relative flex size-5'>
-					<span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75'></span>
-					<span className='relative inline-flex size-5 rounded-full bg-sky-500'></span>
-				</span>
-				<div>Läser in spelare...</div>
-			</div>
-		);
+	function isLoading() {
+		return !response || !playerList;
 	}
+
 	function Content() {
 		if (!response || !playerList) {
-			return <Spinner />;
+			return <div className='pt-5 pb-5'>Läser in spelare...</div>;
 		}
 
 		let { players } = response;
@@ -236,11 +223,9 @@ function App() {
 		);
 	}
 
-
-
 	return (
 		<Page>
-			<Menu />
+			<Menu spinner={isLoading()} />
 
 			<Page.Container>
 				<Title />

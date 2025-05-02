@@ -89,7 +89,7 @@ let Component = () => {
 	return (
 		<>
 			<Page id='event-page'>
-				<Menu />
+				<Menu spinner={isPending} />
 				<Content />
 			</Page>
 		</>

@@ -130,7 +130,7 @@ let Component = () => {
 	return (
 		<>
 			<Page>
-				<Menu />
+				<Menu spinner={isPending} />
 				<Content />
 			</Page>
 		</>

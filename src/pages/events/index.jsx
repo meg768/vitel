@@ -52,7 +52,7 @@ let Component = () => {
 	return (
 		<>
 			<Page id='events-page'>
-				<Menu />
+				<Menu spinner={isPending}/>
 				<Content />
 			</Page>
 		</>

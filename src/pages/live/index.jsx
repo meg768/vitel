@@ -124,7 +124,7 @@ let Component = () => {
 	return (
 		<>
 			<Page id='live-page'>
-				<Menu />
+				<Menu spinner={!response}/>
 				<Content />
 			</Page>
 		</>
