@@ -174,8 +174,8 @@ let Component = () => {
 	}
 
 	function Title() {
-		if (!response || !response.player.country) {
-			return <Page.Title>{params.name}</Page.Title>;
+		if (!response) {
+			return;
 		}
 
 		let { player } = response;

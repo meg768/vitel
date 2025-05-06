@@ -197,6 +197,20 @@ function Component({ player, matches }) {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 	}
 
+	function SurfaceStats() {
+		let A = player.hard_factor || '-';
+		let B = player.clay_factor || '-';
+		let C = player.grass_factor || '-';
+		return <SummaryTable.Cell name={'Hard/Clay/Grass'} value={`${A}/${B}/${C}`} />;
+	}
+
+	function BodyStats() {
+		let H = player.height ? `${player.height}` : '-';
+		let W = player.weight ? `${player.weight}` : '-';
+		let BMI = player.weight && player.weight ? `${Math.round(player.weight / ((player.height/100)^2))}` : '-';
+		return <SummaryTable.Cell name={'Längd/vikt/BMI'} value={`${H}/${W}/${BMI}`} />;
+
+	}
 	function PrizeMoneyCareer() {
 		return <SummaryTable.Cell name={'Prispengar'} value={player.career_prize ? cash(player.career_prize) : '-'} />;
 	}
@@ -222,14 +236,14 @@ function Component({ player, matches }) {
 							</div>
 						</SummaryTable.Cell>
 						<SummaryTable.Cell name='Ålder' value={player.age ? player.age : '-'} />
-						<SummaryTable.Cell name='Längd (cm)' value={player.height} />
-						<SummaryTable.Cell colSpan='1' name='Vikt (kg)' value={player.weight} />
+						<BodyStats />
 						<PrizeMoneyCareer />
 						<PrizeMoneyYTD />
 						<SummaryTable.Cell colSpan='1' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
 						<ELO/>
+						<SurfaceStats />
 					</SummaryTable.Row>
 					<StatisticsRow stats={stats.ytd} />
 					<StatisticsRow stats={stats.career} />

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import mysql from '../../js/atp-service';
 
@@ -9,20 +8,46 @@ import Players from '../../components/players';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
-
+import { useSearchParams } from 'react-router';
 
 let Component = () => {
-	const queryKey = `players`;
-	const queryOptions = {};
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	const [searchParams] = useSearchParams();
+
+	let query = getQuery();
+
+	const queryKey = query ? `players-${JSON.stringify(query)}` : 'players-noquery';
+	console.log(`QueryKey: ${queryKey}`);
+	const { data: response, isPending, isLoading, isFetching, isPreviousData, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+
+	function isReady() {
+		return !isLoading && !isPending && !isFetching && !isPreviousData && response != null;
+	}
+
+	function getQuery() {
+		let query = searchParams.get('query');
+
+		if (!query) {
+			return null;
+		}
+		try {
+			query = JSON.parse(decodeURIComponent(query));
+		} catch (error) {
+			query = null;
+		}
+		return query;
+	}
 
 	async function fetch() {
 		try {
-			let sql = '';
+			let query = getQuery();
 
-			sql += `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
+			if (!query || !query.sql) {
+				query = {};
+				query.sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
+			} else {
+			}
 
-			let players = await mysql.query({ sql });
+			let players = await mysql.query(query);
 
 			return { players };
 		} catch (error) {
@@ -31,21 +56,29 @@ let Component = () => {
 		}
 	}
 
+	function Title() {
+		let title = getQuery()?.title;
+
+		if (!title) {
+			title = 'Spelare';
+		}
+		return <Page.Title>{title}</Page.Title>;
+	}
+
 	function Content() {
-		if (response == null) {
+		if (!isReady()) {
 			return;
 		}
 
 		let { players } = response;
 
-
 		return (
 			<Page.Container>
-				<Page.Title>{`Spelare`}</Page.Title>
+				<Title />
 				<Container>
 					<Players players={players} />
 				</Container>
-			</Page.Container	>
+			</Page.Container>
 		);
 	}
 

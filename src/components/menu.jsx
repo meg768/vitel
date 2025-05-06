@@ -4,6 +4,8 @@ import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
 import classNames from 'classnames';
 
+import { Half2Icon, ReaderIcon, RocketIcon } from '@radix-ui/react-icons';
+
 function Component(props) {
 	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
@@ -12,7 +14,6 @@ function Component(props) {
 	}
 
 	function TennisBall(props) {
-
 		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';
 
 		return (
@@ -26,46 +27,40 @@ function Component(props) {
 		);
 	}
 
+	function MenuItem(props) {
+		let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
+
+		return (
+			<div className='flex items-center'>
+				<Button className={buttonClass}>
+					<Link to={props.link}>{props.children}</Link>
+				</Button>
+			</div>
+		);
+	}
 
 	return (
-		<div id='menu' className='border-b-1 border-primary-800'>
-			<div className='flex  justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900'>
+		<div className='border-b-1 border-primary-800'>
+			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
 				<div className='flex space-x-1'>
 					<TennisBall ping={props.spinner} />
-					<div className='flex items-center '>
-						<Button className={buttonClass}>
-							<Link to='/#'>Jämför spelare</Link>
-						</Button>
-					</div>
-					<div className='flex items-center '>
-						<Button className={buttonClass}>
-							<Link to='/events'>Turneringar</Link>
-						</Button>
-					</div>
-					<div className='flex items-center '>
-						<Button className={buttonClass}>
-							<Link to='/players'>Spelare</Link>
-						</Button>
-					</div>
-					<div className='flex items-center '>
-						<Button className={buttonClass}>
-							<Link to='/live'>Live</Link>
-						</Button>
-					</div>
+					<MenuItem link='/#'>Jämför spelare</MenuItem>
+					<MenuItem link='/events'>Turneringar</MenuItem>
+					<MenuItem link='/players'>Spelare</MenuItem>
+					<MenuItem link='/live'>Live</MenuItem>
 				</div>
 				<div className='flex space-x-1'>
-					<div className=''>
-						<Button className={buttonClass}>
-							<Link to='/log'>
-								<span className='text-[100%]'>🐞</span>
-							</Link>
-						</Button>
-					</div>
-					<div className=''>
-						<Button className={buttonClass} onClick={toggleDarkMode}>
-							🌓
-						</Button>
-					</div>
+					<MenuItem link='/trial'>
+						<RocketIcon className='w-7 h-7 '></RocketIcon>
+					</MenuItem>
+					<MenuItem link='/log'>
+						<ReaderIcon className='w-7 h-7 '></ReaderIcon>
+					</MenuItem>
+
+					<MenuItem>
+						<Half2Icon className='w-7 h-7 ' onClick={toggleDarkMode} />
+					</MenuItem>
+
 				</div>
 			</div>
 		</div>

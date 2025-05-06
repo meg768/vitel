@@ -5,10 +5,11 @@ import { Button, Container } from '../../components/ui';
 import { useQuery } from '@tanstack/react-query';
 
 import { useState, useRef } from 'react';
-import { NavLink, Link } from 'react-router';
+//import { NavLink, Link } from 'react-router';
 
 import PlayerPicker from '../../components/player-picker';
 import Menu from '../../components/menu';
+import Link from '../../components/ui/link';
 import Page from '../../components/page';
 
 import LocalStorage from '../../js/local-storage';
@@ -119,6 +120,20 @@ function App() {
 		);
 	}
 
+	function TestButton() {
+		let url = '/players';
+		let sql = `SELECT * FROM players WHERE country = 'ITA'`;
+		let encodedSql = encodeURIComponent(sql);
+		url += `?sql=${encodedSql}`;
+
+		return (
+			<Button link={url}>
+				Prova
+			</Button>
+		);
+
+	}
+
 	function CompareButton() {
 		let url = '';
 		let playerA = playerList['A'];
@@ -129,8 +144,8 @@ function App() {
 		}
 
 		return (
-			<Button disabled={url == ''}>
-				<Link to={url}>Jämför</Link>
+			<Button disabled={url == ''} link={url}>
+				Jämför
 			</Button>
 		);
 	}
@@ -185,7 +200,7 @@ function App() {
 			let { latestImport } = response;
 			let date = '';
 
-			if (latestImport.date) {
+			if (latestImport?.date) {
 				date = new Date(latestImport.date).toLocaleDateString();
 			}
 

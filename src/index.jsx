@@ -12,6 +12,7 @@ import Players from './pages/players';
 import Live from './pages/live';
 import Log from './pages/log';
 import App from './pages/app';
+import Trial from './pages/trial';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
@@ -64,6 +65,7 @@ class WebApp {
 						<Route path='/players' element={<Players />} />
 						<Route path='/live' element={<Live />} />
 						<Route path='/log' element={<Log />} />
+						<Route path='/trial' element={<Trial />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>

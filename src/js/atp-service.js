@@ -39,6 +39,7 @@ class MySqlExpress {
 	async query(options) {
 		let url = `${this.url}/query`;
 
+		
 		let response = await fetch(url, {
 			method: 'POST',
 			body: JSON.stringify(options),

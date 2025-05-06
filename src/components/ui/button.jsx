@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Link } from 'react-router';
 
-//import './button.scss';
 
 const Button = React.forwardRef((properties, ref) => {
-	let { className, disabled, ...props } = properties;
+	let { children, className, link, disabled, ...props } = properties;
 
 	className = classNames('ui button text-white  bg-primary-700 hover:bg-primary-600 dark:bg-primary-800', className);
 	className = classNames(className, 'rounded-sm px-3 py-2');
@@ -13,7 +13,18 @@ const Button = React.forwardRef((properties, ref) => {
 		className = classNames('opacity-50', className);
 	}
 
-	return <button className={className} ref={ref} {...props}></button>;
+	if (link) {
+		return (
+			<button className={className} ref={ref} {...props}>
+				<Link to={link} className=''>
+					{children}
+				</Link>
+			</button>
+		);
+	}
+	return <button className={className} ref={ref} {...props}>
+		{children}
+	</button>;
 });
 
 export default Button;

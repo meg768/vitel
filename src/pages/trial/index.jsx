@@ -1,114 +1,54 @@
 import React from 'react';
+import mysql from '../../js/atp-service';
 
-import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router';
 
-import { useState, useRef } from 'react';
-import { NavLink, Link } from 'react-router';
-
-
-import Menu from '../../components/menu';
+import { Container } from '../../components/ui';
+import Players from '../../components/players';
 import Page from '../../components/page';
+import Menu from '../../components/menu';
+import Link from '../../components/ui/link';
+import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router';
+import Button from '../../components/ui/button';
+
+import prospects from './prospects.js';
+import goat from './goat.js';
 
 
-
-
-
-let now = new Date();
-let year = now.getFullYear();
-
-
-
-class LiveFetcher  {
-	constructor(options) {
-	}
-
-	async fetch({}) {
-		let results = [];
-
-		let url = `https://app.atptour.com/api/v2/gateway/livematches/website?scoringTournamentLevel=tour`;
-		let response = await fetch(url);
-
-		if (!response) {
-			return null;
-		}
-
-		let result = [];
-
-		for (let tournamentIndex = 0; ; tournamentIndex++) {
-			let tournament = jp.query(response, `$.Data.LiveMatchesTournamentsOrdered[${tournamentIndex}]`);
-
-			if (tournament.length == 0) {
-				break;
-			}
-
-			tournament = tournament[0];
-
-			for (let matchIndex = 0; ; matchIndex++) {
-				let match = jp.query(tournament, `$.LiveMatches[${matchIndex}]`);
-
-				if (match.length == 0) {
-					break;
-				}
-
-				match = match[0];
-
-				let eventID = `${tournament.EventYear}-${tournament.EventId}`;
-				let eventTitle = tournament.EventTitle;
-				let player = jp.query(match, `$.PlayerTeam.Player`)[0];
-				let opponent = jp.query(match, `$.OpponentTeam.Player`)[0];
-
-				let row = {};
-				row.event = eventID;
-				row.title = eventTitle;
-				row.player = {};
-				row.opponent = {};
-
-				row.player.id = player.PlayerId;
-				row.player.name = `${player.PlayerFirstName} ${player.PlayerLastName}`;
-
-				row.opponent.id = opponent.PlayerId;
-				row.opponent.name = `${opponent.PlayerFirstName} ${opponent.PlayerLastName}`;
-
-				result.push(row);
-			}
-		}
-
-		return result;
-	}
-}
-
-
-function Component() {
-	const queryKey = 'LiveFetcher';
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
-
-	async function fetch() {
-		let fetcher = new LiveFetcher();
-
-		let details = await fetcher.fetch();
-		return {details};
-	}
-
+let Component = () => {
 	function Content() {
-		if (!response) {
-			return;
-		}
 		return (
-			<p>{response.details}</p>
+			<Page.Container>
+				<Page.Title>Testbänk</Page.Title>
+				<div className='text-[110%] pt-4 pb-4'>Här är några frågor som kan vara intressanta att ställa till databasen. Det är inte säkert att de ger något vettigt svar...</div>
+				<div>
+					<Query {...prospects} />
+					<Query {...goat} />
+				</div>
+			</Page.Container>
 		);
 	}
 
+	function Query({ sql, format = null, title = null, description = '-', ...props }) {
+		return (
+			<div className='text-[110%]  border-1 p-3 mt-3 mb-3 bg-primary-500/10 rounded-md hover:bg-primary-500/20'>
+				<Link hover={false} query={{ sql, format, title}} to={`/players`} {...props}>
+					<div>{title} </div>
+					<div className={'text-[100%]! bg-transparent text-primary-500/50'}>{description}</div>
+				</Link>
+			</div>
+		);
+	}
 
 	return (
+		<>
 			<Page>
 				<Menu />
-				<Page.Container >
-					<h1 className='pb-2'>Debug</h1>
-					<p />
-					<Content />
-				</Page.Container>
+				<Content />
 			</Page>
+		</>
 	);
-}
+};
 
 export default Component;
