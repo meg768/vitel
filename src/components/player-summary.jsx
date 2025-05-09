@@ -207,7 +207,9 @@ function Component({ player, matches }) {
 	function BodyStats() {
 		let H = player.height ? `${player.height}` : '-';
 		let W = player.weight ? `${player.weight}` : '-';
-		let BMI = player.weight && player.weight ? `${Math.round(player.weight / ((player.height/100)^2))}` : '-';
+		let A = player.weight;
+		let B = player.height/100;
+		let BMI = A && B ? `${Math.round(A/(B*B))}` : '-';
 		return <SummaryTable.Cell name={'Längd/vikt/BMI'} value={`${H}/${W}/${BMI}`} />;
 
 	}
