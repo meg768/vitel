@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
+
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant clay (&:where(.clay, .clay *));
 
 /* Remove focus-shadow */
 *:focus {
@@ -9,11 +11,28 @@
 
 
 :root {
-	color-scheme: light dark;
+	/*color-scheme: light dark clay;*/	
+
 }
 
 /* URL to edit (set minimum lightness to 10 before copying)
 /* https://www.tints.dev/?primary=5482B0&secondary=228B22&warning=FFD700&error=B22222&info=1E90FF&link=22C55E&success=22C55E&none=C0C0C0 */
+
+/*
+@theme {
+	--color-clay-50: #fdf7f4;
+	--color-clay-100: #fceee6;
+	--color-clay-200: #f8d6c4;
+	--color-clay-300: #f1b499;
+	--color-clay-400: #e78e6c;
+	--color-clay-500: #d96b47;
+	--color-clay-600: #b6523b;
+	--color-clay-700: #924131;
+	--color-clay-800: #703328;
+	--color-clay-900: #50241c;
+	--color-clay-950: #34160f;
+}
+*/
 
 @theme {
 	--color-primary-50: #eef2f7;
@@ -112,8 +131,24 @@
 	--color-border: black;
 }
 
+.clay {
+	--color-primary-50: #fdf7f4;
+	--color-primary-100: #fceee6;
+	--color-primary-200: #f8d6c4;
+	--color-primary-300: #f1b499;
+	--color-primary-400: #e78e6c;
+	--color-primary-500: #d96b47;
+	--color-primary-600: #b6523b;
+	--color-primary-700: #924131;
+	--color-primary-800: #703328;
+	--color-primary-900: #50241c;
+	--color-primary-950: #34160f;
+  }
+
 .dark {
-}
+  }
+
+
 
 @layer base {
 	html,

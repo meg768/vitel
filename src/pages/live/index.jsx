@@ -10,7 +10,54 @@ import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
+
+function isMatchFinished(score) {
+	if (typeof score !== 'string' || score.trim() === '') return false;
+
+	const sets = score.trim().split(/\s+/);
+
+	const maxSets = sets.length > 3 ? 5 : 3;
+	const setsToWin = Math.ceil(maxSets / 2);
+
+	let player1Sets = 0;
+	let player2Sets = 0;
+
+	for (const set of sets) {
+		// Remove tiebreak info in parentheses, e.g. (4), (10)
+		const cleaned = set.replace(/\(\d+\)/g, '');
+		if (!/^\d{2}$/.test(cleaned)) return false;
+
+		const p1 = parseInt(cleaned[0], 10);
+		const p2 = parseInt(cleaned[1], 10);
+
+		if (p1 < 6 && p2 < 6) return false; // Incomplete set
+
+		const max = Math.max(p1, p2);
+		const min = Math.min(p1, p2);
+		const diff = Math.abs(p1 - p2);
+
+		const valid =
+			(max === 6 && diff >= 2) || // 6–0 to 6–4
+			(max === 7 && (min === 5 || min === 6)); // 7–5 or 7–6
+		if (!valid) return false;
+
+		if (p1 > p2) player1Sets++;
+		else player2Sets++;
+	}
+
+	return player1Sets === setsToWin || player2Sets === setsToWin;
+}
+					 
+
 function LiveTable({ rows }) {
+
+	function Doo({ score }) {
+		if (isMatchFinished(score)) {
+			return <CheckIcon className='block m-auto bg-transparent text-green-500' />;
+		} else {
+			return <DotFilledIcon className='block m-auto bg-transparent text-red-500' />;
+		}
+	}
 
 	function Players({ playerA, playerB }) {
 		return (
@@ -24,15 +71,15 @@ function LiveTable({ rows }) {
 		);
 	}
 
-		function PlayersSimple({ playerA, playerB }) {
-			return (
-				<div className='flex items-center gap-2'>
-					<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
-					<span>{' vs '}</span>
-					<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
-				</div>
-			);
-		}
+	function PlayersSimple({ playerA, playerB }) {
+		return (
+			<div className='flex items-center gap-2'>
+				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
+				<span>{' vs '}</span>
+				<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
+			</div>
+		);
+	}
 
 	function Content() {
 		return (
@@ -67,6 +114,15 @@ function LiveTable({ rows }) {
 
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>Ställning</Table.Title>
+				</Table.Column>
+
+				<Table.Column className=''>
+					<Table.Title className=''>Avslutad</Table.Title>
+					<Table.Value className=''>
+						{({ row }) => {
+							return <Doo score={row.score} />;
+						}}
+					</Table.Value>
 				</Table.Column>
 
 				<Table.Column className='justify-center'>
@@ -113,7 +169,7 @@ let Component = () => {
 
 		return (
 			<Page.Container>
-				<Page.Title>{`Pågående matcher`}</Page.Title>
+				<Page.Title>{`Dagens matcher`}</Page.Title>
 				<Container>
 					<LiveTable rows={live} />
 				</Container>
@@ -124,7 +180,7 @@ let Component = () => {
 	return (
 		<>
 			<Page id='live-page'>
-				<Menu spinner={!response}/>
+				<Menu spinner={!response} />
 				<Content />
 			</Page>
 		</>

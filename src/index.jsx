@@ -20,6 +20,8 @@ class WebApp {
 		this.theme = this.getInitialTheme();
 		this.applyTheme();
 		this.root = ReactDOM.createRoot(this.rootElement); // Create root *after* theme is set
+		this.themeIndex = 0;
+		this.themes = ['dark', 'light', 'clay', 'dark clay'];
 	}
 
 	getInitialTheme() {
@@ -32,18 +34,20 @@ class WebApp {
 		return saved;
 	}
 
-	applyTheme() {
-		if (this.theme === 'dark') {
-			this.rootElement.classList.add('dark');
-		} else {
-			this.rootElement.classList.remove('dark');
-		}
+	applyTheme(theme) {
+		this.rootElement.classList.remove('dark', 'clay', 'light');
+		this.rootElement.classList.add(theme);
 	}
 
 	toggleTheme() {
-		this.theme = this.theme === 'dark' ? 'light' : 'dark';
+		this.themeIndex = (this.themeIndex + 1) % this.themes.length;
+		let theme = this.themes[this.themeIndex];
+
+		this.rootElement.classList.remove('dark', 'clay', 'light');
+		this.rootElement.classList.add(theme.split(' '));
+
+		console.log('Theme changed to:', theme);
 		localStorage.setItem('theme', this.theme);
-		this.applyTheme();
 	}
 
 	render(element) {
