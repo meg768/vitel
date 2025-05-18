@@ -24,7 +24,7 @@ let Component = () => {
 			let sql = '';
 			let format = [];
 
-			sql += `SELECXT * FROM flatly WHERE event_id = ? `;
+			sql += `SELECT * FROM flatly WHERE event_id = ? `;
 			sql += `ORDER BY event_date DESC, `;
 			sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR'); `;
 
