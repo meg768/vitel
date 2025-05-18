@@ -6,7 +6,6 @@ import { useParams } from 'react-router';
 import { Container } from '../../components/ui';
 import Players from '../../components/players';
 import Page from '../../components/page';
-import QueryPage from '../../components/query-page';
 import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
