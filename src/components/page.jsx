@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import Layout from './layout';
+import { CrossCircledIcon } from '@radix-ui/react-icons';
 
 function Component({ className, ...props }) {
 	className = classNames('', className);
@@ -34,6 +35,25 @@ Component.Title = function ({ className, level = 1, ...props }) {
 		}
 	}
 	return <div className={className} {...props}></div>;
+};
+
+Component.Error = function ({ className, ...props }) {
+	className = classNames('', className);
+
+	className = classNames('border rounded-sm  border-error-500/50 bg-error-300/50!  text-error-900 p-3', className);
+	className = classNames('dark:bg-error-600/50! dark:text-error-100', className);
+	className = classNames('flex items-center gap-3', className);
+
+	return (
+		<div className={className}>
+			<div className='bg-transparent '>
+				<CrossCircledIcon className='w-8 h-8 bg-transparent text-error-500' />
+			</div>
+			<div className='bg-transparent '>
+				<div {...props} />
+			</div>
+		</div>
+	);
 };
 
 Component.Container = function (props) {

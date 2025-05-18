@@ -22,6 +22,7 @@ class WebApp {
 		this.root = ReactDOM.createRoot(this.rootElement); // Create root *after* theme is set
 		this.themeIndex = 0;
 		this.themes = ['dark', 'light', 'clay', 'dark clay'];
+		this.themes = ['dark', 'light'];
 	}
 
 	getInitialTheme() {

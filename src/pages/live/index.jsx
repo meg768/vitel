@@ -169,7 +169,7 @@ let Component = () => {
 
 		return (
 			<Page.Container>
-				<Page.Title>{`Dagens matcher`}</Page.Title>
+				<Page.Title>{`Dagens (pågående) matcher`}</Page.Title>
 				<Container>
 					<LiveTable rows={live} />
 				</Container>

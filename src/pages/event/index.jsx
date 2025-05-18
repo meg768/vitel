@@ -1,4 +1,3 @@
-
 import React from 'react';
 import mysql from '../../js/atp-service';
 
@@ -25,7 +24,7 @@ let Component = () => {
 			let sql = '';
 			let format = [];
 
-			sql += `SELECT * FROM flatly WHERE event_id = ? `;
+			sql += `SELECXT * FROM flatly WHERE event_id = ? `;
 			sql += `ORDER BY event_date DESC, `;
 			sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR'); `;
 
@@ -49,7 +48,6 @@ let Component = () => {
 		let date = new Date(event.date).toLocaleDateString();
 		let year = new Date(event.date).getFullYear();
 
-
 		return (
 			<Page.Title className='flex items-center '>
 				<div className='flex-none bg-transparent'>
@@ -67,14 +65,33 @@ let Component = () => {
 	}
 
 	function Content() {
+		if (isError) {
+			return (
+				<Page.Error>
+					<p className='font-bold text-xl'>{`Ett fel inträffade.  `}</p>
+					<p className=''>{`${error.message}`}</p>
+				</Page.Error>
+			);
+		}
+
+
 		if (!response) {
 			return;
 		}
 
 		let { matches, event } = response;
 
+		if (!event) {
+			return (
+				<Page.Error>
+					<p className='font-bold text-xl'>{`Kunde inte hitta turnering med ID '${params.id}'.  `}</p>
+					<p className=''>{`Antagligen är det en ny turnering som ännu inte importerats. `}</p>
+				</Page.Error>
+			);
+		}
+
 		return (
-			<Page.Container>
+			<>
 				<Title />
 				<Container>
 					<Page.Title level={2}>Översikt</Page.Title>
@@ -82,7 +99,7 @@ let Component = () => {
 					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner={`${params.id}`}></Matches>
 				</Container>
-			</Page.Container>
+			</>
 		);
 	}
 
@@ -90,7 +107,9 @@ let Component = () => {
 		<>
 			<Page id='event-page'>
 				<Menu spinner={isPending} />
-				<Content />
+				<Page.Container>
+					<Content />
+				</Page.Container>
 			</Page>
 		</>
 	);
