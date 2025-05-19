@@ -73,12 +73,12 @@ let Component = () => {
 		let { players } = response;
 
 		return (
-			<Page.Container>
+			<Page.Content>
 				<Title />
-				<Container>
+				<Page.Container>
 					<Players players={players} />
-				</Container>
-			</Page.Container>
+				</Page.Container>
+			</Page.Content>
 		);
 	}
 

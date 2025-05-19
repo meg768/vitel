@@ -67,12 +67,12 @@ let Component = () => {
 		let { log } = response;
 
 		return (
-			<Page.Container>
+			<Page.Content>
 				<Page.Title>{`Logg senaste dygnet`}</Page.Title>
-				<Container>
+				<Page.Container>
 					<LogTable rows={log} />
-				</Container>
-			</Page.Container>
+				</Page.Container>
+			</Page.Content>
 		);
 	}
 

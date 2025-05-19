@@ -21,7 +21,7 @@ import { PlayerRankingComparisonChart } from '../../components/player-ranking-ch
 let Component = () => {
 	const params = useParams();
 	const queryKey = `head-to-head/${JSON.stringify(useParams())}`;
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	//const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
 		try {
@@ -59,8 +59,7 @@ let Component = () => {
 		}
 	}
 
-	function Title() {
-		let { playerOne, playerTwo } = response || {};
+	function Title({ playerOne, playerTwo }) {
 
 		let link = '';
 		let title = `${playerOne.name} vs ${playerTwo.name}`;
@@ -96,10 +95,9 @@ let Component = () => {
 		);
 	}
 
-	function HeadToHeadRankingChart() {
+	function HeadToHeadRankingChart({ playerOne, playerOneMatches, playerTwo, playerTwoMatches }) {
 		let now = new Date();
 
-		let { playerOne, playerOneMatches, playerTwo, playerTwoMatches } = response;
 
 		return (
 			<>
@@ -108,25 +106,40 @@ let Component = () => {
 			</>
 		);
 	}
-	function Content() {
+	function Content(response) {
 		if (!response) {
 			return;
 		}
+
 		let { matches, playerOne, playerTwo, playerOneMatches, playerTwoMatches } = response;
 
+		if (!response.matches) {
+			return;
+		}
 		return (
-			<Page.Container>
-				<Title />
-				<Container>
+			<>
+				<Title playerOne={playerOne} playerTwo={playerTwo}/>
+				<Page.Container>
 					<Summary matches={playerOneMatches} player={playerOne} />
 					<Summary matches={playerTwoMatches} player={playerTwo} />
-					<HeadToHeadRankingChart />
+					<HeadToHeadRankingChart {...response}/>
 					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
-				</Container>
-			</Page.Container>
+				</Page.Container>
+			</>
 		);
 	}
+
+	return (
+		<Page id='events-page'>
+			<Page.Menu/>
+			<Page.Content>
+				<Page.Query queryKey={queryKey} queryFn={fetch}>
+					{Content}
+				</Page.Query>
+			</Page.Content>
+		</Page>
+	);	
 	return (
 		<>
 			<Page>

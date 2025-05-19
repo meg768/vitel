@@ -1,11 +1,11 @@
 import { useParams } from 'react-router';
 import mysql from '../../js/atp-service';
 
-import QueryPage from '../../components/query-page';
 import Matches from '../../components/matches';
 import EventLogo from '../../components/event-logo';
 import EventSummary from '../../components/event-summary';
 import Page from '../../components/page';
+import Menu from '../../components/menu';
 import { Container } from '../../components/ui';
 import Link from '../../components/ui/link';
 
@@ -27,7 +27,10 @@ export default function EventPage() {
 	};
 
 	// ✅ JSX Component for rendering content
-	const Content = ({ matches, event }) => {
+	const Content = (response) => {
+
+		let { matches, event } = response || {};
+		
 		if (!event) {
 			return (
 				<Page.Error>
@@ -54,20 +57,25 @@ export default function EventPage() {
 					</div>
 				</Page.Title>
 
-				<Container>
+				<Page.Container>
 					<Page.Title level={2}>Översikt</Page.Title>
 					<EventSummary event={event} matches={matches} />
 
 					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner={id} />
-				</Container>
+				</Page.Container>
 			</>
 		);
 	};
 
 	return (
-		<QueryPage id='event-page' queryKey={queryKey} queryFn={queryFn}>
-			{Content}
-		</QueryPage>
+		<Page id='event-page'>
+			<Menu></Menu>
+			<Page.Content>
+				<Page.Query queryKey={queryKey} queryFn={queryFn}>
+					{Content}
+				</Page.Query>
+			</Page.Content>
+		</Page>
 	);
 }

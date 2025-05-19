@@ -19,23 +19,23 @@ import goat from './goat.js';
 let Component = () => {
 	function Content() {
 		return (
-			<Page.Container>
+			<Page.Content>
 				<Page.Title>Testbänk</Page.Title>
-				<div className='text-[110%] pt-4 pb-4'>Här är några frågor som kan vara intressanta att ställa till databasen. Det är inte säkert att de ger något vettigt svar...</div>
-				<div>
+				<div className='text-lg pt-4 pb-2'>Här är några frågor som kan vara intressanta att ställa till databasen. Det är inte säkert att de ger något vettigt svar...</div>
+				<Page.Container>
 					<Query {...prospects} />
 					<Query {...goat} />
-				</div>
-			</Page.Container>
+				</Page.Container>
+			</Page.Content>
 		);
 	}
 
 	function Query({ sql, format = null, title = null, description = '-', ...props }) {
 		return (
-			<div className='text-[110%]  border-1 p-3 mt-3 mb-3 bg-primary-500/10 rounded-md hover:bg-primary-500/20'>
+			<div className='text-xl  border-1 p-3 mt-3 mb-3 bg-primary-500/10 rounded-md hover:bg-primary-500/20'>
 				<Link hover={false} query={{ sql, format, title}} to={`/players`} {...props}>
 					<div>{title} </div>
-					<div className={'text-[100%]! bg-transparent text-primary-500/50'}>{description}</div>
+					<div className={'text-lg! bg-transparent text-primary-500'}>{description}</div>
 				</Link>
 			</div>
 		);
@@ -43,8 +43,8 @@ let Component = () => {
 
 	return (
 		<>
-			<Page>
-				<Menu />
+			<Page id='trial-page'>
+				<Page.Menu />
 				<Content />
 			</Page>
 		</>

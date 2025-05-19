@@ -238,14 +238,24 @@ function App() {
 		);
 	}
 
+	// return (
+	// 	<Page id='app-page'>
+	// 		<Page.Menu></Page.Menu>
+	// 		<Page.Content>
+	// 			<Page.Query queryKey={'app-page'} queryFn={fetch}>
+	// 				{Content}
+	// 			</Page.Query>
+	// 		</Page.Content>
+	// 	</Page>
+	// );
 	return (
 		<Page>
 			<Menu spinner={isLoading()} />
 
-			<Page.Container>
+			<Page.Content>
 				<Title />
 				<Content />
-			</Page.Container>
+			</Page.Content>
 		</Page>
 	);
 }

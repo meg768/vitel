@@ -10,7 +10,6 @@ import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
 import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
-
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') return false;
 
@@ -47,10 +46,8 @@ function isMatchFinished(score) {
 
 	return player1Sets === setsToWin || player2Sets === setsToWin;
 }
-					 
 
 function LiveTable({ rows }) {
-
 	function Doo({ score }) {
 		if (isMatchFinished(score)) {
 			return <CheckIcon className='block m-auto bg-transparent text-green-500' />;
@@ -145,9 +142,9 @@ function LiveTable({ rows }) {
 }
 
 let Component = () => {
-	const queryKey = `events`;
+	const queryKey = `live`;
 	const queryOptions = {};
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	// const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
 		try {
@@ -160,22 +157,33 @@ let Component = () => {
 		}
 	}
 
-	function Content() {
-		if (response == null) {
-			return;
+	function Content(response) {
+		let { live } = response || {};
+
+		let content = <Page.Loading>Läser in dagens matcher...</Page.Loading>;
+
+		if (live) {
+			content = <LiveTable rows={live} />;
 		}
 
-		let { live } = response;
-
 		return (
-			<Page.Container>
+			<>
 				<Page.Title>{`Dagens (pågående) matcher`}</Page.Title>
-				<Container>
-					<LiveTable rows={live} />
-				</Container>
-			</Page.Container>
+				<Page.Container>{content}</Page.Container>
+			</>
 		);
 	}
+
+	return (
+		<Page id='live-page'>
+			<Page.Menu />
+			<Page.Content>
+				<Page.Query queryKey={queryKey} queryFn={fetch}>
+					{Content}
+				</Page.Query>
+			</Page.Content>
+		</Page>
+	);
 
 	return (
 		<>

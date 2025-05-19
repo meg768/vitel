@@ -1,11 +1,16 @@
+
 import React from 'react';
-import mysql from '../../js/atp-service';
+	import mysql from '../../js/atp-service';
+//import mysql from '../../js/atp-service';
 import Link from '../../components/ui/link';
 import { useParams } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import { Button, Container } from '../../components/ui';
 
 import Page from '../../components/page';
 import PlayerSummary from '../../components/player-summary';
+import PlayerOverview from '../../components/player-overview';
+import Menu from '../../components/menu';
 
 import Matches from '../../components/matches';
 import Flag from '../../components/flag';
@@ -142,10 +147,11 @@ let PlayerOverview = ({player, matches}) => {
 let Component = () => {
 	const params = useParams();
 	const queryKey = `player/${JSON.stringify(useParams())}`;
-	// const queryOptions = {};
-	// const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	const queryOptions = {};
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
+
 		let sql = '';
 		sql += `SELECT * FROM flatly `;
 		sql += `WHERE winner_id = ? `;
@@ -167,10 +173,12 @@ let Component = () => {
 		return response;
 	}
 
-	function Title({player}) {
-		if (!player) {
+	function Title() {
+		if (!response) {
 			return;
 		}
+
+		let { player } = response;
 
 		return (
 			<Page.Title className='flex justify-left items-center gap-2'>
@@ -185,41 +193,48 @@ let Component = () => {
 		);
 	}
 
-	function Content(response) {
+	function Contents() {
 		if (!response) {
 			return;
 		}
 
-		let {matches, player} = response || {};
+		return (
+			<Container>
+				<Page.Title level={2}>Översikt</Page.Title>
+				<div className='overflow-x-auto'>
+					<PlayerSummary player={response.player} matches={response.matches} />
+				</div>
+
+				<Page.Title level={2}>Ranking</Page.Title>
+				<PlayerRankingChart className='' player={response.player} matches={response.matches} />
+				
+				<Page.Title level={2}>Matcher</Page.Title>
+				<PlayerMatchTabs params={params} player={response.player} matches={response.matches} />
+			</Container>
+		);
 
 		return (
-			<>
-				<Title player={player}/>
-				<Page.Container>
-					<Page.Title level={2}>Översikt</Page.Title>
-					<div className='overflow-x-auto'>
-						<PlayerSummary player={player} matches={matches} />
-					</div>
-
-					<Page.Title level={2}>Ranking</Page.Title>
-					<PlayerRankingChart className='' player={player} matches={matches} />
-
-					<Page.Title level={2}>Matcher</Page.Title>
-					<PlayerMatchTabs params={params} player={player} matches={matches} />
-				</Page.Container>
-			</>
+			<Container>
+				<h2>Summary</h2>
+				<PlayerSummary player={response.player} matches={response.matches} />
+				<h2>Ranking</h2>
+				<h2>Matches</h2>
+				<PlayerMatchTabs params={params} player={response.player} matches={response.matches} />
+			</Container>
 		);
 	}
 
+	
 	return (
-		<Page id='live-page'>
-			<Page.Menu />
-			<Page.Content>
-				<Page.Query queryKey={queryKey} queryFn={fetch}>
-					{Content}
-				</Page.Query>
-			</Page.Content>
-		</Page>
+		<>
+			<Page id='player-page'>
+				<Menu spinner={isPending}/>
+				<Page.Container>
+					<Title />
+					<Contents />
+				</Page.Container>
+			</Page>
+		</>
 	);
 };
 

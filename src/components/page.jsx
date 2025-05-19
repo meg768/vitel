@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import Layout from './layout';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
+import { useQuery } from '@tanstack/react-query';
+import Menu from './menu';
 
 function Component({ className, ...props }) {
 	className = classNames('', className);
@@ -77,5 +79,69 @@ Component.Content = function (props) {
 		</div>
 	);
 };
+
+Component.Query = function ({ queryKey, queryFn, children }) {
+	function isReady() {
+		return !isLoading && !isPending && !isFetching && !isPreviousData && data != null;
+	}
+
+	if (!Array.isArray(queryKey)) {
+		// If queryKey is not an array, wrap it in an array
+		queryKey = [queryKey];
+	}
+
+	const { data, isLoading, isFetching, isPending, isPreviousData, isError, error } = useQuery({
+		queryKey,
+		queryFn
+	});
+
+	if (isError) {
+		return (
+			<Page.Error>
+				<p className='font-bold text-xl'>Ett fel inträffade när sidan ladades.</p>
+				<p>{error.message}</p>
+			</Page.Error>
+		);
+	}
+
+	if (isPending) {
+		return children(null);
+	}
+
+	return children(data);
+};
+
+Component.Loading = function (props) {
+	function TennisBall(props) {
+		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';
+
+		return (
+			<div className='relative flex items-center justify-center w-10 h-10'>
+				{/* Ping effect (behind) */}
+				<span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 ${animation}`}></span>
+
+				{/* Tennis Ball emoji */}
+				<span className='relative text-xl bg-transparent'>🎾</span>
+			</div>
+		);
+	}
+
+	return (
+		<div className='flex gap-2 items-center'>
+			<TennisBall ping={true} />
+			<div {...props}></div>
+		</div>
+	);
+
+	return <p>Läser in...</p>;
+};
+
+Component.Container = function ({ className, ...props }) {
+	className = classNames('p-3', className);
+
+	return <div className={className}>{props.children}</div>;
+};
+
+Component.Menu = Menu;
 
 export default Component;

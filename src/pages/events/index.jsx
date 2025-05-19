@@ -3,7 +3,7 @@ import mysql from '../../js/atp-service';
 import { Container } from '../../components/ui';
 import Events from '../../components/events';
 import Page from '../../components/page';
-import QueryPage from '../../components/query-page';
+import Menu from '../../components/menu';
 
 let Component = () => {
 	const queryKey = `events`;
@@ -18,7 +18,8 @@ let Component = () => {
 		return { events };
 	}
 
-	function Content({ events }) {
+	function Content(response) {
+		let {events} = response || {};
 
 		let content = <p>Läser in...</p>;
 
@@ -29,17 +30,20 @@ let Component = () => {
 		return (
 			<>
 				<Page.Title>{`Turneringar`}</Page.Title>
-				<Container>{content}</Container>
+				<Page.Container>{content}</Page.Container>
 			</>
 		);
 	}
 
 	return (
-		<>
-			<QueryPage id='events-page' queryKey={queryKey} queryFn={fetch}>
-				{Content}
-			</QueryPage>
-		</>
+		<Page id='events-page'>
+			<Menu></Menu>
+			<Page.Content>
+				<Page.Query queryKey={queryKey} queryFn={fetch}>
+					{Content}
+				</Page.Query>
+			</Page.Content>
+		</Page>
 	);
 };
 

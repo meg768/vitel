@@ -6,7 +6,6 @@ import { useParams } from 'react-router';
 import { Container } from '../../components/ui';
 import Players from '../../components/players';
 import Page from '../../components/page';
-import QueryPage from '../../components/query-page';
 import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
@@ -18,11 +17,11 @@ let Component = () => {
 
 	const queryKey = query ? `players-${JSON.stringify(query)}` : 'players-noquery';
 	console.log(`QueryKey: ${queryKey}`);
-	const { data: response, isPending, isLoading, isFetching, isPreviousData, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	// const { data: response, isPending, isLoading, isFetching, isPreviousData, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
-	function isReady() {
-		return !isLoading && !isPending && !isFetching && !isPreviousData && response != null;
-	}
+	// function isReady() {
+	// 	return !isLoading && !isPending && !isFetching && !isPreviousData && response != null;
+	// }
 
 	function getQuery() {
 		let query = searchParams.get('query');
@@ -66,22 +65,33 @@ let Component = () => {
 		return <Page.Title>{title}</Page.Title>;
 	}
 
-	function Content() {
-		if (!isReady()) {
+	function Content(response) {
+		if (!response) {
 			return;
 		}
 
-		let { players } = response;
+		let {players} = response;
 
 		return (
-			<Page.Container>
+			<>
 				<Title />
-				<Container>
+				<Page.Container>
 					<Players players={players} />
-				</Container>
-			</Page.Container>
+				</Page.Container>
+			</>
 		);
 	}
+
+	return (
+		<Page id='players-page'>
+			<Page.Menu />
+			<Page.Content>
+				<Page.Query queryKey={queryKey} queryFn={fetch}>
+					{Content}
+				</Page.Query>
+			</Page.Content>
+		</Page>
+	);
 
 	return (
 		<>
