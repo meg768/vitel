@@ -67,4 +67,15 @@ Component.Container = function (props) {
 	);
 };
 
+Component.Content = function (props) {
+	let { className, ...other } = props;
+	className = classNames('p-3 px-3 lg:px-15', className);
+
+	return (
+		<div className={className} {...other}>
+			{props.children}
+		</div>
+	);
+};
+
 export default Component;
