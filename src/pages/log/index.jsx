@@ -10,16 +10,19 @@ import Menu from '../../components/menu';
 import { useQuery } from '@tanstack/react-query';
 
 function LogTable({ rows }) {
-
 	function Content() {
 		return (
 			<Table rows={rows} className=''>
 				<Table.Column id='timestamp'>
-					<Table.Title className=''>Datum/tid</Table.Title>
+					<Table.Title className=''>
+						Datum/tid
+					</Table.Title>
 
 					<Table.Value className=''>
 						{({ row }) => {
-							return new Date(row.timestamp).toLocaleString();
+							return new Date(
+								row.timestamp
+							).toLocaleString();
 						}}
 					</Table.Value>
 
@@ -31,7 +34,9 @@ function LogTable({ rows }) {
 				</Table.Column>
 
 				<Table.Column id='message' className=''>
-					<Table.Title className=''>Meddelande</Table.Title>
+					<Table.Title className=''>
+						Meddelande
+					</Table.Title>
 				</Table.Column>
 			</Table>
 		);
@@ -42,8 +47,6 @@ function LogTable({ rows }) {
 
 let Component = () => {
 	const queryKey = `logs`;
-	const queryOptions = {};
-	const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
 		try {
@@ -59,30 +62,31 @@ let Component = () => {
 		}
 	}
 
-	function Content() {
-		if (response == null) {
-			return;
-		}
-
-		let { log } = response;
+	function Content(response) {
+		const log = response?.log;
 
 		return (
 			<Page.Content>
-				<Page.Title>{`Logg senaste dygnet`}</Page.Title>
+				<Page.Title>Logg senaste dygnet</Page.Title>
 				<Page.Container>
-					<LogTable rows={log} />
+					{!log ? (
+						<Page.Loading>
+							Läser in...
+						</Page.Loading>
+					) : (
+						<LogTable rows={log} />
+					)}
 				</Page.Container>
 			</Page.Content>
 		);
 	}
-
 	return (
-		<>
-			<Page id='log-page'>
-				<Menu />
-				<Content />
-			</Page>
-		</>
+		<Page id='event-page'>
+			<Page.Menu />
+			<Page.Query queryKey={queryKey} queryFn={fetch}>
+				{Content}
+			</Page.Query>
+		</Page>
 	);
 };
 

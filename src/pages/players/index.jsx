@@ -15,13 +15,10 @@ let Component = () => {
 
 	let query = getQuery();
 
-	const queryKey = query ? `players-${JSON.stringify(query)}` : 'players-noquery';
-	console.log(`QueryKey: ${queryKey}`);
-	// const { data: response, isPending, isLoading, isFetching, isPreviousData, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+	const queryKey = query
+		? `players-${JSON.stringify(query)}`
+		: 'players-noquery';
 
-	// function isReady() {
-	// 	return !isLoading && !isPending && !isFetching && !isPreviousData && response != null;
-	// }
 
 	function getQuery() {
 		let query = searchParams.get('query');
@@ -66,30 +63,30 @@ let Component = () => {
 	}
 
 	function Content(response) {
-		if (!response) {
-			return;
+		let players  = response?.players;
+		let content = <Page.Loading>Läser in spelare...</Page.Loading>;
+
+		if (players) {
+			content = <Players players={players} />;
+
 		}
 
-		let {players} = response;
-
 		return (
-			<>
+			<Page.Content>
 				<Title />
 				<Page.Container>
-					<Players players={players} />
+					{content}
 				</Page.Container>
-			</>
+			</Page.Content>
 		);
 	}
 
 	return (
 		<Page id='players-page'>
 			<Page.Menu />
-			<Page.Content>
-				<Page.Query queryKey={queryKey} queryFn={fetch}>
-					{Content}
-				</Page.Query>
-			</Page.Content>
+			<Page.Query queryKey={queryKey} queryFn={fetch}>
+				{Content}
+			</Page.Query>
 		</Page>
 	);
 

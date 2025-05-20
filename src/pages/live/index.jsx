@@ -4,6 +4,7 @@ import atp from '../../js/atp-service';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import Flag from '../../components/flag';
+import {Button} from '../../components/ui';
 import { Container } from '../../components/ui';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
@@ -169,7 +170,14 @@ let Component = () => {
 		return (
 			<>
 				<Page.Title>{`Dagens (pågående) matcher`}</Page.Title>
-				<Page.Container>{content}</Page.Container>
+				<Page.Container>
+					<div>{content}</div>
+					<div className='flex justify-center py-4'>
+						<Button link={'https://www.tv4play.se/kategorier/atp-tour'}>
+							Se på TV4-Play
+						</Button>
+					</div>
+				</Page.Container>
 			</>
 		);
 	}

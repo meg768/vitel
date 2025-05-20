@@ -92,15 +92,23 @@ Component.Query = function ({ queryKey, queryFn, children }) {
 
 	const { data, isLoading, isFetching, isPending, isPreviousData, isError, error } = useQuery({
 		queryKey,
-		queryFn
+		queryFn,
+
+		// Retry count
+		retry:0
 	});
 
 	if (isError) {
 		return (
-			<Page.Error>
-				<p className='font-bold text-xl'>Ett fel inträffade när sidan ladades.</p>
-				<p>{error.message}</p>
-			</Page.Error>
+			<Component.Content>
+				<Component.Error>
+					<p className='font-bold text-xl'>
+						Ett fel inträffade när sidan
+						laddades.
+					</p>
+					<p>{error.message}</p>
+				</Component.Error>
+			</Component.Content>
 		);
 	}
 

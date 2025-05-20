@@ -19,30 +19,27 @@ let Component = () => {
 	}
 
 	function Content(response) {
-		let {events} = response || {};
-
-		let content = <p>Läser in...</p>;
+		let events = response?.events;
+		let content = <Page.Loading>Läser in turneringar...</Page.Loading>;
 
 		if (events) {
 			content = <Events events={events} />;
 		}
 
 		return (
-			<>
+			<Page.Content>
 				<Page.Title>{`Turneringar`}</Page.Title>
 				<Page.Container>{content}</Page.Container>
-			</>
+			</Page.Content>
 		);
 	}
 
 	return (
 		<Page id='events-page'>
 			<Menu></Menu>
-			<Page.Content>
-				<Page.Query queryKey={queryKey} queryFn={fetch}>
-					{Content}
-				</Page.Query>
-			</Page.Content>
+			<Page.Query queryKey={queryKey} queryFn={fetch}>
+				{Content}
+			</Page.Query>
 		</Page>
 	);
 };

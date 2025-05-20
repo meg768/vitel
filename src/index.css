@@ -145,8 +145,19 @@
 	--color-primary-950: #34160f;
   }
 
-.dark {
-  }
+  .grass {
+	--color-primary-50:  #f5fbf5;
+	--color-primary-100: #e6f6e6;
+	--color-primary-200: #c3e9c3;
+	--color-primary-300: #98d498;
+	--color-primary-400: #6cb86c;
+	--color-primary-500: #4b9e4b;
+	--color-primary-600: #3b823b;
+	--color-primary-700: #2e682e;
+	--color-primary-800: #235023;
+	--color-primary-900: #183918;
+	--color-primary-950: #0f250f;
+}
 
 
 

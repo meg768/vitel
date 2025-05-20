@@ -1,5 +1,5 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import { HashRouter, Routes, Route } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -17,37 +17,40 @@ import Trial from './pages/trial';
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
 		this.rootElement = document.getElementById(rootId);
+		this.themes = ['dark', 'light', 'light clay', 'dark clay', 'light grass', 'dark grass'];
+		this.themeClasses = ['dark', 'light', 'clay', 'grass'];
+
 		this.theme = this.getInitialTheme();
-		this.applyTheme();
-		this.root = ReactDOM.createRoot(this.rootElement); // Create root *after* theme is set
-		this.themeIndex = 0;
-		this.themes = ['dark', 'light', 'clay', 'dark clay'];
-		this.themes = ['dark', 'light'];
+		this.applyTheme(this.theme);
+
+		// Create root *after* theme is set
+		this.root = ReactDOM.createRoot(this.rootElement);
 	}
 
 	getInitialTheme() {
-		let saved = localStorage.getItem('theme');
-		if (!saved) {
-			//saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-			saved = 'dark';
-			localStorage.setItem('theme', saved);
+		let theme = localStorage.getItem('theme');
+
+		if (!this.themes.includes(theme)) {
+			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			theme = prefersDark ? 'dark' : 'light';
+			localStorage.setItem('theme', theme);
 		}
-		return saved;
+
+		return theme;
 	}
 
-	applyTheme(theme) {
-		this.rootElement.classList.remove('dark', 'clay', 'light');
-		this.rootElement.classList.add(theme);
+	applyTheme(classList) {
+		const themes = classList.split(/\s+/);
+
+		this.rootElement.classList.remove(...this.themeClasses);
+		this.rootElement.classList.add(...themes);
 	}
 
 	toggleTheme() {
-		this.themeIndex = (this.themeIndex + 1) % this.themes.length;
-		let theme = this.themes[this.themeIndex];
+		let themeIndex = (this.themes.indexOf(this.theme) + 1) % this.themes.length;
+		this.theme = this.themes[themeIndex];
 
-		this.rootElement.classList.remove('dark', 'clay', 'light');
-		this.rootElement.classList.add(theme.split(' '));
-
-		console.log('Theme changed to:', theme);
+		this.applyTheme(this.theme);
 		localStorage.setItem('theme', this.theme);
 	}
 

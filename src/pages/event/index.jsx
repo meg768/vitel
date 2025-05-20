@@ -29,6 +29,10 @@ export default function EventPage() {
 	// ✅ JSX Component for rendering content
 	const Content = (response) => {
 
+		if (!response) {
+			return <Page.Loading>Läser in turnering...</Page.Loading>
+		}
+
 		let { matches, event } = response || {};
 		
 		if (!event) {

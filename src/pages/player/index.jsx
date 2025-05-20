@@ -187,7 +187,7 @@ let Component = () => {
 
 	function Content(response) {
 		if (!response) {
-			return;
+			return <Page.Loading>Läser in spelare...</Page.Loading>
 		}
 
 		let {matches, player} = response || {};

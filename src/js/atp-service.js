@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 class MySqlExpress {
 	constructor({ url }) {
@@ -8,76 +7,67 @@ class MySqlExpress {
 		};
 	}
 
-	async request(options) {
-		try {
-			const response = await axios({ ...options, headers: this.headers });
-			return response.data;
-		} catch (error) {
-			const errorMessage = error.response?.data?.error || error.message || 'Unknown error';
-			throw new Error(`Request failed: ${errorMessage}`);
+	delay(ms) {
+		if (ms < 0) {
+			ms = 0;
 		}
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	async get(path, options) {
-		let url = `${this.url}/${path}`;
-
-		let response = await fetch(url, {
-			method: 'GET',
-			body: JSON.stringify(options),
-			headers: this.headers
-		});
+	async fetch(url, options) {
+		const start = Date.now();
+		let response = await fetch(url, options);
+		const elapsed = Date.now() - start;
 
 		if (!response.ok) {
-			throw new Error(`Error in get: ${response.statusText}`);
+			let message = response.statusText;
+
+			try {
+				const error = await response.json();
+				message = error.message || message;
+			} catch {
+				try {
+					message = await response.text();
+				} catch {
+					// fallback to statusText
+				}
+			}
+
+			const remaining = 500 - elapsed;
+			await this.delay(remaining);
+
+			throw new Error(`Fetch failed: ${message}`);
 		}
 
-		let json = await response.json();
+		return await response.json();
+	}
 
-		return json;
+	async get(path) {
+		const url = `${this.url}/${path}`;
+
+		return await this.fetch(url, {
+			method: 'GET',
+			headers: this.headers
+		});
+	}
+
+	async post(path, data) {
+		const url = `${this.url}/${path}`;
+
+		return await this.fetch(url, {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: this.headers
+		});
 	}
 
 	async query(options) {
-		let url = `${this.url}/query`;
-
-		
-		let response = await fetch(url, {
-			method: 'POST',
-			body: JSON.stringify(options),
-			headers: this.headers
-		});
-
-		if (!response.ok) {
-			throw new Error(`Error in query: ${response.statusText}`);
-		}
-
-		let json = await response.json();
-
-		try {
-			json = JSON.parse(json);
-		} catch (error) {
-			throw new Error('Failed to parse JSON response in query');
-		}
-
-		return json;
-	}
-
-	async upsert({ table, rows, row, ...other }) {
-		if (!table || (!rows && !row)) {
-			throw new Error('Table and either rows or row are required for upsert');
-		}
-
-		const options = {
-			method: 'post',
-			url: `${this.url}/upsert`,
-			params: { ...other, table, rows, row, database: this.database }
-		};
-
-		return this.request(options);
+		return await this.post('query', options);
 	}
 }
 
 const mysql = new MySqlExpress({
-	url: 'http://router.egelberg.se:3004'
+	url: ''
 });
 
 export default mysql;
