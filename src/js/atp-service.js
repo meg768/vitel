@@ -15,6 +15,9 @@ class MySqlExpress {
 	}
 
 	async fetch(url, options) {
+
+		console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
+		
 		const start = Date.now();
 		let response = await fetch(url, options);
 		const elapsed = Date.now() - start;
@@ -62,12 +65,12 @@ class MySqlExpress {
 	}
 
 	async query(options) {
-		return await this.post('query', options);
+		return await this.post('/query', options);
 	}
 }
 
 const mysql = new MySqlExpress({
-	url: ''
+	url: 'api'
 });
 
 export default mysql;

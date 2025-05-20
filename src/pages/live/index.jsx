@@ -149,7 +149,7 @@ let Component = () => {
 
 	async function fetch() {
 		try {
-			let live = await atp.get('atp/live');
+			let live = await atp.get('/live');
 
 			return { live };
 		} catch (error) {
