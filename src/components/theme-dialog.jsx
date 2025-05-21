@@ -58,7 +58,7 @@ export default function ThemeDialog({ children }) {
 			<Dialog.Trigger asChild>{children}</Dialog.Trigger>
 
 			<Dialog.Portal>
-				<Dialog.Overlay className='fixed inset-0 bg-black/50 backdrop-blur-sm' />
+				<Dialog.Overlay className='fixed inset-0 bg-black/50 backdrop-blur-[1px]' />
 				<Dialog.Content className='fixed top-1/2 left-1/2 w-80 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white dark:bg-gray-900 p-6 shadow-xl space-y-5'>
 					<Dialog.Title className='text-lg font-bold text-gray-800 dark:text-white'>Temainställningar</Dialog.Title>
 

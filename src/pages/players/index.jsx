@@ -15,10 +15,7 @@ let Component = () => {
 
 	let query = getQuery();
 
-	const queryKey = query
-		? `players-${JSON.stringify(query)}`
-		: 'players-noquery';
-
+	const queryKey = query ? `players-${JSON.stringify(query)}` : 'players-noquery';
 
 	function getQuery() {
 		let query = searchParams.get('query');
@@ -63,20 +60,17 @@ let Component = () => {
 	}
 
 	function Content(response) {
-		let players  = response?.players;
+		let players = response?.players;
 		let content = <Page.Loading>Läser in spelare...</Page.Loading>;
 
 		if (players) {
 			content = <Players players={players} />;
-
 		}
 
 		return (
 			<Page.Content>
 				<Title />
-				<Page.Container>
-					{content}
-				</Page.Container>
+				<Page.Container>{content}</Page.Container>
 			</Page.Content>
 		);
 	}
