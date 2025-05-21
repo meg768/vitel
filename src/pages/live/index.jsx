@@ -3,8 +3,10 @@ import atp from '../../js/atp-service';
 
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
+import { Link as RouterLink } from 'react-router';
+
 import Flag from '../../components/flag';
-import {Button} from '../../components/ui';
+import { Button } from '../../components/ui';
 import { Container } from '../../components/ui';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
@@ -149,7 +151,7 @@ let Component = () => {
 
 	async function fetch() {
 		try {
-			let live = await atp.get('/live');
+			let live = await atp.get('live');
 
 			return { live };
 		} catch (error) {
@@ -173,8 +175,10 @@ let Component = () => {
 				<Page.Container>
 					<div>{content}</div>
 					<div className='flex justify-center py-4'>
-						<Button link={'https://www.tv4play.se/kategorier/atp-tour'}>
-							Se på TV4-Play
+						<Button>
+							<RouterLink to={'https://www.tv4play.se/kategorier/atp-tour'} target={'_blank'} className=''>
+								Se på TV4-Play
+							</RouterLink>
 						</Button>
 					</div>
 				</Page.Container>

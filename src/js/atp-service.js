@@ -36,7 +36,7 @@ class MySqlExpress {
 				}
 			}
 
-			const remaining = 500 - elapsed;
+			const remaining = 800 - elapsed;
 			await this.delay(remaining);
 
 			throw new Error(`Fetch failed: ${message}`);
@@ -65,12 +65,17 @@ class MySqlExpress {
 	}
 
 	async query(options) {
-		return await this.post('/query', options);
+		return await this.post('query', options);
 	}
 }
 
+
+let url = import.meta.env.VITE_API_URL;
+
+alert(console.log(`Using API '${url}`));
+
 const mysql = new MySqlExpress({
-	url: 'api'
+	url: url
 });
 
 export default mysql;
