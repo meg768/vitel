@@ -182,8 +182,8 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-primary-400/50 bg-primary-100/5 odd:bg-primary-900/5 ');
-		className = classNames(className, 'dark:hover:bg-primary-600/50	dark:bg-primary-900/10 dark:odd:bg-primary-500/10');
+		className = classNames(className, 'hover:bg-primary-500/40 bg-primary-100 odd:bg-primary-200 ');
+		className = classNames(className, 'dark:hover:bg-primary-500/40 dark:bg-primary-900 dark:odd:bg-primary-800');
 		className = classNames(className, '');
 
 		let items = columns.map((column, index) => {
