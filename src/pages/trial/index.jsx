@@ -12,9 +12,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
 import Button from '../../components/ui/button';
 
+
 import prospects from './prospects.js';
 import goat from './goat.js';
 
+import ThemeDialog from '../../components/theme-dialog.jsx';
 
 let Component = () => {
 	function Content() {
@@ -46,6 +48,8 @@ let Component = () => {
 			<Page id='trial-page'>
 				<Page.Menu />
 				<Content />
+
+					<ThemeDialog><button>KALLE</button></ThemeDialog>
 			</Page>
 		</>
 	);

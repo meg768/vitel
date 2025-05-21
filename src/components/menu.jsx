@@ -4,8 +4,10 @@ import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
 import classNames from 'classnames';
 import colors from './colors';
+import ThemeDialog from './theme-dialog.jsx';
 
-import { Half2Icon, ReaderIcon, RocketIcon } from '@radix-ui/react-icons';
+import { Half2Icon, ReaderIcon, GearIcon, RocketIcon } from '@radix-ui/react-icons';
+import { Theme } from '@radix-ui/themes/dist/cjs/index.js';
 
 function Component(props) {
 	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
@@ -59,9 +61,10 @@ function Component(props) {
 					</MenuItem>
 
 					<MenuItem>
-						<Half2Icon className='w-7 h-7 ' onClick={toggleDarkMode} />
+						<ThemeDialog>
+							<GearIcon className='w-7 h-7 ' XonClick={toggleDarkMode} />
+						</ThemeDialog>
 					</MenuItem>
-
 				</div>
 			</div>
 		</div>
