@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
 import classNames from 'classnames';
+import colors from './colors';
 
 import { Half2Icon, ReaderIcon, RocketIcon } from '@radix-ui/react-icons';
 
