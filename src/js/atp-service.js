@@ -1,7 +1,6 @@
-
 class MySqlExpress {
-	constructor({ url }) {
-		this.url = url;
+	constructor() {
+		this.url = import.meta.env.VITE_API_URL;
 		this.headers = {
 			'content-type': 'application/json'
 		};
@@ -15,9 +14,8 @@ class MySqlExpress {
 	}
 
 	async fetch(url, options) {
-
 		console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
-		
+
 		const start = Date.now();
 		let response = await fetch(url, options);
 		const elapsed = Date.now() - start;
@@ -69,13 +67,6 @@ class MySqlExpress {
 	}
 }
 
-
-let url = import.meta.env.VITE_API_URL;
-
-alert(console.log(`Using API '${url}`));
-
-const mysql = new MySqlExpress({
-	url: url
-});
+const mysql = new MySqlExpress();
 
 export default mysql;
