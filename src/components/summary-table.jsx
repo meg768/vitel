@@ -15,7 +15,7 @@ let Component = ({ children }) => {
 
 Component.Cell = ({ children, name, value, className, ...props }) => {
 	function Label() {
-		return <div className={'whitespace-nowrap text-primary-500 dark:text-primary-300 mt-1 text-[80%] px-2'}>{name == undefined ? '-' : name}</div>;
+		return <div className={'whitespace-nowrap text-primary-800 dark:text-primary-200 mt-1 text-[80%] px-2'}>{name == undefined ? '-' : name}</div>;
 	}
 
 	function Value() {

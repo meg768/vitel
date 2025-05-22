@@ -48,8 +48,6 @@ let Component = () => {
 			<Page id='trial-page'>
 				<Page.Menu />
 				<Content />
-
-					<ThemeDialog><button>KALLE</button></ThemeDialog>
 			</Page>
 		</>
 	);

@@ -27,7 +27,7 @@ function Component({ matches, owner }) {
 							return (
 								<>
 									<Link to={`/event/${row.event_id}`}>{value}</Link>
-									<span>{` (${row.event_type})`}</span>
+									<span className='bg-transparent' >{` (${row.event_type})`}</span>
 								</>
 							);
 						}}
@@ -66,7 +66,7 @@ function Component({ matches, owner }) {
 							return (
 								<>
 									<Link to={`/player/${row.winner_id}`}>{value}</Link>
-									<span>{` (${row.winner_rank})`}</span>
+									<span className='bg-transparent'>{` (${row.winner_rank})`}</span>
 								</>
 							);
 						}}
@@ -91,7 +91,7 @@ function Component({ matches, owner }) {
 							return (
 								<>
 									<Link to={`/player/${row.loser_id}`}>{value}</Link>
-									<span>{` (${row.loser_rank})`}</span>
+									<span className='bg-transparent'>{` (${row.loser_rank})`}</span>
 								</>
 							);
 						}}

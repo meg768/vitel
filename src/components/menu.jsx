@@ -60,6 +60,32 @@ function Component(props) {
 						<ReaderIcon className='w-7 h-7 '></ReaderIcon>
 					</MenuItem>
 
+					<MenuItem link='/settings'>
+							<GearIcon className='w-7 h-7 ' XonClick={toggleDarkMode}/>
+					</MenuItem>
+				</div>
+			</div>
+		</div>
+	);
+
+	return (
+		<div className='border-b-1 border-primary-800'>
+			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
+				<div className='flex space-x-1'>
+					<TennisBall ping={props.spinner} />
+					<MenuItem link='/#'>Jämför spelare</MenuItem>
+					<MenuItem link='/events'>Turneringar</MenuItem>
+					<MenuItem link='/players'>Spelare</MenuItem>
+					<MenuItem link='/live'>Live</MenuItem>
+				</div>
+				<div className='flex space-x-1'>
+					<MenuItem link='/trial'>
+						<RocketIcon className='w-7 h-7 '></RocketIcon>
+					</MenuItem>
+					<MenuItem link='/log'>
+						<ReaderIcon className='w-7 h-7 '></ReaderIcon>
+					</MenuItem>
+
 					<MenuItem>
 						<ThemeDialog>
 							<GearIcon className='w-7 h-7 ' XonClick={toggleDarkMode} />

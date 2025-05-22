@@ -34,6 +34,12 @@ Component.Title = function ({ className, level = 1, ...props }) {
 		case 2: {
 			className = classNames('py-2', className);
 			className = classNames('text-[150%]', className);
+			break;
+		}
+		case 3: {
+			className = classNames('py-2', className);
+			className = classNames('text-[125%]', className);
+			break;
 		}
 	}
 	return <div className={className} {...props}></div>;

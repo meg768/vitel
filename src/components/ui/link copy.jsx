@@ -23,7 +23,7 @@ function Component({ to, query, hover = true, className, ...props }) {
 	className = classNames(className, 'bg-transparent');
 
 	if (hover) {
-		className = classNames(className, 'hover:text-primary-600 hover:dark:text-primary-400');
+		className = classNames(className, 'hover:text-link-500');
 	}
 
 	if (query) {
