@@ -18,9 +18,8 @@ export default function SettingsPage() {
 
 	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
 
-	const [activeSurface, setActiveSurface] = useState(null);
-	const [activeMode, setActiveMode] = useState(null);
-	const [initialized, setInitialized] = useState(false);
+	const [activeSurface, setActiveSurface] = useState('hard');
+	const [activeMode, setActiveMode] = useState('light');
 
 	// Load theme from localStorage on first mount
 	useEffect(() => {
@@ -32,17 +31,16 @@ export default function SettingsPage() {
 				if (colorModes[mode] && surfaceThemes[surface]) {
 					setActiveMode(mode);
 					setActiveSurface(surface);
+					return;
 				}
 			}
 		}
-		setInitialized(true);
 	}, []);
 
-	// Apply theme once values are set
+	// Apply theme whenever either value changes
 	useEffect(() => {
-		if (!initialized || !activeMode || !activeSurface) return;
 		applyClasses(activeMode, activeSurface);
-	}, [activeMode, activeSurface, initialized]);
+	}, [activeMode, activeSurface]);
 
 	// If "auto", listen for system preference changes
 	useEffect(() => {

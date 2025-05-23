@@ -14,11 +14,11 @@ import Log from './pages/log';
 import App from './pages/app';
 import Trial from './pages/trial';
 import Settings from './pages/settings';
-
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
 		this.rootElement = document.getElementById(rootId);
-		this.themeClasses = ['dark', 'light', 'clay', 'grass', 'hard'];
+		this.themes = ['dark', 'light', 'auto', 'light clay', 'dark clay', 'auto clay', 'light grass', 'dark grass', 'auto grass'];
+		this.themeClasses = ['dark', 'light', 'clay', 'grass'];
 		this.mql = null;
 
 		this.theme = this.getInitialTheme();
@@ -30,12 +30,10 @@ class WebApp {
 	getInitialTheme() {
 		let theme = localStorage.getItem('theme');
 
-		// Accept any valid "mode surface" combination
-		const validTheme = /^(light|dark|auto) (hard|clay|grass)$/;
-
-		if (!theme || !validTheme.test(theme)) {
+		// fallback
+		if (!this.themes.includes(theme)) {
 			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			theme = prefersDark ? 'dark hard' : 'light hard';
+			theme = prefersDark ? 'dark' : 'light';
 			localStorage.setItem('theme', theme);
 		}
 
@@ -46,21 +44,27 @@ class WebApp {
 		const root = this.rootElement;
 		if (!root) return;
 
+		// Remove all known theme classes
 		root.classList.remove(...this.themeClasses);
 
+		// Split the theme into mode + surface
 		const [mode, surface] = theme.split(' ');
 
+		// If "auto", determine from system
 		const resolvedMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
 
+		// Apply new classes
 		root.classList.add(resolvedMode);
 		if (surface) root.classList.add(surface);
 
+		// If mode is auto, set up listener
 		if (mode === 'auto') {
 			this.setupAutoListener(surface);
 		}
 	}
 
 	setupAutoListener(surface) {
+		// Clean up previous listener
 		if (this.mql) {
 			this.mql.removeEventListener('change', this._autoListener);
 		}
@@ -75,8 +79,11 @@ class WebApp {
 	}
 
 	toggleTheme() {
-		// Optional: implement if you want to cycle through themes
-		console.warn('toggleTheme not implemented for flexible theme list');
+		let themeIndex = (this.themes.indexOf(this.theme) + 1) % this.themes.length;
+		this.theme = this.themes[themeIndex];
+
+		this.applyTheme(this.theme);
+		localStorage.setItem('theme', this.theme);
 	}
 
 	render(element) {

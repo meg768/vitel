@@ -12,17 +12,14 @@ export default function SettingsPage() {
 
 	const colorModes = {
 		light: 'Ljust',
-		dark: 'Mörkt',
-		auto: 'Automatiskt'
+		dark: 'Mörkt'
 	};
 
 	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
 
-	const [activeSurface, setActiveSurface] = useState(null);
-	const [activeMode, setActiveMode] = useState(null);
-	const [initialized, setInitialized] = useState(false);
+	const [activeSurface, setActiveSurface] = useState('hard');
+	const [activeMode, setActiveMode] = useState('light');
 
-	// Load theme from localStorage on first mount
 	useEffect(() => {
 		const stored = localStorage.getItem('theme');
 		if (stored) {
@@ -32,54 +29,33 @@ export default function SettingsPage() {
 				if (colorModes[mode] && surfaceThemes[surface]) {
 					setActiveMode(mode);
 					setActiveSurface(surface);
+					applyClasses(mode, surface);
+					return;
 				}
 			}
 		}
-		setInitialized(true);
-	}, []);
-
-	// Apply theme once values are set
-	useEffect(() => {
-		if (!initialized || !activeMode || !activeSurface) return;
 		applyClasses(activeMode, activeSurface);
-	}, [activeMode, activeSurface, initialized]);
-
-	// If "auto", listen for system preference changes
-	useEffect(() => {
-		if (activeMode === 'auto') {
-			const mql = window.matchMedia('(prefers-color-scheme: dark)');
-			const apply = () => {
-				const root = document.getElementById('root');
-				if (!root) return;
-				root.classList.remove('light', 'dark');
-				root.classList.add(mql.matches ? 'dark' : 'light');
-			};
-			apply();
-			mql.addEventListener('change', apply);
-			return () => mql.removeEventListener('change', apply);
-		}
-	}, [activeMode]);
+	}, []);
 
 	function applyClasses(mode, surface) {
 		const root = document.getElementById('root');
 		if (!root) return;
 
 		root.classList.remove(...themeClasses);
-
-		const effectiveMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
-
-		root.classList.add(effectiveMode);
-		root.classList.add(surface);
-
+		root.classList.add(mode, surface);
 		localStorage.setItem('theme', `${mode} ${surface}`);
 	}
 
 	function handleSurfaceChange(value) {
-		if (value) setActiveSurface(value);
+		if (!value) return;
+		setActiveSurface(value);
+		applyClasses(activeMode, value);
 	}
 
 	function handleColorChange(value) {
-		if (value) setActiveMode(value);
+		if (!value) return;
+		setActiveMode(value);
+		applyClasses(value, activeSurface);
 	}
 
 	function SurfaceSelector() {
