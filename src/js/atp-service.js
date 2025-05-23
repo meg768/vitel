@@ -17,8 +17,13 @@ class MySqlExpress {
 		console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
 
 		const start = Date.now();
+
 		let response = await fetch(url, options);
+
 		const elapsed = Date.now() - start;
+		const remaining = 500 - elapsed;
+
+		await this.delay(remaining);
 
 		if (!response.ok) {
 			let message = response.statusText;
@@ -33,9 +38,6 @@ class MySqlExpress {
 					// fallback to statusText
 				}
 			}
-
-			const remaining = 800 - elapsed;
-			await this.delay(remaining);
 
 			throw new Error(`Fetch failed: ${message}`);
 		}

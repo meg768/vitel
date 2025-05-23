@@ -1,11 +1,17 @@
+import React from 'react';
 import atp from '../../js/atp-service';
+
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { Link as RouterLink } from 'react-router';
+
 import Flag from '../../components/flag';
 import { Button } from '../../components/ui';
+import { Container } from '../../components/ui';
 import Page from '../../components/page';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
+import Menu from '../../components/menu';
+import { useQuery } from '@tanstack/react-query';
+import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') return false;
@@ -45,6 +51,14 @@ function isMatchFinished(score) {
 }
 
 function LiveTable({ rows }) {
+	function Doo({ score }) {
+		if (isMatchFinished(score)) {
+			return <CheckIcon className='block m-auto bg-transparent text-green-500' />;
+		} else {
+			return <DotFilledIcon className='block m-auto bg-transparent text-red-500' />;
+		}
+	}
+
 	function Players({ playerA, playerB }) {
 		return (
 			<div className='flex items-center gap-2 bg-transparent'>
@@ -52,6 +66,16 @@ function LiveTable({ rows }) {
 				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
 				<span>{' vs '}</span>
 				<Flag className='w-5! h-5! border-1! border-primary-200' country={playerB.country}></Flag>
+				<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
+			</div>
+		);
+	}
+
+	function PlayersSimple({ playerA, playerB }) {
+		return (
+			<div className='flex items-center gap-2'>
+				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
+				<span>{' vs '}</span>
 				<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
 			</div>
 		);
@@ -65,7 +89,11 @@ function LiveTable({ rows }) {
 
 					<Table.Cell className=''>
 						{({ row, value }) => {
-							return <Link to={`/event/${row.event}`}>{value}</Link>;
+							return (
+								<>
+									<Link to={`/event/${row.event}`}>{value}</Link>
+								</>
+							);
 						}}
 					</Table.Cell>
 				</Table.Column>
@@ -77,10 +105,24 @@ function LiveTable({ rows }) {
 							return <Players playerA={row.player} playerB={row.opponent} />;
 						}}
 					</Table.Value>
+					<Table.Cell className=''>
+						{({ row, value }) => {
+							return value;
+						}}
+					</Table.Cell>
 				</Table.Column>
 
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>Ställning</Table.Title>
+				</Table.Column>
+
+				<Table.Column className=''>
+					<Table.Title className=''>Avslutad</Table.Title>
+					<Table.Value className=''>
+						{({ row }) => {
+							return <Doo score={row.score} />;
+						}}
+					</Table.Value>
 				</Table.Column>
 
 				<Table.Column className='justify-center'>
@@ -104,86 +146,41 @@ function LiveTable({ rows }) {
 
 let Component = () => {
 	const queryKey = `live`;
+	const queryOptions = {};
+	// const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
 
 	async function fetch() {
 		try {
-			let matches = await atp.get('live');
+			let live = await atp.get('live');
 
-			return { matches };
+			return { live };
 		} catch (error) {
 			console.log(error.message);
 			return null;
 		}
 	}
 
-	function FinishedMatches({ matches }) {
-		if (matches.length == 0) {
-			return;
-		}
-
-		return (
-			<>
-				<Page.Title level={2}>Avslutade</Page.Title>
-				<LiveTable rows={matches} />
-			</>
-		);
-	}
-
-	function ActiveMatches({ matches }) {
-		if (matches.length == 0) {
-			return;
-		}
-
-		return (
-			<>
-				<Page.Title level={2}>Pågående</Page.Title>
-				<LiveTable rows={matches} />
-
-				<div className='flex justify-center pt-2'>
-					<Button>
-						<RouterLink to={'https://www.tv4play.se/kategorier/atp-tour'} target={'_blank'} className=''>
-							Se på TV4-Play
-						</RouterLink>
-					</Button>
-				</div>
-			</>
-		);
-	}
-
-	function Matches({ matches }) {
-		// No matches yet, just display 'loading...'
-		if (!matches) {
-			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
-		}
-
-		let finishedMatches = [];
-		let activeMatches = [];
-
-		// Split up into finished and unfinished matches
-		for (let row of matches) {
-			if (isMatchFinished(row.score)) {
-				finishedMatches.push(row);
-			} else {
-				activeMatches.push(row);
-			}
-		}
-
-		return (
-			<>
-				<ActiveMatches matches={activeMatches} />
-				<FinishedMatches matches={finishedMatches} />
-			</>
-		);
-	}
-
 	function Content(response) {
-		let { matches } = response || {};
+		let { live } = response || {};
+
+		let content = <Page.Loading>Läser in dagens matcher...</Page.Loading>;
+
+		if (live) {
+			content = <LiveTable rows={live} />;
+		}
 
 		return (
 			<>
-				<Page.Title>{`Dagens matcher`}</Page.Title>
+				<Page.Title>{`Dagens (pågående) matcher`}</Page.Title>
 				<Page.Container>
-					<Matches matches={matches} />
+					<div>{content}</div>
+					<div className='flex justify-center py-4'>
+						<Button>
+							<RouterLink to={'https://www.tv4play.se/kategorier/atp-tour'} target={'_blank'} className=''>
+								Se på TV4-Play
+							</RouterLink>
+						</Button>
+					</div>
 				</Page.Container>
 			</>
 		);
@@ -198,6 +195,15 @@ let Component = () => {
 				</Page.Query>
 			</Page.Content>
 		</Page>
+	);
+
+	return (
+		<>
+			<Page id='live-page'>
+				<Menu spinner={!response} />
+				<Content />
+			</Page>
+		</>
 	);
 };
 
