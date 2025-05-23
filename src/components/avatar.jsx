@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 function Component({ className, src, ...props }) {
 
-	className = classNames('flex w-10 h-10 border-2 border-none-300 content-center items-center rounded-full overflow-hidden', className);
+	className = classNames('flex w-10 h-10 border-primary-500 content-center items-center rounded-full overflow-hidden', className);
 
 	// Hover
 	//className = classNames('transform transition-transform duration-300 hover:scale-110', className);
