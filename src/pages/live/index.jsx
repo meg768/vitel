@@ -8,43 +8,83 @@ import Page from '../../components/page';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 
 function isMatchFinished(score) {
-	if (typeof score !== 'string' || score.trim() === '') return false;
-
-	const sets = score.trim().split(/\s+/);
-
-	const maxSets = sets.length > 3 ? 5 : 3;
-	const setsToWin = Math.ceil(maxSets / 2);
-
-	let player1Sets = 0;
-	let player2Sets = 0;
-
-	for (const set of sets) {
-		// Remove tiebreak info in parentheses, e.g. (4), (10)
-		const cleaned = set.replace(/\(\d+\)/g, '');
-		if (!/^\d{2}$/.test(cleaned)) return false;
-
-		const p1 = parseInt(cleaned[0], 10);
-		const p2 = parseInt(cleaned[1], 10);
-
-		if (p1 < 6 && p2 < 6) return false; // Incomplete set
-
-		const max = Math.max(p1, p2);
-		const min = Math.min(p1, p2);
-		const diff = Math.abs(p1 - p2);
-
-		const valid =
-			(max === 6 && diff >= 2) || // 6–0 to 6–4
-			(max === 7 && (min === 5 || min === 6)); // 7–5 or 7–6
-		if (!valid) return false;
-
-		if (p1 > p2) player1Sets++;
-		else player2Sets++;
+	if (typeof score !== 'string' || score.trim() === '') {
+		return true;
 	}
 
-	return player1Sets === setsToWin || player2Sets === setsToWin;
+	// Remove tiebreaks from the score
+	score = score.replace(/\(\d+\)/g, '');
+
+	const parts = score.trim().split(/\s+/);
+
+	// Check if any part matches RET-like code (e.g., RET, RETD, retd, retired)
+	if (parts.some(p => /^ret/i.test(p))) {
+		return true;
+	}
+
+	// If there's only one part, it means the match is not finished
+	if (parts.length == 1) {
+		return false;
+	}
+
+	let playerA = 0;
+	let playerB = 0;
+
+	for (const part of parts) {
+		if (part.length !== 2) {
+			// If any part is not exactly two characters, consider it invalid
+			// This can happen if the score is malformed or incomplete
+			continue;
+		}
+
+		let A = parseInt(part[0], 10);
+		let B = parseInt(part[1], 10);
+
+		if (isNaN(A) || isNaN(B)) {
+			// If any part is not a valid number, consider part invalid
+			continue;
+		}
+
+		// If not 6 games played, match is not finished
+		if (A + B < 6) {
+			return false;
+		}
+
+		let setFinished = false;
+
+		// If one player has more than 6 games, they must have won the set
+		// or if the difference is 2 or more, one player has won the set
+		// (e.g., 6-4, 7-5, etc.)
+		if (A > 6 || B > 6) {
+			setFinished = true;
+		}
+
+		// If the difference is 2 or more, and one player has 6 or more games
+		// the set is finished
+		if ((A >= 6 || B >= 6) && Math.abs(A - B) >= 2) {
+			setFinished = true;
+		}
+
+		// If any set is not finished, the match is not finished
+		if (!setFinished) {
+			return false;
+		}
+
+		if (A > B) {
+			playerA++;
+		} else if (B > A) {
+			playerB++;
+		}
+	}
+
+	const maxSets = parts.length > 3 ? 5 : 3;
+	const setsToWin = Math.ceil(maxSets / 2);
+
+	return playerA >= setsToWin || playerB >= setsToWin;
 }
 
-function LiveTable({ rows }) {
+
+function LiveTable({ rows, finished = false }) {
 	function Players({ playerA, playerB }) {
 		return (
 			<div className='flex items-center gap-2 bg-transparent'>
@@ -61,7 +101,7 @@ function LiveTable({ rows }) {
 		return (
 			<Table rows={rows} className=''>
 				<Table.Column id='name' className=''>
-					<Table.Title className=''>Tournering</Table.Title>
+					<Table.Title className=''>Turnering</Table.Title>
 
 					<Table.Cell className=''>
 						{({ row, value }) => {
@@ -80,7 +120,7 @@ function LiveTable({ rows }) {
 				</Table.Column>
 
 				<Table.Column id='score' className=''>
-					<Table.Title className=''>Ställning</Table.Title>
+					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
 				</Table.Column>
 
 				<Table.Column className='justify-center'>
@@ -103,8 +143,10 @@ function LiveTable({ rows }) {
 }
 
 let Component = () => {
-	const queryKey = `live`;
-
+	// This component fetches and displays live ATP matches.
+	// It uses the ATP service to get the matches and displays them in a table format.
+	// It also splits the matches into active and finished matches.
+	// Active matches are displayed with a link to TV4-Play and max.com for viewing.
 	async function fetch() {
 		try {
 			let matches = await atp.get('live');
@@ -124,7 +166,7 @@ let Component = () => {
 		return (
 			<>
 				<Page.Title level={2}>Avslutade</Page.Title>
-				<LiveTable rows={matches} />
+				<LiveTable rows={matches} finished={true} />
 			</>
 		);
 	}
@@ -137,12 +179,17 @@ let Component = () => {
 		return (
 			<>
 				<Page.Title level={2}>Pågående</Page.Title>
-				<LiveTable rows={matches} />
+				<LiveTable rows={matches} finished={false} />
 
-				<div className='flex justify-center pt-2'>
+				<div className='flex justify-center pt-4 gap-4'>
 					<Button>
 						<RouterLink to={'https://www.tv4play.se/kategorier/atp-tour'} target={'_blank'} className=''>
 							Se på TV4-Play
+						</RouterLink>
+					</Button>
+					<Button>
+						<RouterLink to={'https://play.max.com/sports/tennis'} target={'_blank'} className=''>
+							Se på max.com
 						</RouterLink>
 					</Button>
 				</div>
@@ -193,7 +240,7 @@ let Component = () => {
 		<Page id='live-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Query queryKey={queryKey} queryFn={fetch}>
+				<Page.Query queryKey={'live-page-query'} queryFn={fetch}>
 					{Content}
 				</Page.Query>
 			</Page.Content>

@@ -66,7 +66,8 @@ async function getLatestImport() {
 function App() {
 	const [playerList, setPlayerList] = React.useState(null);
 
-	const queryKey = ['app-page'];
+	// Fetch data
+	const { data: response, isPending, isError, error } = useQuery({ queryKey: ['app-page'], queryFn: fetch });
 
 	React.useEffect(() => {
 		async function getPlayerList() {
@@ -150,7 +151,7 @@ function App() {
 	}
 
 	function Player(properties) {
-		const { id, className, response, ...props } = properties;
+		const { id, className, ...props } = properties;
 
 		function onPlayerChange(player) {
 			let list = { ...playerList };
@@ -184,16 +185,16 @@ function App() {
 		);
 	}
 
+	function isLoading() {
+		return !response || !playerList;
+	}
 
-
-	function Content(response) {
+	function Content() {
 		if (!response || !playerList) {
-			return <Page.Loading>Läser in spelare...</Page.Loading>
+			return <div className='pt-5 pb-5'>Läser in spelare...</div>;
 		}
-		
-		let { players,  events, latestEvent, latestImport } = response;
 
-
+		let { players } = response;
 
 		function LatestUpdate() {
 			let { latestImport } = response;
@@ -211,12 +212,22 @@ function App() {
 
 		return (
 			<>
+				<p className='pt-5 pb-5'>
+					{`All data är baserad med hjälp från `}
+					<span className={'hover:text-link-500'}>
+						<Link target='_blank' to='https://www.jeffsackmann.com'>
+							Jeff Sackmanns
+						</Link>
+					</span>
+					{` arbete. `}
+					<LatestUpdate />
+				</p>
 				<div className='justify-center m-auto'>
-					<div className='pb-2 text-xl'>Välj två spelare och jämför matchstatistik.</div>
+					<div className='pb-2 text-xl'>Välj två spelare och jämför deras matchstatistik.</div>
 					<div className='flex justify-center'>
 						<div className='border-1 p-5 rounded-md w-full '>
-							<Player response={response} id='A' players={players} />
-							<Player response={response} id='B' players={players} />
+							<Player id='A' players={players} />
+							<Player id='B' players={players} />
 						</div>
 					</div>
 					<div className='flex justify-center py-4'>
@@ -238,15 +249,12 @@ function App() {
 	// 	</Page>
 	// );
 	return (
-		<Page id='event-page'>
-			<Menu></Menu>
+		<Page>
+			<Menu spinner={isLoading()} />
+
 			<Page.Content>
 				<Title />
-				<Page.Container>
-					<Page.Query queryKey={queryKey} queryFn={fetch}>
-						{Content}
-					</Page.Query>
-				</Page.Container>
+				<Content />
 			</Page.Content>
 		</Page>
 	);

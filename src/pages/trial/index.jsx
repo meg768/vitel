@@ -35,9 +35,9 @@ let Component = () => {
 	function Query({ sql, format = null, title = null, description = '-', ...props }) {
 		return (
 			<div className='text-xl  border-1 p-3 mt-3 mb-3 bg-primary-500/10 rounded-md hover:bg-primary-500/20'>
-				<Link hover={false} query={{ sql, format, title}} to={`/players`} {...props}>
+				<Link hover={false} query={{ sql, format, title }} to={`/players`} {...props}>
 					<div>{title} </div>
-					<div className={'text-lg! bg-transparent text-primary-500'}>{description}</div>
+					<div className={'text-sm! bg-transparent text-primary-600 dark:text-primary-100'}>{description}</div>
 				</Link>
 			</div>
 		);

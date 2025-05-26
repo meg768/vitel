@@ -8,26 +8,13 @@ import ThemeDialog from './theme-dialog.jsx';
 
 import { Half2Icon, ReaderIcon, GearIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Theme } from '@radix-ui/themes/dist/cjs/index.js';
+import atpLogoWhite from '../assets/atp-logo-white.png';
 
 function Component(props) {
 	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
 	function toggleDarkMode() {
 		app.toggleTheme();
-	}
-
-	function TennisBall(props) {
-		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';
-
-		return (
-			<div className='relative flex items-center justify-center w-10 h-10'>
-				{/* Ping effect (behind) */}
-				<span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 ${animation}`}></span>
-
-				{/* Tennis Ball emoji */}
-				<span className='relative text-xl bg-transparent'>🎾</span>
-			</div>
-		);
 	}
 
 	function MenuItem(props) {
@@ -44,52 +31,25 @@ function Component(props) {
 
 	return (
 		<div className='border-b-1 border-primary-800'>
-			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
-				<div className='flex space-x-1'>
-					<TennisBall ping={props.spinner} />
-					<MenuItem link='/#'>Jämför spelare</MenuItem>
+			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-1 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
+				<div className='flex space-x-1 items-center'>
+					<MenuItem link='/#'>
+						<img src={atpLogoWhite} className='opacity-75 h-6' />
+					</MenuItem>
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/players'>Spelare</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
 				</div>
-				<div className='flex space-x-1'>
+				<div className='flex space-x-1 items-center'>
 					<MenuItem link='/trial'>
-						<RocketIcon className='w-7 h-7 '></RocketIcon>
+						<RocketIcon className='w-6 h-6 '></RocketIcon>
 					</MenuItem>
 					<MenuItem link='/log'>
-						<ReaderIcon className='w-7 h-7 '></ReaderIcon>
+						<ReaderIcon className='w-6 h-6 '></ReaderIcon>
 					</MenuItem>
 
 					<MenuItem link='/settings'>
-							<GearIcon className='w-7 h-7 ' XonClick={toggleDarkMode}/>
-					</MenuItem>
-				</div>
-			</div>
-		</div>
-	);
-
-	return (
-		<div className='border-b-1 border-primary-800'>
-			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-2 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
-				<div className='flex space-x-1'>
-					<TennisBall ping={props.spinner} />
-					<MenuItem link='/#'>Jämför spelare</MenuItem>
-					<MenuItem link='/events'>Turneringar</MenuItem>
-					<MenuItem link='/players'>Spelare</MenuItem>
-					<MenuItem link='/live'>Live</MenuItem>
-				</div>
-				<div className='flex space-x-1'>
-					<MenuItem link='/trial'>
-						<RocketIcon className='w-7 h-7 '></RocketIcon>
-					</MenuItem>
-					<MenuItem link='/log'>
-						<ReaderIcon className='w-7 h-7 '></ReaderIcon>
-					</MenuItem>
-
-					<MenuItem>
-						<ThemeDialog>
-							<GearIcon className='w-7 h-7 ' XonClick={toggleDarkMode} />
-						</ThemeDialog>
+						<GearIcon className='w-6 h-6 ' />
 					</MenuItem>
 				</div>
 			</div>
