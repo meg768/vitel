@@ -7,11 +7,12 @@ import { Link as RouterLink } from 'react-router';
 
 import Flag from '../../components/flag';
 import { Button } from '../../components/ui';
-import { Container } from '../../components/ui';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
-import { useQuery } from '@tanstack/react-query';
-import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+
+import DotFilledIcon from '../assets/radix-icons-jsx/dot-filled.jsx';
+import CheckIcon from '../assets/radix-icons-jsx/check.jsx';
+import ChevronRightIcon from '../assets/radix-icons-jsx/chevron-right.jsx';
 
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') return false;

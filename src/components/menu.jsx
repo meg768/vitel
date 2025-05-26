@@ -6,8 +6,11 @@ import classNames from 'classnames';
 import colors from './colors';
 import ThemeDialog from './theme-dialog.jsx';
 
-import { Half2Icon, ReaderIcon, GearIcon, RocketIcon } from '@radix-ui/react-icons';
-import { Theme } from '@radix-ui/themes/dist/cjs/index.js';
+import RocketIcon from '../assets/radix-icons-jsx/rocket.jsx';
+import GearIcon from '../assets/radix-icons-jsx/gear.jsx';
+import ReaderIcon from '../assets/radix-icons-jsx/reader.jsx';
+import SearchIcon from '../assets/radix-icons-jsx/magnifying-glass.jsx';
+
 import atpLogoWhite from '../assets/atp-logo-white.png';
 
 function Component(props) {
@@ -40,14 +43,13 @@ function Component(props) {
 					<MenuItem link='/players'>Spelare</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
 				</div>
-				<div className='flex space-x-1 items-center'>
+				<div className='flex space-x-1 items-center '>
+					<MenuItem link='/not-found'>
+						<SearchIcon className='w-6 h-6' />
+					</MenuItem>
 					<MenuItem link='/trial'>
-						<RocketIcon className='w-6 h-6 '></RocketIcon>
+						<RocketIcon className='w-6 h-6 ' />
 					</MenuItem>
-					<MenuItem link='/log'>
-						<ReaderIcon className='w-6 h-6 '></ReaderIcon>
-					</MenuItem>
-
 					<MenuItem link='/settings'>
 						<GearIcon className='w-6 h-6 ' />
 					</MenuItem>

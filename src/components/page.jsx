@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import Layout from './layout';
-import { CrossCircledIcon } from '@radix-ui/react-icons';
+
+import CrossCircledIcon from '../assets/radix-icons-jsx/cross-circled.jsx';
 import { useQuery } from '@tanstack/react-query';
 import Menu from './menu';
 

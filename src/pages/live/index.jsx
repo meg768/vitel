@@ -5,7 +5,7 @@ import { Link as RouterLink } from 'react-router';
 import Flag from '../../components/flag';
 import { Button } from '../../components/ui';
 import Page from '../../components/page';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
+import ChevronRightIcon from '../../assets/radix-icons-jsx/chevron-right.jsx';
 
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') {

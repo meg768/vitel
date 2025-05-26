@@ -3,8 +3,7 @@ import './checkbox.scss';
 import React from 'react';
 import classNames from 'classnames';
 import { Checkbox } from 'radix-ui';
-import { CheckIcon } from '@radix-ui/react-icons';
-
+import CheckIcon from '../assets/radix-icons-jsx/check.jsx';
 
 
 function Component(properties) {

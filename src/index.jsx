@@ -14,6 +14,7 @@ import Log from './pages/log';
 import App from './pages/app';
 import Trial from './pages/trial';
 import Settings from './pages/settings';
+import NotFound from './pages/not-found';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
@@ -100,6 +101,7 @@ class WebApp {
 						<Route path='/log' element={<Log />} />
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/settings' element={<Settings />} />
+						<Route path='/not-found' element={<NotFound />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>

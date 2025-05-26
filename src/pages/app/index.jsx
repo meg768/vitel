@@ -18,7 +18,6 @@ import { Info } from '../../components/icons';
 import atpTourSVG from '../../assets/atp-tour.svg';
 import atpTourPNG from '../../assets/atp-tour.png';
 
-import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import classNames from 'classnames';
 
 let locals = new LocalStorage({ key: 'AppPage-2	' });

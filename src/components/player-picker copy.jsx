@@ -5,7 +5,7 @@ import FlagIcon from '../components/flag-icon';
 import Flag from '../components/flag';
 import classNames from 'classnames';
 
-import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import ChevronDownIcon from '../assets/radix-icons-jsx/chevron-down.jsx';
 
 function PlayerSelect({ players, className, player, onClick, onChange, placeholder = '-' }) {
 	let [filter, setFilter] = React.useState('');

@@ -23,8 +23,10 @@ let Component = () => {
 		return (
 			<Page.Content>
 				<Page.Title>Testbänk</Page.Title>
-				<div className='text-lg pt-4 pb-2'>Här är några frågor som kan vara intressanta att ställa till databasen. Det är inte säkert att de ger något vettigt svar...</div>
 				<Page.Container>
+					<div className='text-lg pt-4 pb-2'>
+						Här är några frågor som kan vara intressanta att ställa till databasen. Det är inte säkert att de ger något vettigt svar...
+					</div>
 					<Query {...prospects} />
 					<Query {...goat} />
 				</Page.Container>

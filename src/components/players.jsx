@@ -3,9 +3,6 @@ import Link from '../components/ui/link';
 import Table from './ui/data-table';
 import Flag from './flag';
 
-import { HamburgerMenuIcon, DotFilledIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-
-import classNames from 'classnames';
 
 function Component({ players }) {
 	function Content() {

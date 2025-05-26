@@ -1,5 +1,6 @@
 import Page from '../../components/page';
 import Menu from '../../components/menu';
+import Button from '../../components/ui/button';
 import { useState, useEffect } from 'react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 
@@ -124,6 +125,25 @@ export default function SettingsPage() {
 		);
 	}
 
+	function LogButtonX() {
+		return (
+			<>
+				<Page.Title level={3}>Logg</Page.Title>
+				kalle
+				<Button link={'/log'}>Visa logg senaste dygnet</Button>
+			</>
+		);
+	}
+
+	function LogButton() {
+		return (
+			<>
+				<Page.Title className='my-1!' level={3}>Felsökning</Page.Title>
+				<Button className='' link={'/log'}>Visa logg senaste dygnet</Button>
+			</>
+		);
+	}
+
 	function Content() {
 		return (
 			<>
@@ -131,6 +151,7 @@ export default function SettingsPage() {
 				<Page.Container className='space-y-6'>
 					<ColorModeSelector />
 					<SurfaceSelector />
+					<LogButton />
 				</Page.Container>
 			</>
 		);
