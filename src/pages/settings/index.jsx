@@ -50,7 +50,7 @@ export default function SettingsPage() {
 		if (activeMode === 'auto') {
 			const mql = window.matchMedia('(prefers-color-scheme: dark)');
 			const apply = () => {
-				const root = document.getElementById('root');
+				const root = document.body;
 				if (!root) return;
 				root.classList.remove('light', 'dark');
 				root.classList.add(mql.matches ? 'dark' : 'light');
@@ -62,7 +62,7 @@ export default function SettingsPage() {
 	}, [activeMode]);
 
 	function applyClasses(mode, surface) {
-		const root = document.getElementById('root');
+		const root = document.body;
 		if (!root) return;
 
 		root.classList.remove(...themeClasses);

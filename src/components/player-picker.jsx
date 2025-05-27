@@ -4,7 +4,6 @@ import FlagIcon from '../components/flag-icon';
 import Flag from '../components/flag';
 import classNames from 'classnames';
 
-
 import ChevronDownIcon from '../assets/radix-icons-jsx/chevron-down.jsx';
 
 function PlayerSelect({ players, className, player, onClick, onChange, placeholder = '-' }) {
@@ -51,8 +50,9 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 
 		return items.map((player, index) => {
 			let className = '';
-			className = className + ' px-2 py-1  rounded-sm ';
-			className = className + '  hover:bg-primary-500! ';
+			className = classNames(className, 'px-2 py-1  rounded-sm');
+			className = classNames(className, 'text-primary-900! dark:text-primary-100!');
+			className = classNames(className, 'hover:bg-primary-500! hover:text-primary-100!');
 
 			return (
 				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
@@ -97,12 +97,21 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 				</div>
 			</DropdownMenu.Trigger>
 
-			<DropdownMenu.Portal>
-				<DropdownMenu.Content align='start' sideOffset={5}>
-					<div className=' '>
-						<Input className='my-2 mx-2' value={filter} autoFocus spellCheck={false} placeholder={'Sök spelare'} onChange={onFilterChange} />
+			<DropdownMenu.Portal className=''>
+				<DropdownMenu.Content align='start' sideOffset={5} className='' asChild>
+					<div className='bg-primary-50! border-primary-200! dark:bg-primary-900! dark:border-primary-800! dark:text-primary-100! border-1 rounded-md shadow-md p-2'>
+						<div className=''>
+							<Input
+								className='border-primary-400! dark:border-primary-600! my-2 mx-2'
+								value={filter}
+								autoFocus
+								spellCheck={false}
+								placeholder={'Sök spelare'}
+								onChange={onFilterChange}
+							/>
+						</div>
+						<Items />
 					</div>
-					<Items />
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>

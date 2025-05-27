@@ -188,4 +188,4 @@ test('75 31', false);
 test('64', false);
 test('64 75 46 57 53', false);
 test('76 63 52', false);
-
+test(`36 62 43 Ret'd`, true);
