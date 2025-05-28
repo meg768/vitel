@@ -28,7 +28,8 @@ let locals = new LocalStorage({ key: 'AppPage-2	' });
 
 // Get all players sorted by rank/date
 async function getTopPlayers() {
-	let sql = `SELECT * FROM players ORDER BY ISNULL(rank), rank ASC`;
+	//let sql = `SELECT * FROM players ORDER BY ISNULL(rank), rank ASC`;
+	let sql = `SELECT id, name, country FROM players ORDER BY ISNULL(rank), rank ASC`;
 	//let sql = `SELECT * FROM players `;
 	return await atp.query({ sql });
 }
