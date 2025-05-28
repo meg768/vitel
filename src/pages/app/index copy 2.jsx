@@ -240,13 +240,13 @@ function App() {
 				</div>
 				<div className='justify-center'>
 					<div className='flex justify-center'>
-						<div className='border-0 p-0 rounded-md w-full '>
+						<div className='border-1 p-5 rounded-md w-full '>
 							<Player response={response} id='A' players={players} />
 							<Player response={response} id='B' players={players} />
-							<div className='flex justify-center pt-2'>
-								<CompareButton />
-							</div>
 						</div>
+					</div>
+					<div className='flex justify-center py-4'>
+						<CompareButton />
 					</div>
 				</div>
 			</>

@@ -11,5 +11,4 @@ colors.border = {};
 colors.border.light = 'text-primary-600';
 colors.border.dark = 'text-primary-400';
 
-
 export default colors;

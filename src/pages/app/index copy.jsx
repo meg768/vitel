@@ -1,6 +1,5 @@
 import React from 'react';
 import atp from '../../js/atp-service';
-import { useNavigate } from 'react-router';
 
 import { Button, Container } from '../../components/ui';
 import { useQuery } from '@tanstack/react-query';
@@ -18,9 +17,6 @@ import { Info } from '../../components/icons';
 
 import atpTourSVG from '../../assets/atp-tour.svg';
 import atpTourPNG from '../../assets/atp-tour.png';
-import ChevronDownIcon from '../../assets/radix-icons-jsx/chevron-down.jsx';
-import Flag from '../../components/flag';
-import SearchIcon from '../../assets/radix-icons-jsx/magnifying-glass.jsx';
 
 import classNames from 'classnames';
 
@@ -47,9 +43,27 @@ async function getPlayer(name) {
 	return details[0];
 }
 
+async function getLatestEvent() {
+	let sql = `SELECT * FROM events ORDER BY date DESC LIMIT 1`;
+	let events = await atp.query({ sql: sql });
+	return events[0];
+}
+
+async function getLatestImport() {
+	let sql = 'SELECT * FROM settings WHERE ?? = ?';
+	let format = ['key', 'import.status'];
+	let details = await atp.query({ sql: sql, format: format });
+	console.log('Latest import:', details);
+
+	try {
+		return JSON.parse(details[0].value);
+	} catch (error) {
+		return undefined;
+	}
+}
+
 function App() {
 	const [playerList, setPlayerList] = React.useState(null);
-	const navigate = useNavigate();
 
 	const queryKey = ['app-page'];
 
@@ -70,13 +84,11 @@ function App() {
 	async function fetch() {
 		try {
 			let players = await getTopPlayers();
-			/*
 			let events = await getEvents();
 			let latestEvent = await getLatestEvent();
 			let latestImport = await getLatestImport();
-			*/
 
-			return { players };
+			return { players: players, events: events, latestEvent: latestEvent, latestImport: latestImport };
 		} catch (error) {
 			console.log(error);
 			return { players: null, events: null, latestEvent: null };
@@ -106,6 +118,20 @@ function App() {
 		);
 	}
 
+	function TestButton() {
+		let url = '/players';
+		let sql = `SELECT * FROM players WHERE country = 'ITA'`;
+		let encodedSql = encodeURIComponent(sql);
+		url += `?sql=${encodedSql}`;
+
+		return (
+			<Button link={url}>
+				Prova
+			</Button>
+		);
+
+	}
+
 	function CompareButton() {
 		let url = '';
 		let playerA = playerList['A'];
@@ -132,83 +158,17 @@ function App() {
 			setPlayerList(list);
 		}
 
-		function TriggerTitle() {
-			let player = playerList[id];
-			if (!player) {
-				return '-';
-			} else {
-				return (
-					<div className='flex items-center gap-2'>
-						<Flag country={player.country} className='border-1! w-8! h-8!' />
-						<div>{`${player.name} `}</div>
-					</div>
-				);
-			}
-		}
-
-		let triggerClassName = '';
-		triggerClassName = classNames(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
-		triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
-
 		return (
 			<div className={className}>
 				<div className='flex justify-start gap-4 items-center pt-1 pb-1'>
 					<div className='flex-1'>
-						<PlayerPicker className='' onChange={onPlayerChange} players={response.players} player={playerList[id]}>
-							<div className={triggerClassName}>
-								<div className=' flex-1  text-left '>
-									<TriggerTitle />
-								</div>
-								<div>
-									<ChevronDownIcon className='w-4 h-4' />
-								</div>
-							</div>
-						</PlayerPicker>
+						<PlayerPicker className='' onChange={onPlayerChange} players={response.players} player={playerList[id]} placeholder={'-'} />
+					</div>
+					<div>
+						<GoButton id={id} />
 					</div>
 				</div>
 			</div>
-		);
-	}
-
-	function SearchPlayer(properties) {
-		const { className, players } = properties;
-
-		function onPlayerChange(player) {
-			navigate(`/player/${player.id}`);
-		}
-
-		function Trigger() {
-			return (
-				<div className='inline-block'>
-					<div className=''>
-						<SearchIcon className='w-6 h-6' />
-						{`Sök spelare`}
-					</div>
-				</div>
-			);
-		}
-
-		function SearchButton() {
-			let className = 'inline-block cursor-pointer';
-			className = classNames(className, 'w-8 h-8');
-			className = classNames(className, 'transition-transform duration-200 hover:scale-150');
-			className = classNames(className, 'hover:text-primary-500 hover:fill-primary-500');
-
-			return <SearchIcon className={className} />;
-		}
-
-		return (
-			<PlayerPicker className='' onChange={onPlayerChange} players={players}>
-				<div className='inline-block'>
-					<SearchButton />
-				</div>
-			</PlayerPicker>
-		);
-
-		return (
-			<PlayerPicker className='' onChange={onPlayerChange} players={players}>
-				<Trigger />
-			</PlayerPicker>
 		);
 	}
 
@@ -223,38 +183,33 @@ function App() {
 		);
 	}
 
+
+
 	function Content(response) {
 		if (!response || !playerList) {
-			return <Page.Loading>Läser in spelare...</Page.Loading>;
+			return <Page.Loading>Läser in spelare...</Page.Loading>
+		}
+		
+		let { players,  events, latestEvent, latestImport } = response;
+
+
+
+		function LatestUpdate() {
+			let { latestImport } = response;
+			let date = '';
+
+			if (latestImport?.date) {
+				date = new Date(latestImport.date).toLocaleDateString();
+			}
+
+			if (!date) {
+				return;
+			}
+			return `Statistiken senast uppdaterad ${date}.`;
 		}
 
-		let { players } = response;
-
 		return (
 			<>
-				<div className='flex text-xl items-center justify-left gap-2 py-2'>
-					<SearchPlayer players={players} />
-					<div className=''>Sök</div>
-					<div className=''>en spelare</div>
-					<div className=''>eller välj två spelare och jämför matchstatistik</div>
-				</div>
-				<div className='justify-center'>
-					<div className='flex justify-center'>
-						<div className='border-0 p-0 rounded-md w-full '>
-							<Player response={response} id='A' players={players} />
-							<Player response={response} id='B' players={players} />
-							<div className='flex justify-center pt-2'>
-								<CompareButton />
-							</div>
-						</div>
-					</div>
-				</div>
-			</>
-		);
-
-		return (
-			<>
-				<SearchPlayer players={players} />
 				<div className='justify-center m-auto'>
 					<div className='pb-2 text-xl'>Välj två spelare och jämför matchstatistik.</div>
 					<div className='flex justify-center'>

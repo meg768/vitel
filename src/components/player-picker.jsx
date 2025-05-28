@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import ChevronDownIcon from '../assets/radix-icons-jsx/chevron-down.jsx';
 
-function PlayerSelect({ players, className, player, onClick, onChange, placeholder = '-' }) {
+function PlayerSelect({ players, children, onChange}) {
 	let [filter, setFilter] = React.useState('');
 
 	function List() {
@@ -62,39 +62,14 @@ function PlayerSelect({ players, className, player, onClick, onChange, placehold
 		});
 	}
 
-	function TriggerTitle() {
-		if (!player) {
-			return placeholder;
-		} else {
-			return (
-				<div className='flex items-center gap-2'>
-					<Flag country={player.country} className='border-1! w-8! h-8!' />
-					<div>{`${player.name} `}</div>
-				</div>
-			);
-		}
-	}
-
 	function onFilterChange(event) {
 		setFilter(event.target.value);
 	}
 
-	let triggerClassName = '';
-	triggerClassName = classNames(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
-	triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
-
 	return (
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild>
-				<div className={triggerClassName}>
-					<div className=' flex-1  text-left '>
-						<TriggerTitle />
-					</div>
-
-					<div>
-						<ChevronDownIcon className='w-4 h-4' />
-					</div>
-				</div>
+				{children}
 			</DropdownMenu.Trigger>
 
 			<DropdownMenu.Portal className=''>

@@ -15,6 +15,7 @@ import Button from '../../components/ui/button';
 
 import prospects from './prospects.js';
 import goat from './goat.js';
+import topPlayers from './top-players.js';
 
 import ThemeDialog from '../../components/theme-dialog.jsx';
 
@@ -29,6 +30,7 @@ let Component = () => {
 					</div>
 					<Query {...prospects} />
 					<Query {...goat} />
+					<Query {...topPlayers} />
 				</Page.Container>
 			</Page.Content>
 		);

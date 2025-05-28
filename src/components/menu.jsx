@@ -13,6 +13,14 @@ import SearchIcon from '../assets/radix-icons-jsx/magnifying-glass.jsx';
 
 import atpLogoWhite from '../assets/atp-logo-white.png';
 
+/*
+
+					<MenuItem link='/not-found'>
+						<SearchIcon className='w-6 h-6' />
+					</MenuItem>
+
+
+					*/
 function Component(props) {
 	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
@@ -44,9 +52,6 @@ function Component(props) {
 					<MenuItem link='/live'>Live</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center '>
-					<MenuItem link='/not-found'>
-						<SearchIcon className='w-6 h-6' />
-					</MenuItem>
 					<MenuItem link='/trial'>
 						<RocketIcon className='w-6 h-6 ' />
 					</MenuItem>
