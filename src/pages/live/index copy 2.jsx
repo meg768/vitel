@@ -1,4 +1,4 @@
-import atp from '../../js/service';
+import atp from '../../js/atp-service';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { Link as RouterLink } from 'react-router';
@@ -7,7 +7,7 @@ import { Button } from '../../components/ui';
 import Page from '../../components/page';
 import ChevronRightIcon from '../../assets/radix-icons-jsx/chevron-right.jsx';
 
-import { useSQL, useRequest } from '../../js/vitel.js';
+import {useSQL, useRequest} from '../../js/vitel.js';
 
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') {
@@ -85,6 +85,7 @@ function isMatchFinished(score) {
 	return playerA >= setsToWin || playerB >= setsToWin;
 }
 
+
 function LiveTable({ rows, finished = false }) {
 	function Players({ playerA, playerB }) {
 		return (
@@ -148,6 +149,16 @@ let Component = () => {
 	// It uses the ATP service to get the matches and displays them in a table format.
 	// It also splits the matches into active and finished matches.
 	// Active matches are displayed with a link to TV4-Play and max.com for viewing.
+	async function fetch() {
+		try {
+			let matches = await atp.get('live');
+
+			return { matches };
+		} catch (error) {
+			console.log(error.message);
+			return null;
+		}
+	}
 
 	function FinishedMatches({ matches }) {
 		if (matches.length == 0) {
@@ -189,6 +200,11 @@ let Component = () => {
 	}
 
 	function Matches({ matches }) {
+		// No matches yet, just display 'loading...'
+		if (!matches) {
+			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
+		}
+
 		let finishedMatches = [];
 		let activeMatches = [];
 
@@ -209,29 +225,26 @@ let Component = () => {
 		);
 	}
 
-	function Content() {
+	function Content(response) {
+		let { matches } = response || {};
 
-		let { response, error } = useRequest({ path: 'live', method: 'GET', cache: 60 * 1000 });
-
-		if (error) {
-			return <Page.Error>Misslyckades med att läsa in dagens matcher - {error.message}</Page.Error>;
-		}
-
-		if (response) {
-			return <Matches matches={response} />;
-		}
-
-		return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
+		return (
+			<>
+				<Page.Title>{`Dagens matcher`}</Page.Title>
+				<Page.Container>
+					<Matches matches={matches} />
+				</Page.Container>
+			</>
+		);
 	}
 
 	return (
 		<Page id='live-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Title>{`Dagens matcher`}</Page.Title>
-				<Page.Container>
-					<Content />
-				</Page.Container>
+				<Page.Query queryKey={'live-page-query'} queryFn={fetch}>
+					{Content}
+				</Page.Query>
 			</Page.Content>
 		</Page>
 	);

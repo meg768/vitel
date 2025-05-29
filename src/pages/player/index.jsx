@@ -1,5 +1,5 @@
 import React from 'react';
-import mysql from '../../js/atp-service';
+import mysql from '../../js/service';
 import Link from '../../components/ui/link';
 import { useParams } from 'react-router';
 import { Button, Container } from '../../components/ui';

@@ -1,4 +1,5 @@
-class MySqlExpress {
+
+class Service {
 	constructor() {
 		this.url = import.meta.env.VITE_API_URL;
 		this.headers = {
@@ -45,6 +46,18 @@ class MySqlExpress {
 		return await response.json();
 	}
 
+	async request(path, options) {
+		const url = `${this.url}/${path}`;
+
+		return await this.fetch(url, {
+			...options,
+			headers: {
+				...this.headers,
+				...options.headers
+			}
+		});
+	}
+
 	async get(path) {
 		const url = `${this.url}/${path}`;
 
@@ -55,13 +68,7 @@ class MySqlExpress {
 	}
 
 	async post(path, data) {
-		const url = `${this.url}/${path}`;
-
-		return await this.fetch(url, {
-			method: 'POST',
-			body: JSON.stringify(data),
-			headers: this.headers
-		});
+		return await this.request(path, {method: 'POST', body: JSON.stringify(data)});
 	}
 
 	async query(options) {
@@ -69,6 +76,6 @@ class MySqlExpress {
 	}
 }
 
-const mysql = new MySqlExpress();
+const service = new Service();
 
-export default mysql;
+export default service;

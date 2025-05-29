@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import mysql from '../../js/atp-service';
+import mysql from '../../js/service';
 
 import Matches from '../../components/matches';
 import EventLogo from '../../components/event-logo';

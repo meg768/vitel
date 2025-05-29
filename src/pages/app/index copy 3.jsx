@@ -1,8 +1,9 @@
 import React from 'react';
-import {service as atp, useSQL} from '../../js/vitel.js';
+import atp from '../../js/atp-service';
 import { useNavigate } from 'react-router';
 
 import { Button, Container } from '../../components/ui';
+import { useQuery } from '@tanstack/react-query';
 
 import { useState, useRef } from 'react';
 //import { NavLink, Link } from 'react-router';
@@ -22,8 +23,6 @@ import Flag from '../../components/flag';
 import SearchIcon from '../../assets/radix-icons-jsx/magnifying-glass.jsx';
 
 import classNames from 'classnames';
-
-//import { useSqlQuery } from '../../js/use-sql-query.js';
 
 let locals = new LocalStorage({ key: 'AppPage-2	' });
 
@@ -53,7 +52,7 @@ function App() {
 	const [playerList, setPlayerList] = React.useState(null);
 	const navigate = useNavigate();
 
-
+	const queryKey = ['app-page'];
 
 	React.useEffect(() => {
 		async function getPlayerList() {
@@ -125,7 +124,7 @@ function App() {
 	}
 
 	function Player(properties) {
-		const { id, className, players, ...props } = properties;
+		const { id, className, response, ...props } = properties;
 
 		function onPlayerChange(player) {
 			let list = { ...playerList };
@@ -156,7 +155,7 @@ function App() {
 			<div className={className}>
 				<div className='flex justify-start gap-4 items-center pt-1 pb-1'>
 					<div className='flex-1'>
-						<PlayerPicker className='' onChange={onPlayerChange} players={players} player={playerList[id]}>
+						<PlayerPicker className='' onChange={onPlayerChange} players={response.players} player={playerList[id]}>
 							<div className={triggerClassName}>
 								<div className=' flex-1  text-left '>
 									<TriggerTitle />
@@ -225,23 +224,12 @@ function App() {
 		);
 	}
 
-	function Content() {
-		let sql = `SELECT id, name, country FROM players ORDER BY ISNULL(rank), rank ASC`;
-
-		const { response : players, error } = useSQL({ sql, cache: Infinity });
-
-		if (error) {
-			return (
-				<Page.Error>
-					<p className='font-bold text-xl'>Ett fel inträffade när sidan laddades.</p>
-					<p>{error.message}</p>
-				</Page.Error>
-			);
-		}
-
-		if (!players || !playerList) {
+	function Content(response) {
+		if (!response || !playerList) {
 			return <Page.Loading>Läser in spelare...</Page.Loading>;
 		}
+
+		let { players } = response;
 
 		return (
 			<>
@@ -254,8 +242,8 @@ function App() {
 				<div className='justify-center'>
 					<div className='flex justify-center'>
 						<div className='border-0 p-0 rounded-md w-full '>
-							<Player id='A' players={players} />
-							<Player id='B' players={players} />
+							<Player response={response} id='A' players={players} />
+							<Player response={response} id='B' players={players} />
 							<div className='flex justify-center pt-2'>
 								<CompareButton />
 							</div>
@@ -264,16 +252,45 @@ function App() {
 				</div>
 			</>
 		);
+
+		return (
+			<>
+				<SearchPlayer players={players} />
+				<div className='justify-center m-auto'>
+					<div className='pb-2 text-xl'>Välj två spelare och jämför matchstatistik.</div>
+					<div className='flex justify-center'>
+						<div className='border-1 p-5 rounded-md w-full '>
+							<Player response={response} id='A' players={players} />
+							<Player response={response} id='B' players={players} />
+						</div>
+					</div>
+					<div className='flex justify-center py-4'>
+						<CompareButton />
+					</div>
+				</div>
+			</>
+		);
 	}
 
-
+	// return (
+	// 	<Page id='app-page'>
+	// 		<Page.Menu></Page.Menu>
+	// 		<Page.Content>
+	// 			<Page.Query queryKey={'app-page'} queryFn={fetch}>
+	// 				{Content}
+	// 			</Page.Query>
+	// 		</Page.Content>
+	// 	</Page>
+	// );
 	return (
 		<Page id='event-page'>
 			<Menu></Menu>
 			<Page.Content>
 				<Title />
 				<Page.Container>
-					<Content />
+					<Page.Query queryKey={queryKey} queryFn={fetch}>
+						{Content}
+					</Page.Query>
 				</Page.Container>
 			</Page.Content>
 		</Page>
