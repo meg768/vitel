@@ -1,19 +1,20 @@
 import { useParams } from 'react-router';
-import {useSQL} from '../../js/vitel';
-
-import Link from '../../components/ui/link';
+import mysql from '../../js/service';
 
 import Matches from '../../components/matches';
 import EventLogo from '../../components/event-logo';
 import EventSummary from '../../components/event-summary';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
+import { Container } from '../../components/ui';
+import Link from '../../components/ui/link';
 
 export default function EventPage() {
+	const { id } = useParams();
 
-	function fetch() {
-		const { id } = useParams();
+	const queryKey = [`event/${id}`];
 
+	const queryFn = async () => {
 		let sql = `
 			SELECT * FROM flatly WHERE event_id = ? 
 			ORDER BY event_date DESC,
@@ -21,29 +22,19 @@ export default function EventPage() {
 
 			SELECT * FROM events WHERE id = ?
 		`;
+		let [matches, [event]] = await mysql.query({ sql, format: [id, id] });
+		return { matches, event };
+	};
 
-		let format = [id, id];
-
-		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
-
-	}
-
-	function Content() {
-		const { id } = useParams();
-
-		let { data:response, error } = fetch();
-
-		if (error) {
-			return <Page.Error>Misslyckades med att läsa in turnering - {error.message}</Page.Error>;
-		}
+	// ✅ JSX Component for rendering content
+	const Content = (response) => {
 
 		if (!response) {
-			return <Page.Loading>Läser in turnering...</Page.Loading>;
+			return <Page.Loading>Läser in turnering...</Page.Loading>
 		}
 
-		let matches = response[0];
-		let event = response[1][0];
-
+		let { matches, event } = response || {};
+		
 		if (!event) {
 			return (
 				<Page.Error>
@@ -85,7 +76,9 @@ export default function EventPage() {
 		<Page id='event-page'>
 			<Menu></Menu>
 			<Page.Content>
-				<Content />
+				<Page.Query queryKey={queryKey} queryFn={queryFn}>
+					{Content}
+				</Page.Query>
 			</Page.Content>
 		</Page>
 	);

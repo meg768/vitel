@@ -1,13 +1,14 @@
-import atp from '../../js/service';
+import { Link as RouterLink } from 'react-router';
+
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { Link as RouterLink } from 'react-router';
+import Button  from '../../components/ui/button';
 import Flag from '../../components/flag';
-import { Button } from '../../components/ui';
 import Page from '../../components/page';
+
 import ChevronRightIcon from '../../assets/radix-icons-jsx/chevron-right.jsx';
 
-import { useSQL, useRequest } from '../../js/vitel.js';
+import { useRequest } from '../../js/vitel.js';
 
 function isMatchFinished(score) {
 	if (typeof score !== 'string' || score.trim() === '') {
@@ -87,12 +88,15 @@ function isMatchFinished(score) {
 
 function LiveTable({ rows, finished = false }) {
 	function Players({ playerA, playerB }) {
+
+		let flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
+
 		return (
 			<div className='flex items-center gap-2 bg-transparent'>
-				<Flag className='w-5! h-5! border-1! border-primary-200' country={playerA.country}></Flag>
+				<Flag className={flagClassName} country={playerA.country}></Flag>
 				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
 				<span>{' vs '}</span>
-				<Flag className='w-5! h-5! border-1! border-primary-200' country={playerB.country}></Flag>
+				<Flag className={flagClassName} country={playerB.country}></Flag>
 				<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
 			</div>
 		);
@@ -210,28 +214,31 @@ let Component = () => {
 	}
 
 	function Content() {
-
-		let { response, error } = useRequest({ path: 'live', method: 'GET', cache: 60 * 1000 });
+		let { data: matches, error } = useRequest({ path: 'live', method: 'GET', cache: 0 });
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in dagens matcher - {error.message}</Page.Error>;
 		}
 
-		if (response) {
-			return <Matches matches={response} />;
+		if (!matches) {
+			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
 		}
 
-		return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
+		return (
+			<>
+				<Page.Title>{`Dagens matcher`}</Page.Title>
+				<Page.Container>
+					<Matches matches={matches} />
+				</Page.Container>
+			</>
+		);
 	}
 
 	return (
-		<Page id='live-page'>
+		<Page>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Title>{`Dagens matcher`}</Page.Title>
-				<Page.Container>
-					<Content />
-				</Page.Container>
+				<Content />
 			</Page.Content>
 		</Page>
 	);

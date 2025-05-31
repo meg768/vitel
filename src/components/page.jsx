@@ -7,8 +7,8 @@ import Menu from './menu';
 
 function Component({ className, ...props }) {
 	className = classNames('', className);
-	className = classNames(' bg-transparent text-primary-900 border-black/10', className);
-	className = classNames('dark:bg-transparent	 dark:text-none-300 dark:border-primary-700', className);
+	className = classNames(' bg-transparent text-primary-900 border-primary-300', className);
+	className = classNames('dark:bg-transparent	 dark:text-primary-100 dark:border-primary-700', className);
 
 	return <Layout className={className} {...props} />;
 }
@@ -28,8 +28,8 @@ Component.Title = function ({ className, level = 1, ...props }) {
 
 	switch (level) {
 		case 1: {
-			className = classNames('border rounded-sm  bg-primary-200/50!  text-primary-900 p-3', className);
-			className = classNames('text-[200%]', 'dark:bg-primary-500/50! dark:text-primary-100', className);
+			className = classNames('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700!   p-3', className);
+			className = classNames('text-[200%]', 'dark:bg-primary-500/50! ', className);
 			break;
 		}
 		case 2: {

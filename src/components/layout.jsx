@@ -1,8 +1,13 @@
 import classNames from 'classnames';
 
 export default function Layout(props) {
-
-
+	return (
+		<div className='relative min-w-2xl min-h-screen'>
+			<div className='relative z-0 bg-white dark:bg-primary-950 min-h-screen '>
+				<div {...props}></div>
+			</div>
+		</div>
+	);
 
 	return (
 		<div className='relative min-w-2xl min-h-screen'>

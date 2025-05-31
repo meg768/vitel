@@ -33,6 +33,14 @@ function Component(props) {
 
 		return (
 			<div className='flex items-center'>
+				<Link to={props.link}>
+					<Button className={buttonClass}>{props.children}</Button>
+				</Link>
+			</div>
+		);
+
+		return (
+			<div className='flex items-center'>
 				<Button className={buttonClass}>
 					<Link to={props.link}>{props.children}</Link>
 				</Button>

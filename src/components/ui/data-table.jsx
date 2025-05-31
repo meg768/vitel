@@ -102,8 +102,6 @@ function Table({ rows, className, children, ...props }) {
 	}
 
 	className = classNames(className, `ui data-table w-full border-1 text-[90%]`);
-	className = classNames(className, `${colors.text.light} ${colors.border.light}`);
-	className = classNames(className, `dark:${colors.text.dark} dark:${colors.border.dark}`);
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
@@ -182,8 +180,8 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-primary-500/40 bg-primary-100 odd:bg-primary-200 ');
-		className = classNames(className, 'dark:hover:bg-primary-500/40 dark:bg-primary-900 dark:odd:bg-primary-800');
+		className = classNames(className, 'hover:bg-primary-500/30 bg-primary-100 odd:bg-primary-200 ');
+		className = classNames(className, 'dark:hover:bg-primary-500/30 dark:bg-primary-900 dark:odd:bg-primary-800');
 		className = classNames(className, '');
 
 		let items = columns.map((column, index) => {

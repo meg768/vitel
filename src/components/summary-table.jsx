@@ -6,7 +6,7 @@ import classNames from 'classnames';
 let Component = ({ children }) => {
 	return (
 		<div className='overflow-auto'>
-			<Table className='w-full border-1 dark:border-primary-700'>
+			<Table className='w-full border-1 '>
 				<Table.Body className={''}>{children}</Table.Body>
 			</Table>
 		</div>

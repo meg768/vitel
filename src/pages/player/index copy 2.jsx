@@ -1,44 +1,49 @@
-import { useParams } from 'react-router';
-
+import React from 'react';
+import mysql from '../../js/service';
 import Link from '../../components/ui/link';
-import Tabs from '../../components/ui/tabs';
+import { useParams } from 'react-router';
+import { Button, Container } from '../../components/ui';
 
 import Page from '../../components/page';
 import PlayerSummary from '../../components/player-summary';
+
 import Matches from '../../components/matches';
 import Flag from '../../components/flag';
+import Tabs from '../../components/ui/tabs';
 
 import { PlayerRankingChart } from '../../components/player-ranking-charts';
 
-import { useSQL } from '../../js/vitel';
+function PlayerMatches({ matches, player }) {
+	return (
+		<>
+			<Matches matches={matches} owner={player.name} />
+		</>
+	);
+}
 
 function PlayerMatchTabs({ matches, player }) {
-	let grandSlamsWins = matches.filter(match => {
+	let grandSlamsWins = matches.filter((match) => {
 		return match.round == 'F' && match.event_type == 'Grand Slam' && match.winner == player.name;
 	});
 
-	let mastersWins = matches.filter(match => {
+	let mastersWins = matches.filter((match) => {
 		return match.round == 'F' && match.event_type == 'Masters' && match.winner == player.name;
 	});
 
-	let atp500Wins = matches.filter(match => {
+	let atp500Wins = matches.filter((match) => {
 		return match.round == 'F' && match.event_type == 'ATP-500' && match.winner == player.name;
 	});
 
-	let atp250Wins = matches.filter(match => {
+	let atp250Wins = matches.filter((match) => {
 		return match.round == 'F' && match.event_type == 'ATP-250' && match.winner == player.name;
 	});
 
-	let titles = matches.filter(match => {
+	let titles = matches.filter((match) => {
 		return match.round == 'F' && match.winner_id == player.id;
 	});
 
-	let finals = matches.filter(match => {
+	let finals = matches.filter((match) => {
 		return match.round == 'F';
-	});
-
-	let wins = matches.filter(match => {
-		return match.winner_id == player.id;
 	});
 
 	function MatchTab({ matches, value, title }) {
@@ -56,17 +61,12 @@ function PlayerMatchTabs({ matches, player }) {
 		<Tabs.Root className='' defaultValue='Karriär'>
 			<Tabs.List className='flex '>
 				<MatchTab title='Karriär' matches={matches} />
-				<MatchTab title='Vinster' matches={wins} />
 				<MatchTab title='Finaler' matches={finals} />
 				<MatchTab title='Grand Slams' matches={grandSlamsWins} />
 				<MatchTab title='Masters' matches={mastersWins} />
 				<MatchTab title='ATP-500' matches={atp500Wins} />
 				<MatchTab title='ATP-250' matches={atp250Wins} />
 			</Tabs.List>
-
-			<Tabs.Content value='Vinster' className='overflow-x-auto'>
-				<Matches player={player} matches={wins} owner={player.id} />
-			</Tabs.Content>
 
 			<Tabs.Content value='Finaler' className='overflow-x-auto'>
 				<Matches player={player} matches={finals} owner={player.id} />
@@ -99,11 +99,53 @@ function PlayerMatchTabs({ matches, player }) {
 	);
 }
 
-function Component () {
+function PlayerTitles({ matches, player, title = 'Titles' }) {
+	matches = matches.filter((match) => {
+		return match.round == 'F' && match.winner == player.name;
+	});
+	return (
+		<>
+			<Matches matches={matches} owner={player.name} />
+		</>
+	);
+}
 
-	function fetch() {
-		const params = useParams();
+function PlayerFinals({ player, matches, level, title = 'Finals' }) {
+	matches = matches.filter((match) => {
+		return match.round == 'F';
+	});
 
+	return (
+		<>
+			<Matches matches={matches} owner={player.id} />
+		</>
+	);
+}
+
+/*
+let PlayerOverview = ({player, matches}) => {
+		let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
+
+		return (
+			<div className='border-none-200 border-1 rounded-none flex p-0'>
+				<div className='w-30 self-center p-4'>
+					<img className='border-none-300	bg-primary-900 border-4 rounded-full' src={src} />
+				</div>
+				<div className='flex-1 p-3'>
+					<PlayerSummary player={player} matches={matches} />
+				</div>
+			</div>
+		);
+
+}
+*/
+let Component = () => {
+	const params = useParams();
+	const queryKey = `player/${JSON.stringify(useParams())}`;
+	// const queryOptions = {};
+	// const { data: response, isPending, isError, error } = useQuery({ queryKey: [queryKey], queryFn: fetch });
+
+	async function fetch() {
 		let sql = '';
 		sql += `SELECT * FROM flatly `;
 		sql += `WHERE winner_id = ? `;
@@ -116,10 +158,20 @@ function Component () {
 
 		let format = [params.id, params.id, params.id];
 
-		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
+		let details = await mysql.query({ sql: sql, format: format });
+
+		let matches = details[0];
+		let player = details[1][0];
+		let response = { matches: matches, player: player };
+
+		return response;
 	}
 
-	function Title({ player }) {
+	function Title({player}) {
+		if (!player) {
+			return;
+		}
+
 		return (
 			<Page.Title className='flex justify-left items-center gap-2'>
 				<Flag className='mr-1 w-15! h-15!' country={player.country}></Flag>
@@ -133,24 +185,16 @@ function Component () {
 		);
 	}
 
-	function Content() {
-		let { data:response, error } = fetch();
-
-		if (error) {
-			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
-		}
-
+	function Content(response) {
 		if (!response) {
-			return <Page.Loading>Läser in spelare...</Page.Loading>;
+			return <Page.Loading>Läser in spelare...</Page.Loading>
 		}
 
-
-		let matches = response[0];
-		let player = response[1][0];
+		let {matches, player} = response || {};
 
 		return (
 			<>
-				<Title player={player} />
+				<Title player={player}/>
 				<Page.Container>
 					<Page.Title level={2}>Översikt</Page.Title>
 					<div className='overflow-x-auto'>
@@ -161,7 +205,7 @@ function Component () {
 					<PlayerRankingChart className='' player={player} matches={matches} />
 
 					<Page.Title level={2}>Matcher</Page.Title>
-					<PlayerMatchTabs player={player} matches={matches} />
+					<PlayerMatchTabs params={params} player={player} matches={matches} />
 				</Page.Container>
 			</>
 		);
@@ -171,7 +215,9 @@ function Component () {
 		<Page id='live-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Content />
+				<Page.Query queryKey={queryKey} queryFn={fetch}>
+					{Content}
+				</Page.Query>
 			</Page.Content>
 		</Page>
 	);

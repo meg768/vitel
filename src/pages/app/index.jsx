@@ -228,7 +228,7 @@ function App() {
 	function Content() {
 		let sql = `SELECT id, name, country FROM players ORDER BY ISNULL(rank), rank ASC`;
 
-		const { response : players, error } = useSQL({ sql, cache: Infinity });
+		const { data : players, error } = useSQL({ sql, cache: Infinity });
 
 		if (error) {
 			return (

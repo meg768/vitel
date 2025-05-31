@@ -70,8 +70,7 @@ function PlayerRankingChart({ className, style, player, matches, ...props }) {
 		return data;
 	}
 
-	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
-	className = classNames('dark:border-primary-700', className);
+	className = classNames('h-[12em] border-1 pb-2', className);
 
 	return (
 		<div className={className}>
