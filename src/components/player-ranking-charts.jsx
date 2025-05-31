@@ -76,9 +76,9 @@ function PlayerRankingChart({ className, style, player, matches, ...props }) {
 		<div className={className}>
 			<ResponsiveContainer>
 				<LineChart className={''} data={computeData()} margin={{ top: 20, right: 50, bottom: 0, left: 0 }}>
-					<XAxis dataKey='date' tick={{ fill: 'var(--color-primary-400)', fontSize: 12 }} />
-
-					<YAxis tick={{ fill: 'var(--color-primary-400)', fontSize: 12 }} allowDecimals={false} />
+					<XAxis dataKey='date' tick={{ fill: 'currentColor', fontSize: 12 }} />
+					<YAxis tick={{ fill: 'currentColor', fontSize: 12 }} allowDecimals={false} />
+					
 					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-primary-400)'} />
 					<Line dot={false} type='linear' dataKey='Rank' stroke={'var(--color-success-500)'} strokeWidth={3} connectNulls={true} />
 				</LineChart>
@@ -122,9 +122,9 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, prop
 		<div className={className}>
 			<ResponsiveContainer height={'100%'} width={'100%'}>
 				<LineChart data={computeData()} margin={{ top: 20, right: 50, bottom: 0, left: 0 }}>
-					<XAxis dataKey='date' tick={{ fill: 'var(--color-primary-400)', fontSize: 12 }} />
+					<XAxis dataKey='date' tick={{ fill: 'currentColor', fontSize: 12 }} />
+					<YAxis tick={{ fill: 'currentColor', fontSize: 12 }} allowDecimals={false} />
 
-					<YAxis tick={{ fill: 'var(--color-none-400)', fontSize: 12 }} allowDecimals={false} />
 					<CartesianGrid strokeDasharray='2 2' stroke={'var(--color-primary-400)'} />
 					<Line dot={false} type='linear' dataKey={playerA.player.name} stroke='var(--color-success-500)' strokeWidth={3} connectNulls={true} />
 					<Line dot={false} type='linear' dataKey={playerB.player.name} stroke='var(--color-warning-500)' strokeWidth={3} connectNulls={true} />
