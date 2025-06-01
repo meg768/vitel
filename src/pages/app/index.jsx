@@ -1,5 +1,5 @@
 import React from 'react';
-import {service as atp, useSQL} from '../../js/vitel.js';
+import { service as atp, useSQL } from '../../js/vitel.js';
 import { useNavigate } from 'react-router';
 
 import { Button, Container } from '../../components/ui';
@@ -52,8 +52,6 @@ async function getPlayer(name) {
 function App() {
 	const [playerList, setPlayerList] = React.useState(null);
 	const navigate = useNavigate();
-
-
 
 	React.useEffect(() => {
 		async function getPlayerList() {
@@ -179,12 +177,12 @@ function App() {
 			navigate(`/player/${player.id}`);
 		}
 
-		function Trigger() {
+		function TriggerX() {
 			return (
 				<div className='inline-block'>
-					<div className=''>
+					<div className='bg-black border-1!'>
 						<SearchIcon className='w-6 h-6' />
-						{`Sök spelare`}
+						{`Sök spelareXXX`}
 					</div>
 				</div>
 			);
@@ -192,9 +190,11 @@ function App() {
 
 		function SearchButton() {
 			let className = 'inline-block cursor-pointer';
-			className = classNames(className, 'w-8 h-8');
-			className = classNames(className, 'transition-transform duration-200 hover:scale-150');
-			className = classNames(className, 'hover:text-primary-500 hover:fill-primary-500');
+			//			className = classNames(className, 'border-1! rounded-full p-1 border-current');
+			className = classNames(className, 'w-10 h-10');
+			className = classNames(className, 'transition-transform duration-200 hover:scale-125');
+			//className = classNames(className, 'bg-primary-50 dark:bg-primary-900');
+			className = classNames(className, 'xhover:text-primary-500 xhover:fill-primary-500');
 
 			return <SearchIcon className={className} />;
 		}
@@ -204,12 +204,6 @@ function App() {
 				<div className='inline-block'>
 					<SearchButton />
 				</div>
-			</PlayerPicker>
-		);
-
-		return (
-			<PlayerPicker className='' onChange={onPlayerChange} players={players}>
-				<Trigger />
 			</PlayerPicker>
 		);
 	}
@@ -228,15 +222,10 @@ function App() {
 	function Content() {
 		let sql = `SELECT id, name, country FROM players ORDER BY ISNULL(rank), rank ASC`;
 
-		const { data : players, error } = useSQL({ sql, cache: Infinity });
+		const { data: players, error } = useSQL({ sql, cache: Infinity });
 
 		if (error) {
-			return (
-				<Page.Error>
-					<p className='font-bold text-xl'>Ett fel inträffade när sidan laddades.</p>
-					<p>{error.message}</p>
-				</Page.Error>
-			);
+			return <Page.Error>{error.message}</Page.Error>;
 		}
 
 		if (!players || !playerList) {
@@ -245,36 +234,35 @@ function App() {
 
 		return (
 			<>
-				<div className='flex text-xl items-center justify-left gap-2 py-2'>
-					<SearchPlayer players={players} />
-					<div className=''>Sök</div>
-					<div className=''>en spelare</div>
-					<div className=''>eller välj två spelare och jämför matchstatistik</div>
-				</div>
-				<div className='justify-center'>
-					<div className='flex justify-center'>
-						<div className='border-0 p-0 rounded-md w-full '>
-							<Player id='A' players={players} />
-							<Player id='B' players={players} />
-							<div className='flex justify-center pt-2'>
-								<CompareButton />
+				<Title />
+				<Page.Container>
+					<div className='flex text-xl items-center justify-left gap-2 py-2'>
+						<SearchPlayer players={players} />
+						<div className=''>Sök</div>
+						<div className=''>en spelare</div>
+						<div className=''>eller välj två spelare och jämför matchstatistik</div>
+					</div>
+					<div className='justify-center'>
+						<div className='flex justify-center'>
+							<div className='border-0 p-0 rounded-md w-full '>
+								<Player id='A' players={players} />
+								<Player id='B' players={players} />
+								<div className='flex justify-center pt-2'>
+									<CompareButton />
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				</Page.Container>
 			</>
 		);
 	}
 
-
 	return (
-		<Page id='event-page'>
-			<Menu></Menu>
+		<Page>
+			<Page.Menu/>
 			<Page.Content>
-				<Title />
-				<Page.Container>
-					<Content />
-				</Page.Container>
+				<Content />
 			</Page.Content>
 		</Page>
 	);

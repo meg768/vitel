@@ -1,12 +1,8 @@
 import React from 'react';
-import { Container, DropdownMenu, Input } from '../components/ui';
-import FlagIcon from '../components/flag-icon';
-import Flag from '../components/flag';
+import { DropdownMenu, Input } from '../components/ui';
 import classNames from 'classnames';
 
-import ChevronDownIcon from '../assets/radix-icons-jsx/chevron-down.jsx';
-
-function PlayerSelect({ players, children, onChange}) {
+function PlayerSelect({ players, children, onChange }) {
 	let [filter, setFilter] = React.useState('');
 
 	function List() {
@@ -50,9 +46,10 @@ function PlayerSelect({ players, children, onChange}) {
 
 		return items.map((player, index) => {
 			let className = '';
-			className = classNames(className, 'px-2 py-1  rounded-sm');
-			className = classNames(className, 'text-primary-900! dark:text-primary-100!');
+			className = classNames(className, 'px-2 py-1 rounded-sm');
+			//			className = classNames(className, 'text-primary-900! dark:text-primary-100!');
 			className = classNames(className, 'hover:bg-primary-500! hover:text-primary-100!');
+			className = classNames(className, 'cursor-pointer!');
 
 			return (
 				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
@@ -66,18 +63,32 @@ function PlayerSelect({ players, children, onChange}) {
 		setFilter(event.target.value);
 	}
 
+	let contentClassName = '';
+	contentClassName = classNames(contentClassName, 'rounded-md border-1! shadow-md p-2 text-base');
+	contentClassName = classNames(contentClassName, 'border-primary-300! bg-primary-50!');
+	contentClassName = classNames(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
+
 	return (
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>
-				{children}
-			</DropdownMenu.Trigger>
+			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
 
-			<DropdownMenu.Portal className=''>
+			<DropdownMenu.Content align='start' sideOffset={5} className={contentClassName}>
+				<Input className='px-2 py-1 border rounded-sm my-1 mx-1' value={filter} autoFocus spellCheck={false} placeholder={'Sök spelare'} onChange={onFilterChange} />
+				<Items />
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
+	);
+
+	return (
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
+
+			<DropdownMenu.Portal container={document.getElementById('layout')}>
 				<DropdownMenu.Content align='start' sideOffset={5} className='' asChild>
-					<div className='bg-primary-50! border-primary-200! dark:bg-primary-900! dark:border-primary-800! dark:text-primary-100! border-1 rounded-md shadow-md p-2'>
+					<div className=' rounded-md shadow-md p-2'>
 						<div className=''>
 							<Input
-								className='border-primary-400! dark:border-primary-600! my-2 mx-2'
+								className='px-2 py-1 border-1 rounded-sm my-1 mx-1'
 								value={filter}
 								autoFocus
 								spellCheck={false}

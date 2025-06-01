@@ -10,6 +10,7 @@ import RocketIcon from '../assets/radix-icons-jsx/rocket.jsx';
 import GearIcon from '../assets/radix-icons-jsx/gear.jsx';
 import ReaderIcon from '../assets/radix-icons-jsx/reader.jsx';
 import SearchIcon from '../assets/radix-icons-jsx/magnifying-glass.jsx';
+import AtpLogo from '../assets/atp-logo.jsx';
 
 import atpLogoWhite from '../assets/atp-logo-white.png';
 
@@ -53,7 +54,7 @@ function Component(props) {
 			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-1 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
 				<div className='flex space-x-1 items-center'>
 					<MenuItem link='/#'>
-						<img src={atpLogoWhite} className='opacity-75 h-6' />
+						<AtpLogo className='w-20 h-auto ' />
 					</MenuItem>
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/players'>Spelare</MenuItem>

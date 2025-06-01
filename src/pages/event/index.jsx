@@ -83,7 +83,7 @@ export default function EventPage() {
 
 	return (
 		<Page id='event-page'>
-			<Menu></Menu>
+			<Page.Menu></Page.Menu>
 			<Page.Content>
 				<Content />
 			</Page.Content>
