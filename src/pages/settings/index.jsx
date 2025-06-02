@@ -1,23 +1,16 @@
+import { useState, useEffect } from 'react';
+
 import Page from '../../components/page';
 import Menu from '../../components/menu';
 import Button from '../../components/ui/button';
-import { useState, useEffect } from 'react';
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import classNames from 'classnames';
+
+import ToggleGroup from '../../components/ui/toggle-group.jsx';
 
 export default function SettingsPage() {
-	const surfaceThemes = {
-		hard: 'Cement',
-		clay: 'Grus',
-		grass: 'Gräs'
-	};
 
-	const colorModes = {
-		light: 'Ljust',
-		dark: 'Mörkt',
-		auto: 'Automatiskt'
-	};
-
-	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
+	
+	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass', 'auto'];
 
 	const [activeSurface, setActiveSurface] = useState(null);
 	const [activeMode, setActiveMode] = useState(null);
@@ -30,10 +23,8 @@ export default function SettingsPage() {
 			const parts = stored.split(' ');
 			if (parts.length === 2) {
 				const [mode, surface] = parts;
-				if (colorModes[mode] && surfaceThemes[surface]) {
-					setActiveMode(mode);
-					setActiveSurface(surface);
-				}
+				setActiveMode(mode);
+				setActiveSurface(surface);
 			}
 		}
 		setInitialized(true);
@@ -75,31 +66,15 @@ export default function SettingsPage() {
 		localStorage.setItem('theme', `${mode} ${surface}`);
 	}
 
-	function handleSurfaceChange(value) {
-		if (value) setActiveSurface(value);
-	}
-
-	function handleColorChange(value) {
-		if (value) setActiveMode(value);
-	}
-
 	function SurfaceSelector() {
 		return (
 			<div>
 				<Page.Title level={3}>Underlag</Page.Title>
-				<ToggleGroup.Root type='single' value={activeSurface} onValueChange={handleSurfaceChange} className='flex gap-2'>
-					{Object.entries(surfaceThemes).map(([key, label]) => (
-						<ToggleGroup.Item
-							key={key}
-							value={key}
-							className={`px-4 py-2 rounded-sm border text-sm cursor-pointer transition ${
-								activeSurface === key ? 'bg-primary-600 text-primary-100' : 'bg-primary-100 text-primary-900'
-							}`}
-						>
-							{label}
-						</ToggleGroup.Item>
-					))}
-				</ToggleGroup.Root>
+				<ToggleGroup defaultValue={activeSurface} onChange={setActiveSurface}>
+					<ToggleGroup.Item value='hard'>Cement</ToggleGroup.Item>
+					<ToggleGroup.Item value='clay'>Grus</ToggleGroup.Item>
+					<ToggleGroup.Item value='grass'>Gräs</ToggleGroup.Item>
+				</ToggleGroup>
 			</div>
 		);
 	}
@@ -108,38 +83,24 @@ export default function SettingsPage() {
 		return (
 			<div>
 				<Page.Title level={3}>Färgläge</Page.Title>
-				<ToggleGroup.Root type='single' value={activeMode} onValueChange={handleColorChange} className='flex gap-2'>
-					{Object.entries(colorModes).map(([key, label]) => (
-						<ToggleGroup.Item
-							key={key}
-							value={key}
-							className={`px-4 py-2 rounded-sm border text-sm cursor-pointer transition ${
-								activeMode === key ? 'bg-primary-600 text-primary-100' : 'bg-primary-100 text-primary-900'
-							}`}
-						>
-							{label}
-						</ToggleGroup.Item>
-					))}
-				</ToggleGroup.Root>
+				<ToggleGroup defaultValue={activeMode} onChange={setActiveMode}>
+					<ToggleGroup.Item value='light'>Ljust</ToggleGroup.Item>
+					<ToggleGroup.Item value='dark'>Mörkt</ToggleGroup.Item>
+					<ToggleGroup.Item value='auto'>Automatiskt</ToggleGroup.Item>
+				</ToggleGroup>
 			</div>
-		);
-	}
-
-	function LogButtonX() {
-		return (
-			<>
-				<Page.Title level={3}>Logg</Page.Title>
-				kalle
-				<Button link={'/log'}>Visa logg senaste dygnet</Button>
-			</>
 		);
 	}
 
 	function LogButton() {
 		return (
 			<>
-				<Page.Title className='my-1!' level={3}>Felsökning</Page.Title>
-				<Button className='' link={'/log'}>Visa logg senaste dygnet</Button>
+				<Page.Title className='my-1!' level={3}>
+					Felsökning
+				</Page.Title>
+				<Button className='' link={'/log'}>
+					Visa logg senaste dygnet
+				</Button>
 			</>
 		);
 	}

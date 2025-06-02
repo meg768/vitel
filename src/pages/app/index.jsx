@@ -139,7 +139,7 @@ function App() {
 			} else {
 				return (
 					<div className='flex items-center gap-2'>
-						<Flag country={player.country} className='border-1! w-8! h-8!' />
+						<Flag country={player.country} className='border-current border-1! w-8! h-8!' />
 						<div>{`${player.name} `}</div>
 					</div>
 				);

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 export default function Layout(props) {
 	let className = '';
-	className = classNames(className, 'bg-primary-50 dark:bg-primary-950');
+	className = classNames(className, 'bg-white dark:bg-primary-950');
 	className = classNames(className, 'text-primary-900 dark:text-primary-100');
 	className = classNames(className, 'border-primary-200 dark:border-primary-600');
 
