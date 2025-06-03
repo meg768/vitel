@@ -1,7 +1,6 @@
 import React from 'react';
 import { DropdownMenu, Input } from '../components/ui';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 function PlayerSelect({ players, children, onChange }) {
 	let [filter, setFilter] = React.useState('');
 
@@ -46,10 +45,10 @@ function PlayerSelect({ players, children, onChange }) {
 
 		return items.map((player, index) => {
 			let className = '';
-			className = classNames(className, 'px-2 py-1 rounded-sm');
-			//			className = classNames(className, 'text-primary-900! dark:text-primary-100!');
-			className = classNames(className, 'hover:bg-primary-500! hover:text-primary-100!');
-			className = classNames(className, 'cursor-pointer!');
+			className = clsx(className, 'px-2 py-1 rounded-sm');
+			//			className = clsx(className, 'text-primary-900! dark:text-primary-100!');
+			className = clsx(className, 'hover:bg-primary-500! hover:text-primary-100!');
+			className = clsx(className, 'cursor-pointer!');
 
 			return (
 				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
@@ -64,9 +63,9 @@ function PlayerSelect({ players, children, onChange }) {
 	}
 
 	let contentClassName = '';
-	contentClassName = classNames(contentClassName, 'rounded-md border-1! shadow-md p-2 text-base');
-	contentClassName = classNames(contentClassName, 'border-primary-300! bg-primary-50!');
-	contentClassName = classNames(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
+	contentClassName = clsx(contentClassName, 'rounded-md border-1! shadow-md p-2 text-base');
+	contentClassName = clsx(contentClassName, 'border-primary-300! bg-primary-50!');
+	contentClassName = clsx(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
 
 	return (
 		<DropdownMenu.Root>

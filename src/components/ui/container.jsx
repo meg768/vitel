@@ -1,8 +1,7 @@
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 function Component({ className, ...props }) {
 
-	className = classNames('p-3', className);
+	className = clsx('p-3', className);
 	
 	return <div className={className}>{props.children}</div>;
 }

@@ -21,8 +21,7 @@ import ChevronDownIcon from '../../assets/radix-icons-jsx/chevron-down.jsx';
 import Flag from '../../components/flag';
 import SearchIcon from '../../assets/radix-icons-jsx/magnifying-glass.jsx';
 
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 //import { useSqlQuery } from '../../js/use-sql-query.js';
 
 let locals = new LocalStorage({ key: 'AppPage-2	' });
@@ -94,8 +93,8 @@ function App() {
 		}
 
 		let className = '';
-		className = classNames(className, 'w-[1.5em] h-[1.5em] fill-primary-500 hover:fill-primary-400 ');
-		className = classNames(className, url ? '' : 'opacity-50!');
+		className = clsx(className, 'w-[1.5em] h-[1.5em] fill-primary-500 hover:fill-primary-400 ');
+		className = clsx(className, url ? '' : 'opacity-50!');
 
 		return (
 			<div className={className}>
@@ -147,8 +146,8 @@ function App() {
 		}
 
 		let triggerClassName = '';
-		triggerClassName = classNames(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
-		triggerClassName = classNames(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
+		triggerClassName = clsx(triggerClassName, 'flex cursor-pointer items-center rounded-md py-1 px-2 text-inherit border-1');
+		triggerClassName = clsx(triggerClassName, 'dark:border-primary-800 dark:bg-primary-900');
 
 		return (
 			<div className={className}>
@@ -180,8 +179,8 @@ function App() {
 
 		function SearchButton() {
 			let className = 'inline-block cursor-pointer';
-			className = classNames(className, 'w-10 h-10');
-			className = classNames(className, 'transition-transform duration-200 hover:scale-125');
+			className = clsx(className, 'w-10 h-10');
+			className = clsx(className, 'transition-transform duration-200 hover:scale-125');
 
 			return <SearchIcon className={className} />;
 		}

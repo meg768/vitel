@@ -1,5 +1,4 @@
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 export default function Layout(props) {
 	return (
 		<div className='relative min-w-2xl min-h-screen'>

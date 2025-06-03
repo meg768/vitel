@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Table } from '../components/ui';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 let Component = ({ children }) => {
 	return (
 		<div className='overflow-auto'>
@@ -22,7 +21,7 @@ Component.Cell = ({ children, name, value, className, ...props }) => {
 		return <div className={'whitespace-nowrap px-2 py-1'}>{value == undefined ? '-' : value}</div>;
 	}
 
-	className = classNames(className, 'border border-1');
+	className = clsx(className, 'border border-1');
 
 	if (children) {
 		return (
@@ -32,7 +31,7 @@ Component.Cell = ({ children, name, value, className, ...props }) => {
 		);
 	}
 	return (
-		<Table.Cell className={classNames(className, 'align-top text-left')} {...props}>
+		<Table.Cell className={clsx(className, 'align-top text-left')} {...props}>
 			<div className='flex flex-col'>
 				<Label />
 				<Value />

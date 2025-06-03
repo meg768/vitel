@@ -1,20 +1,19 @@
 import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router';
+import clsx from 'clsx';import { Link } from 'react-router';
 
 import colors from '../colors';
 
 const Button = React.forwardRef((properties, ref) => {
 	let { children, className, link, disabled, ...props } = properties;
 
-	className = classNames(className, [
+	className = clsx(className, [
 		'rounded-sm px-3 py-2',
 		'bg-primary-700 text-primary-50',
 		'hover:bg-primary-600 hover:dark:bg-primary-600'
 	]);
 
 	if (disabled) {
-		className = classNames('opacity-50', className);
+		className = clsx('opacity-50', className);
 	}
 
 	if (link) {

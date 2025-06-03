@@ -1,6 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 class Column {
 	constructor(child, index) {
 		this.props = child.props;
@@ -81,7 +80,7 @@ class Column {
 
 		let { className, ...others } = props;
 
-		className = classNames(className, 'px-2 py-1.5 border-1');
+		className = clsx(className, 'px-2 py-1.5 border-1');
 
 		return (
 			<td className={className} {...others} key={index}>
@@ -100,8 +99,8 @@ function Table({ rows, className, children, ...props }) {
 		rows = [];
 	}
 
-	className = classNames(className, 'ui data-table text-primary-900 w-full border-1 text-[90%]');
-	className = classNames(className, 'dark:text-primary-200 dark:border-primary-800');
+	className = clsx(className, 'ui data-table text-primary-900 w-full border-1 text-[90%]');
+	className = clsx(className, 'dark:text-primary-200 dark:border-primary-800');
 
 	if (columns == null) {
 		let x = React.Children.map(children, (child, index) => {
@@ -137,7 +136,7 @@ function Table({ rows, className, children, ...props }) {
 		function Arrow({ column }) {
 			let className = '';
 
-			className = classNames(className, 'text-[50%] ');
+			className = clsx(className, 'text-[50%] ');
 
 			if (!column.isSortable()) {
 				return;
@@ -147,12 +146,12 @@ function Table({ rows, className, children, ...props }) {
 				return <span className={className}>{sort.order}</span>;
 			}
 
-			return <span className={classNames(className, 'opacity-0')}>{'▲'}</span>;
+			return <span className={clsx(className, 'opacity-0')}>{'▲'}</span>;
 		}
 
 		function Title(props) {
 			let {className, ...other} = props;
-			className = classNames(className, 'whitespace-nowrap');
+			className = clsx(className, 'whitespace-nowrap');
 
 			return (
 				<div className={className} {...props}>
@@ -164,7 +163,7 @@ function Table({ rows, className, children, ...props }) {
 		let items = columns.map((column, index) => {
 			return (
 				<th key={index} className={'px-2 py-1 opacity-[80%] border-1 bg-none-100 dark:bg-primary-900'}>
-					<div className={classNames(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
+					<div className={clsx(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
 						<div {...column.title.props} className='whitespace-nowrap'></div>
 						<div>
 							<Arrow column={column} />
@@ -184,9 +183,9 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = classNames(className, 'hover:bg-primary-200 even:bg-primary-100 ');
-		className = classNames(className, 'dark:hover:bg-primary-700	dark:even:bg-primary-900');
-		className = classNames(className, '');
+		className = clsx(className, 'hover:bg-primary-200 even:bg-primary-100 ');
+		className = clsx(className, 'dark:hover:bg-primary-700	dark:even:bg-primary-900');
+		className = clsx(className, '');
 
 		let items = columns.map((column, index) => {
 			return column.getCell({ row, index });

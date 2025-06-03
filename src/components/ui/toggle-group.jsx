@@ -1,6 +1,5 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import classNames from 'classnames';
-import colors from '../colors';
+import clsx from 'clsx';import colors from '../colors';
 
 function Component({ defaultValue, onChange, children }) {
 	function onValueChange(value) {
@@ -18,7 +17,7 @@ function Component({ defaultValue, onChange, children }) {
 
 Component.Item = function Item({ value, className, children }) {
 
-	className = classNames(className, [
+	className = clsx(className, [
 		'px-4 py-2 text-sm cursor-pointer transition',
 		'not-first:border-l',
 

@@ -2,14 +2,13 @@ import React from 'react';
 
 import './dropdown-menu.scss';
 import { DropdownMenu as Original } from 'radix-ui';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 let Component = {};
 
 Component.Item = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui dropdownmenu item', className);
+	className = clsx('ui dropdownmenu item', className);
 
 	return <Original.Item className={className} ref={ref} {...props}></Original.Item>;
 });
@@ -17,7 +16,7 @@ Component.Item = React.forwardRef((properties, ref) => {
 Component.Content = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui dropdownmenu content ', className);
+	className = clsx('ui dropdownmenu content ', className);
 
 	return <Original.Content className={className} ref={ref} {...props}></Original.Content>;
 });
@@ -25,7 +24,7 @@ Component.Content = React.forwardRef((properties, ref) => {
 Component.Arrow = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui dropdownmenu arrow ', className);
+	className = clsx('ui dropdownmenu arrow ', className);
 
 	return <Original.Arrow className={className} ref={ref} {...props}></Original.Arrow>;
 });

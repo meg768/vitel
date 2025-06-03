@@ -1,11 +1,10 @@
-import classNames from 'classnames';
-import Layout from './layout';
+import clsx from 'clsx';import Layout from './layout';
 
 import CrossCircledIcon from '../assets/radix-icons-jsx/cross-circled.jsx';
 import Menu from './menu';
 
 function Component({ className, ...props }) {
-	className = classNames(className, '');
+	className = clsx(className, '');
 
 	return <Layout className={className} {...props} />;
 }
@@ -21,22 +20,22 @@ class Styles {
 let styles = new Styles();
 
 Component.Title = function ({ className, level = 1, ...props }) {
-	className = classNames('', className);
+	className = clsx('', className);
 
 	switch (level) {
 		case 1: {
-			className = classNames('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700!   p-3', className);
-			className = classNames('text-[200%]', 'dark:bg-primary-500/50! ', className);
+			className = clsx('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700!   p-3', className);
+			className = clsx('text-[200%]', 'dark:bg-primary-500/50! ', className);
 			break;
 		}
 		case 2: {
-			className = classNames('py-2', className);
-			className = classNames('text-[150%]', className);
+			className = clsx('py-2', className);
+			className = clsx('text-[150%]', className);
 			break;
 		}
 		case 3: {
-			className = classNames('py-2', className);
-			className = classNames('text-[125%]', className);
+			className = clsx('py-2', className);
+			className = clsx('text-[125%]', className);
 			break;
 		}
 	}
@@ -44,11 +43,11 @@ Component.Title = function ({ className, level = 1, ...props }) {
 };
 
 Component.Error = function ({ className, ...props }) {
-	className = classNames('', className);
+	className = clsx('', className);
 
-	className = classNames('border rounded-sm  border-error-500/50 bg-error-300/50!  text-error-900 p-3', className);
-	className = classNames('dark:bg-error-600/50! dark:text-error-100', className);
-	className = classNames('flex items-center gap-3', className);
+	className = clsx('border rounded-sm  border-error-500/50 bg-error-300/50!  text-error-900 p-3', className);
+	className = clsx('dark:bg-error-600/50! dark:text-error-100', className);
+	className = clsx('flex items-center gap-3', className);
 
 	return (
 		<div className={className}>
@@ -64,7 +63,7 @@ Component.Error = function ({ className, ...props }) {
 
 Component.Container = function (props) {
 	let { className, ...other } = props;
-	className = classNames('p-3 px-3 lg:px-15', className);
+	className = clsx('p-3 px-3 lg:px-15', className);
 
 	return (
 		<div className={className} {...other}>
@@ -75,7 +74,7 @@ Component.Container = function (props) {
 
 Component.Content = function (props) {
 	let { className, ...other } = props;
-	className = classNames('p-3 px-3 lg:px-15', className);
+	className = clsx('p-3 px-3 lg:px-15', className);
 
 	return (
 		<div className={className} {...other}>
@@ -150,7 +149,7 @@ Component.Loading = function (props) {
 };
 
 Component.Container = function ({ className, ...props }) {
-	className = classNames('p-3', className);
+	className = clsx('p-3', className);
 
 	return <div className={className}>{props.children}</div>;
 };

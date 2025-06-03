@@ -1,14 +1,13 @@
 
 import React from 'react';
 import * as Original  from '@radix-ui/react-tabs';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 let Component = {};
 
 Component.Root = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui ', className);
+	className = clsx('ui ', className);
 
 	return <Original.Root className={className} ref={ref} {...props}></Original.Root>;
 });
@@ -19,13 +18,13 @@ Component.Trigger = React.forwardRef((properties, ref) => {
 
 	let buttonClass = '';
 
-	buttonClass = classNames(buttonClass, 'border-transparent border-b-2');
-	buttonClass = classNames(buttonClass, 'dark:data-[state=active]:border-b-primary-500');
-	buttonClass = classNames(buttonClass, 'data-[state=active]:border-b-primary-300');
+	buttonClass = clsx(buttonClass, 'border-transparent border-b-2');
+	buttonClass = clsx(buttonClass, 'dark:data-[state=active]:border-b-primary-500');
+	buttonClass = clsx(buttonClass, 'data-[state=active]:border-b-primary-300');
 
 	let spanClass = '';
-	spanClass = classNames(spanClass, 'px-3 m-1 rounded-sm');
-	spanClass = classNames(spanClass, 'hover:text-primary-500');
+	spanClass = clsx(spanClass, 'px-3 m-1 rounded-sm');
+	spanClass = clsx(spanClass, 'hover:text-primary-500');
 
 	return (
 		<Original.Trigger className={buttonClass} {...props} ref={ref}>
@@ -37,7 +36,7 @@ Component.Trigger = React.forwardRef((properties, ref) => {
 Component.Content = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('', className);
+	className = clsx('', className);
 
 	return <Original.Content className={className} ref={ref} {...props}></Original.Content>;
 });
@@ -45,7 +44,7 @@ Component.Content = React.forwardRef((properties, ref) => {
 Component.List = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('flex space-x-2 pb-2', className);
+	className = clsx('flex space-x-2 pb-2', className);
 
 	return <Original.List className={className} ref={ref} {...props}></Original.List>;
 });

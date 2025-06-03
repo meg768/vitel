@@ -3,8 +3,7 @@ import sprintf from 'yow/sprintf';
 import isDate from 'yow/isDate';
 import isString from 'yow/isString';
 
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 import { LineChart, Line, Legend, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 function getRankingPointsByMonth({ matches, player }) {
@@ -70,7 +69,7 @@ function PlayerRankingChart({ className, style, player, matches, ...props }) {
 		return data;
 	}
 
-	className = classNames('h-[12em] border-1 pb-2', className);
+	className = clsx('h-[12em] border-1 pb-2', className);
 
 	return (
 		<div className={className}>
@@ -115,8 +114,8 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, prop
 		return data;
 	}
 
-	className = classNames('h-[12em] border-1 border-none-300 pb-2', className);
-	className = classNames('dark:border-primary-700', className);
+	className = clsx('h-[12em] border-1 border-none-300 pb-2', className);
+	className = clsx('dark:border-primary-700', className);
 
 	return (
 		<div className={className}>

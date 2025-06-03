@@ -1,10 +1,9 @@
 import React from 'react';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 
 function Component({ className, src, ...props }) {
 
-	className = classNames('flex w-10 h-10 border-1 content-center items-center rounded-full overflow-hidden', className);
+	className = clsx('flex w-10 h-10 border-1 content-center items-center rounded-full overflow-hidden', className);
 
 	return (
 		<div className={className} {...props}>

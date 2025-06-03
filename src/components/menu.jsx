@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
-import classNames from 'classnames';
-import colors from './colors';
+import clsx from 'clsx';
 import ThemeDialog from './theme-dialog.jsx';
 
 import RocketIcon from '../assets/radix-icons-jsx/rocket.jsx';
@@ -23,28 +22,19 @@ import atpLogoWhite from '../assets/atp-logo-white.png';
 
 					*/
 function Component(props) {
-	let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
 
 	function toggleDarkMode() {
 		app.toggleTheme();
 	}
 
 	function MenuItem(props) {
-		let buttonClass = 'bg-transparent! hover:bg-primary-600!';
+		let buttonClass = 'bg-transparent! hover:bg-primary-700!';
 
 		return (
 			<div className='flex items-center'>
 				<Link to={props.link}>
 					<Button className={buttonClass}>{props.children}</Button>
 				</Link>
-			</div>
-		);
-
-		return (
-			<div className='flex items-center'>
-				<Button className={buttonClass}>
-					<Link to={props.link}>{props.children}</Link>
-				</Button>
 			</div>
 		);
 	}
@@ -73,31 +63,5 @@ function Component(props) {
 	);
 }
 
-function ComponentX() {
-	return (
-		<div id='menu' className=' '>
-			<div className='flex  bg-primary-800 p-3 gap-4'>
-				<div className='grow-0'>
-					<Button className='bg-primary-800 hover:bg-primary-700'>
-						<Link to='/'>🎾</Link>
-					</Button>
-				</div>
-				<div className='grow-0'>
-					<Button className='bg-primary-800 hover:bg-primary-700'>Tennis ATP statistics</Button>
-				</div>
-				<div className='grow-0'>
-					<Button className='bg-primary-800 hover:bg-primary-700'>B</Button>
-				</div>
-				<div className='grow-0'>
-					<Button className='bg-primary-800 hover:bg-primary-700'>C</Button>
-				</div>
-				<div className='grow'></div>
-				<div className='grow-0'>
-					<Button className='bg-primary-800 hover:bg-primary-700'>D</Button>
-				</div>
-			</div>
-		</div>
-	);
-}
 
 export default Component;

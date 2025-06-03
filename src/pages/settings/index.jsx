@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
 import Button from '../../components/ui/button';
-import classNames from 'classnames';
-
+import clsx from 'clsx';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
 
 export default function SettingsPage() {

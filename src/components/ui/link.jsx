@@ -1,6 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router';
+import clsx from 'clsx';import { Link } from 'react-router';
 
 function Query({ sql, format = null, title = null, ...props }) {
 	let query = { sql, format, title };
@@ -20,10 +19,10 @@ function Query({ sql, format = null, title = null, ...props }) {
 
 function Component({ to, query, hover = true, className, ...props }) {
 
-	className = classNames(className, 'bg-transparent');
+	className = clsx(className, 'bg-transparent');
 
 	if (hover) {
-		className = classNames(className, 'hover:text-primary-600 hover:dark:text-primary-400');
+		className = clsx(className, 'hover:text-primary-600 hover:dark:text-primary-400');
 	}
 
 	if (query) {
