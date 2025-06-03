@@ -30,7 +30,7 @@ function Component(props) {
 	}
 
 	function MenuItem(props) {
-		let buttonClass = 'text-xl bg-primary-900 hover:bg-primary-700 dark:bg-primary-900! dark:hover:bg-primary-800! rounded-sm!';
+		let buttonClass = 'bg-transparent! hover:bg-primary-600!';
 
 		return (
 			<div className='flex items-center'>
@@ -50,7 +50,7 @@ function Component(props) {
 	}
 
 	return (
-		<div className='border-b-1 border-primary-800'>
+		<div className='border-b-1 border-primary-700'>
 			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-1 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
 				<div className='flex space-x-1 items-center'>
 					<MenuItem link='/#'>

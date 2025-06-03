@@ -177,24 +177,11 @@ function App() {
 			navigate(`/player/${player.id}`);
 		}
 
-		function TriggerX() {
-			return (
-				<div className='inline-block'>
-					<div className='bg-black border-1!'>
-						<SearchIcon className='w-6 h-6' />
-						{`Sök spelareXXX`}
-					</div>
-				</div>
-			);
-		}
 
 		function SearchButton() {
 			let className = 'inline-block cursor-pointer';
-			//			className = classNames(className, 'border-1! rounded-full p-1 border-current');
 			className = classNames(className, 'w-10 h-10');
 			className = classNames(className, 'transition-transform duration-200 hover:scale-125');
-			//className = classNames(className, 'bg-primary-50 dark:bg-primary-900');
-			className = classNames(className, 'xhover:text-primary-500 xhover:fill-primary-500');
 
 			return <SearchIcon className={className} />;
 		}

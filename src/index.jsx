@@ -18,7 +18,7 @@ import NotFound from './pages/not-found';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
-			this.rootElement = document.body;
+		this.rootElement = document.body;
 		//this.rootElement = document.getElementById(rootId);
 		this.themeClasses = ['dark', 'light', 'clay', 'grass', 'hard'];
 		this.mql = null;
@@ -114,4 +114,3 @@ const app = new WebApp();
 app.run();
 
 export default app;
-	

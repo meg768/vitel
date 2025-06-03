@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tabs as Original } from 'radix-ui';
+import * as Original  from '@radix-ui/react-tabs';
 import classNames from 'classnames';
 
 let Component = {};
@@ -8,7 +8,7 @@ let Component = {};
 Component.Root = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = classNames('ui tabxs   ', className);
+	className = classNames('ui ', className);
 
 	return <Original.Root className={className} ref={ref} {...props}></Original.Root>;
 });
@@ -22,8 +22,6 @@ Component.Trigger = React.forwardRef((properties, ref) => {
 	buttonClass = classNames(buttonClass, 'border-transparent border-b-2');
 	buttonClass = classNames(buttonClass, 'dark:data-[state=active]:border-b-primary-500');
 	buttonClass = classNames(buttonClass, 'data-[state=active]:border-b-primary-300');
-	buttonClass = classNames(buttonClass, '');
-	buttonClass = classNames(buttonClass, '');
 
 	let spanClass = '';
 	spanClass = classNames(spanClass, 'px-3 m-1 rounded-sm');

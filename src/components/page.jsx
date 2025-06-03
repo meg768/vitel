@@ -25,18 +25,23 @@ Component.Title = function ({ className, level = 1, ...props }) {
 
 	switch (level) {
 		case 1: {
-			className = classNames('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700!   p-3', className);
-			className = classNames('text-[200%]', 'dark:bg-primary-500/50! ', className);
+			className = classNames('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700! p-3', className);
+			className = classNames('text-[150%]', 'dark:bg-primary-500/50! ', className);
 			break;
 		}
 		case 2: {
 			className = classNames('py-2', className);
-			className = classNames('text-[150%]', className);
+			className = classNames('text-[125%]', className);
 			break;
 		}
 		case 3: {
 			className = classNames('py-2', className);
-			className = classNames('text-[125%]', className);
+			className = classNames('text-[110%]', className);
+			break;
+		}
+		case 4: {
+			className = classNames('py-2', className);
+			className = classNames('text-[100%]', className);
 			break;
 		}
 	}
@@ -46,14 +51,17 @@ Component.Title = function ({ className, level = 1, ...props }) {
 Component.Error = function ({ className, ...props }) {
 	className = classNames('', className);
 
-	className = classNames('border rounded-sm  border-error-500/50 bg-error-300/50!  text-error-900 p-3', className);
-	className = classNames('dark:bg-error-600/50! dark:text-error-100', className);
-	className = classNames('flex items-center gap-3', className);
+	className = classNames(className, [
+		'border rounded-sm border-error-600 bg-error-500! text-error-100 p-3',
+		'dark:bg-error-600! dark:text-error-50',
+		'flex items-center gap-3'
+	]);
+
 
 	return (
 		<div className={className}>
 			<div className='bg-transparent '>
-				<CrossCircledIcon className='w-8 h-8 bg-transparent text-error-500' />
+				<CrossCircledIcon className='w-8 h-8 bg-transparent' />
 			</div>
 			<div className='bg-transparent '>
 				<div {...props} />
@@ -62,20 +70,20 @@ Component.Error = function ({ className, ...props }) {
 	);
 };
 
-Component.Container = function (props) {
+Component.XContainer = function (props) {
 	let { className, ...other } = props;
-	className = classNames('p-3 px-3 lg:px-15', className);
+	className = classNames('', className);
 
+	return;
 	return (
 		<div className={className} {...other}>
-			{props.children}
 		</div>
 	);
 };
 
 Component.Content = function (props) {
 	let { className, ...other } = props;
-	className = classNames('p-3 px-3 lg:px-15', className);
+	className = classNames('py-3 px-3 lg:px-10', className);
 
 	return (
 		<div className={className} {...other}>
@@ -83,47 +91,8 @@ Component.Content = function (props) {
 		</div>
 	);
 };
-/*
 
-Component.Query = function ({ queryKey, queryFn, children }) {
-	function isReady() {
-		return !isLoading && !isPending && !isFetching && !isPreviousData && data != null;
-	}
 
-	if (!Array.isArray(queryKey)) {
-		// If queryKey is not an array, wrap it in an array
-		queryKey = [queryKey];
-	}
-
-	const { data, isLoading, isFetching, isPending, isPreviousData, isError, error } = useQuery({
-		queryKey,
-		queryFn,
-
-		// Retry count
-		retry:0
-	});
-
-	if (isError) {
-		return (
-			<Component.Content>
-				<Component.Error>
-					<p className='font-bold text-xl'>
-						Ett fel inträffade när sidan
-						laddades.
-					</p>
-					<p>{error.message}</p>
-				</Component.Error>
-			</Component.Content>
-		);
-	}
-
-	if (isPending) {
-		return children(null);
-	}
-
-	return children(data);
-};
-*/
 Component.Loading = function (props) {
 	function TennisBall(props) {
 		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';

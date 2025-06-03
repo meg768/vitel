@@ -8,8 +8,6 @@ import classNames from 'classnames';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
 
 export default function SettingsPage() {
-
-	
 	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass', 'auto'];
 
 	const [activeSurface, setActiveSurface] = useState(null);
@@ -69,7 +67,7 @@ export default function SettingsPage() {
 	function SurfaceSelector() {
 		return (
 			<div>
-				<Page.Title level={3}>Underlag</Page.Title>
+				<Page.Title level={4}>Underlag</Page.Title>
 				<ToggleGroup defaultValue={activeSurface} onChange={setActiveSurface}>
 					<ToggleGroup.Item value='hard'>Cement</ToggleGroup.Item>
 					<ToggleGroup.Item value='clay'>Grus</ToggleGroup.Item>
@@ -82,7 +80,7 @@ export default function SettingsPage() {
 	function ColorModeSelector() {
 		return (
 			<div>
-				<Page.Title level={3}>Färgläge</Page.Title>
+				<Page.Title level={4}>Färgläge</Page.Title>
 				<ToggleGroup defaultValue={activeMode} onChange={setActiveMode}>
 					<ToggleGroup.Item value='light'>Ljust</ToggleGroup.Item>
 					<ToggleGroup.Item value='dark'>Mörkt</ToggleGroup.Item>
@@ -94,14 +92,12 @@ export default function SettingsPage() {
 
 	function LogButton() {
 		return (
-			<>
-				<Page.Title className='my-1!' level={3}>
-					Felsökning
-				</Page.Title>
+			<div>
+				<Page.Title level={4}>Felsökning</Page.Title>
 				<Button className='' link={'/log'}>
 					Visa logg senaste dygnet
 				</Button>
-			</>
+			</div>
 		);
 	}
 

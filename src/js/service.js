@@ -15,38 +15,45 @@ class Service {
 	}
 
 	async fetch(url, options) {
-		console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
 
-		const start = Date.now();
+		try {
+			console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
 
-		let response = await fetch(url, options);
-
-		const elapsed = Date.now() - start;
-		const remaining = 500 - elapsed;
-
-		await this.delay(remaining);
-
-		if (!response.ok) {
-			let message = response.statusText;
-
-			try {
-				const error = await response.json();
-				message = error.message || message;
-			} catch {
+			const start = Date.now();
+	
+			let response = await fetch(url, options);
+	
+			const elapsed = Date.now() - start;
+			const remaining = 500 - elapsed;
+	
+			await this.delay(remaining);
+	
+			if (!response.ok) {
+				let message = response.statusText;
+	
 				try {
-					message = await response.text();
+					const error = await response.json();
+					message = error.message || message;
 				} catch {
-					// fallback to statusText
+					try {
+						message = await response.text();
+					} catch {
+						// fallback to statusText
+					}
 				}
+	
+				throw new Error(`Fetch failed: ${message}`);
 			}
-
-			throw new Error(`Fetch failed: ${message}`);
+	
+			return await response.json();
+	
+		} catch (error) {
+			throw new Error(`Failed to fetch url "${url}". ${error.message}`);
 		}
-
-		return await response.json();
 	}
 
 	async request(path, options) {
+
 		const url = `${this.url}/${path}`;
 
 		return await this.fetch(url, {
