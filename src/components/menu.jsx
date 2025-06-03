@@ -50,7 +50,7 @@ function Component(props) {
 	}
 
 	return (
-		<div className='border-b-1 border-primary-700'>
+		<div className='border-b-1 border-primary-800'>
 			<div className='flex   justify-between items-center w-full bg-primary-900 p-2 gap-1 dark:bg-primary-900   whitespace-nowrap overflow-auto'>
 				<div className='flex space-x-1 items-center'>
 					<MenuItem link='/#'>
