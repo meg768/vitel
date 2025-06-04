@@ -75,7 +75,7 @@ export default function EventPage() {
 					<EventSummary event={event} matches={matches} />
 
 					<Page.Title level={2}>Matcher</Page.Title>
-					<Matches matches={matches} owner={id} />
+					<Matches matches={matches} owner={id} hide={['event_date', 'event_name', 'event_surface']}/>
 				</Page.Container>
 			</>
 		);

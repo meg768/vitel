@@ -103,9 +103,15 @@ function Table({ rows, className, children, ...props }) {
 	className = clsx(className, `ui data-table w-full border-1 text-[90%]`);
 
 	if (columns == null) {
-		let x = React.Children.map(children, (child, index) => {
-			if (child.type == Table.Column) {
-				return new Column(child, index);
+
+		let index = 0;
+
+		let x = React.Children.map(children, (child) => {
+			if (child.type == Table.Column ) {
+				if (!child.props.hidden) {
+					return new Column(child, index++);
+
+				}
 			}
 		});
 

@@ -4,11 +4,20 @@ import Table from './ui/data-table';
 
 import ChevronRightIcon from '../assets/radix-icons-jsx/chevron-right.jsx';
 
-function Component({ matches, owner }) {
+function Component({ matches, owner, hide = [] }) {
+
+
+	function isHidden(field) {
+		if (hide && hide.length > 0) {
+			return hide.includes(field);
+		}
+		return false;
+	}
+	
 	function Content() {
 		return (
 			<Table rows={matches} className='striped hover'>
-				<Table.Column id='event_date' className=''>
+				<Table.Column id='event_date' className='' hidden={isHidden('event_date')}>
 					<Table.Title className=''>Datum</Table.Title>
 					<Table.Value className=''>
 						{({ row }) => {
@@ -17,7 +26,7 @@ function Component({ matches, owner }) {
 					</Table.Value>
 				</Table.Column>
 
-				<Table.Column id='event_name' className=''>
+				<Table.Column id='event_name' hidden={isHidden('event_name')}>
 					<Table.Title className=''>Turnering</Table.Title>
 					<Table.Cell>
 						{({ row, value }) => {
@@ -27,14 +36,14 @@ function Component({ matches, owner }) {
 							return (
 								<>
 									<Link to={`/event/${row.event_id}`}>{value}</Link>
-									<span className='bg-transparent' >{` (${row.event_type})`}</span>
+									<span className='bg-transparent'>{` (${row.event_type})`}</span>
 								</>
 							);
 						}}
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='event_surface' className=''>
+				<Table.Column id='event_surface' hidden={isHidden('event_surface')}>
 					<Table.Title className=''>Underlag</Table.Title>
 				</Table.Column>
 

@@ -68,7 +68,7 @@ export default function SettingsPage() {
 			<div>
 				<Page.Title level={4}>Underlag</Page.Title>
 				<ToggleGroup defaultValue={activeSurface} onChange={setActiveSurface}>
-					<ToggleGroup.Item value='hard'>Cement</ToggleGroup.Item>
+					<ToggleGroup.Item value='hard'>Hardcourt</ToggleGroup.Item>
 					<ToggleGroup.Item value='clay'>Grus</ToggleGroup.Item>
 					<ToggleGroup.Item value='grass'>Gräs</ToggleGroup.Item>
 				</ToggleGroup>

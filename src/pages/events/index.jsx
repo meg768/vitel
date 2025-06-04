@@ -1,20 +1,42 @@
+import { useSearchParams } from 'react-router';
+
 import Events from '../../components/events';
 import Page from '../../components/page';
 import Menu from '../../components/menu';
 
 import { useSQL } from '../../js/vitel.js';
 
-function Component()  {
+function Component() {
 
-	function fetch() {
-		let sql = '';
-		sql += `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC`;
+	function getQuery() {
+		const [searchParams] = useSearchParams();
+		let query = searchParams.get('query');
 
-		return useSQL({ sql, format: [], cache: 1000 * 60 * 5 });
+		if (query) {
+			try {
+				query = JSON.parse(decodeURIComponent(query));
+			} catch (error) {
+				query = {};
+			}
+		}
+
+		return query || {};
+	}
+
+	function fetch(query) {
+		let {sql, format} = query;
+
+		if (!sql) {
+			sql = `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC LIMIT 100`;
+			format = [];
+		}
+
+		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
 	}
 
 	function Content() {
-		let { data: events, error } = fetch();
+		let query = getQuery();
+		let { data: events, error } = fetch(query);
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>;
@@ -26,9 +48,9 @@ function Component()  {
 
 		return (
 			<>
-				<Page.Title>{`Turneringar`}</Page.Title>
+				<Page.Title>{query.title ? query.title : 'Turneringar'}</Page.Title>
 				<Page.Container>
-					<Events events={events} />
+					<Events events={events} hide={['event_date']} />
 				</Page.Container>
 			</>
 		);
@@ -42,6 +64,6 @@ function Component()  {
 			</Page.Content>
 		</Page>
 	);
-};
+}
 
 export default Component;
