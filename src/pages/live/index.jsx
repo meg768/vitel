@@ -205,6 +205,16 @@ let Component = () => {
 			}
 		}
 
+		if (activeMatches.length === 0 && finishedMatches.length === 0) {
+			return (
+				<div className='flex flex-col items-center justify-center text-center py-12'>
+					<div className='text-8xl'>😢</div>
+					<div className='mt-4 text-xl text-primary-700 dark:text-primary-300'>Inga matcher idag</div>
+				</div>
+			);
+		}
+	
+
 		return (
 			<>
 				<ActiveMatches matches={activeMatches} />
@@ -223,6 +233,7 @@ let Component = () => {
 		if (!matches) {
 			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
 		}
+
 
 		return (
 			<>
