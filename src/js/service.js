@@ -23,8 +23,9 @@ class Service {
 	
 			let response = await fetch(url, options);
 	
+			const minimumResponseTime = 1500;
 			const elapsed = Date.now() - start;
-			const remaining = 500 - elapsed;
+			const remaining = minimumResponseTime - elapsed;
 	
 			await this.delay(remaining);
 	
