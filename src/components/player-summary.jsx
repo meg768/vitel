@@ -233,8 +233,8 @@ function Component({ player, matches }) {
 				<SummaryTable>
 					<SummaryTable.Row>
 						<SummaryTable.Cell rowSpan='3'>
-							<div className='flex items-center justify-center'>
-								<Avatar src={src} className='bg-primary-900 w-30 h-30' />
+							<div className='flex items-center justify-center px-1'>
+								<Avatar src={src} className=' bg-primary-900 w-30 h-30' />
 							</div>
 						</SummaryTable.Cell>
 						<SummaryTable.Cell name='Ålder' value={player.age ? player.age : '-'} />
@@ -244,7 +244,7 @@ function Component({ player, matches }) {
 						<SummaryTable.Cell colSpan='1' name='Serve' value={player.serve_rating ? player.serve_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Retur' value={player.return_rating ? player.return_rating : '-'} />
 						<SummaryTable.Cell colSpan='1' name='Underläge' value={player.pressure_rating ? player.pressure_rating : '-'} />
-						<ELO/>
+						<ELO />
 						<SurfaceStats />
 					</SummaryTable.Row>
 					<StatisticsRow stats={stats.ytd} />
