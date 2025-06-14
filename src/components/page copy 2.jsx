@@ -75,12 +75,12 @@ Component.Content = function (props) {
 
 Component.Loading = function (props) {
 	function TennisBall({ ping }) {
-		const animation = ping ? 'animate-ping bg-[#cddc39]' : 'animate-none bg-transparent';
+		const animation = ping ? 'animate-ping bg-primary-500' : 'animate-none bg-transparent';
 
 		return (
 			<div className='relative flex items-center justify-center w-20 h-20'>
 				{/* Ping effect */}
-				<span className={`absolute inline-flex h-15 w-15 rounded-full opacity-50 ${animation}`}></span>
+				<span className={`absolute inline-flex h-13 w-13 rounded-full opacity-50 ${animation}`}></span>
 
 				<span className='relative text-6xl bg-transparent'>🎾</span>
 			</div>
