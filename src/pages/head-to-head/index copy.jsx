@@ -10,6 +10,7 @@ import { PlayerRankingComparisonChart } from '../../components/player-ranking-ch
 
 import { useSQL } from '../../js/vitel';
 
+
 let Component = () => {
 	function fetch() {
 		const params = useParams();
@@ -45,15 +46,9 @@ let Component = () => {
 		//let response = { matches: matches, playerOne: playerOne, playerTwo: playerTwo, playerOneMatches: playerOneMatches, playerTwoMatches: playerTwoMatches };
 	}
 
-	function Title({ matches, playerOne, playerTwo }) {
+	function Title({ playerOne, playerTwo }) {
 		let link = '';
 		let title = `${playerOne.name} vs ${playerTwo.name}`;
-		let playerOneWins = matches.filter((match) => match.winner_id == playerOne.id).length;
-		let playerTwoWins = matches.filter((match) => match.winner_id == playerTwo.id).length;
-
-		if (playerOneWins > 0 || playerTwoWins > 0) {
-			title += ` (${playerOneWins} - ${playerTwoWins})`;
-		}
 
 		if (playerOne && playerTwo && playerOne.id && playerTwo.id) {
 			link = `https://www.atptour.com/en/players/atp-head-2-head/FOO/${playerOne.id}/${playerTwo.id}`;
@@ -112,7 +107,7 @@ let Component = () => {
 
 		return (
 			<>
-				<Title matches={matches} playerOne={playerOne} playerTwo={playerTwo} />
+				<Title playerOne={playerOne} playerTwo={playerTwo} />
 				<Page.Container>
 					<Summary matches={playerOneMatches} player={playerOne} />
 					<Summary matches={playerTwoMatches} player={playerTwo} />

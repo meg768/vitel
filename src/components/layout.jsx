@@ -6,7 +6,7 @@ export default function Layout(props) {
 	className = clsx(className, 'border-primary-200 dark:border-primary-600');
 
 	return (
-		<div id='layout' className={clsx(className, 'relative min-w-md')}>
+		<div id='layout' className={clsx(className, 'relative min-w-xl')}>
 			<div className='relative z-0 min-h-screen'>
 				<div {...props}></div>
 			</div>

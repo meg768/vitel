@@ -2,6 +2,7 @@ import clsx from 'clsx';import Layout from './layout';
 
 import CrossCircledIcon from '../assets/radix-icons-jsx/cross-circled.jsx';
 import Menu from './menu';
+import tennisBall from '../assets/tennis-ball.png';
 
 function Component({ className, ...props }) {
 	className = clsx(className, '');
@@ -71,14 +72,39 @@ Component.Content = function (props) {
 	);
 };
 
+
 Component.Loading = function (props) {
+	function TennisBall({ ping }) {
+		const animation = ping ? 'animate-ping bg-primary-500' : 'animate-none bg-transparent';
+
+		return (
+			<div className='relative flex items-center justify-center w-20 h-20'>
+				{/* Ping effect */}
+				<span className={`absolute inline-flex h-13 w-13 rounded-full opacity-50 ${animation}`}></span>
+
+				<span className='relative text-6xl bg-transparent'>🎾</span>
+			</div>
+		);
+	}
+
+	return (
+		<div className='fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4 text-lg'>
+			<TennisBall ping={true} />
+		</div>
+	);
+};
+
+
+Component.LoadingY = function (props) {
 	function TennisBall({ ping }) {
 		let animation = ping ? 'animate-ping bg-primary-400' : 'animate-none bg-transparent';
 
 		return (
 			<div className='relative flex items-center justify-center w-20 h-20'>
 				<span className={`absolute inline-flex h-16 w-16 rounded-full opacity-75 ${animation}`}></span>
-				<span className='relative text-6xl bg-transparent'>🎾</span>
+				<span className='relative  bg-transparent mix-blend-screen'>
+					<img src={tennisBall} alt='Tennis Ball' className='w-full h-full object-cover' />
+				</span>
 			</div>
 		);
 	}
@@ -100,7 +126,7 @@ Component.LoadingX = function (props) {
 				<span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 ${animation}`}></span>
 
 				{/* Tennis Ball emoji */}
-				<span className='relative text-xl bg-transparent'>🎾</span>
+				<span className='relative text-6xl bg-transparent'>🎾</span>
 			</div>
 		);
 	}

@@ -224,9 +224,7 @@ function App() {
 				<Page.Container>
 					<div className='flex text-xl items-center justify-left gap-2 py-2'>
 						<SearchPlayer players={players} />
-						<div className=''>Sök</div>
-						<div className=''>en spelare</div>
-						<div className=''>eller välj två spelare och jämför matchstatistik</div>
+						<div className=''>Sök en spelare eller välj två spelare och jämför matchstatistik</div>
 					</div>
 					<div className='justify-center'>
 						<div className='flex justify-center'>
