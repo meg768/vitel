@@ -185,7 +185,7 @@ function Table({ rows, className, children, ...props }) {
 	function Row({ row, index, ...props }) {
 		let className = '';
 
-		className = clsx(className, 'hover:bg-primary-500/30 bg-primary-100 odd:bg-primary-200 ');
+		className = clsx(className, 'hover:bg-primary-500/30 bg-primary-50 odd:bg-primary-100 ');
 		className = clsx(className, 'dark:hover:bg-primary-500/30 dark:bg-primary-900 dark:odd:bg-primary-800');
 		className = clsx(className, '');
 
