@@ -80,7 +80,7 @@ Component.Loading = function (props) {
 		return (
 			<div className='relative flex items-center justify-center w-20 h-20'>
 				{/* Ping effect */}
-				<span className={`absolute inline-flex h-15 w-15 rounded-full opacity-50 ${animation}`}></span>
+				<span className={`absolute inline-flex h-13 w-13 rounded-full opacity-50 ${animation}`}></span>
 
 				<span className='relative text-6xl bg-transparent'>🎾</span>
 			</div>

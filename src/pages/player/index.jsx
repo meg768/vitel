@@ -122,7 +122,7 @@ function Component () {
 	function Title({ player }) {
 		return (
 			<Page.Title className='flex justify-left items-center gap-2'>
-				<Flag className='mr-1 w-15! h-15! border-2 border-current' country={player.country}></Flag>
+				<Flag className='h-10! border-1 border-current' country={player.country}></Flag>
 				<div className='bg-transparent'>
 					<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.id}/overview`}>
 						{player.name}

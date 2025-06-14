@@ -198,7 +198,7 @@ function App() {
 		return (
 			<Page.Title className='flex items-center gap-5'>
 				<div className='bg-transparent'>
-					<img className='h-15 ' src={atpTourPNG} />
+					<img className='h-10 ' src={atpTourPNG} />
 				</div>
 				<div className='bg-transparent'>Statistik från ATP</div>
 			</Page.Title>

@@ -66,7 +66,7 @@ export default function EventPage() {
 					</div>
 					<div className='flex-grow' />
 					<div className='flex-none bg-transparent'>
-						<EventLogo className='max-h-15' event={event} />
+						<EventLogo className='h-10' event={event} />
 					</div>
 				</Page.Title>
 
