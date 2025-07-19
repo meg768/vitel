@@ -2,12 +2,6 @@ import { defineConfig } from 'tailwindcss';
 import { colors } from 'tailwindcss/colors';
 
 export default defineConfig({
-	XXXsafelist: [
-		{
-			pattern: /(bg|text|border)-(primary|secondary|warning|error|info|link|none)-(50|100|200|300|400|500|600|700|800|900|950)/,
-			variants: ['hover', 'dark']
-		}
-	],
 	theme: {
 		extend: {
 			colors: {

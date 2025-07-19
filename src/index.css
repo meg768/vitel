@@ -1,17 +1,16 @@
+
 @import 'tailwindcss';
 
 
+
 @custom-variant dark (&:where(.dark, .dark *));
+
 
 /* Remove focus-shadow */
 *:focus {
 	box-shadow: none !important;
 }
 
-
-:root {
-
-}
 
 /* URL to edit (set minimum lightness to 10 before copying)
 /* https://www.tints.dev/?primary=5482B0&secondary=228B22&warning=FFD700&error=B22222&info=1E90FF&link=22C55E&success=22C55E&none=C0C0C0 */

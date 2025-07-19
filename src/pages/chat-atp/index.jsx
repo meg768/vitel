@@ -3,20 +3,23 @@ import { Button } from '../../components/ui';
 import Page from '../../components/page';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import './index.css';
 
 function Input({ question, setQuestion, onSubmit, pending }) {
 	return (
 		<div className='flex gap-2'>
 			<input
 				className='border border-primary-300 p-2 w-full outline-none rounded-sm'
-				placeholder='Hur många Grand Slam-titlar har Federer?'
+				placeholder={`Skriv Hjälp eller formulera en fråga`}
 				value={question}
 				autoFocus
 				disabled={pending}
 				onChange={e => setQuestion(e.target.value)}
 				onKeyDown={e => e.key === 'Enter' && onSubmit()}
 			/>
-			<Button disabled={pending} onClick={onSubmit}>Fråga</Button>
+			<Button disabled={pending} onClick={onSubmit}>
+				Fråga
+			</Button>
 		</div>
 	);
 }
@@ -29,7 +32,13 @@ function Output({ submitted, reply, error }) {
 
 	return (
 		<div className='mt-4'>
-			<Markdown remarkPlugins={[remarkGfm]}>{reply.reply}</Markdown>
+			<div>
+				<div className='text-sm text-gray-500'>Din fråga</div>
+				<div className='text-lg font-semibold text-primary-800'>{submitted}</div>
+			</div>
+			<div className='markdown prose max-w-none mt-4'>
+				<Markdown remarkPlugins={[remarkGfm]}>{reply.reply}</Markdown>
+			</div>
 		</div>
 	);
 }
