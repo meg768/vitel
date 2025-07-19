@@ -10,7 +10,7 @@ function Input({ question, setQuestion, onSubmit, pending }) {
 		<div className='flex gap-2'>
 			<input
 				className='border border-primary-300 p-2 w-full outline-none rounded-sm'
-				placeholder={`Skriv Hjälp eller formulera en fråga`}
+				placeholder={`Skriv 'Hjälp' eller formulera en fråga`}
 				value={question}
 				autoFocus
 				disabled={pending}
