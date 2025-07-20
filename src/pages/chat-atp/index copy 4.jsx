@@ -27,23 +27,17 @@ function Component() {
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState('');
 	const [chat, setChat] = useState(null);
-	const bottomRef = useRef(null);
 
 	useEffect(() => {
 		try {
 			const json = localStorage.getItem('chat');
 			if (json) setChat(JSON.parse(json));
-		} catch {
+		} catch (err) {
 			setChat(null);
 		}
 	}, []);
-/*
-	useEffect(() => {
-		if ((chat || pending) && bottomRef.current) {
-			bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-		}
-	}, [chat, pending]);
-*/
+
+
 	function Input() {
 		return (
 			<div className='flex gap-2'>
@@ -64,22 +58,7 @@ function Component() {
 	}
 
 	function Output() {
-		if (pending) {
-			return (
-				<div className='mt-4 text-primary-500 flex items-center gap-2'>
-					<span>Assistenten skriver...</span>
-					<div className='flex space-x-1'>
-						<span className='w-2 h-2 bg-primary-500 rounded-full animate-bounce [animation-delay:-300ms] scale-125' />
-						<span className='w-2 h-2 bg-primary-500 rounded-full animate-bounce [animation-delay:-150ms] scale-125' />
-						<span className='w-2 h-2 bg-primary-500 rounded-full animate-bounce scale-125' />
-					</div>
-					<div ref={bottomRef} />
-				</div>
-			);
-		}
-
 		if (!chat) return null;
-
 		return (
 			<div className='mt-4'>
 				<div className='text-sm text-gray-500'>Fråga:</div>
@@ -87,7 +66,6 @@ function Component() {
 				<Prose>
 					<Markdown remarkPlugins={[remarkGfm]}>{chat.reply}</Markdown>
 				</Prose>
-				<div ref={bottomRef} />
 			</div>
 		);
 	}
@@ -99,7 +77,7 @@ function Component() {
 				<Page.Container>
 					<Input />
 					<Output />
-				</Page.Container>
+					</Page.Container>
 			</>
 		);
 	}
