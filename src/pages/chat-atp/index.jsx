@@ -36,7 +36,7 @@ function Output({ submitted, reply, error }) {
 				<div className='text-sm text-gray-500'>Din fråga</div>
 				<div className='text-lg font-semibold text-primary-800'>{submitted}</div>
 			</div>
-			<div className='markdown prose max-w-none mt-4'>
+			<div className='markdown prose max-w-none mt-4 '>
 				<Markdown remarkPlugins={[remarkGfm]}>{reply.reply}</Markdown>
 			</div>
 		</div>

@@ -2,6 +2,7 @@
 .markdown {
   line-height: 1.5;
   color: inherit;
+  
 }
 
 .markdown h1 {
@@ -63,11 +64,13 @@
 .markdown table {
   border-collapse: collapse;
   width: 100%;
+  overflow: auto;
   margin-bottom: 1rem;
 }
 
 .markdown th,
 .markdown td {
+  white-space: nowrap;
   border: 1px solid #d1d5db;
   padding: 0.5rem;
 }
@@ -75,5 +78,6 @@
 .markdown th {
   background-color: #f9fafb;
   text-align: left;
-  font-weight: 600;
+  font-weight: 400;
+  font-size: 85%;
 }
