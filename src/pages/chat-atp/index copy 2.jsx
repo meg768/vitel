@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui';
 import Page from '../../components/page';
 import Markdown from 'react-markdown';
@@ -92,25 +92,20 @@ function Component() {
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState('');
 	const [chat, setChat] = useState(null);
-	const [chatHistory, setChatHistory] = useState([]);
 
-	const bottomElement = useRef(null);
-
+	// Load latest chat state from localStorage on first mount
 	useEffect(() => {
+		let json = null;
+
 		try {
-			const stored = JSON.parse(localStorage.getItem('chatHistory'));
-			if (Array.isArray(stored)) setChatHistory(stored);
+			json = localStorage.getItem('chat');
+			json = JSON.parse(json);
 		} catch (err) {
-			setChatHistory([]);
+			json = { prompt: '', reply: '' };
 		}
+
+		setChat(json);
 	}, []);
-
-	useEffect(() => {
-		if (bottomElement.current) {
-			bottomElement.current.scrollIntoView({ behavior: 'smooth' });
-		}
-	}, [chatHistory]);
-
 
 	function Input() {
 		return (
@@ -131,28 +126,27 @@ function Component() {
 		);
 	}
 
-function Output() {
-	if (pending) {
-		return <div className='mt-4'>{error || 'Väntar på svar från assistenten...'}</div>;
-	}
+	function Output() {
+		if (pending) {
+			return <div className='mt-4 '>{error || 'Väntar på svar från assistenten...'}</div>;
+		}
 
-	if (!chatHistory.length) return null;
+		if (!chat) {
+			return;
+		}
 
-	return (
-		<div className='mt-4 space-y-6'>
-			{chatHistory.map((entry, index) => (
-				<div key={index}>
-					<div className='text-sm text-gray-500'>Fråga:</div>
-					<div className='text-lg font-semibold text-primary-800'>{entry.prompt}</div>
-					<Prose>
-						<Markdown remarkPlugins={[remarkGfm]}>{entry.reply}</Markdown>
-					</Prose>
+		return (
+			<div className='mt-4'>
+				<div>
+					<div className='text-sm '>Din fråga</div>
+					<div className='text-lg font-semibold'>{chat.prompt}</div>
 				</div>
-			))}
-			<div ref={bottomElement} />
-		</div>
-	);
-}
+				<Prose>
+					<Markdown remarkPlugins={[remarkGfm]}>{chat.reply}</Markdown>
+				</Prose>
+			</div>
+		);
+	}
 
 	function Content() {
 		return (
@@ -166,28 +160,32 @@ function Output() {
 		);
 	}
 
-async function fetchReply(q) {
-	try {
-		setPending(true);
-		const url = `${import.meta.env.VITE_API_URL}/chat?prompt=${encodeURIComponent(q)}`;
-		const res = await fetch(url);
-		if (!res.ok) throw new Error(`Fel vid anrop: ${res.status}`);
-		const data = await res.json();
+	async function fetchReply(q) {
+		try {
+			setPending(true);
+			let url = `${import.meta.env.VITE_API_URL}/chat`;
+			if (q) url += `?prompt=${encodeURIComponent(q)}`;
+			console.log('Fetching reply for:', url);
+			const res = await fetch(url);
+			if (!res.ok) throw new Error(`Fel vid anrop: ${res.status}`);
+			const data = await res.json();
+			let chatState = {
+				prompt: q,
+				reply: data.reply,
+				thead: chat?.thead || ''
+			};
+			setChat(chatState);
+			setQuestion('');
+			setError('');
+			localStorage.setItem('chat', JSON.stringify(chatState));
+		} catch (err) {
+			setError(err.message);
+		}
+		finally{
+			setPending(false);
 
-		const newEntry = { prompt: q, reply: data.reply };
-		let updated = [...chatHistory, newEntry];
-		updated = updated.slice(-1); 
-
-		setChatHistory(updated);
-		localStorage.setItem('chatHistory', JSON.stringify(updated));
-		setQuestion('');
-		setError('');
-	} catch (err) {
-		setError(err.message);
-	} finally {
-		setPending(false);
+		}
 	}
-}
 
 	function onSubmit() {
 		if (!question.trim()) return;
