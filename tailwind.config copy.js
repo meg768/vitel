@@ -1,4 +1,6 @@
 import { defineConfig } from 'tailwindcss';
+import { colors } from 'tailwindcss/colors';
+import typography from '@tailwindcss/typography';
 
 export default defineConfig({
 	theme: {
