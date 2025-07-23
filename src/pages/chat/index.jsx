@@ -78,7 +78,7 @@ function Component() {
 			<Page.Content>
 				<Page.Title>Fråga ATP-assistenten</Page.Title>
 
-				<Page.Container className='flex flex-col h-[calc(100vh-8rem)]'>
+				<Page.Container className='flex flex-col h-[calc(100vh-10rem)]'>
 					<div className='flex-1 overflow-y-auto divide-y divide-gray-200' aria-live='polite'>
 						{messages.map((msg, i) => (
 							<div key={i} className='px-2 py-2 w-full xwhitespace-pre-wrap'>
@@ -112,9 +112,6 @@ function Component() {
 							className='flex-1 border border-primary-300 rounded p-2 resize-none outline-none'
 							disabled={isLoading}
 						/>
-						<button type='submit' className='bg-primary-500 hover:bg-primary-600 text-white px-4 rounded' disabled={isLoading}>
-							{isLoading ? 'Skicka' : 'Skicka'}
-						</button>
 					</form>
 				</Page.Container>
 			</Page.Content>
