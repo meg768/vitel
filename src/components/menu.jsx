@@ -50,7 +50,6 @@ function Component(props) {
 					<MenuItem link='/players'>Spelare</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
 					<MenuItem link='/chat'>Chat</MenuItem>
-					<MenuItem link='/chatx'>Chat-X</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center '>
 					<MenuItem link='/trial'>

@@ -15,7 +15,6 @@ import App from './pages/app';
 import Trial from './pages/trial';
 import Settings from './pages/settings';
 import NotFound from './pages/not-found';
-import ChatATP from './pages/chat-atp';
 import Chat from './pages/chat';
 
 class WebApp {
@@ -105,8 +104,7 @@ class WebApp {
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
-						<Route path='/chat' element={<ChatATP />} />
-						<Route path='/chatx' element={<Chat />} />
+						<Route path='/chat' element={<Chat />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>
