@@ -7,9 +7,7 @@ import './index.css';
 
 function Component() {
 	const storedMessages = localStorage.getItem('chat-history');
-	const [messages, setMessages] = useState(
-		storedMessages ? JSON.parse(storedMessages) : [{ role: 'assistant', content: `**Hej!** Jag är Bob – ställ en fråga om tennis! Be om hjälp om du vill.` }]
-	);
+	const [messages, setMessages] = useState(storedMessages ? JSON.parse(storedMessages) : [{ role: 'assistant', content: `**Hej!** Jag är Bob – ställ en fråga om tennis! Be om hjälp om du vill.` }]);
 	const [input, setInput] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const bottomRef = useRef(null);
@@ -27,7 +25,7 @@ function Component() {
 		if (!input.trim()) return;
 
 		const userMessage = { role: 'user', content: input.trim() };
-		setMessages(prev => [...prev, userMessage].slice(-20));
+		setMessages(prev => [...prev, userMessage].slice(-20)); // 👈 begränsa till 20 inlägg
 		setInput('');
 		setIsLoading(true);
 
@@ -36,7 +34,7 @@ function Component() {
 			const res = await fetch(url);
 			const data = await res.json();
 			const bobMessage = { role: 'assistant', content: data.reply };
-			setMessages(prev => [...prev, bobMessage].slice(-20));
+			setMessages(prev => [...prev, bobMessage].slice(-20)); // 👈 begränsa här också
 		} catch (err) {
 			setMessages(prev => [...prev, { role: 'assistant', content: '**Fel:** Kunde inte kontakta Bob.' }].slice(-20));
 		} finally {
@@ -52,7 +50,8 @@ function Component() {
 	}
 
 	function Prose({ children }) {
-		let className = clsx(
+		let className = '';
+		className = clsx(
 			'prose w-full max-w-none text-primary-800 dark:text-primary-100',
 			'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
 			'dark:prose-p:text-primary-100',
@@ -74,56 +73,51 @@ function Component() {
 	}
 
 	function Conversation() {
-		return (
-			<div className='divide-y divide-gray-200' aria-live='polite'>
-				{messages.map((msg, i) => (
-					<div key={i} className='px-2 py-2 w-full Xwhitespace-pre-wrap'>
-						<Prose>
-							{msg.role === 'user' && <strong>Du: </strong>}
-							{msg.role === 'assistant' && <strong>Bob: </strong>}
-							<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-						</Prose>
-					</div>
-				))}
-
-				{isLoading && (
-					<div className='px-2 py-2 w-full Xwhitespace-pre-wrap'>
-						<Prose>
-							<em>{'Bob skriver '}</em>
-							<TypingDots />
-						</Prose>
-					</div>
-				)}
-
-				<div ref={bottomRef} />
-			</div>
-		);
+		
 	}
-
 
 	return (
 		<Page>
 			<Page.Menu />
-			<Page.Content className='xpy-0!'>
+			<Page.Content>
 				<Page.Title>Fråga ATP-assistenten</Page.Title>
 
-				<div className='flex flex-col'>
-					<div className='flex-1 overflow-y-auto px-1'>
-						<Conversation />
+				<Page.Container className='flex flex-col h-[calc(100vh-10rem)]'>
+					<div className='flex-1 overflow-y-auto divide-y divide-gray-200' aria-live='polite'>
+						{messages.map((msg, i) => (
+							<div key={i} className='px-2 py-2 w-full xwhitespace-pre-wrap'>
+								<Prose>
+									{msg.role === 'user' && <strong>Du: </strong>}
+									{msg.role === 'assistant' && <strong>Bob: </strong>}
+									<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+								</Prose>
+							</div>
+						))}
+
+						{isLoading && (
+							<div className='px-2 py-2 w-full xwhitespace-pre-wrap'>
+								<Prose>
+									<em>{'Bob skriver '}</em>
+									<TypingDots />
+								</Prose>
+							</div>
+						)}
+
+						<div ref={bottomRef} />
 					</div>
 
-					<form onSubmit={handleSubmit} className='sticky bottom-4  bg-transparent flex xgap-20 xpy-0  z-10 '>
+					<form onSubmit={handleSubmit} className='p-2 border-t flex gap-2'>
 						<textarea
 							value={input}
 							onChange={e => setInput(e.target.value)}
 							onKeyDown={handleKeyDown}
 							placeholder='Skriv något till ATP-assistenten...'
 							rows={2}
-							className='flex-1 border  border-primary-100 bg-primary-50 rounded-xl p-3 XXXmx-10 my-5 resize-none outline-none'
+							className='flex-1 border border-primary-300 rounded p-2 resize-none outline-none'
 							disabled={isLoading}
 						/>
 					</form>
-				</div>
+				</Page.Container>
 			</Page.Content>
 		</Page>
 	);
