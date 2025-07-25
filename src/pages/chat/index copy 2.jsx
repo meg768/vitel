@@ -3,7 +3,6 @@ import Page from '../../components/page';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
-import TextareaAutosize from 'react-textarea-autosize';
 import './index.css';
 
 function TypingDots() {
@@ -17,7 +16,7 @@ function TypingDots() {
 }
 
 function Prose({ children }) {
-	const className = clsx(
+	let className = clsx(
 		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
 		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
 		'dark:prose-p:text-primary-100',
@@ -28,23 +27,25 @@ function Prose({ children }) {
 	return <div className={className}>{children}</div>;
 }
 
-function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disabled, className }) {
-	className = clsx('w-full bg-transparent resize-none outline-none mt-1 text-sm', className);
-
+function UserPrompt({ value, onChange, onSubmit, disabled, className }) {
 	function onKeyDown(event) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
 			onSubmit(event);
-		} else if (event.key === 'ArrowUp') {
-			event.preventDefault();
-			onArrowUp();
-		} else if (event.key === 'ArrowDown') {
-			event.preventDefault();
-			onArrowDown();
 		}
 	}
 
-	return <TextareaAutosize placeholder='Ställ en fråga till Bob' className={className} value={value} onChange={onChange} onKeyDown={onKeyDown} disabled={disabled} minRows={1} maxRows={8} />;
+	return (
+		<textarea
+			value={value}
+			onChange={onChange}
+			onKeyDown={onKeyDown}
+			placeholder='Skriv något till ATP-assistenten...'
+			rows={2}
+			className='flex-1 border border-primary-300 bg-white rounded-xl p-3 my-5 resize-none outline-none'
+			disabled={disabled}
+		/>
+	);
 }
 
 function Component() {
@@ -54,7 +55,6 @@ function Component() {
 	);
 	const [input, setInput] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
-	const [historyIndex, setHistoryIndex] = useState(null);
 	const bottomRef = useRef(null);
 
 	useEffect(() => {
@@ -65,37 +65,6 @@ function Component() {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages, isLoading]);
 
-	function getUserHistory() {
-		return messages.filter(m => m.role === 'user').map(m => m.content);
-	}
-
-	function handleArrowUp() {
-		const history = getUserHistory();
-		if (history.length === 0) return;
-
-		setHistoryIndex(prev => {
-			let newIndex = prev === null ? history.length - 1 : Math.max(prev - 1, 0);
-			setInput(history[newIndex]);
-			return newIndex;
-		});
-	}
-
-	function handleArrowDown() {
-		const history = getUserHistory();
-		if (history.length === 0) return;
-
-		setHistoryIndex(prev => {
-			if (prev === null) return null;
-			let newIndex = prev + 1;
-			if (newIndex >= history.length) {
-				setInput('');
-				return null;
-			}
-			setInput(history[newIndex]);
-			return newIndex;
-		});
-	}
-
 	async function onSubmit(e) {
 		const maxMessages = 8;
 		e.preventDefault();
@@ -103,12 +72,11 @@ function Component() {
 
 		const userMessage = { role: 'user', content: input.trim() };
 		setMessages(prev => [...prev, userMessage].slice(-maxMessages));
-		setHistoryIndex(null);
 		setInput('');
 		setIsLoading(true);
 
 		try {
-			const url = `${import.meta.env.VITE_API_URL}/chat?prompt=${encodeURIComponent(userMessage.content)}`;
+			const url = `${import.meta.env.VITE_API_URL}/chat?prompt=${encodeURIComponent(input.trim())}`;
 			const res = await fetch(url);
 			const data = await res.json();
 			const bobMessage = { role: 'assistant', content: data.reply };
@@ -124,7 +92,7 @@ function Component() {
 		return (
 			<div className='divide-y divide-primary-200' aria-live='polite'>
 				{messages.map((msg, i) => (
-					<div key={i} className='px-2 py-2 w-full'>
+					<div key={i} className='px-2 py-2 w-full Xwhitespace-pre-wrap'>
 						<Prose>
 							{msg.role === 'user' && <strong>Du: </strong>}
 							{msg.role === 'assistant' && <strong>Bob: </strong>}
@@ -134,7 +102,7 @@ function Component() {
 				))}
 
 				{isLoading && (
-					<div className='px-2 py-2 w-full'>
+					<div className='px-2 py-2 w-full Xwhitespace-pre-wrap'>
 						<Prose>
 							<em>{'Bob skriver '}</em>
 							<TypingDots />
@@ -157,22 +125,8 @@ function Component() {
 					<div className='flex-1 overflow-y-auto px-1'>
 						<Conversation />
 					</div>
-
-					<div className='sticky bottom-4 z-10 px-1 bg-transparent'>
-						<div className='bg-white border border-primary-300  dark:bg-primary-800 rounded-xl px-4 py-4 my-4 shadow-sm'>
-							<UserPrompt
-								className='text-[100%]'
-								value={input}
-								onChange={e => {
-									setHistoryIndex(null);
-									setInput(e.target.value);
-								}}
-								onSubmit={onSubmit}
-								onArrowUp={handleArrowUp}
-								onArrowDown={handleArrowDown}
-								disabled={isLoading}
-							/>
-						</div>
+					<div className='sticky bottom-4 bg-transparent flex z-10'>
+						<UserPrompt value={input} onSubmit={onSubmit} onChange={e => setInput(e.target.value)} disabled={isLoading} />
 					</div>
 				</div>
 			</Page.Content>

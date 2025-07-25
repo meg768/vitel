@@ -37,7 +37,8 @@ class WebApp {
 		const validTheme = /^(light|dark|auto) (hard|clay|grass)$/;
 
 		if (!theme || !validTheme.test(theme)) {
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			prefersDark = false;
 			theme = prefersDark ? 'dark hard' : 'light hard';
 			localStorage.setItem('theme', theme);
 		}
