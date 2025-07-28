@@ -45,9 +45,9 @@ let Component = () => {
 	}
 
 	return (
-		<Page id='players-page'>
-			<Page.Menu />
-			<Page.Content>
+		<Page className=''>
+			<Page.Menu className='' />
+			<Page.Content className=''>
 				<Content />
 			</Page.Content>
 		</Page>

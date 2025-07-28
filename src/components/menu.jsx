@@ -3,24 +3,12 @@ import { Link } from 'react-router';
 import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
 import clsx from 'clsx';
-import ThemeDialog from './theme-dialog.jsx';
 
 import RocketIcon from '../assets/radix-icons-jsx/rocket.jsx';
 import GearIcon from '../assets/radix-icons-jsx/gear.jsx';
-import ReaderIcon from '../assets/radix-icons-jsx/reader.jsx';
-import SearchIcon from '../assets/radix-icons-jsx/magnifying-glass.jsx';
 import AtpLogo from '../assets/atp-logo.jsx';
 
-import atpLogoWhite from '../assets/atp-logo-white.png';
 
-/*
-
-					<MenuItem link='/not-found'>
-						<SearchIcon className='w-6 h-6' />
-					</MenuItem>
-
-
-					*/
 function Component(props) {
 
 	function toggleDarkMode() {

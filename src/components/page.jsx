@@ -5,7 +5,7 @@ import Menu from './menu';
 import tennisBall from '../assets/tennis-ball.png';
 
 function Component({ className, ...props }) {
-	className = clsx(className, '');
+	className = clsx(className, 'flex flex-col h-screen');
 
 	return <Layout className={className} {...props} />;
 }
@@ -64,6 +64,7 @@ Component.Error = function ({ className, ...props }) {
 Component.Content = function (props) {
 	let { className, ...other } = props;
 	className = clsx('py-3 px-3 lg:px-10', className);
+	className = clsx('overflow-y-auto flex-1', className);
 
 	return (
 		<div className={className} {...other}>
@@ -95,58 +96,17 @@ Component.Loading = function (props) {
 };
 
 
-Component.LoadingY = function (props) {
-	function TennisBall({ ping }) {
-		let animation = ping ? 'animate-ping bg-primary-400' : 'animate-none bg-transparent';
-
-		return (
-			<div className='relative flex items-center justify-center w-20 h-20'>
-				<span className={`absolute inline-flex h-16 w-16 rounded-full opacity-75 ${animation}`}></span>
-				<span className='relative  bg-transparent mix-blend-screen'>
-					<img src={tennisBall} alt='Tennis Ball' className='w-full h-full object-cover' />
-				</span>
-			</div>
-		);
-	}
-
-	return (
-		<div className='fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4 text-lg'>
-			<TennisBall ping={true} />
-		</div>
-	);
-};
-
-Component.LoadingX = function (props) {
-	function TennisBall(props) {
-		let animation = props.ping ? 'animate-ping bg-primary-400' : 'animate-none  bg-transparent';
-
-		return (
-			<div className='relative flex items-center justify-center w-10 h-10'>
-				{/* Ping effect (behind) */}
-				<span className={`absolute inline-flex h-6 w-6 rounded-full opacity-75 ${animation}`}></span>
-
-				{/* Tennis Ball emoji */}
-				<span className='relative text-6xl bg-transparent'>🎾</span>
-			</div>
-		);
-	}
-
-	return (
-		<div className='flex gap-2 items-center'>
-			<TennisBall ping={true} />
-			<div {...props}></div>
-		</div>
-	);
-
-	return <p>Läser in...</p>;
-};
-
 Component.Container = function ({ className, ...props }) {
 	className = clsx('p-3', className);
 
 	return <div className={className}>{props.children}</div>;
 };
 
-Component.Menu = Menu;
+
+Component.Menu = function ({ className, ...props }) {
+	className = clsx(className, 'sticky top-0 z-10');
+
+	return <Menu className={className} {...props} />;
+}
 
 export default Component;
