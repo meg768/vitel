@@ -19,31 +19,14 @@ function TypingDots() {
 function Prose({ children }) {
 	const className = clsx(
 		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
-		'dark:prose-invert',
-
-		// Typografijusteringar
 		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
 
-		// Dämpade linjer i mörkt läge
-		'dark:prose-th:border-gray-800',
-		'dark:prose-td:border-gray-800',
-		'dark:prose-table:border-gray-800',
-		'dark:prose-hr:border-gray-800'
-	);
-	return <div className={className}>{children}</div>;
-}
-
-
-function Prose_Saved({ children }) {
-	const className = clsx(
-		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
-		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
-
-		'dark:prose-invert',
-		'dark:prose-th:border-primary-800',
-		'dark:prose-td:border-primary-800',
-		'dark:prose-table:border-primary-800',
-		'dark:prose-hr:border-primary-800'
+		'dark:prose-h3:text-primary-200',
+		'dark:prose-strong:text-primary-200',
+		'dark:prose-p:text-primary-200',
+		'dark:prose-li:text-primary-200',
+		'dark:prose-th:text-primary-200',
+		'dark:prose-td:text-primary-200'
 	);
 	return <div className={className}>{children}</div>;
 }
@@ -62,11 +45,7 @@ function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disable
 		}
 	}
 
-	const textAreaClassName = clsx(
-		'resize-none rounded-md border-1 w-full px-6 py-4 my-4 shadow-sm outline-none',
-		'bg-primary-50 border-primary-200',
-		'dark:bg-primary-900 dark:border-primary-700'
-	);
+	const textAreaClassName = clsx('resize-none rounded-md border-1 w-full px-6 py-4 my-4 shadow-sm outline-none', 'bg-primary-50 border-primary-300', 'dark:bg-primary-900 dark:border-primary-700');
 
 	return (
 		<div className='sticky bottom-4 z-10 px-1 py-4 bg-transparent'>
@@ -180,25 +159,15 @@ function Component() {
 
 	function Conversation() {
 		function Messages() {
-			return messages.map((msg, i) => {
-				if (msg.role === 'user') {
-					return (
-						<div key={i} className='flex justify-end px-2 py-2'>
-							<div className='border-1 bg-primary-50 border-primary-100 dark:border-primary-600 dark:bg-primary-700 dark:text-white px-4 py-2 rounded-md max-w-[75%] '>
-								<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-							</div>
-						</div>
-					);
-				} else {
-					return (
-						<div key={i} className='px-2 py-2 w-full'>
-							<Prose>
-								<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-							</Prose>
-						</div>
-					);
-				}
-			});
+			return messages.map((msg, i) => (
+				<div key={i} className='px-2 py-2 w-full'>
+					<Prose>
+						{msg.role === 'user' && <strong>Du: </strong>}
+						{msg.role === 'assistant' && <strong>Bob: </strong>}
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+					</Prose>
+				</div>
+			));
 		}
 
 		function Replying() {
@@ -215,7 +184,7 @@ function Component() {
 
 		return (
 			<div className='flex-1 overflow-y-auto px-1'>
-				<div className='divide-y divide-primary-50 dark:divide-primary-900 ' aria-live='polite'>
+				<div className='divide-y divide-primary-500 ' aria-live='polite'>
 					<Messages />
 					<Replying />
 					<div ref={bottomRef} />

@@ -17,36 +17,33 @@ function TypingDots() {
 }
 
 function Prose({ children }) {
-	const className = clsx(
-		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
-		'dark:prose-invert',
-
-		// Typografijusteringar
-		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
-
-		// Dämpade linjer i mörkt läge
-		'dark:prose-th:border-gray-800',
-		'dark:prose-td:border-gray-800',
-		'dark:prose-table:border-gray-800',
-		'dark:prose-hr:border-gray-800'
-	);
-	return <div className={className}>{children}</div>;
-}
-
-
-function Prose_Saved({ children }) {
+	
+	
 	const className = clsx(
 		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
 		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
 
-		'dark:prose-invert',
-		'dark:prose-th:border-primary-800',
-		'dark:prose-td:border-primary-800',
-		'dark:prose-table:border-primary-800',
-		'dark:prose-hr:border-primary-800'
+		// Ljusläge
+		'prose-hr:border-primary-200 prose-th:border-primary-300 prose-td:border-primary-100',
+
+		// Mörkt läge – mjukare färger
+		'dark:prose-hr:border-primary-900',
+		'dark:prose-th:border-primary-900',
+		'dark:prose-td:border-primary-900',
+		'dark:prose-table:border-primary-900',
+		'dark:prose-li:border-primary-900',
+
+		// Textfärger
+		'dark:prose-h3:text-primary-200',
+		'dark:prose-strong:text-primary-200',
+		'dark:prose-p:text-primary-200',
+		'dark:prose-li:text-primary-200',
+		'dark:prose-th:text-primary-200',
+		'dark:prose-td:text-primary-200'
 	);
 	return <div className={className}>{children}</div>;
 }
+
 
 function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disabled }) {
 	function onKeyDown(event) {

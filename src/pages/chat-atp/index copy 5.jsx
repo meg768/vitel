@@ -8,6 +8,7 @@ import clsx from 'clsx';
 function Prose({ children }) {
 	let className = '';
 	className = clsx(className, 'prose max-w-none mt-4 text-primary-800 dark:text-primary-100');
+
 	className = clsx(className, 'prose-p:text-primary-800 dark:prose-p:text-primary-100');
 	className = clsx(className, 'prose-td:text-primary-800 dark:prose-td:text-primary-100');
 	className = clsx(className, 'prose-th:text-primary-800 dark:prose-th:text-primary-100');
@@ -36,7 +37,13 @@ function Component() {
 			setChat(null);
 		}
 	}, []);
-
+/*
+	useEffect(() => {
+		if ((chat || pending) && bottomRef.current) {
+			bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [chat, pending]);
+*/
 	function Input() {
 		return (
 			<div className='flex gap-2'>
@@ -74,15 +81,9 @@ function Component() {
 		if (!chat) return null;
 
 		return (
-			<div className='mt-4 space-y-4'>
+			<div className='mt-4'>
 				<div className='text-sm text-gray-500'>Fråga:</div>
-				<div className='flex items-start gap-2'>
-					<div className='text-xl select-none'>🧍‍♂️</div>
-					<div className='relative max-w-[80%]'>
-						<div className='bg-gray-200 dark:bg-gray-700 text-black dark:text-white p-3 rounded-md text-sm shadow'>{chat.prompt}</div>
-						<div className='absolute left-3 -bottom-2 w-0 h-0 border-t-8 border-t-gray-200 dark:border-t-gray-700 border-l-8 border-l-transparent border-r-8 border-r-transparent'></div>
-					</div>
-				</div>
+				<div className='text-lg font-semibold text-primary-800'>{chat.prompt}</div>
 				<Prose>
 					<Markdown remarkPlugins={[remarkGfm]}>{chat.reply}</Markdown>
 				</Prose>
