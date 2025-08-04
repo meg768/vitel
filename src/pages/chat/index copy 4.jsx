@@ -20,7 +20,11 @@ function Prose({ children }) {
 	const className = clsx(
 		'prose w-full max-w-none text-primary-800 dark:text-primary-100',
 		'dark:prose-invert',
+
+		// Typografijusteringar
 		'prose-p:my-1 prose-ul:my-2 prose-li:my-0 prose-table:my-4 prose-th:py-1 prose-td:py-1',
+
+		// Dämpade linjer i mörkt läge
 		'dark:prose-th:border-gray-800',
 		'dark:prose-td:border-gray-800',
 		'dark:prose-table:border-gray-800',
@@ -28,6 +32,8 @@ function Prose({ children }) {
 	);
 	return <div className={className}>{children}</div>;
 }
+
+
 
 function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disabled }) {
 	function onKeyDown(event) {
@@ -44,7 +50,7 @@ function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disable
 	}
 
 	const textAreaClassName = clsx(
-		'resize-none rounded-full border-1 w-full px-8 py-4 my-6 shadow-sm outline-none',
+		'resize-none rounded-md border-1 w-full px-6 py-4 my-4 shadow-sm outline-none',
 		'bg-primary-50 border-primary-200',
 		'dark:bg-primary-900 dark:border-primary-700'
 	);
@@ -156,7 +162,7 @@ function Component() {
 			setMessages(prev => [...prev, { role: 'assistant', content: '**Fel:** Kunde inte kontakta Bob.' }].slice(-MAX_CHAT_ENTRIES));
 		} finally {
 			setIsLoading(false);
-		}x
+		}
 	}
 
 	function Conversation() {
@@ -165,7 +171,7 @@ function Component() {
 				if (msg.role === 'user') {
 					return (
 						<div key={i} className='flex justify-end px-2 py-2'>
-							<div className='relative border-1 bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-white border-primary-200 dark:border-primary-700 px-8 py-3 rounded-full  max-w-[75%]'>
+							<div className='border-1 bg-primary-50 border-primary-100 dark:border-primary-600 dark:bg-primary-700 dark:text-white px-4 py-2 rounded-md max-w-[75%] '>
 								<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
 							</div>
 						</div>
@@ -196,7 +202,7 @@ function Component() {
 
 		return (
 			<div className='flex-1 overflow-y-auto px-1'>
-				<div className='' aria-live='polite'>
+				<div className='divide-y divide-primary-50 dark:divide-primary-900 ' aria-live='polite'>
 					<Messages />
 					<Replying />
 					<div ref={bottomRef} />
