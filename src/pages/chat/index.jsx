@@ -165,7 +165,7 @@ function Component() {
 				if (msg.role === 'user') {
 					return (
 						<div key={i} className='flex justify-end px-2 py-2'>
-							<div className='relative border-1 bg-primary-50 dark:bg-primary-900 text-primary-900 dark:text-primary-50 border-primary-200 dark:border-primary-700 px-8 py-3 rounded-full  max-w-[75%]'>
+							<div className='relative border-1 bg-primary-50 dark:bg-primary-900 text-primary-900 dark:text-primary-50 border-primary-200 dark:border-primary-700 px-3 py-3 rounded-md  max-w-[75%]'>
 								<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
 							</div>
 						</div>
