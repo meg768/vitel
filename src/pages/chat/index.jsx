@@ -69,7 +69,7 @@ function Component() {
 	const CHAT_HISTORY_KEY = 'chat-history';
 	const QUESTION_HISTORY_KEY = 'chat-history-questions';
 	const MAX_HISTORY_ENTRIES = 50;
-	const MAX_CHAT_ENTRIES = 8;
+	const MAX_CHAT_ENTRIES = 12;
 
 	const storedMessages = localStorage.getItem(CHAT_HISTORY_KEY);
 	const [messages, setMessages] = useState(
@@ -165,7 +165,7 @@ function Component() {
 				if (msg.role === 'user') {
 					return (
 						<div key={i} className='flex justify-end px-2 py-2'>
-							<div className='relative border-1 bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-white border-primary-200 dark:border-primary-700 px-8 py-3 rounded-full  max-w-[75%]'>
+							<div className='relative border-1 bg-primary-50 dark:bg-primary-900 text-primary-900 dark:text-primary-50 border-primary-200 dark:border-primary-700 px-8 py-3 rounded-full  max-w-[75%]'>
 								<ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
 							</div>
 						</div>
