@@ -44,7 +44,7 @@ function UserPrompt({ value, onChange, onSubmit, onArrowUp, onArrowDown, disable
 	}
 
 	const textAreaClassName = clsx(
-		'resize-none rounded-full border-1 w-full px-8 py-4 my-6 shadow-sm outline-none',
+		'resize-none rounded-md border-1 w-full px-4 py-4 my-2 shadow-sm outline-none opacity-95',
 		'bg-primary-50 border-primary-200',
 		'dark:bg-primary-900 dark:border-primary-700'
 	);
