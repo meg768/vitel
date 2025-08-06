@@ -69,7 +69,7 @@ function Component() {
 	const CHAT_HISTORY_KEY = 'chat-history';
 	const QUESTION_HISTORY_KEY = 'chat-history-questions';
 	const MAX_HISTORY_ENTRIES = 50;
-	const MAX_CHAT_ENTRIES = 12;
+	const MAX_CHAT_CHARACTERS = 8000; // Begränsa mängden sparad text
 
 	const storedMessages = localStorage.getItem(CHAT_HISTORY_KEY);
 	const [messages, setMessages] = useState(
@@ -87,6 +87,24 @@ function Component() {
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages, isLoading]);
+
+	function trimMessagesToCharLimit(messages, limit) {
+		let totalChars = 0;
+		const result = [];
+
+		for (let i = messages.length - 1; i >= 0; i--) {
+			const msg = messages[i];
+			const contentLength = msg.content.length;
+
+			if (totalChars + contentLength <= limit) {
+				result.unshift(msg);
+				totalChars += contentLength;
+			} else {
+				break;
+			}
+		}
+		return result;
+	}
 
 	function getStoredQuestionHistory() {
 		const stored = localStorage.getItem(QUESTION_HISTORY_KEY);
@@ -141,7 +159,10 @@ function Component() {
 
 		const userMessage = { role: 'user', content: input.trim() };
 		saveToQuestionHistory(userMessage.content);
-		setMessages(prev => [...prev, userMessage].slice(-MAX_CHAT_ENTRIES));
+		setMessages(prev => {
+			const updated = [...prev, userMessage];
+			return trimMessagesToCharLimit(updated, MAX_CHAT_CHARACTERS);
+		});
 		setHistoryIndex(null);
 		setInput('');
 		setIsLoading(true);
@@ -151,12 +172,18 @@ function Component() {
 			const res = await fetch(url);
 			const data = await res.json();
 			const bobMessage = { role: 'assistant', content: data.reply };
-			setMessages(prev => [...prev, bobMessage].slice(-MAX_CHAT_ENTRIES));
+			setMessages(prev => {
+				const updated = [...prev, bobMessage];
+				return trimMessagesToCharLimit(updated, MAX_CHAT_CHARACTERS);
+			});
 		} catch (err) {
-			setMessages(prev => [...prev, { role: 'assistant', content: '**Fel:** Kunde inte kontakta Bob.' }].slice(-MAX_CHAT_ENTRIES));
+			setMessages(prev => {
+				const updated = [...prev, { role: 'assistant', content: '**Fel:** Kunde inte kontakta Bob.' }];
+				return trimMessagesToCharLimit(updated, MAX_CHAT_CHARACTERS);
+			});
 		} finally {
 			setIsLoading(false);
-		}x
+		}
 	}
 
 	function Conversation() {
