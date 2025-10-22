@@ -105,6 +105,23 @@ function App() {
 		);
 	}
 
+	function CompareButtonBob() {
+		let url = '';
+		let playerA = playerList['A'];
+		let playerB = playerList['B'];
+
+		if (playerA && playerB) {
+			let query = `Jämför ${playerA.name} mot ${playerB.name}`;
+			url = `/ask-bob?prompt=${encodeURIComponent(query)}`;
+		}
+
+		return (
+			<Button disabled={url == ''} link={url}>
+				Fråga Bob
+			</Button>
+		);
+	}
+
 	function CompareButton() {
 		let url = '';
 		let playerA = playerList['A'];
@@ -116,7 +133,7 @@ function App() {
 
 		return (
 			<Button disabled={url == ''} link={url}>
-				Jämför
+				Jämför statistik
 			</Button>
 		);
 	}
@@ -176,7 +193,6 @@ function App() {
 			navigate(`/player/${player.id}`);
 		}
 
-
 		function SearchButton() {
 			let className = 'inline-block cursor-pointer';
 			className = clsx(className, 'w-10 h-10');
@@ -231,8 +247,9 @@ function App() {
 							<div className='border-0 p-0 rounded-md w-full '>
 								<Player id='A' players={players} />
 								<Player id='B' players={players} />
-								<div className='flex justify-center pt-2'>
+								<div className='flex justify-center pt-2 space-x-2'>
 									<CompareButton />
+									<CompareButtonBob />
 								</div>
 							</div>
 						</div>
@@ -244,7 +261,7 @@ function App() {
 
 	return (
 		<Page>
-			<Page.Menu/>
+			<Page.Menu />
 			<Page.Content>
 				<Content />
 			</Page.Content>

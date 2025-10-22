@@ -16,6 +16,7 @@ import Trial from './pages/trial';
 import Settings from './pages/settings';
 import NotFound from './pages/not-found';
 import Chat from './pages/chat';
+import AskBob from './pages/ask-bob';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
@@ -106,6 +107,7 @@ class WebApp {
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/chat' element={<Chat />} />
+						<Route path='/ask-bob' element={<AskBob />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>

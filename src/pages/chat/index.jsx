@@ -1,10 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+
 import Page from '../../components/page';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
 import TextareaAutosize from 'react-textarea-autosize';
 import './index.css';
+
+function useQueryParam(name) {
+	const [sp] = useSearchParams();
+	return sp.get(name);
+}
 
 function TypingDots() {
 	return (
@@ -75,11 +83,20 @@ function Component() {
 	const [messages, setMessages] = useState(
 		storedMessages ? JSON.parse(storedMessages) : [{ role: 'assistant', content: `**Hej!** Jag är Bob – ställ en fråga om tennis! Be om hjälp om du vill.` }]
 	);
+
 	const [input, setInput] = useState('');
+//	const promptFromUrl = useQueryParam('prompt');
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [historyIndex, setHistoryIndex] = useState(null);
 	const bottomRef = useRef(null);
-
+/*
+	useEffect(() => {
+		if (typeof promptFromUrl === 'string') {
+			setInput(promptFromUrl);
+		}
+	}, [promptFromUrl]);
+*/
 	useEffect(() => {
 		localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
 	}, [messages]);
