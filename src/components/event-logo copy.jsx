@@ -1,3 +1,4 @@
+
 import atp500 from '../assets/atp-500.png';
 import atp250 from '../assets/atp-250.png';
 import atpMasters from '../assets/atp-masters.png';
@@ -5,50 +6,15 @@ import unitedCup from '../assets/united-cup.png';
 import davisCup from '../assets/davis-cup.png';
 import laverCup from '../assets/laver-cup.png';
 import australianOpen from '../assets/australian-open.png';
-import usOpen from '../assets/us-open.png';
 import wimbledon from '../assets/wimbledon.png';
+import usOpen from '../assets/us-open.png';
 import rolandGarros from '../assets/roland-garros.png';
 import atpNittoFinals from '../assets/atp-nitto-finals.png';
 import atpNextGenFinals from '../assets/atp-next-gen-finals.png';
 
-import SvgWimbledon from '../assets/wimbledon.jsx';
-import SvgRolandGarros from '../assets/roland-garros.jsx';
-import SvgUsOpen from '../assets/us-open.jsx';
-import SvgAustralianOpen from '../assets/australian-open.jsx';
-import SvgLaverCup from '../assets/laver-cup.jsx';
-import SvgDavisCup from '../assets/davis-cup.jsx';
-import SvgAtp250 from '../assets/atp-250.jsx';
-
 function EventLogo({ event, ...props }) {
 	let url = undefined;
 
-	if (event?.type === 'Grand Slam' && event?.name === 'Wimbledon') {
-		return <SvgWimbledon {...props} />;
-	}
-
-	if (event?.type === 'Grand Slam' && event?.name === 'Roland Garros') {
-		return <SvgRolandGarros {...props} />;
-	}
-
-	if (event?.type === 'Grand Slam' && event?.name === 'US Open') {
-		return <SvgUsOpen {...props} />;
-	}
-
-	if (event?.type === 'Grand Slam' && event?.name === 'Australian Open') {
-		return <SvgAustralianOpen {...props} />;
-	}
-
-	if (event?.type === 'Rod Laver Cup') {
-		return <SvgLaverCup {...props} />;
-	}
-
-	if (event?.type === 'Davis Cup') {
-		return <SvgDavisCup {...props} />;
-	}
-
-	if (event?.type === 'ATP-250') {
-		return <SvgAtp250 {...props} />;
-	}
 	switch (event.type) {
 		case 'Masters': {
 			url = atpMasters;
@@ -68,12 +34,12 @@ function EventLogo({ event, ...props }) {
 					url = australianOpen;
 					break;
 				}
-				case 'US Open': {
-					url = usOpen;
-					break;
-				}
 				case 'Wimbledon': {
 					url = wimbledon;
+					break;
+				}
+				case 'US Open': {
+					url = usOpen;
 					break;
 				}
 				case 'Roland Garros': {
@@ -105,9 +71,7 @@ function EventLogo({ event, ...props }) {
 		}
 	}
 
-	if (!url) return null;
-
-	return <img src={url} alt={event?.name ?? event?.type ?? ''} {...props} />;
+	return <img src={url} {...props} />;
 }
 
 export default EventLogo;
