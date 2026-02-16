@@ -15,8 +15,11 @@ import Page from '../../components/page';
 import LocalStorage from '../../js/local-storage';
 import { Info } from '../../components/icons';
 
+import AtpTourLogo from '../../assets/atp-tour.jsx';
+import Atp250Logo from '../../assets/atp-250.jsx';
+import Atp500Logo from '../../assets/atp-500.jsx';
+import AtpMastersLogo from '../../assets/atp-masters.jsx';
 import atpTourSVG from '../../assets/atp-tour.svg';
-import atpTourPNG from '../../assets/atp-tour.png';
 import ChevronDownIcon from '../../assets/radix-icons-jsx/chevron-down.jsx';
 import Flag from '../../components/flag';
 import SearchIcon from '../../assets/radix-icons-jsx/magnifying-glass.jsx';
@@ -214,7 +217,7 @@ function App() {
 		return (
 			<Page.Title className='flex items-center gap-5'>
 				<div className='bg-transparent'>
-					<img className='h-10 ' src={atpTourPNG} />
+					<AtpTourLogo fill='currentColor' className='h-10 ' />
 				</div>
 				<div className='bg-transparent'>Statistik från ATP</div>
 			</Page.Title>
