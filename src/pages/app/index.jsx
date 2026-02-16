@@ -15,10 +15,10 @@ import Page from '../../components/page';
 import LocalStorage from '../../js/local-storage';
 import { Info } from '../../components/icons';
 
-import AtpTourLogo from '../../assets/atp-tour.jsx';
-import Atp250Logo from '../../assets/atp-250.jsx';
-import Atp500Logo from '../../assets/atp-500.jsx';
-import AtpMastersLogo from '../../assets/atp-masters.jsx';
+import AtpTourLogo from '../../assets/atp-tour.svg?react';
+import Atp250Logo from '../../assets/atp-250.svg?react';
+import Atp500Logo from '../../assets/atp-500.svg?react';
+import AtpMastersLogo from '../../assets/atp-masters.svg?react';
 import atpTourSVG from '../../assets/atp-tour.svg';
 import ChevronDownIcon from '../../assets/radix-icons-jsx/chevron-down.jsx';
 import Flag from '../../components/flag';

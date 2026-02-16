@@ -4,9 +4,9 @@ import { Container, Button } from '../components';
 import app from '../../src/index.jsx';
 import clsx from 'clsx';
 
-import RocketIcon from '../assets/radix-icons-jsx/rocket.jsx';
-import GearIcon from '../assets/radix-icons-jsx/gear.jsx';
-import AtpLogo from '../assets/atp-logo.jsx';
+import RocketIcon from '../assets/radix-icons/rocket.svg?react';
+import GearIcon from '../assets/radix-icons/gear.svg?react';
+import AtpLogo from '../assets/atp-logo.svg?react';
 
 
 function Component(props) {

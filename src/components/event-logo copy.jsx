@@ -1,77 +1,62 @@
+import SvgUnitedCup from '../assets/united-cup.jsx';
+import SvgNextGenFinals from '../assets/atp-next-gen-finals.jsx';
+import SvgWimbledon from '../assets/wimbledon.jsx';
+import SvgRolandGarros from '../assets/roland-garros.jsx';
+import SvgUsOpen from '../assets/us-open.jsx';
+import SvgAustralianOpen from '../assets/australian-open.jsx';
+import SvgLaverCup from '../assets/laver-cup.jsx';
+import SvgDavisCup from '../assets/davis-cup.jsx';
+import SvgAtp250 from '../assets/atp-250.jsx';
+import SvgAtpMasters from '../assets/atp-masters.jsx';
+import SvgAtpNittoFinals from '../assets/atp-nitto-finals.jsx';
 
-import atp500 from '../assets/atp-500.png';
-import atp250 from '../assets/atp-250.png';
-import atpMasters from '../assets/atp-masters.png';
-import unitedCup from '../assets/united-cup.png';
-import davisCup from '../assets/davis-cup.png';
-import laverCup from '../assets/laver-cup.png';
-import australianOpen from '../assets/australian-open.png';
-import wimbledon from '../assets/wimbledon.png';
-import usOpen from '../assets/us-open.png';
-import rolandGarros from '../assets/roland-garros.png';
-import atpNittoFinals from '../assets/atp-nitto-finals.png';
-import atpNextGenFinals from '../assets/atp-next-gen-finals.png';
+import LogoAtp500  from '../assets/atp-500.svg?react';
 
 function EventLogo({ event, ...props }) {
-	let url = undefined;
 
-	switch (event.type) {
-		case 'Masters': {
-			url = atpMasters;
-			break;
+	switch (event.name) {
+		case 'Nitto ATP Finals': {
+			return <SvgAtpNittoFinals fill='currentColor' {...props} />;
 		}
-		case 'ATP-500': {
-			url = atp500;
-			break;
+		case 'Wimbledon': {
+			return <SvgWimbledon fill='currentColor' {...props} />;
 		}
-		case 'ATP-250': {
-			url = atp250;
-			break;
+		case 'Roland Garros': {
+			return <SvgRolandGarros fill='currentColor' {...props} />;
 		}
-		case 'Grand Slam': {
-			switch (event.name) {
-				case 'Australian Open': {
-					url = australianOpen;
-					break;
-				}
-				case 'Wimbledon': {
-					url = wimbledon;
-					break;
-				}
-				case 'US Open': {
-					url = usOpen;
-					break;
-				}
-				case 'Roland Garros': {
-					url = rolandGarros;
-					break;
-				}
-			}
-			break;
+		case 'US Open': {
+			return <SvgUsOpen fill='currentColor' {...props} />;
 		}
-		case 'Davis Cup': {
-			url = davisCup;
-			break;
-		}
-		case 'Rod Laver Cup': {
-			url = laverCup;
-			break;
-		}
-		case 'United Cup': {
-			url = unitedCup;
-			break;
-		}
-		case 'XXI': {
-			url = atpNextGenFinals;
-			break;
-		}
-		case 'WC': {
-			url = atpNittoFinals;
-			break;
+		case 'Australian Open': {
+			return <SvgAustralianOpen fill='currentColor' {...props} />;
 		}
 	}
 
-	return <img src={url} {...props} />;
+	switch (event.type) {
+		case 'Rod Laver Cup': {
+			return <SvgLaverCup fill='currentColor' {...props} />;
+		}
+		case 'Masters': {
+			return <SvgAtpMasters fill='currentColor' {...props} />;
+		}
+		case 'ATP-500': {
+            return <LogoAtp500 fill='currentColor' {...props} />;
+		}
+		case 'ATP-250': {
+			return <SvgAtp250 fill='currentColor' {...props} />;
+		}
+		case 'Davis Cup': {
+			return <SvgDavisCup fill='currentColor' {...props} />;
+		}
+		case 'United Cup': {
+			return <SvgUnitedCup fill='currentColor' {...props} />;
+		}
+		case 'Next Gen Finals': {
+			return <SvgNextGenFinals fill='currentColor' {...props} />;
+		}
+	}
+
+    return null;
 }
 
 export default EventLogo;
