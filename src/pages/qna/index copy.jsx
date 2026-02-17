@@ -85,29 +85,27 @@ let Component = () => {
 		);
 	}
 
-	function Query({ sql, title = null, description = '-', ...props }) {
-		const link = `/query?sql=${encodeURIComponent(sql)}&title=${encodeURIComponent(title)}`;
+function Query({ sql, title = null, description = '-', ...props }) {
+	const link = `/query?sql=${encodeURIComponent(sql)}&title=${encodeURIComponent(title)}`;
 
-		return (
-			<div className='border p-4 rounded-md mb-3'>
-				{/* Header */}
-				<div className='flex items-center gap-3'>
-					<Link hover={true} to={link} >
-						<div className='text-2xl'>{title}</div>
-					</Link>
-
-					<Button link={link} className='rounded-full! h-8! w-8! p-0! flex items-center justify-center'>
-						<PlayIcon className='bg-transparent w-6! h-6!' />
-					</Button>
-				</div>
-				{/* Description */}
-				<div className='mt-3 prose prose-sm max-w-none prose-p:text-inherit prose-li:text-inherit prose-strong:text-inherit prose-headings:text-inherit dark:prose-invert'>
-					<ReactMarkdown>{description}</ReactMarkdown>
-				</div>
-			</div>
-		);
-	}
 	return (
+		<div className='border p-4 rounded-md'>
+			{/* Header */}
+			<div className='flex items-center gap-3'>
+				<h3 className='text-2xl font-semibold leading-tight'>{title}</h3>
+
+				<Button link={link} className='rounded-full! h-10! w-10! p-0! flex items-center justify-center'>
+					<PlayIcon className='w-6 h-6' />
+				</Button>
+			</div>
+
+			{/* Description */}
+			<div className='mt-3 prose prose-sm max-w-none prose-p:text-inherit prose-li:text-inherit prose-strong:text-inherit prose-headings:text-inherit dark:prose-invert'>
+				<ReactMarkdown>{description}</ReactMarkdown>
+			</div>
+		</div>
+	);
+}	return (
 		<>
 			<Page id='qna-page'>
 				<Page.Menu />
