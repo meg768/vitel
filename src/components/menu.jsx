@@ -36,13 +36,10 @@ function Component(props) {
 					</MenuItem>
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/players'>Spelare</MenuItem>
+					<MenuItem link='/qna'>Q&A</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
-					<MenuItem link='/chat'>Chat</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center '>
-					<MenuItem link='/qna'>
-						<RocketIcon className='w-6 h-6 ' />
-					</MenuItem>
 					<MenuItem link='/settings'>
 						<GearIcon className='w-6 h-6 ' />
 					</MenuItem>
