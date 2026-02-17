@@ -13,6 +13,7 @@ import Live from './pages/live';
 import Log from './pages/log';
 import App from './pages/app';
 import Trial from './pages/trial';
+import QnA from './pages/qna';
 import Settings from './pages/settings';
 import NotFound from './pages/not-found';
 import Chat from './pages/chat';
@@ -104,6 +105,7 @@ class WebApp {
 						<Route path='/live' element={<Live />} />
 						<Route path='/log' element={<Log />} />
 						<Route path='/trial' element={<Trial />} />
+						<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/chat' element={<Chat />} />

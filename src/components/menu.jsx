@@ -6,7 +6,7 @@ import clsx from 'clsx';
 
 import RocketIcon from '../assets/radix-icons/rocket.svg?react';
 import GearIcon from '../assets/radix-icons/gear.svg?react';
-import AtpLogo from '../assets/atp-logo.svg?react';
+import AtpLogo from '../assets/logos/atp-logo.svg?react';
 
 
 function Component(props) {
@@ -40,7 +40,7 @@ function Component(props) {
 					<MenuItem link='/chat'>Chat</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center '>
-					<MenuItem link='/trial'>
+					<MenuItem link='/qna'>
 						<RocketIcon className='w-6 h-6 ' />
 					</MenuItem>
 					<MenuItem link='/settings'>
