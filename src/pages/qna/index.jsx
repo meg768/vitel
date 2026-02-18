@@ -92,10 +92,6 @@ let Component = () => {
 					<Link hover={true} to={link}>
 						<div className='text-2xl'>{title}</div>
 					</Link>
-
-					<Button link={link} className='rounded-full! h-8! w-8! p-0! flex items-center justify-center'>
-						<PlayIcon className='bg-transparent w-6! h-6!' />
-					</Button>
 				</div>
 				{/* Description */}
 				<Markdown className='mt-1'>{description}</Markdown>

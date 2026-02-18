@@ -1,27 +1,25 @@
 /*
 
-@title
-Top 20 yngsta aktiva spelare
+    @title
+    Unga lovande spelare
 
-@description
-Visar de 20 yngsta aktiva spelarna som spelat minst 10 matcher senaste 12 månaderna.
-Inkluderar ålder, aktuell ranking, bästa ranking (med datum) samt andel vinster senaste 12 månaderna.
+    @description
+    Detta visar de 20 yngsta aktiva spelarna som spelat minst 10 matcher senaste året.
+    Därefter sorteras dessa 20 efter aktuell ranking.
+    Visar ålder aktuell ranking, bästa ranking samt andel vinster (%) senaste året.
+
 
 */
 
 WITH matchrader_12m AS (
-    SELECT
-        winner_id AS player_id,
-        1 AS vinst
+    SELECT winner_id AS player_id, 1 AS vinst
     FROM flatly
     WHERE event_date >= (CURDATE() - INTERVAL 12 MONTH)
       AND winner_id IS NOT NULL
 
     UNION ALL
 
-    SELECT
-        loser_id AS player_id,
-        0 AS vinst
+    SELECT loser_id AS player_id, 0 AS vinst
     FROM flatly
     WHERE event_date >= (CURDATE() - INTERVAL 12 MONTH)
       AND loser_id IS NOT NULL
@@ -33,19 +31,35 @@ matchdata AS (
         SUM(vinst) AS vinster_12m
     FROM matchrader_12m
     GROUP BY player_id
+),
+yngsta_20 AS (
+    SELECT
+        p.id,
+        p.name,
+        p.country,
+        p.rank,
+        p.highest_rank,
+        p.birthdate,
+        md.matcher_12m,
+        md.vinster_12m
+    FROM players p
+    JOIN matchdata md ON md.player_id = p.id
+    WHERE p.active = 1
+      AND p.birthdate IS NOT NULL
+      AND p.rank IS NOT NULL
+      AND md.matcher_12m >= 10
+    ORDER BY
+        p.birthdate DESC,  -- yngst först
+        p.rank ASC
+    LIMIT 20
 )
 SELECT
-    CONCAT(p.name, ' (', p.country, ')') AS `Spelare`,
-    TIMESTAMPDIFF(YEAR, p.birthdate, CURDATE()) AS `Ålder`,
-    p.rank AS `Ranking`,
-    CONCAT(p.highest_rank, ' (', DATE_FORMAT(p.highest_rank_date, '%Y-%m-%d'), ')') AS `Bästa ranking`,
-    ROUND(100 * md.vinster_12m / md.matcher_12m, 0) AS `Andel vinster`
-FROM players p
-JOIN matchdata md ON md.player_id = p.id
-WHERE p.active = 1
-  AND p.birthdate IS NOT NULL
-  AND md.matcher_12m >= 10
+    CONCAT(name, ' (', country, ')') AS `Spelare`,
+    TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS `Ålder`,
+    rank AS `Ranking`,
+    highest_rank AS `Bästa ranking`,
+    ROUND(100 * vinster_12m / matcher_12m, 0) AS `Vinster (%)`
+FROM yngsta_20
 ORDER BY
-    `Ålder` ASC,
-    `Andel vinster` DESC
-LIMIT 20;
+    `Ranking` ASC,
+    `Vinster (%)` DESC;
