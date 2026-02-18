@@ -1,6 +1,6 @@
 import clsx from 'clsx';import Layout from './layout';
 
-import CrossCircledIcon from '../assets/radix-icons-jsx/cross-circled.jsx';
+import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
 import Menu from './menu';
 import tennisBall from '../assets/tennis-ball.png';
 

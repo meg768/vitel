@@ -1,5 +1,5 @@
 import React from 'react';
-import clsx from 'clsx';import colors from '../colors';
+import clsx from 'clsx';
 
 class Column {
     constructor(child, index) {

@@ -6,7 +6,7 @@ import Button  from '../../components/ui/button';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 
-import ChevronRightIcon from '../../assets/radix-icons-jsx/chevron-right.jsx';
+import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
 
 import { useRequest } from '../../js/vitel.js';
 
