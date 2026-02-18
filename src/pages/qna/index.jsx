@@ -1,16 +1,13 @@
 import React from 'react';
 import Page from '../../components/page';
 import Link from '../../components/ui/link';
-import ReactMarkdown from 'react-markdown';
+import Markdown from '../../components/ui/markdown';
 import PlayIcon from '../../assets/radix-icons/triangle-right.svg?react';
 
 import { Button } from '../../components';
 
-const sqlFiles = import.meta.glob('./queries/*.sql', {
-	query: '?raw',
-	import: 'default',
-	eager: true
-});
+// Load all SQL files in the queries folder, with raw content, eagerly
+const sqlFiles = import.meta.glob('./queries/*.sql', { query: '?raw', import: 'default', eager: true });
 
 let Component = () => {
 	function Content() {
@@ -86,13 +83,13 @@ let Component = () => {
 	}
 
 	function Query({ sql, title = null, description = '-', ...props }) {
-		const link = `/query?sql=${encodeURIComponent(sql)}&title=${encodeURIComponent(title)}`;
+		const link = `/query?sql=${encodeURIComponent(sql)}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`;
 
 		return (
-			<div className='border p-4 rounded-md mb-3'>
+			<div className='border p-4 rounded-md mb-3 hover:bg-primary-50 dark:hover:bg-primary-900 transition-colors' {...props}>
 				{/* Header */}
 				<div className='flex items-center gap-3'>
-					<Link hover={true} to={link} >
+					<Link hover={true} to={link}>
 						<div className='text-2xl'>{title}</div>
 					</Link>
 
@@ -101,9 +98,7 @@ let Component = () => {
 					</Button>
 				</div>
 				{/* Description */}
-				<div className='mt-3 prose prose-sm max-w-none prose-p:text-inherit prose-li:text-inherit prose-strong:text-inherit prose-headings:text-inherit dark:prose-invert'>
-					<ReactMarkdown>{description}</ReactMarkdown>
-				</div>
+				<Markdown className='mt-1'>{description}</Markdown>
 			</div>
 		);
 	}

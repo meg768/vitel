@@ -1,6 +1,37 @@
 import { useSearchParams } from 'react-router';
-import Page from '../../components/page';
 import { useSQL } from '../../js/vitel';
+import Page from '../../components/page';
+import Table from '../../components/ui/data-table';
+import Markdown from '../../components/ui/markdown';
+
+function getMetaData(rows) {
+	if (!rows || rows.length === 0) {
+		return { columns: [], meta: {} };
+	}
+
+	const columns = Object.keys(rows[0]);
+
+	const meta = {};
+
+	for (const col of columns) {
+		const values = rows.map(r => r[col]).filter(v => v !== null && v !== undefined && v !== '');
+		const isNumber = values.length > 0 && values.every(v => Number.isFinite(typeof v === 'number' ? v : Number(String(v).replace(',', '.'))));
+		const isDate = !isNumber && values.length > 0 && values.every(v => !isNaN(Date.parse(v)));
+
+		let type = 'text';
+		if (isNumber) type = 'number';
+		else if (isDate) type = 'date';
+
+		meta[col] = {
+			type,
+			align: type === 'number' ? 'right' : 'left',
+			isNumeric: type === 'number',
+			isDate: type === 'date'
+		};
+	}
+
+	return { columns, meta };
+}
 
 function Component() {
 	const [searchParams] = useSearchParams();
@@ -10,18 +41,51 @@ function Component() {
 	params.title = searchParams.get('title') || null;
 	params.description = searchParams.get('description') || null;
 
-	console.log('Query page received query:', params);
-
 	function Title() {
 		return <Page.Title className='flex justify-left items-center gap-2'>{params.title || 'Query'}</Page.Title>;
 	}
 
 	function Content() {
+		let { data, error } = useSQL({ sql: params.sql, cache: 1000 * 60 * 5 });
+
+		if (error) {
+			return <Page.Error>Misslyckades med att läsa in - {error.message}</Page.Error>;
+		}
+
+		if (!data) {
+			return <Page.Loading>Läser in data...</Page.Loading>;
+		}
+
+		const { columns, meta } = getMetaData(data);
+
 		return (
 			<>
 				<Title />
 				<Page.Container>
-					<pre className='text-xs bg-black/10 p-2 rounded overflow-auto'>{params.sql}</pre>
+					{/* Description */}
+					<Markdown className='border p-2 bg-primary-50 dark:bg-primary-900 rounded-md mb-3'>{params.description}</Markdown>
+					{/* Table */}
+					<Table rows={data} className='striped hover'>
+						{columns.map(id => (
+							<Table.Column key={id} id={id}>
+								<Table.Title className={meta[id].align === 'right' ? 'text-right' : ''}>{id}</Table.Title>
+
+								<Table.Cell className={meta[id].align === 'right' ? 'text-right' : ''}>
+									{({ value }) => {
+										if (meta[id].isNumeric) {
+											return Number(value).toLocaleString('sv-SE');
+										}
+
+										if (meta[id].isDate) {
+											return new Date(value).toLocaleDateString('sv-SE');
+										}
+
+										return value;
+									}}
+								</Table.Cell>
+							</Table.Column>
+						))}
+					</Table>
 				</Page.Container>
 			</>
 		);
