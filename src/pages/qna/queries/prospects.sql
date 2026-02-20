@@ -1,7 +1,7 @@
 /*
 
     @title
-    Unga lovande spelare
+    Unga lovande spelare (aka "Prospects")
 
     @description
     Detta visar de 20 yngsta aktiva spelarna som spelat minst 10 matcher senaste året.

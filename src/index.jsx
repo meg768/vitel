@@ -19,6 +19,7 @@ import NotFound from './pages/not-found';
 import Chat from './pages/chat';
 import AskBob from './pages/ask-bob';
 import Query from './pages/query';
+import Currently from './pages/currently';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
@@ -112,6 +113,7 @@ class WebApp {
 						<Route path='/chat' element={<Chat />} />
 						<Route path='/ask-bob' element={<AskBob />} />
 						<Route path='/query' element={<Query />} />
+						<Route path='/currently' element={<Currently />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>
