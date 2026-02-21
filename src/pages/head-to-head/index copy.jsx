@@ -10,7 +10,6 @@ import { PlayerRankingComparisonChart } from '../../components/player-ranking-ch
 
 import { useSQL } from '../../js/vitel';
 
-
 let Component = () => {
 	function fetch() {
 		const params = useParams();
@@ -40,7 +39,7 @@ let Component = () => {
 		sql += 'SELECT * FROM flatly WHERE winner_id = ? OR loser_id = ?; ';
 		format = format.concat([params.B, params.B]);
 
-		return useSQL({ sql: sql, format: format, cache: 1000 * 60 * 5 });
+		return useSQL({ sql: sql, format: format });
 
 		//let [matches, [playerOne], [playerTwo], playerOneMatches, playerTwoMatches] = await mysql.query({ sql: sql, format: format });
 		//let response = { matches: matches, playerOne: playerOne, playerTwo: playerTwo, playerOneMatches: playerOneMatches, playerTwoMatches: playerTwoMatches };

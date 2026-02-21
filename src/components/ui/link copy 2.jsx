@@ -3,10 +3,11 @@ import clsx from 'clsx';
 import { Link } from 'react-router';
 
 function Component({ to, query, hover = true, className, ...props }) {
+
 	className = clsx(className, 'bg-transparent');
 
 	if (hover) {
-		className = clsx(className, 'hover:opacity-60');
+		className = clsx(className, 'hover:opacity-90');
 	}
 
 	if (query) {

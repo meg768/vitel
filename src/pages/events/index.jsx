@@ -7,7 +7,6 @@ import Menu from '../../components/menu';
 import { useSQL } from '../../js/vitel.js';
 
 function Component() {
-
 	function getQuery() {
 		const [searchParams] = useSearchParams();
 		let query = searchParams.get('query');
@@ -24,14 +23,14 @@ function Component() {
 	}
 
 	function fetch(query) {
-		let {sql, format} = query;
+		let { sql, format } = query;
 
 		if (!sql) {
 			sql = `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC LIMIT 100`;
 			format = [];
 		}
 
-		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
+		return useSQL({ sql, format });
 	}
 
 	function Content() {

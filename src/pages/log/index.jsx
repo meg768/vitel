@@ -4,7 +4,6 @@ import { useSQL } from '../../js/vitel';
 import Table from '../../components/ui/data-table';
 import Page from '../../components/page';
 
-
 function Component() {
 	const queryKey = `logs`;
 
@@ -12,7 +11,7 @@ function Component() {
 		let sql = '';
 		sql += `SELECT * FROM log WHERE timestamp >= CURDATE() - INTERVAL 1 DAY ORDER BY timestamp ASC;`;
 
-		return useSQL({ sql, format:[], cache: 10000 });
+		return useSQL({ sql });
 	}
 
 	function LogTable({ rows }) {
@@ -44,10 +43,9 @@ function Component() {
 
 		return <Content />;
 	}
-	
 
 	function Content() {
-		let { data:log, error } = fetch();
+		let { data: log, error } = fetch();
 
 		if (error) {
 			return <Page.Error>{error.message}</Page.Error>;

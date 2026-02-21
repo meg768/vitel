@@ -116,7 +116,7 @@ function Component () {
 
 		let format = [params.id, params.id, params.id];
 
-		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
+		return useSQL({ sql, format});
 	}
 
 	function Title({ player }) {

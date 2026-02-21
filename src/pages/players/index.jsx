@@ -24,7 +24,7 @@ let Component = () => {
 			sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
 		}
 
-		let { data: players, error } = useSQL({ sql, format, cache: 1000 * 60 * 5 });
+		let { data: players, error } = useSQL({ sql, format});
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;

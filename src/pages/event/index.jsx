@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import {useSQL} from '../../js/vitel';
+import { useSQL } from '../../js/vitel';
 
 import Link from '../../components/ui/link';
 
@@ -10,7 +10,6 @@ import Page from '../../components/page';
 import Menu from '../../components/menu';
 
 export default function EventPage() {
-
 	function fetch() {
 		const { id } = useParams();
 
@@ -24,14 +23,13 @@ export default function EventPage() {
 
 		let format = [id, id];
 
-		return useSQL({ sql, format, cache: 1000 * 60 * 5 });
-
+		return useSQL({ sql, format });
 	}
 
 	function Content() {
 		const { id } = useParams();
 
-		let { data:response, error } = fetch();
+		let { data: response, error } = fetch();
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in turnering - {error.message}</Page.Error>;
@@ -75,11 +73,11 @@ export default function EventPage() {
 					<EventSummary event={event} matches={matches} />
 
 					<Page.Title level={2}>Matcher</Page.Title>
-					<Matches matches={matches} owner={id} hide={['event_date', 'event_name', 'event_surface']}/>
+					<Matches matches={matches} owner={id} hide={['event_date', 'event_name', 'event_surface']} />
 				</Page.Container>
 			</>
 		);
-	};
+	}
 
 	return (
 		<Page id='event-page'>

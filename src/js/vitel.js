@@ -4,7 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import service from './service.js';
 import hash from 'object-hash';
 
-function useRequest({ path, method, body, cache = 0, retry = 0 }) {
+// Default cache time for SQL queries (1 hour) since the data doesn't change often and can be expensive to fetch
+const DEFAULT_CACHE_TIME = 60 * 60 * 1000; 
+
+function useRequest({ path, method, body, cache = DEFAULT_CACHE_TIME, retry = 0 }) {
 	const queryKey = ['request', hash({ path, method, body })];
 
 	const queryFn = async function () {
@@ -12,7 +15,6 @@ function useRequest({ path, method, body, cache = 0, retry = 0 }) {
 	};
 
 	return useQuery({ queryKey, queryFn, staleTime: cache, retry });
-
 }
 
 function useSQL({ sql, format = [], cache, retry = 0 }) {

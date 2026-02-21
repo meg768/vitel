@@ -46,7 +46,7 @@ function Component() {
 	}
 
 	function Content() {
-		let { data, error } = useSQL({ sql: params.sql, cache: 1000 * 60 * 5 });
+		let { data, error } = useSQL({ sql: params.sql});
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in - {error.message}</Page.Error>;
