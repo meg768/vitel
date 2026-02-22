@@ -47,8 +47,14 @@ let Component = () => {
 		}
 
 		// SQL = ta bort första kommentaren (om finns), trimma
-		const sql = commentMatch ? text.replace(commentMatch[0], '').trim() : text.trim();
+		let sql = commentMatch ? text.replace(commentMatch[0], '') : text;
 
+		// Ta bort överflödiga radbrytningar och mellanslag
+		sql = sql
+			.replace(/\s+/g, ' ') // alla whitespace-sekvenser → ett mellanslag
+			.replace(/\s*,\s*/g, ', ') // snyggare kommatecken
+			.trim();
+            
 		// Fallbacks
 		const fallbackTitle = filename.replace(/\.sql$/i, '').replace(/[-_]/g, ' ');
 		return {
