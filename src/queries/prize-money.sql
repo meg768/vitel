@@ -4,12 +4,12 @@ Spelare med mest intjänade prispengar
 
 @description
 Visar spelare sorterade på totala karriärens prispengar.
+Spelaren visas som "Namn (Land)".
 Aktivt intervall baseras på första och sista året spelaren förekommer i matchdata.
-
+Prispengar formateras med $-tecken och tusentalsavgränsare.
 */
 SELECT
-    p.name AS Namn,
-    p.country AS Land,
+    CONCAT(p.name, ' (', p.country, ')') AS Spelare,
     CONCAT('$', FORMAT(p.career_prize, 0)) AS Prispengar,
     CONCAT(MIN(YEAR(e.date)), '–', MAX(YEAR(e.date))) AS Aktiv
 FROM
@@ -30,4 +30,4 @@ ORDER BY
     p.career_prize DESC,
     p.name ASC
 LIMIT
-    100;
+    200;

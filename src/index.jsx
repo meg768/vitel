@@ -112,7 +112,7 @@ class WebApp {
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/chat' element={<Chat />} />
 						<Route path='/ask-bob' element={<AskBob />} />
-						<Route path='/query' element={<Query />} />
+						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />
 					</Routes>
 				</HashRouter>

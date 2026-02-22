@@ -8,8 +8,6 @@ const Button = React.forwardRef((properties, ref) => {
 
 	className = clsx(['rounded-sm px-3 py-2', 'bg-primary-700 text-primary-50', 'hover:bg-primary-600 hover:dark:bg-primary-600'], className);
 
-    console.log(className);
-    
 	if (disabled) {
 		className = clsx('opacity-50', className);
 	}

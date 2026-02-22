@@ -1,8 +1,9 @@
-import { useSearchParams } from 'react-router';
+import { useSearchParams, useParams } from 'react-router';
 import { useSQL } from '../../js/vitel';
 import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
 import Markdown from '../../components/ui/markdown';
+import { queries } from '../../js/queries';
 
 function getMetaData(rows) {
 	if (!rows || rows.length === 0) {
@@ -34,19 +35,15 @@ function getMetaData(rows) {
 }
 
 function Component() {
-	const [searchParams] = useSearchParams();
-
-	const params = {};
-	params.sql = searchParams.get('sql') || null;
-	params.title = searchParams.get('title') || null;
-	params.description = searchParams.get('description') || null;
+	const { name } = useParams();
+	const query = queries.find(item => item.name === name);
 
 	function Title() {
-		return <Page.Title className='flex justify-left items-center gap-2'>{params.title || 'Query'}</Page.Title>;
+		return <Page.Title className='flex justify-left items-center gap-2'>{query.title || 'Query'}</Page.Title>;
 	}
 
 	function Content() {
-		let { data, error } = useSQL({ sql: params.sql});
+		let { data, error } = useSQL({ sql: query.sql });
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in - {error.message}</Page.Error>;
@@ -63,7 +60,7 @@ function Component() {
 				<Title />
 				<Page.Container>
 					{/* Description */}
-					<Markdown className='border p-2 bg-primary-50 dark:bg-primary-900 rounded-md mb-3'>{params.description}</Markdown>
+					<Markdown className='border p-2 bg-primary-50 dark:bg-primary-900 rounded-md mb-3'>{query.description}</Markdown>
 					{/* Table */}
 					<Table rows={data} className='striped hover'>
 						{columns.map(id => (
