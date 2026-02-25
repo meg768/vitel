@@ -114,6 +114,7 @@ class WebApp {
 						<Route path='/ask-bob' element={<AskBob />} />
 						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />
+						<Route path='*' element={<NotFound />} />
 					</Routes>
 				</HashRouter>
 			</QueryClientProvider>

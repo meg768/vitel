@@ -43,6 +43,13 @@ function Component() {
 	}
 
 	function Content() {
+		if (!query) {
+			return <Page.Error>Frågan hittades inte ({name}).</Page.Error>;
+		}
+		return <QueryContent />;
+	}
+
+	function QueryContent() {
 		let { data, error } = useSQL({ sql: query.sql });
 
 		if (error) {

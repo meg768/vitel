@@ -1,19 +1,11 @@
-import React from 'react';
 import { Link } from 'react-router';
-import { Container, Button } from '../components';
-import app from '../../src/index.jsx';
-import clsx from 'clsx';
+import { Button } from '../components';
 
-import RocketIcon from '../assets/radix-icons/rocket.svg?react';
 import GearIcon from '../assets/radix-icons/gear.svg?react';
 import AtpLogo from '../assets/logos/atp-logo.svg?react';
 
 
-function Component(props) {
-
-	function toggleDarkMode() {
-		app.toggleTheme();
-	}
+function Component() {
 
 	function MenuItem(props) {
 		let buttonClass = 'bg-transparent! hover:bg-primary-700!';
