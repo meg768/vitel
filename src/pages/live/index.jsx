@@ -1,13 +1,11 @@
 import { Link as RouterLink } from 'react-router';
 
-import Table from '../../components/ui/data-table';
-import Link from '../../components/ui/link';
-import Button  from '../../components/ui/button';
+import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
-
-import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
-
+import Button  from '../../components/ui/button';
+import Table from '../../components/ui/data-table';
+import Link from '../../components/ui/link';
 import { useRequest } from '../../js/vitel.js';
 
 function isMatchFinished(score) {

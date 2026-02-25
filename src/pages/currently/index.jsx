@@ -1,9 +1,8 @@
-import React from 'react';
-import Page from '../../components/page';
-import Flag from '../../components/flag';
-import Link from '../../components/ui/link';
-import EventLogo from '../../components/event-logo';
 
+import EventLogo from '../../components/event-logo';
+import Flag from '../../components/flag';
+import Page from '../../components/page';
+import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel.js';
 
 let Component = () => {

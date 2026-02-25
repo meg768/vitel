@@ -1,8 +1,8 @@
 // src/pages/ask-bob/index.jsx
-import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'react-router';
 import clsx from 'clsx';
+import { useEffect, useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useSearchParams } from 'react-router';
 import remarkGfm from 'remark-gfm';
 
 import Page from '../../components/page';

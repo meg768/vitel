@@ -1,7 +1,6 @@
-import { useSQL } from '../../js/vitel';
-
-import Table from '../../components/ui/data-table';
 import Page from '../../components/page';
+import Table from '../../components/ui/data-table';
+import { useSQL } from '../../js/vitel';
 
 function Component() {
 	const queryKey = `logs`;

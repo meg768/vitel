@@ -1,5 +1,5 @@
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 let Table = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 

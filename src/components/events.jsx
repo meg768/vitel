@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from '../components/ui/link';
+
 import Table from './ui/data-table';
+import Link from '../components/ui/link';
 
 function Component({ events }) {
 	function Content() {

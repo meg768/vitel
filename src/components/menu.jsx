@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
-import { Button } from '../components';
 
-import GearIcon from '../assets/radix-icons/gear.svg?react';
+import { Button } from '../components';
 import AtpLogo from '../assets/logos/atp-logo.svg?react';
+import GearIcon from '../assets/radix-icons/gear.svg?react';
 
 
 function Component() {

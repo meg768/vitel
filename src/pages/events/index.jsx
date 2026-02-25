@@ -1,9 +1,8 @@
 import { useSearchParams } from 'react-router';
 
 import Events from '../../components/events';
-import Page from '../../components/page';
 import Menu from '../../components/menu';
-
+import Page from '../../components/page';
 import { useSQL } from '../../js/vitel.js';
 
 function Component() {

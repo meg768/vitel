@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Page from '../../components/page';
 import Link from '../../components/ui/link';
 import Markdown from '../../components/ui/markdown';

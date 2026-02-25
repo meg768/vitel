@@ -1,7 +1,8 @@
-import React from 'react';
+
+
+import clsx from 'clsx';
 
 import { Table } from '../components/ui';
-import clsx from 'clsx';
 let Component = ({ children }) => {
 	return (
 		<div className='overflow-auto'>

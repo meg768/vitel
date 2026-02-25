@@ -1,10 +1,7 @@
-import React from 'react';
-import sprintf from 'yow/sprintf';
-import isDate from 'yow/isDate';
-import isString from 'yow/isString';
 
 import clsx from 'clsx';
 import { LineChart, Line, Legend, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from 'recharts';
+import sprintf from 'yow/sprintf';
 
 function getRankingPointsByMonth({ matches, player }) {
 	let ranks = {};

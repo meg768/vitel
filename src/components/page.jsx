@@ -1,8 +1,9 @@
-import clsx from 'clsx';import Layout from './layout';
+import clsx from 'clsx';
 
 import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
+import Layout from './layout';
 import Menu from './menu';
-import tennisBall from '../assets/tennis-ball.png';
+
 
 function Component({ className, ...props }) {
 	className = clsx(className, 'flex flex-col h-screen');

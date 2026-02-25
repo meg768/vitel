@@ -1,15 +1,15 @@
-import LogoUnitedCup from '../assets/logos/united-cup.svg?react';
-import LogoNextGenFinals from '../assets/logos/atp-next-gen-finals.svg?react';
-import LogoWimbledon from '../assets/logos/wimbledon.svg?react';
-import LogoRolandGarros from '../assets/logos/roland-garros.svg?react';
-import LogoUsOpen from '../assets/logos/us-open.svg?react';
-import LogoAustralianOpen from '../assets/logos/australian-open.svg?react';
-import LogoLaverCup from '../assets/logos/laver-cup.svg?react';
-import LogoDavisCup from '../assets/logos/davis-cup.svg?react';
 import LogoAtp250 from '../assets/logos/atp-250.svg?react';
-import LogoAtpMasters from '../assets/logos/atp-masters.svg?react';
-import LogoAtpNittoFinals from '../assets/logos/atp-nitto-finals.svg?react';
 import LogoAtp500 from '../assets/logos/atp-500.svg?react';
+import LogoAtpMasters from '../assets/logos/atp-masters.svg?react';
+import LogoNextGenFinals from '../assets/logos/atp-next-gen-finals.svg?react';
+import LogoAtpNittoFinals from '../assets/logos/atp-nitto-finals.svg?react';
+import LogoAustralianOpen from '../assets/logos/australian-open.svg?react';
+import LogoDavisCup from '../assets/logos/davis-cup.svg?react';
+import LogoLaverCup from '../assets/logos/laver-cup.svg?react';
+import LogoRolandGarros from '../assets/logos/roland-garros.svg?react';
+import LogoUnitedCup from '../assets/logos/united-cup.svg?react';
+import LogoUsOpen from '../assets/logos/us-open.svg?react';
+import LogoWimbledon from '../assets/logos/wimbledon.svg?react';
 
 function EventLogo({ event, ...props }) {
 	switch (event.name) {

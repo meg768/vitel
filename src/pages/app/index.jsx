@@ -1,25 +1,18 @@
+import clsx from 'clsx';
 import React from 'react';
-import { service as atp, useSQL } from '../../js/vitel.js';
 import { useNavigate } from 'react-router';
-
-import { Button, Container } from '../../components/ui';
-
-import { useState, useRef } from 'react';
-
-import PlayerPicker from '../../components/player-picker';
-import Menu from '../../components/menu';
-import Link from '../../components/ui/link';
-import Page from '../../components/page';
-
-import LocalStorage from '../../js/local-storage';
-import { Info } from '../../components/icons';
 
 import AtpTourLogo from '../../assets/logos/atp-tour.svg?react';
 import ChevronDownIcon from '../../assets/radix-icons/chevron-down.svg?react';
-import Flag from '../../components/flag';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
-
-import clsx from 'clsx';
+import Flag from '../../components/flag';
+import { Info } from '../../components/icons';
+import Page from '../../components/page';
+import PlayerPicker from '../../components/player-picker';
+import { Button } from '../../components/ui';
+import Link from '../../components/ui/link';
+import LocalStorage from '../../js/local-storage';
+import { service as atp, useSQL } from '../../js/vitel.js';
 
 let locals = new LocalStorage({ key: 'AppPage-2	' });
 

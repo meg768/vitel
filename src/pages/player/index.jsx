@@ -1,15 +1,12 @@
 import { useParams } from 'react-router';
 
+import Flag from '../../components/flag';
+import Matches from '../../components/matches';
+import Page from '../../components/page';
+import { PlayerRankingChart } from '../../components/player-ranking-charts';
+import PlayerSummary from '../../components/player-summary';
 import Link from '../../components/ui/link';
 import Tabs from '../../components/ui/tabs';
-
-import Page from '../../components/page';
-import PlayerSummary from '../../components/player-summary';
-import Matches from '../../components/matches';
-import Flag from '../../components/flag';
-
-import { PlayerRankingChart } from '../../components/player-ranking-charts';
-
 import { useSQL } from '../../js/vitel';
 
 function PlayerMatchTabs({ matches, player }) {

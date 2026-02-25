@@ -1,13 +1,12 @@
 import { useParams } from 'react-router';
-import { useSQL } from '../../js/vitel';
 
-import Link from '../../components/ui/link';
-
-import Matches from '../../components/matches';
 import EventLogo from '../../components/event-logo';
 import EventSummary from '../../components/event-summary';
+import Matches from '../../components/matches';
 import Page from '../../components/page';
-import Menu from '../../components/menu';
+import Link from '../../components/ui/link';
+import { useSQL } from '../../js/vitel';
+
 
 export default function EventPage() {
 	function fetch() {

@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 import SummaryTable from './summary-table';
 

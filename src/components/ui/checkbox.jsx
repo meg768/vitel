@@ -1,8 +1,8 @@
-import './checkbox.scss';
+import clsx from 'clsx';
+import { Checkbox } from 'radix-ui';
 
-import React from 'react';
-import clsx from 'clsx';import { Checkbox } from 'radix-ui';
 import CheckIcon from '../assets/radix-icons-jsx/check.jsx';
+import './checkbox.scss';
 
 
 function Component(properties) {

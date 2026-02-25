@@ -1,6 +1,6 @@
 
-import React from 'react';
 import clsx from 'clsx';
+import React from 'react';
 const Input = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 

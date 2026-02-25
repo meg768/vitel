@@ -1,8 +1,7 @@
 import { useSearchParams } from 'react-router';
 
-import Players from '../../components/players';
 import Page from '../../components/page';
-
+import Players from '../../components/players';
 import { useSQL } from '../../js/vitel.js';
 
 let Component = () => {

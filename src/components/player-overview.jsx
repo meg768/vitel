@@ -1,7 +1,7 @@
-import React from 'react';
+
 
 import PlayerSummary from './player-summary';
-import PlayerDetails from './player-details';
+
 
 let Component = ({ player, matches }) => {
 	let src = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;

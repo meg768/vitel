@@ -1,10 +1,11 @@
 
+import { useQuery } from '@tanstack/react-query';
+
+import Menu from '../../components/menu';
+import Page from '../../components/page';
+import Players from '../../components/players';
 import { Container } from '../../components/ui';
 import mysql from '../../js/service';
-import Players from '../../components/players';
-import Page from '../../components/page';
-import Menu from '../../components/menu';
-import { useQuery } from '@tanstack/react-query';
 
 
 let Component = () => {

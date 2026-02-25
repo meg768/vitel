@@ -1,6 +1,7 @@
-import React from 'react';
-import { DropdownMenu, Input } from '../components/ui';
 import clsx from 'clsx';
+import React from 'react';
+
+import { DropdownMenu, Input } from '../components/ui';
 function PlayerSelect({ players, children, onChange }) {
 	let [filter, setFilter] = React.useState('');
 

@@ -1,13 +1,11 @@
 import { useParams } from 'react-router';
 
-import Link from '../../components/ui/link';
-
-import Page from '../../components/page';
 import Flag from '../../components/flag';
-import PlayerSummary from '../../components/player-summary';
 import Matches from '../../components/matches';
+import Page from '../../components/page';
 import { PlayerRankingComparisonChart } from '../../components/player-ranking-charts';
-
+import PlayerSummary from '../../components/player-summary';
+import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel';
 
 let Component = () => {

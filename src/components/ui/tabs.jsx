@@ -1,7 +1,7 @@
 
-import React from 'react';
 import * as Original  from '@radix-ui/react-tabs';
 import clsx from 'clsx';
+import React from 'react';
 let Component = {};
 
 Component.Root = React.forwardRef((properties, ref) => {

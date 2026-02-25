@@ -1,8 +1,7 @@
 import Page from '../../components/page';
 import Link from '../../components/ui/link';
-
-import prospects from './prospects.js';
 import goat from './goat.js';
+import prospects from './prospects.js';
 import topPlayers from './top-players.js';
 
 let Component = () => {

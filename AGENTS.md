@@ -91,6 +91,11 @@ Updated: 2026-02-25
   - `src/pages/app/index.jsx`
   - `src/components/ui/table.jsx`
   - `utilities/fetch-flags.js`
+- Removed unused import specifiers/redundant import declarations across the codebase (including `src`, `utilities`, and generated JSX icon components under `src/assets/CCCradix-icons-jsx`).
+- Normalized `.jsx` import spacing so there is never more than one blank line between consecutive import statements.
+- Sorted `.jsx` imports with this order:
+  - external modules first
+  - then internal imports sorted by source folder/path
 
 ## Working Notes
 - README is minimal (`README.md` contains only `# vite`).

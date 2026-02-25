@@ -1,7 +1,8 @@
-import React from 'react';
+
 import { useQuery } from '@tanstack/react-query';
-import Page from './page';
+
 import Menu from './menu';
+import Page from './page';
 
 export default function QueryPage({ id, queryKey, queryFn, children }) {
 	if (!Array.isArray(queryKey)) {

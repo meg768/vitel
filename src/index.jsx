@@ -1,26 +1,25 @@
-import ReactDOM from 'react-dom/client';
-
-import { HashRouter, Routes, Route } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ReactDOM from 'react-dom/client';
+import { HashRouter, Routes, Route } from 'react-router';
 
-import Player from './pages/player';
-import HeadToHead from './pages/head-to-head';
+import ABC from './pages/abc';
+import App from './pages/app';
+import AskBob from './pages/ask-bob';
+import Chat from './pages/chat';
+import Currently from './pages/currently';
 import Event from './pages/event';
-import Ranking from './pages/ranking';
 import Events from './pages/events';
-import Players from './pages/players';
+import HeadToHead from './pages/head-to-head';
 import Live from './pages/live';
 import Log from './pages/log';
-import App from './pages/app';
-import Trial from './pages/trial';
-import QnA from './pages/qna';
-import Settings from './pages/settings';
 import NotFound from './pages/not-found';
-import Chat from './pages/chat';
-import AskBob from './pages/ask-bob';
+import Player from './pages/player';
+import Players from './pages/players';
+import QnA from './pages/qna';
 import Query from './pages/query';
-import Currently from './pages/currently';
-import ABC from './pages/abc';
+import Ranking from './pages/ranking';
+import Settings from './pages/settings';
+import Trial from './pages/trial';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {

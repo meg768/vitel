@@ -1,7 +1,7 @@
-import React from 'react';
 
-import SummaryTable from './summary-table';
+
 import Avatar from './avatar';
+import SummaryTable from './summary-table';
 
 function computeStatistics({ player, matches }) {
 

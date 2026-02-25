@@ -1,8 +1,7 @@
-import React from 'react';
-import Link  from './../components/ui/link';
-import Table from './ui/data-table';
 
 import ChevronRightIcon from '../assets/radix-icons/chevron-right.svg?react';
+import Table from './ui/data-table';
+import Link  from './../components/ui/link';
 
 function Component({ matches, owner, hide = [] }) {
 

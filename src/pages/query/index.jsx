@@ -1,9 +1,10 @@
-import { useSearchParams, useParams } from 'react-router';
-import { useSQL } from '../../js/vitel';
+import { useParams } from 'react-router';
+
 import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
 import Markdown from '../../components/ui/markdown';
 import { queries } from '../../js/queries';
+import { useSQL } from '../../js/vitel';
 
 function getMetaData(rows) {
 	if (!rows || rows.length === 0) {

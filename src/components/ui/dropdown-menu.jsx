@@ -1,8 +1,8 @@
+import clsx from 'clsx';
+import { DropdownMenu as Original } from 'radix-ui';
 import React from 'react';
 
 import './dropdown-menu.scss';
-import { DropdownMenu as Original } from 'radix-ui';
-import clsx from 'clsx';
 let Component = {};
 
 Component.Item = React.forwardRef((properties, ref) => {
