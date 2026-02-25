@@ -20,6 +20,7 @@ import Chat from './pages/chat';
 import AskBob from './pages/ask-bob';
 import Query from './pages/query';
 import Currently from './pages/currently';
+import ABC from './pages/abc';
 
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
@@ -114,6 +115,7 @@ class WebApp {
 						<Route path='/ask-bob' element={<AskBob />} />
 						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />
+						<Route path='/abc' element={<ABC />} />
 						<Route path='*' element={<NotFound />} />
 					</Routes>
 				</HashRouter>

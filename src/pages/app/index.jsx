@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router';
 import { Button, Container } from '../../components/ui';
 
 import { useState, useRef } from 'react';
-//import { NavLink, Link } from 'react-router';
 
 import PlayerPicker from '../../components/player-picker';
 import Menu from '../../components/menu';
@@ -21,7 +20,6 @@ import Flag from '../../components/flag';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
 
 import clsx from 'clsx';
-//import { useSqlQuery } from '../../js/use-sql-query.js';
 
 let locals = new LocalStorage({ key: 'AppPage-2	' });
 

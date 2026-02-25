@@ -1,4 +1,3 @@
-//import './table.scss';
 import React from 'react';
 import clsx from 'clsx';
 let Table = React.forwardRef((properties, ref) => {
