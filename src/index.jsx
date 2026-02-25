@@ -11,6 +11,7 @@ import HeadToHead from './pages/head-to-head';
 import Live from './pages/live';
 import Log from './pages/log';
 import NotFound from './pages/not-found';
+import PLJ from './pages/plj';
 import Player from './pages/player';
 import Players from './pages/players';
 import QnA from './pages/qna';
@@ -19,13 +20,18 @@ import Ranking from './pages/ranking';
 import Settings from './pages/settings';
 import Trial from './pages/trial';
 
+// Application entrypoint: handles bootstrapping, theme setup, and route rendering.
 class WebApp {
 	constructor({ rootId = 'root' } = {}) {
+		// Theme classes are applied to body, so the app is mounted on body as well.
 		this.rootElement = document.body;
+		// Keep rootId fallback for quick switch back to #root mounting if needed.
 		//this.rootElement = document.getElementById(rootId);
+		// Classes that may be toggled by theme/surface handling.
 		this.themeClasses = ['dark', 'light', 'clay', 'grass', 'hard'];
 		this.mql = null;
 
+		// Load persisted theme and apply it before first render.
 		this.theme = this.getInitialTheme();
 		this.applyTheme(this.theme);
 
@@ -33,13 +39,15 @@ class WebApp {
 	}
 
 	getInitialTheme() {
+		// Stored format: "<mode> <surface>", e.g. "dark clay".
 		let theme = localStorage.getItem('theme');
 
-		// Accept any valid "mode surface" combination
+		// Accept any valid "mode surface" combination.
 		const validTheme = /^(light|dark|auto) (hard|clay|grass)$/;
 
 		if (!theme || !validTheme.test(theme)) {
 			let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			// Current product default overrides system preference.
 			prefersDark = false;
 			theme = prefersDark ? 'dark hard' : 'light hard';
 			localStorage.setItem('theme', theme);
@@ -52,21 +60,25 @@ class WebApp {
 		const root = this.rootElement;
 		if (!root) return;
 
+		// Remove all known theme/surface classes, then apply current selection.
 		root.classList.remove(...this.themeClasses);
 
 		const [mode, surface] = theme.split(' ');
 
+		// "auto" resolves to current OS preference.
 		const resolvedMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
 
 		root.classList.add(resolvedMode);
 		if (surface) root.classList.add(surface);
 
+		// In auto mode we subscribe to system theme changes.
 		if (mode === 'auto') {
 			this.setupAutoListener(surface);
 		}
 	}
 
 	setupAutoListener(surface) {
+		// Ensure we never keep multiple listeners alive.
 		if (this.mql) {
 			this.mql.removeEventListener('change', this._autoListener);
 		}
@@ -90,6 +102,7 @@ class WebApp {
 	}
 
 	run() {
+		// App providers and all client-side routes are wired here.
 		this.render(
 			<QueryClientProvider client={new QueryClient()}>
 				<HashRouter>
@@ -107,6 +120,7 @@ class WebApp {
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
+						<Route path='/plj' element={<PLJ />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />
