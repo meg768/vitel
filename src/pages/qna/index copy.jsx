@@ -37,12 +37,16 @@ let Component = () => {
 		const link = `/query/${name}`;
 
 		return (
-			<Link hover={false} to={link} className='block border p-4 rounded-md mb-3 hover:bg-primary-50 dark:hover:bg-primary-900 transition-colors' {...props}>
+			<div className='border p-4 rounded-md mb-3 hover:bg-primary-50 dark:hover:bg-primary-900 transition-colors' {...props}>
 				{/* Header */}
-				<div className='text-2xl'>{title}</div>
+				<div className='flex items-center gap-3'>
+					<Link hover={true} to={link}>
+						<div className='text-2xl'>{title}</div>
+					</Link>
+				</div>
 				{/* Description */}
 				<Markdown className='mt-1'>{description}</Markdown>
-			</Link>
+			</div>
 		);
 	}
 	return (

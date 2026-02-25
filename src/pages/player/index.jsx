@@ -134,6 +134,7 @@ function Component () {
 	}
 
 	function Content() {
+		const { id } = useParams();
 		let { data:response, error } = fetch();
 
 		if (error) {
@@ -147,6 +148,10 @@ function Component () {
 
 		let matches = response[0];
 		let player = response[1][0];
+
+		if (!player) {
+			return <Page.Error>Spelaren hittades inte ({id}).</Page.Error>;
+		}
 
 		return (
 			<>

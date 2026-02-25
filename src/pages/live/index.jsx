@@ -126,6 +126,11 @@ function LiveTable({ rows, finished = false }) {
 
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
+					<Table.Cell>
+						{({ value }) => value
+							?.replace(/(\d)(\(\d+\))(\d)/g, (_, a, tb, b) => `${a}-${b}${tb}`)
+							?.replace(/(\d)(\d)(\(\d+\))?/g, (_, a, b, tb) => `${a}-${b}${tb ?? ''}`)}
+					</Table.Cell>
 				</Table.Column>
 
 				<Table.Column className='justify-center'>

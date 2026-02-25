@@ -3,7 +3,7 @@
 Top 10 – Aktuell ranking
 
 @description
-De tio bäst rankade aktiva spelarna just nu, med matchstatistik de senaste 3 månaderna.
+De tio bäst rankade aktiva spelarna just nu, med matchstatistik de **senaste 3 månaderna**.
 */
 
 WITH recent AS (
