@@ -1,23 +1,9 @@
-import React from 'react';
-import mysql from '../../js/service';
-
-import { useParams } from 'react-router';
-
-import { Container } from '../../components/ui';
-import Players from '../../components/players';
 import Page from '../../components/page';
-import Menu from '../../components/menu';
 import Link from '../../components/ui/link';
-import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router';
-import Button from '../../components/ui/button';
-
 
 import prospects from './prospects.js';
 import goat from './goat.js';
 import topPlayers from './top-players.js';
-
-import ThemeDialog from '../../components/theme-dialog.jsx';
 
 let Component = () => {
 	function Content() {

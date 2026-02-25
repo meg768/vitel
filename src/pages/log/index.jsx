@@ -1,4 +1,3 @@
-import mysql from '../../js/service';
 import { useSQL } from '../../js/vitel';
 
 import Table from '../../components/ui/data-table';

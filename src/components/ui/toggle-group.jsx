@@ -1,5 +1,5 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import clsx from 'clsx';import colors from '../colors';
+import clsx from 'clsx';
 
 function Component({ defaultValue, onChange, children }) {
 	function onValueChange(value) {
