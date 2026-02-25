@@ -23,54 +23,17 @@ Updated: 2026-02-25
 - Backend base URL via `VITE_API_URL`.
 - Main data API usage:
   - SQL-like endpoint: `/query` via `src/js/service.js` and `src/js/vitel.js`.
-  - Chat endpoint: `/chat` used by pages such as `src/pages/chat/index.jsx`.
 
 ## Key Paths
 - App bootstrap and routes: `src/index.jsx`
 - API service wrapper: `src/js/service.js`
 - Query hooks: `src/js/vitel.js`
 - SQL query file loader: `src/js/queries.js`
+- Database schema (source of truth): `src/database/schema.sql`
 - Markdown UI component: `src/components/ui/markdown.jsx`
 
 ## Database Schema
-- Source of truth: user-provided MySQL DDL (2026-02-25).
-- Tables:
-  - `players`
-  - `matches`
-  - `events`
-  - `log`
-- Views:
-  - `flatly` (joined match/event/player analysis view)
-  - `currently` (ongoing events and alive players in main draw)
-- Key relationships:
-  - `matches.event -> events.id`
-  - `matches.winner -> players.id`
-  - `matches.loser -> players.id`
-- Important `players` columns:
-  - `id`, `name`, `country`, `age`, `birthdate`, `active`, `rank`, `highest_rank`, `highest_rank_date`
-  - `career_wins`, `career_losses`, `career_titles`, `career_prize`
-  - `ytd_wins`, `ytd_losses`, `ytd_titles`, `ytd_prize`
-  - `serve_rating`, `return_rating`, `pressure_rating`
-  - `elo_rank`, `elo_rank_clay`, `elo_rank_grass`, `elo_rank_hard`
-  - `hard_factor`, `clay_factor`, `grass_factor`
-- Important `matches` columns:
-  - `id`, `event`, `round`, `winner`, `loser`, `winner_rank`, `loser_rank`, `score`, `status`, `duration`
-- Important `events` columns:
-  - `id`, `date`, `name`, `location`, `type`, `surface`, `url`
-- Functions:
-  - `IS_MATCH_COMPLETED`
-  - `NUMBER_OF_GAMES_PLAYED`
-  - `NUMBER_OF_MINUTES_PLAYED`
-  - `NUMBER_OF_SETS`
-  - `NUMBER_OF_SETS_PLAYED`
-  - `NUMBER_OF_TIEBREAKS_PLAYED`
-- Procedures:
-  - `sp_log`
-  - `sp_update`
-  - `sp_update_match_duration`
-  - `sp_update_match_status`
-  - `sp_update_surface_factors`
-  - `sp_update_surface_factors_for_player`
+- Source of truth: `src/database/schema.sql` (always read current file contents).
 
 ## Recent Changes
 - `src/components/ui/markdown.jsx`:
@@ -96,7 +59,15 @@ Updated: 2026-02-25
 - Sorted `.jsx` imports with this order:
   - external modules first
   - then internal imports sorted by source folder/path
+- Removed Bob assistant from frontend:
+  - Removed routes `/ask-bob` and `/chat` from `src/index.jsx`
+  - Deleted `src/pages/ask-bob/index.jsx`
+  - Deleted `src/pages/chat/index.jsx` and `src/pages/chat/index.css`
+  - Removed "Fråga Bob" button from `src/pages/app/index.jsx`
+- Database structure moved to separate file:
+  - `src/database/schema.sql`
+- Simplified `## Database Schema` in `AGENTS.md` to a single reference to `src/database/schema.sql`.
 
 ## Working Notes
 - README is minimal (`README.md` contains only `# vite`).
-- Local uncommitted changes currently include `src/components/ui/markdown.jsx`.
+- Local worktree currently has many uncommitted changes.

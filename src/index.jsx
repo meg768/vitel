@@ -4,8 +4,6 @@ import { HashRouter, Routes, Route } from 'react-router';
 
 import ABC from './pages/abc';
 import App from './pages/app';
-import AskBob from './pages/ask-bob';
-import Chat from './pages/chat';
 import Currently from './pages/currently';
 import Event from './pages/event';
 import Events from './pages/events';
@@ -110,8 +108,6 @@ class WebApp {
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
-						<Route path='/chat' element={<Chat />} />
-						<Route path='/ask-bob' element={<AskBob />} />
 						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />
 						<Route path='/abc' element={<ABC />} />

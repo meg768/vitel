@@ -95,23 +95,6 @@ function App() {
 		);
 	}
 
-	function CompareButtonBob() {
-		let url = '';
-		let playerA = playerList['A'];
-		let playerB = playerList['B'];
-
-		if (playerA && playerB) {
-			let query = `Jämför ${playerA.name} mot ${playerB.name}`;
-			url = `/ask-bob?prompt=${encodeURIComponent(query)}`;
-		}
-
-		return (
-			<Button disabled={url == ''} link={url}>
-				Fråga Bob
-			</Button>
-		);
-	}
-
 	function CompareButton() {
 		let url = '';
 		let playerA = playerList['A'];
@@ -239,7 +222,6 @@ function App() {
 								<Player id='B' players={players} />
 								<div className='flex justify-center pt-2 space-x-2'>
 									<CompareButton />
-									<CompareButtonBob />
 								</div>
 							</div>
 						</div>
