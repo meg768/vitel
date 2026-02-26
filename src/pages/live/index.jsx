@@ -8,7 +8,7 @@ import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest } from '../../js/vitel.js';
 
-function hasFinishedStatus(status) {
+function isMatchFinished(status) {
 	if (typeof status !== 'string') {
 		return false;
 	}
@@ -16,85 +16,36 @@ function hasFinishedStatus(status) {
 	return ['completed', 'aborted', 'walkover'].includes(status.trim().toLowerCase());
 }
 
-function parseSetScore(token) {
-	const cleaned = token.trim().replace(/\(\d+\)/g, '');
-	if (!cleaned) {
-		return null;
+function formatScore(value) {
+	if (typeof value !== 'string') {
+		return value;
 	}
 
-	const separated = cleaned.match(/^(\d+)[-:](\d+)$/);
-	if (separated) {
-		return { A: parseInt(separated[1], 10), B: parseInt(separated[2], 10) };
-	}
+	return value
+		.trim()
+		.split(/\s+/)
+		.map(token => {
+			const bracket = token.match(/^\[([^\]]+)\]$/);
+			if (bracket) {
+				const inner = bracket[1];
+				if (/^\d{4}$/.test(inner)) {
+					return `[${inner.slice(0, 2)}-${inner.slice(2)}]`;
+				}
+				return token;
+			}
 
-	const compact = cleaned.match(/^(\d)(\d)$/);
-	if (compact) {
-		return { A: parseInt(compact[1], 10), B: parseInt(compact[2], 10) };
-	}
+			const withTiebreak = token.match(/^(\d)(\d)(\(\d+\))$/);
+			if (withTiebreak) {
+				return `${withTiebreak[1]}-${withTiebreak[2]}${withTiebreak[3]}`;
+			}
 
-	return null;
-}
+			if (/^\d\d$/.test(token)) {
+				return `${token[0]}-${token[1]}`;
+			}
 
-function isSetFinished(A, B) {
-	if (A === B) {
-		return false;
-	}
-
-	if (Math.max(A, B) >= 10 && Math.abs(A - B) >= 2) {
-		return true;
-	}
-
-	if ((A === 7 && (B === 5 || B === 6)) || (B === 7 && (A === 5 || A === 6))) {
-		return true;
-	}
-
-	return Math.max(A, B) >= 6 && Math.abs(A - B) >= 2;
-}
-
-function isMatchFinished(score, status) {
-	if (hasFinishedStatus(status)) {
-		return true;
-	}
-
-	if (typeof score !== 'string' || score.trim() === '') {
-		return false;
-	}
-
-	const parts = score.replace(/,/g, ' ').trim().split(/\s+/);
-	if (parts.some(p => /^(ret|retd|retired|wo|w\/o|walkover|abd|abandoned|def|default)$/i.test(p))) {
-		return true;
-	}
-
-	let playerA = 0;
-	let playerB = 0;
-	let parsedSets = 0;
-
-	for (const part of parts) {
-		const set = parseSetScore(part);
-		if (!set) {
-			continue;
-		}
-
-		parsedSets += 1;
-
-		if (!isSetFinished(set.A, set.B)) {
-			return false;
-		}
-
-		if (set.A > set.B) {
-			playerA += 1;
-		} else {
-			playerB += 1;
-		}
-	}
-
-	if (parsedSets === 0) {
-		return false;
-	}
-
-	const maxSets = parsedSets > 3 ? 5 : 3;
-	const setsToWin = Math.ceil(maxSets / 2);
-	return playerA >= setsToWin || playerB >= setsToWin;
+			return token;
+		})
+		.join(' ');
 }
 
 function LiveTable({ rows, finished = false }) {
@@ -138,9 +89,7 @@ function LiveTable({ rows, finished = false }) {
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
 					<Table.Cell>
-						{({ value }) => value
-							?.replace(/(\d)(\(\d+\))(\d)/g, (_, a, tb, b) => `${a}-${b}${tb}`)
-							?.replace(/(\d)(\d)(\(\d+\))?/g, (_, a, b, tb) => `${a}-${b}${tb ?? ''}`)}
+						{({ value }) => formatScore(value)}
 					</Table.Cell>
 				</Table.Column>
 
@@ -214,7 +163,7 @@ let Component = () => {
 
 		// Split up into finished and unfinished matches
 		for (let row of matches) {
-			if (isMatchFinished(row.score, row.status)) {
+			if (isMatchFinished(row.status)) {
 				finishedMatches.push(row);
 			} else {
 				activeMatches.push(row);
