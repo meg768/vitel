@@ -8,79 +8,92 @@ import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest } from '../../js/vitel.js';
 
-function isMatchFinished(score) {
-	if (typeof score !== 'string' || score.trim() === '') {
-		return true;
-	}
-
-	// Remove tiebreaks from the score
-	score = score.replace(/\(\d+\)/g, '');
-
-	const parts = score.trim().split(/\s+/);
-
-	// Check if any part matches RET-like code (e.g., RET, RETD, retd, retired)
-	if (parts.some(p => /^ret/i.test(p))) {
-		return true;
-	}
-
-	// If there's only one part, it means the match is not finished
-	if (parts.length == 1) {
+function hasFinishedStatus(status) {
+	if (typeof status !== 'string') {
 		return false;
+	}
+
+	return ['completed', 'aborted', 'walkover'].includes(status.trim().toLowerCase());
+}
+
+function parseSetScore(token) {
+	const cleaned = token.trim().replace(/\(\d+\)/g, '');
+	if (!cleaned) {
+		return null;
+	}
+
+	const separated = cleaned.match(/^(\d+)[-:](\d+)$/);
+	if (separated) {
+		return { A: parseInt(separated[1], 10), B: parseInt(separated[2], 10) };
+	}
+
+	const compact = cleaned.match(/^(\d)(\d)$/);
+	if (compact) {
+		return { A: parseInt(compact[1], 10), B: parseInt(compact[2], 10) };
+	}
+
+	return null;
+}
+
+function isSetFinished(A, B) {
+	if (A === B) {
+		return false;
+	}
+
+	if (Math.max(A, B) >= 10 && Math.abs(A - B) >= 2) {
+		return true;
+	}
+
+	if ((A === 7 && (B === 5 || B === 6)) || (B === 7 && (A === 5 || A === 6))) {
+		return true;
+	}
+
+	return Math.max(A, B) >= 6 && Math.abs(A - B) >= 2;
+}
+
+function isMatchFinished(score, status) {
+	if (hasFinishedStatus(status)) {
+		return true;
+	}
+
+	if (typeof score !== 'string' || score.trim() === '') {
+		return false;
+	}
+
+	const parts = score.replace(/,/g, ' ').trim().split(/\s+/);
+	if (parts.some(p => /^(ret|retd|retired|wo|w\/o|walkover|abd|abandoned|def|default)$/i.test(p))) {
+		return true;
 	}
 
 	let playerA = 0;
 	let playerB = 0;
+	let parsedSets = 0;
 
 	for (const part of parts) {
-		if (part.length !== 2) {
-			// If any part is not exactly two characters, consider it invalid
-			// This can happen if the score is malformed or incomplete
+		const set = parseSetScore(part);
+		if (!set) {
 			continue;
 		}
 
-		let A = parseInt(part[0], 10);
-		let B = parseInt(part[1], 10);
+		parsedSets += 1;
 
-		if (isNaN(A) || isNaN(B)) {
-			// If any part is not a valid number, consider part invalid
-			continue;
-		}
-
-		// If not 6 games played, match is not finished
-		if (A + B < 6) {
+		if (!isSetFinished(set.A, set.B)) {
 			return false;
 		}
 
-		let setFinished = false;
-
-		// If one player has more than 6 games, they must have won the set
-		// or if the difference is 2 or more, one player has won the set
-		// (e.g., 6-4, 7-5, etc.)
-		if (A > 6 || B > 6) {
-			setFinished = true;
-		}
-
-		// If the difference is 2 or more, and one player has 6 or more games
-		// the set is finished
-		if ((A >= 6 || B >= 6) && Math.abs(A - B) >= 2) {
-			setFinished = true;
-		}
-
-		// If any set is not finished, the match is not finished
-		if (!setFinished) {
-			return false;
-		}
-
-		if (A > B) {
-			playerA++;
-		} else if (B > A) {
-			playerB++;
+		if (set.A > set.B) {
+			playerA += 1;
+		} else {
+			playerB += 1;
 		}
 	}
 
-	const maxSets = parts.length > 3 ? 5 : 3;
-	const setsToWin = Math.ceil(maxSets / 2);
+	if (parsedSets === 0) {
+		return false;
+	}
 
+	const maxSets = parsedSets > 3 ? 5 : 3;
+	const setsToWin = Math.ceil(maxSets / 2);
 	return playerA >= setsToWin || playerB >= setsToWin;
 }
 
@@ -201,7 +214,7 @@ let Component = () => {
 
 		// Split up into finished and unfinished matches
 		for (let row of matches) {
-			if (isMatchFinished(row.score)) {
+			if (isMatchFinished(row.score, row.status)) {
 				finishedMatches.push(row);
 			} else {
 				activeMatches.push(row);

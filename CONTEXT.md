@@ -2,6 +2,10 @@
 
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
+## Recent Updates
+
+- 2026-02-26: Fixed `/live` match grouping to avoid showing completed matches as ongoing by prioritizing explicit `status` (`Completed`/`Aborted`/`Walkover`) and improving score parsing for both compact (`64`) and hyphenated (`6-4`) set formats.
+
 ## Overview
 
 - Frontend: React 19 + Vite 6 + Tailwind CSS v4
