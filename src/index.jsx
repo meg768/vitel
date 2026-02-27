@@ -11,7 +11,6 @@ import HeadToHead from './pages/head-to-head';
 import Live from './pages/live';
 import Log from './pages/log';
 import NotFound from './pages/not-found';
-import PLJ from './pages/plj';
 import Player from './pages/player';
 import Players from './pages/players';
 import QnA from './pages/qna';
@@ -120,7 +119,6 @@ class WebApp {
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
-						<Route path='/plj' element={<PLJ />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />
 						<Route path='/currently' element={<Currently />} />

@@ -56,13 +56,12 @@ VITE_API_URL=https://your-api-base-url
 
 ## Active Routes
 
-`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/log`, `/trial`, `/qna`, `/settings`, `/query/:name`, `/currently`, `/abc`, `/plj`, `/not-found`, and fallback `*` -> `NotFound`.
+`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/log`, `/trial`, `/qna`, `/settings`, `/query/:name`, `/currently`, `/abc`, `/not-found`, and fallback `*` -> `NotFound`.
 
 ## Key Files
 
 - `src/index.jsx` - app bootstrap, theme handling, and route wiring
 - `src/pages/app/index.jsx` - landing page
-- `src/pages/plj/index.jsx` - creative neon-arcade showcase page with interactive fireworks toggle
 - `src/js/service.js` - low-level API requests
 - `src/js/vitel.js` - exports `service`, `useSQL`, `useRequest`
 - `src/js/queries.js` - loads/parses `src/queries/*.sql`
