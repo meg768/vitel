@@ -6,20 +6,25 @@ import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { useRequest } from '../../js/vitel.js';
+import { useRequest, useSQL } from '../../js/vitel.js';
 
 
 function LiveTable({ rows, finished = false }) {
 	function Players({ playerA, playerB }) {
 		let flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
+		const formatPlayerLabel = player => {
+			const ranking = player.rank ? ` #${player.rank}` : '';
+
+			return `${player.name} (${player.country})${ranking}`;
+		};
 
 		return (
 			<div className='flex items-center gap-2 bg-transparent'>
 				<Flag className={flagClassName} country={playerA.country}></Flag>
-				<Link to={`/player/${playerA.id}`}>{`${playerA.name}, ${playerA.country}`}</Link>
+				<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
 				<span>{' vs '}</span>
 				<Flag className={flagClassName} country={playerB.country}></Flag>
-				<Link to={`/player/${playerB.id}`}>{`${playerB.name}, ${playerB.country}`}</Link>
+				<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
 			</div>
 		);
 	}
@@ -44,6 +49,15 @@ function LiveTable({ rows, finished = false }) {
 							return <Players playerA={row.player} playerB={row.opponent} />;
 						}}
 					</Table.Value>
+				</Table.Column>
+
+				<Table.Column id='headToHead' className=''>
+					<Table.Title className=''>Tidigare matcher</Table.Title>
+					<Table.Cell className='text-right'>
+						{({ value }) => {
+							return value ?? '0-0';
+						}}
+					</Table.Cell>
 				</Table.Column>
 
 				<Table.Column id='score' className=''>
@@ -147,6 +161,30 @@ let Component = () => {
 
 	function Content() {
 		let { data: matches, error } = useRequest({ path: 'live', method: 'GET', cache: 0 });
+		const rankingSql = `SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC`;
+		const { data: rankingRows, error: rankError } = useSQL({ sql: rankingSql, cache: 5 * 60 * 1000 });
+		const pairs = matches
+			? [...new Map(matches
+				.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
+				.filter(pair => pair.length === 2)
+				.map(pair => [`${pair[0]}:${pair[1]}`, pair])
+			).values()]
+			: [];
+		const meetingsWhere = pairs.length
+			? pairs.map(() => '((winner_id = ? AND loser_id = ?) OR (winner_id = ? AND loser_id = ?))').join(' OR ')
+			: '1 = 0';
+		const meetingsFormat = pairs.flatMap(([A, B]) => [A, B, B, A]);
+		const meetingsSql = `
+			SELECT
+				LEAST(winner_id, loser_id) AS player_a_id,
+				GREATEST(winner_id, loser_id) AS player_b_id,
+				SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
+				SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
+			FROM flatly
+			WHERE ${meetingsWhere}
+			GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
+		`;
+		const { data: meetingRows, error: meetingError } = useSQL({ sql: meetingsSql, format: meetingsFormat, cache: 5 * 60 * 1000 });
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in dagens matcher - {error.message}</Page.Error>;
@@ -156,11 +194,57 @@ let Component = () => {
 			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
 		}
 
+		if (rankError) {
+			return <Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>;
+		}
+
+		if (meetingError) {
+			return <Page.Error>Misslyckades med att läsa in head-to-head - {meetingError.message}</Page.Error>;
+		}
+
+		if (!rankingRows) {
+			return <Page.Loading>Läser in ranking...</Page.Loading>;
+		}
+
+		if (!meetingRows) {
+			return <Page.Loading>Läser in head-to-head...</Page.Loading>;
+		}
+
+		const ranks = Object.fromEntries(rankingRows.map((player, index) => [player.id, index + 1]));
+		const headToHead = Object.fromEntries(
+			meetingRows.map(row => [
+				`${row.player_a_id}:${row.player_b_id}`,
+				{
+					[row.player_a_id]: row.wins_for_player_a,
+					[row.player_b_id]: row.wins_for_player_b
+				}
+			])
+		);
+		const rows = matches.map(match => ({
+			...match,
+			player: {
+				...match.player,
+				rank: ranks[match.player?.id]
+			},
+			opponent: {
+				...match.opponent,
+				rank: ranks[match.opponent?.id]
+			},
+			headToHead: (() => {
+				const key = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
+				const record = headToHead[key];
+				const playerWins = record?.[match.player?.id] ?? 0;
+				const opponentWins = record?.[match.opponent?.id] ?? 0;
+
+				return `${playerWins}-${opponentWins}`;
+			})()
+		}));
+
 		return (
 			<>
 				<Page.Title>{`Dagens matcher`}</Page.Title>
 				<Page.Container>
-					<Matches matches={matches} />
+					<Matches matches={rows} />
 				</Page.Container>
 			</>
 		);
