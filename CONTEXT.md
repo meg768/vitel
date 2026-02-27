@@ -4,6 +4,7 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-02-27: `/live` replaced the textual refresh countdown with a subtle centered dot indicator that fills up over each 1-minute refresh cycle.
 - 2026-02-27: `/live` now shows a visible countdown to the next 1-minute refresh so users can see when the page will update.
 - 2026-02-27: `/live` now auto-refreshes every minute. `useRequest` and `useSQL` also accept pass-through TanStack Query options so polling can be enabled per page.
 - 2026-02-27: `/live` now shows a `Tidigare matcher` column with the current head-to-head record for each visible player pair, computed from `flatly`.

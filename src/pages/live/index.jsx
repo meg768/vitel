@@ -10,6 +10,7 @@ import Link from '../../components/ui/link';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 60 * 1000;
+const LIVE_REFRESH_STEPS = 6;
 
 function RefreshCountdown({ dataUpdatedAt, isFetching }) {
 	const [now, setNow] = React.useState(Date.now());
@@ -25,10 +26,35 @@ function RefreshCountdown({ dataUpdatedAt, isFetching }) {
 	const remainingMs = dataUpdatedAt
 		? Math.max(0, LIVE_REFRESH_INTERVAL_MS - (now - dataUpdatedAt))
 		: LIVE_REFRESH_INTERVAL_MS;
-	const remainingSeconds = Math.ceil(remainingMs / 1000);
-	const label = isFetching ? 'Uppdaterar...' : `Uppdateras om ${remainingSeconds} sekunder`;
+	const elapsedMs = LIVE_REFRESH_INTERVAL_MS - remainingMs;
+	const filledSteps = isFetching
+		? LIVE_REFRESH_STEPS
+		: Math.min(LIVE_REFRESH_STEPS, Math.floor(elapsedMs / (LIVE_REFRESH_INTERVAL_MS / LIVE_REFRESH_STEPS)));
+	const label = isFetching
+		? 'Uppdaterar live-sidan'
+		: `Nästa uppdatering inom ${Math.ceil(remainingMs / 1000)} sekunder`;
 
-	return <div className='pt-4 pb-2 text-center text-sm text-primary-700 dark:text-primary-300'>{label}</div>;
+	return (
+		<div className='flex justify-center pt-4 pb-2' aria-label={label} title={label}>
+			<div className='flex items-center gap-2'>
+				{Array.from({ length: LIVE_REFRESH_STEPS }, (_, index) => {
+					const filled = index < filledSteps;
+
+					return (
+						<span
+							key={index}
+							className={[
+								'h-2.5 w-2.5 rounded-full border border-primary-500 transition-colors duration-500',
+								filled
+									? 'bg-primary-600 dark:bg-primary-300'
+									: 'bg-transparent dark:bg-transparent'
+							].join(' ')}
+						></span>
+					);
+				})}
+			</div>
+		</div>
+	);
 }
 
 
