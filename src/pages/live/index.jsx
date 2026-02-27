@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link as RouterLink } from 'react-router';
 
 import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
@@ -7,6 +8,28 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest, useSQL } from '../../js/vitel.js';
+
+const LIVE_REFRESH_INTERVAL_MS = 60 * 1000;
+
+function RefreshCountdown({ dataUpdatedAt, isFetching }) {
+	const [now, setNow] = React.useState(Date.now());
+
+	React.useEffect(() => {
+		const timer = window.setInterval(() => {
+			setNow(Date.now());
+		}, 1000);
+
+		return () => window.clearInterval(timer);
+	}, []);
+
+	const remainingMs = dataUpdatedAt
+		? Math.max(0, LIVE_REFRESH_INTERVAL_MS - (now - dataUpdatedAt))
+		: LIVE_REFRESH_INTERVAL_MS;
+	const remainingSeconds = Math.ceil(remainingMs / 1000);
+	const label = isFetching ? 'Uppdaterar...' : `Uppdateras om ${remainingSeconds} sekunder`;
+
+	return <div className='pt-4 pb-2 text-center text-sm text-primary-700 dark:text-primary-300'>{label}</div>;
+}
 
 
 function LiveTable({ rows, finished = false }) {
@@ -160,7 +183,13 @@ let Component = () => {
 	}
 
 	function Content() {
-		let { data: matches, error } = useRequest({ path: 'live', method: 'GET', cache: 0 });
+		let { data: matches, error, dataUpdatedAt, isFetching } = useRequest({
+			path: 'live',
+			method: 'GET',
+			cache: 0,
+			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchIntervalInBackground: true
+		});
 		const rankingSql = `SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC`;
 		const { data: rankingRows, error: rankError } = useSQL({ sql: rankingSql, cache: 5 * 60 * 1000 });
 		const pairs = matches
@@ -184,7 +213,13 @@ let Component = () => {
 			WHERE ${meetingsWhere}
 			GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
 		`;
-		const { data: meetingRows, error: meetingError } = useSQL({ sql: meetingsSql, format: meetingsFormat, cache: 5 * 60 * 1000 });
+		const { data: meetingRows, error: meetingError } = useSQL({
+			sql: meetingsSql,
+			format: meetingsFormat,
+			cache: 0,
+			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchIntervalInBackground: true
+		});
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in dagens matcher - {error.message}</Page.Error>;
@@ -245,6 +280,7 @@ let Component = () => {
 				<Page.Title>{`Dagens matcher`}</Page.Title>
 				<Page.Container>
 					<Matches matches={rows} />
+					<RefreshCountdown dataUpdatedAt={dataUpdatedAt} isFetching={isFetching} />
 				</Page.Container>
 			</>
 		);
