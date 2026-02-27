@@ -3,91 +3,14 @@ import { Link as RouterLink } from 'react-router';
 import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
-import Button  from '../../components/ui/button';
+import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest } from '../../js/vitel.js';
 
-function isMatchFinished(score) {
-	if (typeof score !== 'string') {
-		return false;
-	}
-
-	const normalizedScore = score
-		.trim()
-		.replace(/,/g, ' ')
-		.replace(/\u00A0/g, ' ')
-		.replace(/\s+/g, ' ');
-
-	if (normalizedScore === '') {
-		return false;
-	}
-
-	// Retirement / walkover tokens indicate that the match ended.
-	if (/\b(ret|retd|retired|wo|w\/o|walkover|abd|abandoned|def|default)\b/i.test(normalizedScore)) {
-		return true;
-	}
-
-	const parts = normalizedScore.split(' ');
-	let playerA = 0;
-	let playerB = 0;
-	let parsedSets = 0;
-
-	for (const part of parts) {
-		// Ongoing game points, e.g. [40-30] / [4030]
-		if (/^\[[^\]]+\]$/.test(part)) {
-			return false;
-		}
-
-		// Strip tiebreak details: 7-6(5) -> 7-6, 76(5) -> 76
-		const gamesPart = part.replace(/\(\d+\)$/, '');
-		const separated = gamesPart.match(/^(\d{1,2})[-:](\d{1,2})$/);
-		const compact = gamesPart.match(/^(\d)(\d)$/);
-
-		let a;
-		let b;
-
-		if (separated) {
-			a = Number(separated[1]);
-			b = Number(separated[2]);
-		} else if (compact) {
-			a = Number(compact[1]);
-			b = Number(compact[2]);
-		} else {
-			continue;
-		}
-
-		parsedSets += 1;
-
-		const hi = Math.max(a, b);
-		const lo = Math.min(a, b);
-		const isSetFinished = (hi >= 6 && hi - lo >= 2) || (hi === 7 && lo === 6);
-
-		if (!isSetFinished) {
-			return false;
-		}
-
-		if (a > b) {
-			playerA += 1;
-		} else {
-			playerB += 1;
-		}
-	}
-
-	if (parsedSets === 0) {
-		return false;
-	}
-
-	// Assume BO3 when <=3 parsed sets, BO5 when >3 parsed sets.
-	const maxSets = parsedSets > 3 ? 5 : 3;
-	const setsToWin = Math.ceil(maxSets / 2);
-	return playerA >= setsToWin || playerB >= setsToWin;
-}
-
 
 function LiveTable({ rows, finished = false }) {
 	function Players({ playerA, playerB }) {
-
 		let flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
 
 		return (
@@ -125,9 +48,7 @@ function LiveTable({ rows, finished = false }) {
 
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
-					<Table.Cell>
-						{({ value }) => (value)}
-					</Table.Cell>
+					<Table.Cell>{({ value }) => value}</Table.Cell>
 				</Table.Column>
 
 				<Table.Column className='justify-center'>
@@ -200,7 +121,7 @@ let Component = () => {
 
 		// Split up into finished and unfinished matches
 		for (let row of matches) {
-			if (isMatchFinished(row.score)) {
+			if (row.winner) {
 				finishedMatches.push(row);
 			} else {
 				activeMatches.push(row);
@@ -215,7 +136,6 @@ let Component = () => {
 				</div>
 			);
 		}
-	
 
 		return (
 			<>
@@ -235,7 +155,6 @@ let Component = () => {
 		if (!matches) {
 			return <Page.Loading>Läser in dagens matcher...</Page.Loading>;
 		}
-
 
 		return (
 			<>
