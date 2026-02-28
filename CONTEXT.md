@@ -4,6 +4,10 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-02-28: Renamed the `/query/monthly-salary-indexed` query title to `Månadslön för en tennisspelare genom tiderna`.
+- 2026-02-28: Renamed the `/query/monthly-salary-indexed` salary output column to `Månadslön (indexreglerad)` and kept the original query title.
+- 2026-02-28: `/query/monthly-salary-indexed` now renders year fields without Swedish thousands separators.
+- 2026-02-28: Added `/query/monthly-salary-indexed`, a CPI-adjusted monthly salary estimate based on each player's career prize money and career midpoint year; year fields are emitted as text to avoid numeric formatting, and at least 5 active years are required.
 - 2026-02-27: `/live` replaced the textual refresh countdown with a subtle centered dot indicator that fills up over each 30-second refresh cycle.
 - 2026-02-27: `/live` now shows a visible countdown to the next 30-second refresh so users can see when the page will update.
 - 2026-02-27: `/live` now auto-refreshes every 30 seconds. `useRequest` and `useSQL` also accept pass-through TanStack Query options so polling can be enabled per page.
@@ -88,7 +92,7 @@ Description rendered as Markdown
 ```
 
 Current query files:
-`best-form`, `biggest-upsets`, `decenial-slams`, `longest-matches-ever`, `match-turn-arounds`, `prize-money`, `prospects`, `ranking-climbers`, `titles-under-age-21`, `top-10-players`, `top-50-dropouts`, `underranked-players`, `who-is-the-goat`.
+`best-form`, `biggest-upsets`, `decenial-slams`, `longest-matches-ever`, `match-turn-arounds`, `monthly-salary-indexed`, `prize-money`, `prospects`, `ranking-climbers`, `titles-under-age-21`, `top-10-players`, `top-50-dropouts`, `underranked-players`, `who-is-the-goat`.
 
 ## Database (Summary)
 
