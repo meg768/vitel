@@ -101,7 +101,7 @@ function LiveTable({ rows, finished = false }) {
 				</Table.Column>
 
 				<Table.Column id='headToHead' className=''>
-					<Table.Title className=''>Tidigare matcher</Table.Title>
+					<Table.Title className=''>Tidigare möten</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ value }) => {
 							return value ?? '0-0';
@@ -146,7 +146,7 @@ let Component = () => {
 
 		return (
 			<>
-				<Page.Title level={2}>Avslutade</Page.Title>
+				<Page.Title level={2}>Nyligen avslutade</Page.Title>
 				<LiveTable rows={matches} finished={true} />
 			</>
 		);

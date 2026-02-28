@@ -7,7 +7,7 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 - 2026-02-27: `/live` replaced the textual refresh countdown with a subtle centered dot indicator that fills up over each 30-second refresh cycle.
 - 2026-02-27: `/live` now shows a visible countdown to the next 30-second refresh so users can see when the page will update.
 - 2026-02-27: `/live` now auto-refreshes every 30 seconds. `useRequest` and `useSQL` also accept pass-through TanStack Query options so polling can be enabled per page.
-- 2026-02-27: `/live` now shows a `Tidigare matcher` column with the current head-to-head record for each visible player pair, computed from `flatly`.
+- 2026-02-27: `/live` now shows a `Tidigare möten` column with the current head-to-head record for each visible player pair, computed from `flatly`.
 - 2026-02-27: `/live` now computes player rankings locally from the sorted `players` table, so rankings render without relying on any `rank` field in the live API payload.
 - 2026-02-26: Fixed `/live` score display formatting to avoid corrupting live game-point brackets; e.g. `[4040]` now renders as `[40-40]` instead of `[4-0-4-0]`.
 - 2026-02-26: Simplified `/live` grouping to stop client-side score interpretation; match grouping now relies on backend-provided `status` only.
