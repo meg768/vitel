@@ -1,8 +1,6 @@
-
 import Flag from './flag';
 import Table from './ui/data-table';
 import Link from '../components/ui/link';
-
 
 function Component({ players }) {
 	function Content() {
@@ -32,6 +30,15 @@ function Component({ players }) {
 
 				<Table.Column id='rank' className=''>
 					<Table.Title>Ranking</Table.Title>
+					<Table.Cell className='text-right'>
+						{({ row, value }) => {
+							return value;
+						}}
+					</Table.Cell>
+				</Table.Column>
+                
+				<Table.Column id='points' className=''>
+					<Table.Title>Poäng</Table.Title>
 					<Table.Cell className='text-right'>
 						{({ row, value }) => {
 							return value;

@@ -334,89 +334,6 @@ BEGIN
         RETURN total_tie_breaks;
     END;
 
--- Create syntax for FUNCTION 'IS_MATCH_COMPLETED'
-CREATE DEFINER=`root`@`%` FUNCTION `IS_MATCH_COMPLETED`(score TEXT) RETURNS tinyint(4)
-    DETERMINISTIC
-BEGIN
-        DECLARE working TEXT;
-        DECLARE last_set TEXT;
-        DECLARE games_part TEXT;
-        DECLARE left_games INT;
-        DECLARE right_games INT;
-        DECLARE hi INT;
-        DECLARE lo INT;
-
-        IF score IS NULL OR TRIM(score) = '' THEN
-            RETURN 0;
-        END IF;
-
-        SET working = TRIM(score);
-        SET working = REPLACE(working, CHAR(9), ' ');
-        SET working = REPLACE(working, CHAR(160), ' ');
-        SET working = REPLACE(working, CHAR(10), ' ');
-        SET working = REPLACE(working, CHAR(13), ' ');
-        SET working = REGEXP_REPLACE(working, '[[:space:]]+', ' ');
-
-        SET last_set = SUBSTRING_INDEX(working, ' ', -1);
-        SET games_part = SUBSTRING_INDEX(last_set, '(', 1);
-
-        IF games_part NOT REGEXP '^[0-9]{1,2}-[0-9]{1,2}$' THEN
-            RETURN 0;
-        END IF;
-
-        SET left_games = CAST(SUBSTRING_INDEX(games_part, '-', 1) AS UNSIGNED);
-        SET right_games = CAST(SUBSTRING_INDEX(games_part, '-', -1) AS UNSIGNED);
-        SET hi = GREATEST(left_games, right_games);
-        SET lo = LEAST(left_games, right_games);
-
-        IF (hi >= 6 AND (hi - lo) >= 2)
-           OR (hi = 7 AND lo = 6)
-        THEN
-            RETURN 1;
-        END IF;
-
-        RETURN 0;
-    END;
-
--- Compatibility wrappers for legacy query/procedure names still used by older clients.
--- Create syntax for FUNCTION 'NUMBER_OF_GAMES_PLAYED'
-CREATE DEFINER=`root`@`%` FUNCTION `NUMBER_OF_GAMES_PLAYED`(score TEXT) RETURNS int(11)
-    DETERMINISTIC
-BEGIN
-        RETURN COALESCE(NUMBER_OF_GAMES(score), 0);
-    END;
-
--- Create syntax for FUNCTION 'NUMBER_OF_SETS_PLAYED'
-CREATE DEFINER=`root`@`%` FUNCTION `NUMBER_OF_SETS_PLAYED`(score TEXT) RETURNS int(11)
-    DETERMINISTIC
-BEGIN
-        RETURN COALESCE(NUMBER_OF_SETS(score), 0);
-    END;
-
--- Create syntax for FUNCTION 'NUMBER_OF_TIEBREAKS_PLAYED'
-CREATE DEFINER=`root`@`%` FUNCTION `NUMBER_OF_TIEBREAKS_PLAYED`(score TEXT) RETURNS int(11)
-    DETERMINISTIC
-BEGIN
-        RETURN COALESCE(NUMBER_OF_TIE_BREAKS(score), 0);
-    END;
-
--- Create syntax for FUNCTION 'NUMBER_OF_MINUTES_PLAYED'
-CREATE DEFINER=`root`@`%` FUNCTION `NUMBER_OF_MINUTES_PLAYED`(duration VARCHAR(8)) RETURNS int(11)
-    DETERMINISTIC
-BEGIN
-        DECLARE hours INT;
-        DECLARE minutes INT;
-
-        IF duration IS NULL OR CHAR_LENGTH(duration) < 5 THEN
-            RETURN NULL;
-        END IF;
-
-        SET hours = CAST(SUBSTRING_INDEX(duration, ':', 1) AS UNSIGNED);
-        SET minutes = CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(duration, ':', -2), ':', 1) AS UNSIGNED);
-
-        RETURN (hours * 60) + minutes;
-    END;
-
 -- Create syntax for PROCEDURE 'sp_log'
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_log`(IN p_message TEXT)
@@ -473,45 +390,22 @@ BEGIN
     CALL sp_log('Updating match status for matches...');
 
     UPDATE matches m
-    JOIN events e ON e.id = m.event
     SET m.status =
         CASE
-
-            -- Behåll Walkover om vi inte tvingar uppdatering
-            WHEN force_update = FALSE AND m.status = 'Walkover'
+            WHEN force_update = FALSE AND m.status IN ('Completed', 'Aborted', 'Walkover')
                 THEN m.status
-
-            -- Ingen score (NULL eller bara whitespace)
             WHEN m.score IS NULL OR TRIM(m.score) = ''
                 THEN 'Unknown'
-
-            -- Om matchen inte är färdig enligt tennisregler
-            WHEN IS_MATCH_COMPLETED(m.score) = 0
+            WHEN UPPER(m.score) REGEXP '(^|[[:space:]])(W/O|WO|WALKOVER)($|[[:space:]])'
+                THEN 'Walkover'
+            WHEN UPPER(m.score) REGEXP '(^|[[:space:]])(RET|RET''D|RETD|DEF|ABD)($|[[:space:]])'
                 THEN 'Aborted'
-
-            -- Grand Slam main draw = best-of-5
-            WHEN e.type = 'Grand Slam'
-                 AND m.round IN ('F','SF','QF','R16','R32','R64','R128')
-                 AND NUMBER_OF_SETS(m.score) >= 3
-                THEN 'Completed'
-
-            WHEN e.type = 'Grand Slam'
-                 AND m.round IN ('F','SF','QF','R16','R32','R64','R128')
-                 AND NUMBER_OF_SETS(m.score) < 3
-                THEN 'Aborted'
-
-            -- Övriga matcher = best-of-3
-            WHEN NUMBER_OF_SETS(m.score) >= 2
-                THEN 'Completed'
-
-            ELSE 'Aborted'
-
+            ELSE 'Completed'
         END
     WHERE
         force_update = TRUE
         OR m.status IS NULL
         OR m.status = 'Unknown';
-
 END;;
 DELIMITER ;
 
