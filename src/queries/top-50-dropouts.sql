@@ -40,7 +40,7 @@ WHERE
                 OR m.loser = p.id
             )
             AND e.date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
-            AND NUMBER_OF_SETS_PLAYED (m.score) > 0
+            AND NUMBER_OF_SETS(m.score) > 0
     )
 ORDER BY
     Skillnad DESC,

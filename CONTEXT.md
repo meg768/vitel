@@ -4,6 +4,7 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-01: Synced the frontend and schema source of truth with the latest database function rename. Queries now use `NUMBER_OF_GAMES`/`NUMBER_OF_SETS`, `sp_update_match_status` uses the new `NUMBER_OF_SETS(score)` signature, and `schema.sql` restores compatibility helpers plus `IS_MATCH_COMPLETED` so the dump remains runnable.
 - 2026-02-28: Renamed the `/query/monthly-salary-indexed` query title to `Månadslön för en tennisspelare genom tiderna`.
 - 2026-02-28: Renamed the `/query/monthly-salary-indexed` salary output column to `Månadslön (indexreglerad)` and kept the original query title.
 - 2026-02-28: `/query/monthly-salary-indexed` now renders year fields without Swedish thousands separators.

@@ -19,7 +19,7 @@ SELECT
 
     m.score AS `Resultat`,
 
-    NUMBER_OF_GAMES_PLAYED(m.score) AS `Antal Game`,
+    NUMBER_OF_GAMES(m.score) AS `Antal Game`,
 
     m.duration AS `Speltid`
 
