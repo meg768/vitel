@@ -8,7 +8,6 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest, useSQL } from '../../js/vitel.js';
-
 const LIVE_REFRESH_INTERVAL_MS = 30 * 1000;
 const LIVE_REFRESH_STEPS = 6;
 

@@ -9,6 +9,7 @@ import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
 import Live from './pages/live';
+import LiveMatch from './pages/live-match';
 import Log from './pages/log';
 import NotFound from './pages/not-found';
 import Player from './pages/player';
@@ -115,6 +116,7 @@ class WebApp {
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
 						<Route path='/live' element={<Live />} />
+						<Route path='/live-match' element={<LiveMatch />} />
 						<Route path='/log' element={<Log />} />
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/qna' element={<QnA />} />

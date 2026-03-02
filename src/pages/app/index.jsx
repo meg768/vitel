@@ -111,6 +111,10 @@ function App() {
 		);
 	}
 
+	function LiveMatchButton() {
+		return <Button link='/live-match'>Live-match</Button>;
+	}
+
 	function Player(properties) {
 		const { id, className, players, ...props } = properties;
 
@@ -222,6 +226,7 @@ function App() {
 								<Player id='B' players={players} />
 								<div className='flex justify-center pt-2 space-x-2'>
 									<CompareButton />
+									<LiveMatchButton />
 								</div>
 							</div>
 						</div>
