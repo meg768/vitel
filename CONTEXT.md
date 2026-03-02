@@ -4,6 +4,32 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-02: `/live-match` now builds the head-to-head link inline inside `ScoreCell`, removing an unnecessary local helper.
+- 2026-03-02: `/live-match` no longer falls back when route params are missing; the page now expects `A` and `B` and renders a standard error state if either player id is missing or not found.
+- 2026-03-02: `/live-match` now assumes fetched players always have ids, so the player card avatar uses the ATP headshot URL directly instead of checking for a missing id fallback helper.
+- 2026-03-02: `/live-match` now keeps helper functions local to `PlayerCell` and `ScoreCell` where they are used, simplifying the file-level API surface.
+- 2026-03-02: `/live-match` now centers player names within the side cards so multi-line names stay visually centered.
+- 2026-03-02: `/live-match` now shows a `Visa tidigare möten` button under the center scoreboard that links to `/head-to-head/:A/:B` when both player ids are available.
+- 2026-03-02: `/live-match` no longer uses linear-gradient utility classes in the player card fallback avatars; the page now keeps those surfaces flat and simple.
+- 2026-03-02: `/live-match` player cards now align their avatar/flag color treatment more closely with the player page, including `bg-primary-900` behind ATP headshots and `border-current` on flags.
+- 2026-03-02: `/live-match` now uses the shared `Avatar` component with ATP headshot URLs for `playerA` and `playerB` when player ids are available, while keeping initials as a fallback.
+- 2026-03-02: `/live-match` no longer simulates an extra client-side timeout before rendering; it now resolves immediately from mock fallback or as soon as the SQL player lookup returns.
+- 2026-03-02: `/live-match` now fetches `playerA` and `playerB` from the `players` table in one `useSQL` call sequence, using route params `A` and `B` and then mapping those rows into the page state.
+- 2026-03-02: `/live-match` now includes a local `fetch()` scaffold that reads route params `A` and `B`, mirroring the basic `/head-to-head` pattern without adding SQL yet.
+ - 2026-03-02: The app landing page live-match CTA is now labeled `Följ matchen live`.
+- 2026-03-02: The app landing page `Live-match` button now links to `/live-match/:A/:B` using the selected/default player ids, matching the head-to-head style of navigation.
+- 2026-03-02: `/live-match` now also accepts route params `:A/:B`, matching the parameter naming used by `/head-to-head/:A/:B`, while keeping the plain `/live-match` route for the static mock page.
+- 2026-03-02: `/live-match` now renders the center score panel through a dedicated `ScoreCell` helper for a cleaner component structure.
+- 2026-03-02: `/live-match` mock data now names the players `playerA` and `playerB` instead of `leftPlayer` and `rightPlayer`.
+- 2026-03-02: `/live-match` mockup now uses `rounded-sm` for the main panel and center score card corners.
+- 2026-03-02: `/live-match` mockup no longer uses linear gradient backgrounds in the match panel; the card surfaces are now flat color fills.
+- 2026-03-02: `/live-match` no longer shows the extra top metadata row inside the match card; the mockup now relies on the page title plus the core three-column match layout.
+- 2026-03-02: `/live-match` no longer shows a separate mock status badge in the header area; the mockup now keeps only event, round, players, and score.
+- 2026-03-02: `/live-match` now uses the mock match event name as the page title instead of the generic `Live-match` heading.
+- 2026-03-02: `/live-match` mockup now derives the center display from a single compact `score` string in the format `set set set [game-points]`, instead of storing set summary and live points separately.
+- 2026-03-02: `/live-match` mockup now shows the played sets as a compact line beneath the large live game score in the center card, replacing the earlier center score table experiment.
+- 2026-03-02: `/live-match` mockup now includes played sets in the center scoreboard, showing per-player set scores plus current game points for the static Sinner vs Alcaraz example.
+- 2026-03-02: `/live-match` now shows a static three-column table mockup with fixed-width player avatar columns and a centered expanding score column, using a placeholder Sinner vs Alcaraz live state (`40-15`) without fetching data.
 - 2026-03-02: Added a placeholder `/live-match` page with the standard page shell and title only, plus a button on the app landing page that links to it.
 - 2026-03-01: Synced the frontend and schema source of truth with the latest database function rename. Queries now use `NUMBER_OF_GAMES`/`NUMBER_OF_SETS`, `sp_update_match_status` uses the new `NUMBER_OF_SETS(score)` signature, and `schema.sql` restores compatibility helpers plus `IS_MATCH_COMPLETED` so the dump remains runnable.
 - 2026-02-28: Renamed the `/query/monthly-salary-indexed` query title to `Månadslön för en tennisspelare genom tiderna`.

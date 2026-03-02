@@ -112,7 +112,19 @@ function App() {
 	}
 
 	function LiveMatchButton() {
-		return <Button link='/live-match'>Live-match</Button>;
+		let url = '';
+		let playerA = playerList['A'];
+		let playerB = playerList['B'];
+
+		if (playerA && playerB) {
+			url = `/live-match/${playerA.id}/${playerB.id}/`;
+		}
+
+		return (
+			<Button disabled={url == ''} link={url}>
+				Följ matchen live
+			</Button>
+		);
 	}
 
 	function Player(properties) {
