@@ -118,7 +118,7 @@ function LiveTable({ rows, finished = false }) {
 					<Table.Cell className=''>
 						{({ row, value }) => {
 							return (
-								<Link to={`/head-to-head/${row.player.id}/${row.opponent.id}`}>
+								<Link to={`/live-match/${row.player.id}/${row.opponent.id}`}>
 									<ChevronRightIcon className='block m-auto' />
 								</Link>
 							);

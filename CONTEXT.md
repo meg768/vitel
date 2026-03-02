@@ -4,6 +4,21 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-02: `/live-match` no longer passes `enabled` to its player lookup query; the page now fully relies on route params `A` and `B` always being present.
+- 2026-03-02: `/live-match` no longer keeps a separate file-level refresh interval constant; the 30-second SQL refetch interval is now inlined where the query is configured.
+- 2026-03-02: `/live-match` no longer renders the experimental `ProgressBar`; the page was simplified again and now keeps only the 30-second auto-refetch behavior without a visual timer.
+- 2026-03-02: `/live-match` again wraps its route params, SQL lookup, and progress calculation in a local `fetch()` helper, while keeping the 30-second auto-refetch behavior.
+- 2026-03-02: `/live-match` now auto-refetches its player lookup every 30 seconds; the bottom `ProgressBar` is derived from `dataUpdatedAt` and reaches completion exactly when the next fetch starts.
+- 2026-03-02: `/live-match` `ProgressBar` now accepts a `type` prop with `squre` as the default flat-edged variant and `round` as an alternative for circular ticks.
+- 2026-03-02: `/live-match` now uses a reusable `ProgressBar` component at the bottom of the page, rendered from a percentage `percent` prop instead of its own timer.
+- 2026-03-02: `/live-match` `ProgressBar` is defined as a separate reusable component in the same file instead of nesting it inside the page component.
+- 2026-03-02: `/live-match` `ProgressBar` accepts a `ticks` prop to control the number of dots, defaulting to `10`.
+- 2026-03-02: `/live-match` `ProgressBar` accepts a `percent` prop and clamps it to the range `0-100`.
+- 2026-03-02: `/live-match` mock data now only keeps fields that are still rendered; the unused `round` field was removed.
+- 2026-03-02: `/live-match` now keeps `PlayerCell` and `ScoreCell` local to `Component`, reducing file-level API surface before the upcoming live endpoint integration.
+- 2026-03-02: `/live-match` player cards now render `#${player.rank}` directly instead of using a local `playerSeed()` helper or seed fallback.
+- 2026-03-02: `/live-match` mock data now only keeps static match metadata that is still rendered; mock player objects were removed because fetched `playerA` and `playerB` always replace them.
+- 2026-03-02: `/live-match` no longer returns a separate local `isLoading` flag from its fetch helper; the page now treats missing `data` as the loading state.
 - 2026-03-02: `/live-match` now builds the head-to-head link inline inside `ScoreCell`, removing an unnecessary local helper.
 - 2026-03-02: `/live-match` no longer falls back when route params are missing; the page now expects `A` and `B` and renders a standard error state if either player id is missing or not found.
 - 2026-03-02: `/live-match` now assumes fetched players always have ids, so the player card avatar uses the ATP headshot URL directly instead of checking for a missing id fallback helper.

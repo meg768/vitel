@@ -10,86 +10,66 @@ import { useSQL } from '../../js/vitel.js';
 
 const mockMatch = {
 	event: 'Indian Wells',
-	round: 'Semifinal',
-	score: '6-3 4-6 3-3 [40-15]',
-	playerA: {
-		name: 'Jannik Sinner',
-		country: 'ITA',
-		seed: '#1',
-		initials: 'JS'
-	},
-	playerB: {
-		name: 'Carlos Alcaraz',
-		country: 'ESP',
-		seed: '#3',
-		initials: 'CA'
-	}
+	score: '6-3 4-6 3-3 [40-15]'
 };
 
-function PlayerCell({ player }) {
-	function playerSeed() {
-		if (player.rank) {
-			return `#${player.rank}`;
-		}
-
-		return player.seed ?? '-';
-	}
-	const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
-
-	return (
-		<div className='flex flex-col items-center gap-4'>
-			<Avatar
-				src={avatarSrc}
-				className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300'
-			/>
-			<div className='flex flex-col items-center gap-1'>
-				<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>{player.name}</div>
-				<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
-					<Flag className='h-5! w-5! border-current' country={player.country} />
-					<span>{player.country}</span>
-					<span aria-hidden='true'>•</span>
-					<span>{playerSeed()}</span>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function ScoreCell({ score, playerA, playerB }) {
-	function parseScore() {
-		const match = score.match(/\[(.+)\]\s*$/);
-		const gameScore = match ? match[1] : score;
-		const setsSummary = match ? score.slice(0, match.index).trim() : '';
-
-		return { gameScore, setsSummary };
-	}
-	const { gameScore, setsSummary } = parseScore();
-	const link = `/head-to-head/${playerA.id}/${playerB.id}/`;
-
-	return (
-		<div className='flex flex-col items-center gap-4'>
-			<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
-				<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>
-					Ställning
-				</div>
-				<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>
-					{gameScore}
-				</div>
-				{setsSummary ? (
-					<div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>
-						{setsSummary}
-					</div>
-				) : null}
-			</div>
-
-			<Button disabled={link == ''} link={link}>
-				Visa tidigare möten
-			</Button>
-		</div>
-	);
-}
-
 function Component() {
+	function PlayerCell({ player }) {
+		const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
+
+		return (
+			<div className='flex flex-col items-center gap-4'>
+				<Avatar
+					src={avatarSrc}
+					className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300'
+				/>
+				<div className='flex flex-col items-center gap-1'>
+					<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>{player.name}</div>
+					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
+						<Flag className='h-5! w-5! border-current' country={player.country} />
+						<span>{player.country}</span>
+						<span aria-hidden='true'>•</span>
+						<span>{`#${player.rank}`}</span>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	function ScoreCell({ score, playerA, playerB }) {
+		function parseScore() {
+			const match = score.match(/\[(.+)\]\s*$/);
+			const gameScore = match ? match[1] : score;
+			const setsSummary = match ? score.slice(0, match.index).trim() : '';
+
+			return { gameScore, setsSummary };
+		}
+		const { gameScore, setsSummary } = parseScore();
+		const link = `/head-to-head/${playerA.id}/${playerB.id}/`;
+
+		return (
+			<div className='flex flex-col items-center gap-4'>
+				<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
+					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>
+						Ställning
+					</div>
+					<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>
+						{gameScore}
+					</div>
+					{setsSummary ? (
+						<div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>
+							{setsSummary}
+						</div>
+					) : null}
+				</div>
+
+				<Button disabled={link == ''} link={link}>
+					Visa tidigare möten
+				</Button>
+			</div>
+		);
+	}
+
 	function fetch() {
 		const params = useParams();
 		let sql = '';
@@ -102,7 +82,8 @@ function Component() {
 			sql,
 			format,
 			cache: 0,
-			enabled: Boolean(params.A && params.B)
+			refetchInterval: 30 * 1000,
+			refetchIntervalInBackground: true
 		});
 		let data = null;
 
@@ -118,13 +99,12 @@ function Component() {
 		return {
 			data,
 			error,
-			params,
-			isLoading: Boolean(params.A && params.B) && !sqlData && !error
+			params
 		};
 	}
 
 	function Content() {
-		let { data, error, isLoading, params } = fetch();
+		let { data, error, params } = fetch();
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
@@ -134,7 +114,7 @@ function Component() {
 			return <Page.Error>Spelarna hittades inte ({params.A ?? '-'}, {params.B ?? '-'})</Page.Error>;
 		}
 
-		if (isLoading) {
+		if (!data) {
 			return <Page.Loading>Läser in spelare...</Page.Loading>;
 		}
 
@@ -178,10 +158,10 @@ function Component() {
 							</Table.Body>
 						</Table>
 					</div>
-				</div>
-			</>
-		);
-	}
+					</div>
+				</>
+			);
+		}
 
 	return (
 		<Page id='live-match-page'>
