@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router';
 
-import ChevronRightIcon from '../../assets/radix-icons/chevron-right.svg?react';
+import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
@@ -73,6 +73,14 @@ function LiveTable({ rows, finished = false }) {
 				<span>{' vs '}</span>
 				<Flag className={flagClassName} country={playerB.country}></Flag>
 				<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
+				<Link
+					to={`/live-match/${playerA.id}/${playerB.id}`}
+					className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100'
+					aria-label={`Följ matchen mellan ${playerA.name} och ${playerB.name} live`}
+					title='Följ matchen live'
+				>
+					<TriangleRightIcon className='block h-full w-full' />
+				</Link>
 			</div>
 		);
 	}
@@ -113,18 +121,6 @@ function LiveTable({ rows, finished = false }) {
 					<Table.Cell>{({ value }) => value}</Table.Cell>
 				</Table.Column>
 
-				<Table.Column className='justify-center'>
-					<Table.Title className=''>♨︎</Table.Title>
-					<Table.Cell className=''>
-						{({ row, value }) => {
-							return (
-								<Link to={`/live-match/${row.player.id}/${row.opponent.id}`}>
-									<ChevronRightIcon className='block m-auto' />
-								</Link>
-							);
-						}}
-					</Table.Cell>
-				</Table.Column>
 			</Table>
 		);
 	}

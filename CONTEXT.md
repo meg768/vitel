@@ -4,6 +4,9 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: `/live` now renders the inline `triangle-right` live-match icon inside a small `border` + `rounded-full` control in the `Spelare` column.
+- 2026-03-03: `/live` now uses `triangle-right.svg` as the inline live-match link icon in the `Spelare` column.
+- 2026-03-03: `/live` now shows a trailing inline play icon inside the `Spelare` column that links to `/live-match/:A/:B`, replacing the separate live-match navigation column.
 - 2026-03-03: `/live-match` now builds `data` directly once `match` has been validated, removing an unnecessary conditional around the data object.
 - 2026-03-03: `/live-match` now returns a dedicated error as soon as no matching live match is found, and separately reports missing SQL player rows.
 - 2026-03-03: `/live-match` now names the inline live payload lookup result `match` instead of `liveMatch`.
