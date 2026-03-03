@@ -6,16 +6,67 @@ import Page from '../../components/page';
 import Flag from '../../components/flag';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/table';
-import { useSQL } from '../../js/vitel.js';
+import { useRequest, useSQL } from '../../js/vitel.js';
 
-const mockMatch = {
-	event: 'Indian Wells',
-	score: '6-3 4-6 3-3 [40-15]'
-};
+const LIVE_REFRESH_INTERVAL_MS = 15 * 1000;
+
+function findMatch(matches, A, B) {
+	if (!A || !B) {
+		return null;
+	}
+
+	return matches.find(match => match.player?.id === A && match.opponent?.id === B)
+		?? matches.find(match => [match.player?.id, match.opponent?.id].includes(A) && [match.player?.id, match.opponent?.id].includes(B))
+		?? null;
+}
+
+function mergePlayer(player, sqlPlayer) {
+	return {
+		...player,
+		...sqlPlayer
+	};
+}
+
+function invertScoreToken(token) {
+	const hyphenatedMatch = token.match(/^(\d+)-(\d+)(\(\d+\))?$/);
+
+	if (hyphenatedMatch) {
+		const [, left, right, suffix = ''] = hyphenatedMatch;
+
+		return `${right}-${left}${suffix}`;
+	}
+
+	const compactMatch = token.match(/^(\d)(\d)(\(\d+\))?$/);
+
+	if (compactMatch) {
+		const [, left, right, suffix = ''] = compactMatch;
+
+		return `${right}${left}${suffix}`;
+	}
+
+	return token;
+}
+
+function invertScore(score) {
+	if (!score) {
+		return score;
+	}
+
+	return score.replace(/\[([^\]]+)\]|[^\s]+/g, token => {
+		if (token.startsWith('[') && token.endsWith(']')) {
+			const content = token.slice(1, -1);
+
+			return `[${invertScoreToken(content)}]`;
+		}
+
+		return invertScoreToken(token);
+	});
+}
 
 function Component() {
 	function PlayerCell({ player }) {
 		const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
+		const rankLabel = player.rank != null ? `#${player.rank}` : null;
 
 		return (
 			<div className='flex flex-col items-center gap-4'>
@@ -28,15 +79,14 @@ function Component() {
 					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
 						<Flag className='h-5! w-5! border-current' country={player.country} />
 						<span>{player.country}</span>
-						<span aria-hidden='true'>•</span>
-						<span>{`#${player.rank}`}</span>
+						{rankLabel ? <span>{rankLabel}</span> : null}
 					</div>
 				</div>
 			</div>
 		);
 	}
 
-	function ScoreCell({ score, playerA, playerB }) {
+	function ScoreCell({ score, winner, playerA, playerB }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -45,13 +95,12 @@ function Component() {
 			return { gameScore, setsSummary };
 		}
 		const { gameScore, setsSummary } = parseScore();
-		const link = `/head-to-head/${playerA.id}/${playerB.id}/`;
 
 		return (
 			<div className='flex flex-col items-center gap-4'>
 				<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>
-						Ställning
+						{winner ? 'Resultat' : 'Ställning'}
 					</div>
 					<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>
 						{gameScore}
@@ -62,9 +111,8 @@ function Component() {
 						</div>
 					) : null}
 				</div>
-
-				<Button disabled={link == ''} link={link}>
-					Visa tidigare möten
+				<Button disabled={playerA.id == null || playerB.id == null} link={`/head-to-head/${playerA.id}/${playerB.id}/`}>
+					Jämför spelare
 				</Button>
 			</div>
 		);
@@ -72,61 +120,70 @@ function Component() {
 
 	function fetch() {
 		const params = useParams();
-		let sql = '';
-		let format = [params.A, params.B];
-
-		sql += 'SELECT * FROM players WHERE id = ?; ';
-		sql += 'SELECT * FROM players WHERE id = ?; ';
-
-		const { data: sqlData, error } = useSQL({
-			sql,
-			format,
+		const { data: matches, error } = useRequest({
+			path: 'live',
+			method: 'GET',
 			cache: 0,
-			refetchInterval: 30 * 1000,
+			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 			refetchIntervalInBackground: true
 		});
-		let data = null;
-
-		if (sqlData) {
-			let [[playerA], [playerB]] = sqlData;
-
-			data = {
-				playerA,
-				playerB
-			};
-		}
+		const playerSql = 'SELECT * FROM players WHERE id = ?; SELECT * FROM players WHERE id = ?;';
+		const { data: playerRows, error: playerError } = useSQL({
+			sql: playerSql,
+			format: [params.A, params.B],
+			cache: 0,
+			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchIntervalInBackground: true
+		});
+		const playersById = Object.fromEntries((playerRows ?? []).flat().filter(Boolean).map(player => [player.id, player]));
+		const liveMatch = matches ? findMatch(matches, params.A, params.B) : null;
+		const isReversed = liveMatch?.player?.id === params.B && liveMatch?.opponent?.id === params.A;
+		const playerA = isReversed ? liveMatch?.opponent : liveMatch?.player;
+		const playerB = isReversed ? liveMatch?.player : liveMatch?.opponent;
+		let data = liveMatch
+			? {
+				event: liveMatch.name,
+				score: isReversed ? invertScore(liveMatch.score) : liveMatch.score,
+				winner: liveMatch.winner,
+				playerA: mergePlayer(playerA, playersById[playerA?.id]),
+				playerB: mergePlayer(playerB, playersById[playerB?.id])
+			}
+			: null;
 
 		return {
 			data,
 			error,
-			params
+			playerError,
+			params,
+			isLoading: !matches,
+			isRankingLoading: !playerRows
 		};
 	}
 
 	function Content() {
-		let { data, error, params } = fetch();
+		let { data, error, playerError, params, isLoading, isRankingLoading } = fetch();
 
-		if (error) {
-			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
+		if (error && !data) {
+			return <Page.Error>Misslyckades med att läsa in live-match - {error.message}</Page.Error>;
+		}
+
+		if (playerError) {
+			return <Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>;
 		}
 
 		if (!params.A || !params.B) {
 			return <Page.Error>Spelarna hittades inte ({params.A ?? '-'}, {params.B ?? '-'})</Page.Error>;
 		}
 
-		if (!data) {
-			return <Page.Loading>Läser in spelare...</Page.Loading>;
+		if (isLoading || isRankingLoading) {
+			return <Page.Loading>Läser in match...</Page.Loading>;
 		}
 
 		if (!data?.playerA || !data?.playerB) {
-			return <Page.Error>Spelarna hittades inte ({params.A}, {params.B})</Page.Error>;
+			return <Page.Error>Matchen hittades inte bland live-matcherna ({params.A}, {params.B})</Page.Error>;
 		}
 
-		let match = {
-			...mockMatch,
-			playerA: data.playerA,
-			playerB: data.playerB
-		};
+		let match = data;
 
 		return (
 			<>
@@ -148,7 +205,7 @@ function Component() {
 									</Table.Cell>
 
 									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell score={match.score} playerA={match.playerA} playerB={match.playerB} />
+										<ScoreCell score={match.score} winner={match.winner} playerA={match.playerA} playerB={match.playerB} />
 									</Table.Cell>
 
 									<Table.Cell className='pl-4 py-4 align-middle'>
@@ -157,11 +214,12 @@ function Component() {
 								</Table.Row>
 							</Table.Body>
 						</Table>
-					</div>
-					</div>
-				</>
-			);
-		}
+				</div>
+			</div>
+
+		</>
+	);
+	}
 
 	return (
 		<Page id='live-match-page'>

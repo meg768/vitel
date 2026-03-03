@@ -4,6 +4,16 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: `/live-match` head-to-head button label now reads `Jämför spelare` instead of `Visa statistik`.
+- 2026-03-03: `/live-match` now places the centered `Visa statistik` button directly below the result/ställning panel in the middle column instead of below the full match card.
+- 2026-03-03: `/live-match` once again shows a centered `Visa statistik` button below the scoreboard, linking to `/head-to-head/:A/:B`.
+- 2026-03-03: `/live-match` now shows `#rank` as plain inline text after the player flag and country code, without a styled badge.
+- 2026-03-03: `/live-match` now fetches both route players with `SELECT * FROM players` and merges those rows directly into the live payload, so card metadata like `rank` comes straight from the players table.
+- 2026-03-03: `/live-match` now respects route order for `:A/:B`; if the live payload lists the pair in the opposite order, the page swaps the player cards and inverts the displayed score.
+- 2026-03-03: `/live-match` now refetches live data every 15 seconds instead of every 30 seconds.
+- 2026-03-03: `/live-match` no longer shows the `Visa tidigare möten` button below the scoreboard.
+- 2026-03-03: `/live-match` now reads the real `GET /live` payload, matching by route params `:A/:B` and using SQL only to derive local ranking numbers for the two live players.
+- 2026-03-02: `/live-match` now renders the `Visa tidigare möten` button below the three-column table instead of inside the center score cell, keeping the side player cards visually centered against the score board.
 - 2026-03-02: `/live-match` no longer passes `enabled` to its player lookup query; the page now fully relies on route params `A` and `B` always being present.
 - 2026-03-02: `/live-match` no longer keeps a separate file-level refresh interval constant; the 30-second SQL refetch interval is now inlined where the query is configured.
 - 2026-03-02: `/live-match` no longer renders the experimental `ProgressBar`; the page was simplified again and now keeps only the 30-second auto-refetch behavior without a visual timer.
