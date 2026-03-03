@@ -69,7 +69,7 @@ function Component() {
 		const rankLabel = player.rank != null ? `#${player.rank}` : null;
 
 		return (
-			<div className='flex flex-col items-center gap-4'>
+			<div className='flex h-full flex-col items-center justify-center gap-4'>
 				<Avatar
 					src={avatarSrc}
 					className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300'
@@ -86,7 +86,7 @@ function Component() {
 		);
 	}
 
-	function ScoreCell({ score, winner, playerA, playerB }) {
+	function ScoreCell({ score, winner }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -111,9 +111,6 @@ function Component() {
 						</div>
 					) : null}
 				</div>
-				<Button disabled={playerA.id == null || playerB.id == null} link={`/head-to-head/${playerA.id}/${playerB.id}/`}>
-					Jämför spelare
-				</Button>
 			</div>
 		);
 	}
@@ -205,12 +202,24 @@ function Component() {
 									</Table.Cell>
 
 									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell score={match.score} winner={match.winner} playerA={match.playerA} playerB={match.playerB} />
+										<ScoreCell score={match.score} winner={match.winner} />
 									</Table.Cell>
 
 									<Table.Cell className='pl-4 py-4 align-middle'>
 										<PlayerCell player={match.playerB} />
 									</Table.Cell>
+								</Table.Row>
+
+								<Table.Row>
+									<Table.Cell className='pr-4 pt-0 pb-4' />
+
+									<Table.Cell className='px-2 pt-0 pb-4 text-center'>
+										<Button disabled={match.playerA.id == null || match.playerB.id == null} link={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}>
+											Jämför spelare
+										</Button>
+									</Table.Cell>
+
+									<Table.Cell className='pl-4 pt-0 pb-4' />
 								</Table.Row>
 							</Table.Body>
 						</Table>

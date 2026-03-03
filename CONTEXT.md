@@ -4,6 +4,8 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: `/live-match` now renders the `Jämför spelare` button in its own center-column table row, so the side `PlayerCell`s stay vertically centered against the score panel.
+- 2026-03-03: `/live-match` `PlayerCell` now centers its avatar/name block vertically within the side table cells.
 - 2026-03-03: `/live-match` head-to-head button label now reads `Jämför spelare` instead of `Visa statistik`.
 - 2026-03-03: `/live-match` now places the centered `Visa statistik` button directly below the result/ställning panel in the middle column instead of below the full match card.
 - 2026-03-03: `/live-match` once again shows a centered `Visa statistik` button below the scoreboard, linking to `/head-to-head/:A/:B`.
