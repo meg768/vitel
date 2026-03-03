@@ -4,6 +4,7 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: The app landing page no longer shows the `Följ matchen live` button.
 - 2026-03-03: `/players` now renders `Ranking` as the first table column; the shared `Players` component got a local `rankFirst` prop so `/ranking` keeps its previous column order.
 - 2026-03-03: Fixed `/players` ranking-column regression by rendering the conditional rank cell as a direct `Table.Column` element instead of a wrapper component, which `data-table` does not introspect.
 - 2026-03-03: `/players` now shows the player's country inline in the `Namn` column and hides the separate `Land` column on that page.

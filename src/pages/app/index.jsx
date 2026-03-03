@@ -111,22 +111,6 @@ function App() {
 		);
 	}
 
-	function LiveMatchButton() {
-		let url = '';
-		let playerA = playerList['A'];
-		let playerB = playerList['B'];
-
-		if (playerA && playerB) {
-			url = `/live-match/${playerA.id}/${playerB.id}/`;
-		}
-
-		return (
-			<Button disabled={url == ''} link={url}>
-				Följ matchen live
-			</Button>
-		);
-	}
-
 	function Player(properties) {
 		const { id, className, players, ...props } = properties;
 
@@ -238,7 +222,6 @@ function App() {
 								<Player id='B' players={players} />
 								<div className='flex justify-center pt-2 space-x-2'>
 									<CompareButton />
-									<LiveMatchButton />
 								</div>
 							</div>
 						</div>
