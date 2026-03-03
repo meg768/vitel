@@ -106,7 +106,7 @@ function App() {
 
 		return (
 			<Button disabled={url == ''} link={url}>
-				Jämför statistik
+				Jämför spelare
 			</Button>
 		);
 	}
