@@ -8,61 +8,6 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/table';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
-
-function findMatch(matches, A, B) {
-	if (!A || !B) {
-		return null;
-	}
-
-	return matches.find(match => match.player?.id === A && match.opponent?.id === B)
-		?? matches.find(match => [match.player?.id, match.opponent?.id].includes(A) && [match.player?.id, match.opponent?.id].includes(B))
-		?? null;
-}
-
-function mergePlayer(player, sqlPlayer) {
-	return {
-		...player,
-		...sqlPlayer
-	};
-}
-
-function invertScoreToken(token) {
-	const hyphenatedMatch = token.match(/^(\d+)-(\d+)(\(\d+\))?$/);
-
-	if (hyphenatedMatch) {
-		const [, left, right, suffix = ''] = hyphenatedMatch;
-
-		return `${right}-${left}${suffix}`;
-	}
-
-	const compactMatch = token.match(/^(\d)(\d)(\(\d+\))?$/);
-
-	if (compactMatch) {
-		const [, left, right, suffix = ''] = compactMatch;
-
-		return `${right}${left}${suffix}`;
-	}
-
-	return token;
-}
-
-function invertScore(score) {
-	if (!score) {
-		return score;
-	}
-
-	return score.replace(/\[([^\]]+)\]|[^\s]+/g, token => {
-		if (token.startsWith('[') && token.endsWith(']')) {
-			const content = token.slice(1, -1);
-
-			return `[${invertScoreToken(content)}]`;
-		}
-
-		return invertScoreToken(token);
-	});
-}
-
 function Component() {
 	function PlayerCell({ player }) {
 		const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
@@ -115,35 +60,41 @@ function Component() {
 		);
 	}
 
-	function fetch() {
+	function fetch(refetchInterval = 10 * 1000) {
+		function findMatch(matches, A, B) {
+			if (!A || !B) {
+				return null;
+			}
+
+			return matches.find(match => match.player?.id === A && match.opponent?.id === B) ?? null;
+		}
+
 		const params = useParams();
 		const { data: matches, error } = useRequest({
 			path: 'live',
 			method: 'GET',
 			cache: 0,
-			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchInterval,
 			refetchIntervalInBackground: true
 		});
 		const playerSql = 'SELECT * FROM players WHERE id = ?; SELECT * FROM players WHERE id = ?;';
-		const { data: playerRows, error: playerError } = useSQL({
+		const { data: players, error: playerError } = useSQL({
 			sql: playerSql,
 			format: [params.A, params.B],
 			cache: 0,
-			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchInterval,
 			refetchIntervalInBackground: true
 		});
-		const playersById = Object.fromEntries((playerRows ?? []).flat().filter(Boolean).map(player => [player.id, player]));
+		const playerA = players?.[0]?.[0];
+		const playerB = players?.[1]?.[0];
 		const liveMatch = matches ? findMatch(matches, params.A, params.B) : null;
-		const isReversed = liveMatch?.player?.id === params.B && liveMatch?.opponent?.id === params.A;
-		const playerA = isReversed ? liveMatch?.opponent : liveMatch?.player;
-		const playerB = isReversed ? liveMatch?.player : liveMatch?.opponent;
 		let data = liveMatch
 			? {
 				event: liveMatch.name,
-				score: isReversed ? invertScore(liveMatch.score) : liveMatch.score,
+				score: liveMatch.score,
 				winner: liveMatch.winner,
-				playerA: mergePlayer(playerA, playersById[playerA?.id]),
-				playerB: mergePlayer(playerB, playersById[playerB?.id])
+				playerA,
+				playerB
 			}
 			: null;
 
@@ -153,7 +104,7 @@ function Component() {
 			playerError,
 			params,
 			isLoading: !matches,
-			isRankingLoading: !playerRows
+			isRankingLoading: !players
 		};
 	}
 

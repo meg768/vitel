@@ -4,6 +4,12 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: `/live-match` now reads `playerA` and `playerB` directly as the first row from the first and second SQL result sets respectively, removing the temporary `playersById` lookup.
+- 2026-03-03: `/live-match` now reads `playerA` and `playerB` directly from the SQL `players` result by route param id, and no longer merges live payload player objects into the card data.
+- 2026-03-03: `/live-match` `fetch()` now names the SQL player query result `players` instead of `playerRows`.
+- 2026-03-03: `/live-match` now keeps `findMatch()` local inside `fetch()`, reducing file-level helper surface.
+- 2026-03-03: `/live-match` `fetch()` now accepts a `refetchInterval` parameter with default `10 * 1000`, and uses it for both live and player polling queries.
+- 2026-03-03: `/live-match` now assumes route params `:A/:B` already match the live payload order, so the page no longer applies reverse-order fallback or score inversion.
 - 2026-03-03: `/live-match` now refetches live and player data every 10 seconds instead of every 15 seconds.
 - 2026-03-03: `/live-match` now renders the `Jämför spelare` button in its own center-column table row, so the side `PlayerCell`s stay vertically centered against the score panel.
 - 2026-03-03: `/live-match` `PlayerCell` now centers its avatar/name block vertically within the side table cells.
