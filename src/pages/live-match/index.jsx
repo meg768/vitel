@@ -8,7 +8,7 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/table';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 15 * 1000;
+const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 
 function findMatch(matches, A, B) {
 	if (!A || !B) {
