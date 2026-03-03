@@ -106,13 +106,14 @@ function Table({ rows, className, children, ...props }) {
 
         let index = 0;
 
-        let x = React.Children.map(children, (child) => {
-            if (child.type == Table.Column ) {
-                if (!child.props.hidden) {
-                    return new Column(child, index++);
-
-                }
+        let x = React.Children.toArray(children).flatMap((child) => {
+            if (!child || child.type != Table.Column) {
+                return [];
             }
+            if (child.props.hidden) {
+                return [];
+            }
+            return [new Column(child, index++)];
         });
 
         setColumns(x);

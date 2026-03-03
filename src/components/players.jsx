@@ -2,14 +2,27 @@ import Flag from './flag';
 import Table from './ui/data-table';
 import Link from '../components/ui/link';
 
-function Component({ players }) {
+function Component({ players, rankFirst = false }) {
 	function Content() {
 		function cash(value) {
 			return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 		}
 
+		const rankColumn = (
+			<Table.Column id='rank' className=''>
+				<Table.Title>Ranking</Table.Title>
+				<Table.Cell className='text-right'>
+					{({ row, value }) => {
+						return value;
+					}}
+				</Table.Cell>
+			</Table.Column>
+		);
+
 		return (
 			<Table rows={players} className='striped hover'>
+				{rankFirst ? rankColumn : null}
+
 				<Table.Column id='name' className=''>
 					<Table.Title className=''>Namn</Table.Title>
 					<Table.Cell>
@@ -18,24 +31,20 @@ function Component({ players }) {
 								<div className='flex items-center gap-2 whitespace-nowrap bg-transparent'>
 									<Flag className='w-5! h-5! border-1! border-current' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
+									{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>({row.country})</span> : null}
 								</div>
 							);
 						}}
 					</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='country' className=''>
-					<Table.Title className=''>Land</Table.Title>
-				</Table.Column>
+				{rankFirst ? null : (
+					<Table.Column id='country' className=''>
+						<Table.Title className=''>Land</Table.Title>
+					</Table.Column>
+				)}
 
-				<Table.Column id='rank' className=''>
-					<Table.Title>Ranking</Table.Title>
-					<Table.Cell className='text-right'>
-						{({ row, value }) => {
-							return value;
-						}}
-					</Table.Cell>
-				</Table.Column>
+				{rankFirst ? null : rankColumn}
                 
 				<Table.Column id='points' className=''>
 					<Table.Title>Poäng</Table.Title>

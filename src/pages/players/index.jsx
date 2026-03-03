@@ -37,7 +37,7 @@ let Component = () => {
 			<>
 				<Page.Title>{query.title ? query.title : 'Spelare'}</Page.Title>
 				<Page.Container>
-					<Players players={players} />
+					<Players players={players} rankFirst />
 				</Page.Container>
 			</>
 		);
