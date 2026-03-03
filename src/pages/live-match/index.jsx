@@ -70,14 +70,17 @@ function Component() {
 		}
 
 		const params = useParams();
-		const { data: matches, error } = useRequest({
+
+		const { data: matches, error: liveError } = useRequest({
 			path: 'live',
 			method: 'GET',
 			cache: 0,
 			refetchInterval,
 			refetchIntervalInBackground: true
 		});
+
 		const playerSql = 'SELECT * FROM players WHERE id = ?; SELECT * FROM players WHERE id = ?;';
+
 		const { data: players, error: playerError } = useSQL({
 			sql: playerSql,
 			format: [params.A, params.B],
@@ -85,45 +88,39 @@ function Component() {
 			refetchInterval,
 			refetchIntervalInBackground: true
 		});
-		const playerA = players?.[0]?.[0];
-		const playerB = players?.[1]?.[0];
+        
 		const liveMatch = matches ? findMatch(matches, params.A, params.B) : null;
+
 		let data = liveMatch
 			? {
 				event: liveMatch.name,
 				score: liveMatch.score,
 				winner: liveMatch.winner,
-				playerA,
-				playerB
+				playerA: players?.[0]?.[0],
+				playerB: players?.[1]?.[0]
 			}
 			: null;
 
 		return {
 			data,
-			error,
-			playerError,
+			error: liveError ?? playerError,
 			params,
-			isLoading: !matches,
-			isRankingLoading: !players
+			isLoading: !matches || !players
 		};
 	}
 
 	function Content() {
-		let { data, error, playerError, params, isLoading, isRankingLoading } = fetch();
+		let { data, error, params, isLoading } = fetch();
 
 		if (error && !data) {
 			return <Page.Error>Misslyckades med att läsa in live-match - {error.message}</Page.Error>;
-		}
-
-		if (playerError) {
-			return <Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>;
 		}
 
 		if (!params.A || !params.B) {
 			return <Page.Error>Spelarna hittades inte ({params.A ?? '-'}, {params.B ?? '-'})</Page.Error>;
 		}
 
-		if (isLoading || isRankingLoading) {
+		if (isLoading) {
 			return <Page.Loading>Läser in match...</Page.Loading>;
 		}
 
