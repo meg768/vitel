@@ -4,8 +4,14 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-03: `/live-match` now builds `data` directly once `match` has been validated, removing an unnecessary conditional around the data object.
+- 2026-03-03: `/live-match` now returns a dedicated error as soon as no matching live match is found, and separately reports missing SQL player rows.
+- 2026-03-03: `/live-match` now names the inline live payload lookup result `match` instead of `liveMatch`.
+- 2026-03-03: `/live-match` now performs the live match lookup inline in `fetch()` instead of through a local `findMatch()` helper.
+- 2026-03-03: `/live-match` now wraps its page-level fetch errors in `new Error(...)`, and `Content()` renders `error.message`.
+- 2026-03-03: `/live-match` no longer returns a separate `isLoading` from `fetch()`; `Content()` now treats `data == null && error == null` as the loading state.
+- 2026-03-03: `/live-match` now resolves all page-level error cases inside `fetch()` itself, so `Content()` only handles a single prepared `error` string plus loading/success states.
 - 2026-03-03: `/live-match` now assigns `playerA` and `playerB` inline when building `data`, removing temporary local variables.
-- 2026-03-03: `/live-match` `fetch()` now returns a single combined `isLoading` flag for both live and player queries, simplifying `Content()` loading handling.
 - 2026-03-03: `/live-match` now combines `liveError` and `playerError` inline in `fetch()`'s return object instead of storing a temporary `combinedError`.
 - 2026-03-03: `/live-match` now names the `useRequest()` error value `liveError` inside `fetch()`, clarifying the combined error handling.
 - 2026-03-03: `/live-match` `fetch()` now returns a single combined `error` value instead of separate `error` and `playerError`, simplifying `Content()` error handling.

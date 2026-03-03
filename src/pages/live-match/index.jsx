@@ -15,10 +15,7 @@ function Component() {
 
 		return (
 			<div className='flex h-full flex-col items-center justify-center gap-4'>
-				<Avatar
-					src={avatarSrc}
-					className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300'
-				/>
+				<Avatar src={avatarSrc} className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300' />
 				<div className='flex flex-col items-center gap-1'>
 					<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>{player.name}</div>
 					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
@@ -44,32 +41,23 @@ function Component() {
 		return (
 			<div className='flex flex-col items-center gap-4'>
 				<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
-					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>
-						{winner ? 'Resultat' : 'Ställning'}
-					</div>
-					<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>
-						{gameScore}
-					</div>
-					{setsSummary ? (
-						<div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>
-							{setsSummary}
-						</div>
-					) : null}
+					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
+					<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>{gameScore}</div>
+					{setsSummary ? <div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
 				</div>
 			</div>
 		);
 	}
 
 	function fetch(refetchInterval = 10 * 1000) {
-		function findMatch(matches, A, B) {
-			if (!A || !B) {
-				return null;
-			}
-
-			return matches.find(match => match.player?.id === A && match.opponent?.id === B) ?? null;
-		}
-
 		const params = useParams();
+
+		if (!params.A || !params.B) {
+			return {
+				data: null,
+				error: new Error(`Spelarna hittades inte (${params.A ?? '-'}, ${params.B ?? '-'})`)
+			};
+		}
 
 		const { data: matches, error: liveError } = useRequest({
 			path: 'live',
@@ -78,6 +66,13 @@ function Component() {
 			refetchInterval,
 			refetchIntervalInBackground: true
 		});
+
+		if (liveError) {
+			return {
+				data: null,
+				error: new Error(`Misslyckades med att läsa in live-match - ${liveError.message}`)
+			};
+		}
 
 		const playerSql = 'SELECT * FROM players WHERE id = ?; SELECT * FROM players WHERE id = ?;';
 
@@ -88,44 +83,60 @@ function Component() {
 			refetchInterval,
 			refetchIntervalInBackground: true
 		});
-        
-		const liveMatch = matches ? findMatch(matches, params.A, params.B) : null;
 
-		let data = liveMatch
-			? {
-				event: liveMatch.name,
-				score: liveMatch.score,
-				winner: liveMatch.winner,
-				playerA: players?.[0]?.[0],
-				playerB: players?.[1]?.[0]
-			}
-			: null;
+		if (playerError) {
+			return {
+				data: null,
+				error: new Error(`Misslyckades med att läsa in spelare - ${playerError.message}`)
+			};
+		}
+
+		if (!matches || !players) {
+			return {
+				data: null,
+				error: null
+			};
+		}
+
+		const match = matches.find(match => match.player?.id === params.A && match.opponent?.id === params.B) ?? null;
+
+		if (!match) {
+			return {
+				data: null,
+				error: new Error(`Matchen hittades inte bland live-matcherna (${params.A}, ${params.B})`)
+			};
+		}
+
+		const data = {
+			event: match.name,
+			score: match.score,
+			winner: match.winner,
+			playerA: players?.[0]?.[0],
+			playerB: players?.[1]?.[0]
+		};
+
+		if (!data?.playerA || !data?.playerB) {
+			return {
+				data: null,
+				error: new Error(`Spelarna hittades inte (${params.A}, ${params.B})`)
+			};
+		}
 
 		return {
 			data,
-			error: liveError ?? playerError,
-			params,
-			isLoading: !matches || !players
+			error: null
 		};
 	}
 
 	function Content() {
-		let { data, error, params, isLoading } = fetch();
+		let { data, error } = fetch();
 
-		if (error && !data) {
-			return <Page.Error>Misslyckades med att läsa in live-match - {error.message}</Page.Error>;
-		}
-
-		if (!params.A || !params.B) {
-			return <Page.Error>Spelarna hittades inte ({params.A ?? '-'}, {params.B ?? '-'})</Page.Error>;
-		}
-
-		if (isLoading) {
+		if (data == null && error == null) {
 			return <Page.Loading>Läser in match...</Page.Loading>;
 		}
 
-		if (!data?.playerA || !data?.playerB) {
-			return <Page.Error>Matchen hittades inte bland live-matcherna ({params.A}, {params.B})</Page.Error>;
+		if (error) {
+			return <Page.Error>{error.message}</Page.Error>;
 		}
 
 		let match = data;
@@ -162,7 +173,10 @@ function Component() {
 									<Table.Cell className='pr-4 pt-0 pb-4' />
 
 									<Table.Cell className='px-2 pt-0 pb-4 text-center'>
-										<Button disabled={match.playerA.id == null || match.playerB.id == null} link={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}>
+										<Button
+											disabled={match.playerA.id == null || match.playerB.id == null}
+											link={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
+										>
 											Jämför spelare
 										</Button>
 									</Table.Cell>
@@ -171,11 +185,10 @@ function Component() {
 								</Table.Row>
 							</Table.Body>
 						</Table>
+					</div>
 				</div>
-			</div>
-
-		</>
-	);
+			</>
+		);
 	}
 
 	return (
