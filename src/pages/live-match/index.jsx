@@ -5,6 +5,7 @@ import Avatar from '../../components/avatar';
 import Page from '../../components/page';
 import Flag from '../../components/flag';
 import Button from '../../components/ui/button';
+import Link from '../../components/ui/link';
 import Table from '../../components/ui/table';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
@@ -12,12 +13,15 @@ function Component() {
 	function PlayerCell({ player }) {
 		const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
 		const rankLabel = player.rank != null ? `#${player.rank}` : null;
+		const playerLink = `/player/${player.id}`;
 
 		return (
 			<div className='flex h-full flex-col items-center justify-center gap-4'>
 				<Avatar src={avatarSrc} className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300' />
 				<div className='flex flex-col items-center gap-1'>
-					<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>{player.name}</div>
+					<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>
+						<Link to={playerLink}>{player.name}</Link>
+					</div>
 					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
 						<Flag className='h-5! w-5! border-current' country={player.country} />
 						<span>{player.country}</span>
