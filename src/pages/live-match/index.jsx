@@ -1,10 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router';
 
+import BarChartIcon from '../../assets/radix-icons/bar-chart.svg?react';
 import Avatar from '../../components/avatar';
 import Page from '../../components/page';
 import Flag from '../../components/flag';
-import Button from '../../components/ui/button';
 import Link from '../../components/ui/link';
 import Table from '../../components/ui/table';
 import { useRequest, useSQL } from '../../js/vitel.js';
@@ -32,7 +32,7 @@ function Component() {
 		);
 	}
 
-	function ScoreCell({ score, winner, server, comment }) {
+	function ScoreCell({ score, winner, server, comment, compareLink }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -44,7 +44,17 @@ function Component() {
 
 		return (
 			<div className='flex flex-col items-center gap-4'>
-				<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
+				<div className='relative flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
+					{compareLink ? (
+						<Link
+							to={compareLink}
+							className='absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+							aria-label='Jämför spelare'
+							title='Jämför spelare'
+						>
+							<BarChartIcon className='h-4 w-4 bg-transparent' />
+						</Link>
+					) : null}
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
 					<div className='mt-4 flex items-center justify-center gap-4'>
 						<span className='flex h-4 w-4 items-center justify-center'>
@@ -179,27 +189,18 @@ function Component() {
 									</Table.Cell>
 
 									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell score={match.score} winner={match.winner} server={match.server} comment={match.comment} />
+										<ScoreCell
+											score={match.score}
+											winner={match.winner}
+											server={match.server}
+											comment={match.comment}
+											compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
+										/>
 									</Table.Cell>
 
 									<Table.Cell className='pl-4 py-4 align-middle'>
 										<PlayerCell player={match.playerB} />
 									</Table.Cell>
-								</Table.Row>
-
-								<Table.Row>
-									<Table.Cell className='pr-4 pt-0 pb-4' />
-
-									<Table.Cell className='px-2 pt-0 pb-4 text-center'>
-										<Button
-											disabled={match.playerA.id == null || match.playerB.id == null}
-											link={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
-										>
-											Jämför spelare
-										</Button>
-									</Table.Cell>
-
-									<Table.Cell className='pl-4 pt-0 pb-4' />
 								</Table.Row>
 							</Table.Body>
 						</Table>
