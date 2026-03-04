@@ -160,20 +160,20 @@ function Component() {
 
 		let match = data;
 		return (
-			<>
+			<div className='flex flex-1 flex-col'>
 				<Page.Title>{match.event}</Page.Title>
 
-				<div className='mt-4 rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900'>
-					<div className='overflow-x-auto'>
-						<Table className='w-full table-fixed border-separate border-spacing-0'>
+				<div className='mt-4 flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900'>
+					<div className='flex flex-1 overflow-x-auto'>
+						<Table className='h-full w-full table-fixed border-separate border-spacing-0'>
 							<colgroup>
 								<col className='w-44 md:w-64' />
 								<col />
 								<col className='w-44 md:w-64' />
 							</colgroup>
 
-							<Table.Body>
-								<Table.Row className='align-middle'>
+							<Table.Body className='h-full'>
+								<Table.Row className='h-full align-middle'>
 									<Table.Cell className='pr-4 py-4 align-middle'>
 										<PlayerCell player={match.playerA} />
 									</Table.Cell>
@@ -205,14 +205,14 @@ function Component() {
 						</Table>
 					</div>
 				</div>
-			</>
+			</div>
 		);
 	}
 
 	return (
 		<Page id='live-match-page'>
 			<Page.Menu />
-			<Page.Content>
+			<Page.Content className='flex flex-col'>
 				<Content />
 			</Page.Content>
 		</Page>
