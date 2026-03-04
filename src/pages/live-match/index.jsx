@@ -28,7 +28,7 @@ function Component() {
 		);
 	}
 
-	function ScoreCell({ score, winner }) {
+	function ScoreCell({ score, winner, server }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -42,7 +42,15 @@ function Component() {
 			<div className='flex flex-col items-center gap-4'>
 				<div className='flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
-					<div className='mt-4 text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>{gameScore}</div>
+					<div className='mt-4 flex items-center justify-center gap-4'>
+						<span className='flex h-4 w-4 items-center justify-center'>
+							{server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
+						</span>
+						<div className='text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>{gameScore}</div>
+						<span className='flex h-4 w-4 items-center justify-center'>
+							{server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
+						</span>
+					</div>
 					{setsSummary ? <div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
 				</div>
 			</div>
@@ -110,6 +118,7 @@ function Component() {
 		const data = {
 			event: match.name,
 			score: match.score,
+			server: match.server ?? null,
 			winner: match.winner,
 			playerA: players?.[0]?.[0],
 			playerB: players?.[1]?.[0]
@@ -140,7 +149,6 @@ function Component() {
 		}
 
 		let match = data;
-
 		return (
 			<>
 				<Page.Title>{match.event}</Page.Title>
@@ -161,7 +169,7 @@ function Component() {
 									</Table.Cell>
 
 									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell score={match.score} winner={match.winner} />
+										<ScoreCell score={match.score} winner={match.winner} server={match.server} />
 									</Table.Cell>
 
 									<Table.Cell className='pl-4 py-4 align-middle'>

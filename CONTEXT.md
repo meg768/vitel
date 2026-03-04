@@ -4,6 +4,10 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-04: `/live-match` no longer shows the `Servar: <namn>` text under the score panel; the tennis-ball marker alone now indicates the server.
+- 2026-03-04: `/live-match` serve indicator now uses a small tennis-ball marker beside the center score instead of a yellow dot, while keeping the `Servar: <namn>` text.
+- 2026-03-04: `/live-match` now shows a small yellow serve indicator dot beside the center score, on the left for `server: 'player'` and on the right for `server: 'opponent'`, while keeping the `Servar: <namn>` text below.
+- 2026-03-04: `/live-match` now shows `Servar: <namn>` in the center score panel when the live payload includes `server: 'player'` or `server: 'opponent'`.
 - 2026-03-04: Regenerated `total-number-of-games-greater-than-10.js` and `total-number-of-games-greater-than-5.js` from their inline Swedish descriptions; they now return `true` based on summed completed-set games instead of stale placeholder logic.
 - 2026-03-04: `src/pages/live/pings/README.md` now documents the live `score` format explicitly, including standard set notation, live game points in brackets, and tie-break notation such as `7-6(3)`.
 - 2026-03-04: `src/pages/live/pings/README.md` now uses proper Swedish characters for the live ping workflow documentation.
