@@ -48,11 +48,11 @@ function Component() {
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
 					<div className='mt-4 flex items-center justify-center gap-4'>
 						<span className='flex h-4 w-4 items-center justify-center'>
-							{server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
+							{!winner && server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 						<div className='text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>{gameScore}</div>
 						<span className='flex h-4 w-4 items-center justify-center'>
-							{server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
+							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 					</div>
 					{setsSummary ? <div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}

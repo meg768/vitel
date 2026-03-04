@@ -123,8 +123,20 @@ function LiveTable({ rows, finished = false }) {
 				</Table.Column>
 
 				<Table.Column id='varning' className=''>
-					<Table.Title className=''>Varning</Table.Title>
-					<Table.Cell>{({ row, value }) => <span title={row.varningReason ?? undefined}>{value ?? '-'}</span>}</Table.Cell>
+					<Table.Title className=''></Table.Title>
+					<Table.Cell className='text-center'>
+						{({ row, value }) => {
+							if (!value) {
+								return null;
+							}
+
+							return (
+								<span title={row.varningReason ?? undefined} aria-label='Varning'>
+									⚠️
+								</span>
+							);
+						}}
+					</Table.Cell>
 				</Table.Column>
 
 			</Table>
@@ -283,7 +295,7 @@ let Component = () => {
 			])
 		);
 		const rows = matches.map(match => {
-			const hasWarning = ping('total-number-of-games-greater-than-5', match.score); ;
+			const pinging = ping('lost-first-and-second-set', match.score); ;
 			const player = {
 				...match.player,
 				rank: ranks[match.player?.id]
@@ -304,8 +316,8 @@ let Component = () => {
 
 				return `${playerWins}-${opponentWins}`;
 				})(),
-				varning: hasWarning ? 'Varning' : '-',
-				varningReason: hasWarning ? 'Spelaren har forlorat forsta avslutade setet.' : null
+				varning: pinging,
+				varningReason: pinging ? 'Spelaren har forlorat forsta avslutade setet.' : null
 			};
 		});
 

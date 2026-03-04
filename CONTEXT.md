@@ -3,6 +3,10 @@
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
 ## Recent Updates
+- 2026-03-04: `/live` renamed local warning flag variable from `hasWarning` to `pinging` in the row mapping logic.
+- 2026-03-04: Regenerated `src/pages/live/pings/zero-sets-played.js`; it now correctly returns `true` only when score has no set tokens (for example `[15-15]`), and `false` once any set score appears.
+- 2026-03-04: `/live` warning column now has no header title and shows a `⚠️` symbol in warning rows instead of textual `Varning`/`-` values.
+- 2026-03-04: `/live-match` no longer shows the tennis-ball serve indicator once the match has a `winner`; the marker is only shown for in-progress matches.
 - 2026-03-04: `/live-match` now links only the player name to `/player/:id`; avatar and metadata remain non-clickable.
 - 2026-03-04: `/live-match` no longer shows the `Servar: <namn>` text under the score panel; the tennis-ball marker alone now indicates the server.
 - 2026-03-04: `/live-match` serve indicator now uses a small tennis-ball marker beside the center score instead of a yellow dot, while keeping the `Servar: <namn>` text.
