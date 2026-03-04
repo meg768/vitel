@@ -3,7 +3,6 @@
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
 ## Recent Updates
-
 - 2026-03-04: `/live-match` no longer shows the `Servar: <namn>` text under the score panel; the tennis-ball marker alone now indicates the server.
 - 2026-03-04: `/live-match` serve indicator now uses a small tennis-ball marker beside the center score instead of a yellow dot, while keeping the `Servar: <namn>` text.
 - 2026-03-04: `/live-match` now shows a small yellow serve indicator dot beside the center score, on the left for `server: 'player'` and on the right for `server: 'opponent'`, while keeping the `Servar: <namn>` text below.
