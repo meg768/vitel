@@ -57,7 +57,7 @@ function Component() {
 		);
 	}
 
-	function fetch(refetchInterval = 10 * 1000) {
+	function fetch(refetchInterval = 5 * 1000) {
 		const params = useParams();
 
 		if (!params.A || !params.B) {
