@@ -8,6 +8,7 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest, useSQL } from '../../js/vitel.js';
+import { ping } from './ping.js';
 const LIVE_REFRESH_INTERVAL_MS = 30 * 1000;
 const LIVE_REFRESH_STEPS = 6;
 
@@ -119,6 +120,11 @@ function LiveTable({ rows, finished = false }) {
 				<Table.Column id='score' className=''>
 					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
 					<Table.Cell>{({ value }) => value}</Table.Cell>
+				</Table.Column>
+
+				<Table.Column id='varning' className=''>
+					<Table.Title className=''>Varning</Table.Title>
+					<Table.Cell>{({ row, value }) => <span title={row.varningReason ?? undefined}>{value ?? '-'}</span>}</Table.Cell>
 				</Table.Column>
 
 			</Table>
@@ -241,6 +247,7 @@ let Component = () => {
 			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 			refetchIntervalInBackground: true
 		});
+		const ranks = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in dagens matcher - {error.message}</Page.Error>;
@@ -266,7 +273,6 @@ let Component = () => {
 			return <Page.Loading>Läser in head-to-head...</Page.Loading>;
 		}
 
-		const ranks = Object.fromEntries(rankingRows.map((player, index) => [player.id, index + 1]));
 		const headToHead = Object.fromEntries(
 			meetingRows.map(row => [
 				`${row.player_a_id}:${row.player_b_id}`,
@@ -276,25 +282,32 @@ let Component = () => {
 				}
 			])
 		);
-		const rows = matches.map(match => ({
-			...match,
-			player: {
+		const rows = matches.map(match => {
+			const hasWarning = ping('total-number-of-games-greater-than-5', match.score); ;
+			const player = {
 				...match.player,
 				rank: ranks[match.player?.id]
-			},
-			opponent: {
+			};
+			const opponent = {
 				...match.opponent,
 				rank: ranks[match.opponent?.id]
-			},
-			headToHead: (() => {
-				const key = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
+			};
+			return {
+				...match,
+				player,
+				opponent,
+				headToHead: (() => {
+					const key = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
 				const record = headToHead[key];
 				const playerWins = record?.[match.player?.id] ?? 0;
 				const opponentWins = record?.[match.opponent?.id] ?? 0;
 
 				return `${playerWins}-${opponentWins}`;
-			})()
-		}));
+				})(),
+				varning: hasWarning ? 'Varning' : '-',
+				varningReason: hasWarning ? 'Spelaren har forlorat forsta avslutade setet.' : null
+			};
+		});
 
 		return (
 			<>

@@ -4,6 +4,32 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
+- 2026-03-04: Regenerated `total-number-of-games-greater-than-10.js` and `total-number-of-games-greater-than-5.js` from their inline Swedish descriptions; they now return `true` based on summed completed-set games instead of stale placeholder logic.
+- 2026-03-04: `src/pages/live/pings/README.md` now documents the live `score` format explicitly, including standard set notation, live game points in brackets, and tie-break notation such as `7-6(3)`.
+- 2026-03-04: `src/pages/live/pings/README.md` now uses proper Swedish characters for the live ping workflow documentation.
+- 2026-03-04: Workflow rule for live pings: before generating or regenerating code in `src/pages/live/pings/`, always read the local `README.md` in that same folder first.
+- 2026-03-04: Regenerated all live `pings/*.js` from their inline Swedish descriptions; `lost-first-and-second-set.js` now exports a real `ping(score)` implementation.
+- 2026-03-04: `src/pages/live/ping.js` now loads ping files dynamically from `src/pages/live/pings/*.js` via `import.meta.glob`, so new pings no longer need manual registration.
+- 2026-03-04: Reintroduced `src/pages/live/ping.js` as a thin dispatcher with the signature `ping(name, score)`; `/live` now calls `ping('lost-first-set', match.score)` for the `Varning` column.
+- 2026-03-04: `/live` now drives the `Varning` column directly from `src/pages/live/pings/lost-first-set.js`; rows show `Varning` when the player has lost the first completed set, otherwise `-`.
+- 2026-03-04: Removed stale live scenario-loader code from `/live`; after deleting the experimental scenario files, the `Varning` column now renders a static `-` placeholder again.
+- 2026-03-04: Removed `src/pages/live/varning.js`; `/live/index.jsx` now loads scenario files directly with `import.meta.glob('./*.js')` and evaluates them inline.
+- 2026-03-04: Removed current `heads-up` naming from `/live`; the scenario loader is now `src/pages/live/varning.js`, the table column is `Varning`, and live rows use `varning`/`varningReason` instead of `headsUp` fields.
+- 2026-03-04: Live scenario files now import pings from `./ping.js` because both the scenarios and the dispatcher live directly under `src/pages/live/`.
+- 2026-03-04: Removed `src/pages/live/heads-up/`; live scenarios now live directly under `src/pages/live/` (for example `A.js`), and `src/pages/live/heads-up.js` auto-loads them there.
+- 2026-03-04: Moved live `pings/` up one level from `src/pages/live/heads-up/` to `src/pages/live/`, and moved the shared `ping.js` dispatcher alongside it; heads-up scenarios now import pings from `../ping.js`.
+- 2026-03-03: Added `src/pages/live/heads-up/README.md` to define the scenario-file format, and `src/pages/live/heads-up/index.js` now auto-loads scenario modules in that folder instead of manually importing each one.
+- 2026-03-03: Every file in `src/pages/live/heads-up/pings/` now default-exports a uniform `ping(score)` function that returns only `true` or `false`.
+- 2026-03-03: Removed the shared `src/pages/live/heads-up/pings/_sets.js`; each ping file is now self-contained and parses the score it needs locally.
+- 2026-03-03: `src/pages/live/heads-up/pings/` now documents each ping in plain Swedish directly inside the signal file, plus a local `README.md` that explains the one-file-per-signal structure.
+- 2026-03-03: `/live` heads-up signals now live in separate files under `src/pages/live/heads-up/pings/`; `ping.js` is only a dispatcher, and each signal like `won-first-set` or `lost-second-set` can now be extended independently.
+- 2026-03-03: Added `src/pages/live/heads-up/ping.js` as a shared live-score signal helper; it currently supports `won-first-set`, `lost-first-set`, `won-second-set`, and `lost-second-set`, and `A.js` now uses `ping(score, 'won-first-set')`.
+- 2026-03-03: Regenerated `src/pages/live/heads-up/A.js` from its inline Swedish instruction comment; it now exports `evaluate({ score })` and keeps the default live scenario wrapper for `/live`.
+- 2026-03-03: `src/pages/live/heads-up/A.js` can now act as the scenario source itself: it keeps a Swedish instruction comment at the top, exports `headsUp({ score })`, and also default-exports the live scenario wrapper used by `/live`.
+- 2026-03-03: Added `src/pages/live/heads-up/README.md` and `TEMPLATE.md` to define a more practical Swedish scenario format for future `Heads up` rules, centered on `score`, `ranking`, `tidigare moten`, and concrete positive/negative examples.
+- 2026-03-03: `src/pages/live/heads-up/A.md` is now a stricter instruction file, and the generated `A.js` exports `headsUp(score)` that returns `true` when completed-set games exceed 20, ignoring bracket points like `[15-15]`.
+- 2026-03-03: `/live` `Heads up` now imports local generated scenario evaluators from `src/pages/live/heads-up/*.js`; the first rule comes from `A.md` and flags near-equal rankings plus total score dominance such as `6-0 6-0 [0-0]`.
+- 2026-03-03: Added `src/pages/live/heads-up/A.md` as the human-written source format and `src/pages/live/heads-up/A.js` as the generated evaluator module for live warnings.
 - 2026-03-03: The app landing page compare CTA is now labeled `Jämför spelare` instead of `Jämför statistik`.
 - 2026-03-03: The app landing page no longer shows the `Följ matchen live` button.
 - 2026-03-03: `/players` now renders `Ranking` as the first table column; the shared `Players` component got a local `rankFirst` prop so `/ranking` keeps its previous column order.
