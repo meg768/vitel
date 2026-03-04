@@ -55,7 +55,7 @@ function Component() {
 							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 					</div>
-					{setsSummary ? <div className='mt-4 text-xl font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
+					{setsSummary ? <div className='mt-4 text-2xl font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
 						{comment ? (
 							<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
 								{comment}

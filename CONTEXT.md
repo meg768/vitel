@@ -3,6 +3,7 @@
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
 ## Recent Updates
+- 2026-03-04: `/live-match` set-score line was increased again and now uses `text-2xl` in the center score panel.
 - 2026-03-04: `/live-match` now renders the set-score line in a slightly larger size (`text-xl`) in the center score panel.
 - 2026-03-04: `/live-match` now renders the live `comment` text in italic style below the set-score line in the center score panel.
 - 2026-03-04: `/live-match` now renders live `comment` below the set-score line (`setsSummary`) in the center score panel.
