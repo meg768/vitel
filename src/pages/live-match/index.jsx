@@ -33,6 +33,8 @@ function Component() {
 	}
 
 	function ScoreCell({ score, winner, server, comment, compareLink }) {
+		const scoreFont = { fontFamily: "'Courier New', Courier, monospace" };
+
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -60,17 +62,17 @@ function Component() {
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
-						<div className='text-6xl font-semibold tracking-tight text-primary-900 dark:text-primary-50'>{gameScore}</div>
+						<div className='text-6xl font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50' style={scoreFont}>{gameScore}</div>
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 					</div>
 					{setsSummary ? <div className='mt-4 text-2xl font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
-						{comment ? (
-							<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
-								{comment}
-							</div>
-						) : null}
+					{comment ? (
+						<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
+							{comment}
+						</div>
+					) : null}
 				</div>
 			</div>
 		);
