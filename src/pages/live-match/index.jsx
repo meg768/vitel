@@ -32,7 +32,7 @@ function Component() {
 		);
 	}
 
-	function ScoreCell({ score, winner, server }) {
+	function ScoreCell({ score, winner, server, comment }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -55,7 +55,12 @@ function Component() {
 							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 					</div>
-					{setsSummary ? <div className='mt-4 text-lg font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
+					{setsSummary ? <div className='mt-4 text-xl font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
+						{comment ? (
+							<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
+								{comment}
+							</div>
+						) : null}
 				</div>
 			</div>
 		);
@@ -122,6 +127,7 @@ function Component() {
 		const data = {
 			event: match.name,
 			score: match.score,
+			comment: match.comment ?? null,
 			server: match.server ?? null,
 			winner: match.winner,
 			playerA: players?.[0]?.[0],
@@ -173,7 +179,7 @@ function Component() {
 									</Table.Cell>
 
 									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell score={match.score} winner={match.winner} server={match.server} />
+										<ScoreCell score={match.score} winner={match.winner} server={match.server} comment={match.comment} />
 									</Table.Cell>
 
 									<Table.Cell className='pl-4 py-4 align-middle'>
