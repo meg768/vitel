@@ -19,7 +19,7 @@ function Component() {
 			<div className='flex h-full flex-col items-center justify-center gap-4'>
 				<Avatar src={avatarSrc} className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300' />
 				<div className='flex flex-col items-center gap-1'>
-					<div className='text-center text-xl font-semibold text-primary-900 dark:text-primary-100'>
+					<div className='text-center text-lg font-semibold text-primary-900 md:text-xl dark:text-primary-100'>
 						<Link to={playerLink}>{player.name}</Link>
 					</div>
 					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
@@ -44,9 +44,32 @@ function Component() {
 		}
 		const { gameScore, setsSummary, hasLiveGameScore } = parseScore();
 
+		function singleLineFontSize(text, { min = 0.65, max = 3.75, targetWidthRem = 12.0, charWidth = 0.62 } = {}) {
+			const length = Math.max(1, String(text ?? '').replace(/\s+/g, ' ').trim().length);
+			const rem = targetWidthRem / (length * charWidth);
+			const clamped = Math.max(min, Math.min(max, rem));
+
+			return `${clamped.toFixed(3)}rem`;
+		}
+
+		const gameScoreSize = singleLineFontSize(gameScore, {
+			min: 0.65,
+			max: winner ? 2.8 : 3.75,
+			targetWidthRem: 12.0,
+			charWidth: 0.62
+		});
+		const setsSummarySize = setsSummary
+			? singleLineFontSize(setsSummary, {
+				min: 0.6,
+				max: 2.1,
+				targetWidthRem: 12.0,
+				charWidth: 0.58
+			})
+			: null;
+
 		return (
 			<div className='flex flex-col items-center gap-4'>
-				<div className='relative flex w-full flex-col items-center justify-center rounded-sm border border-primary-300 bg-primary-50 px-6 py-10 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900'>
+				<div className='relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-sm border border-primary-300 bg-primary-50 px-3 py-8 text-center shadow-sm sm:px-6 sm:py-10 dark:border-primary-600 dark:bg-primary-900'>
 					{compareLink ? (
 						<Link
 							to={compareLink}
@@ -58,16 +81,31 @@ function Component() {
 						</Link>
 					) : null}
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
-					<div className='mt-4 flex items-center justify-center gap-4'>
+					<div className='mt-4 flex w-full max-w-full items-center justify-center gap-2 sm:gap-4'>
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
-						<div className='text-6xl font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50' style={!winner && hasLiveGameScore ? scoreFont : undefined}>{gameScore}</div>
+						<div
+							className='max-w-full whitespace-nowrap leading-none font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50'
+							style={{
+								fontSize: gameScoreSize,
+								...(!winner && hasLiveGameScore ? scoreFont : undefined)
+							}}
+						>
+							{gameScore}
+						</div>
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
 					</div>
-					{setsSummary ? <div className='mt-4 text-2xl font-medium tracking-[0.18em] text-primary-600 dark:text-primary-300'>{setsSummary}</div> : null}
+					{setsSummary ? (
+						<div
+							className='mt-4 max-w-full whitespace-nowrap font-medium tracking-[0.08em] text-primary-600 dark:text-primary-300'
+							style={{ fontSize: setsSummarySize }}
+						>
+							{setsSummary}
+						</div>
+					) : null}
 					{comment ? (
 						<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
 							{comment}
@@ -162,14 +200,6 @@ function Component() {
 	function Content() {
 		let { data, error } = fetch();
 
-		function VerticalAnchor({ className = '', children }) {
-			return (
-				<div className={`relative h-full ${className}`}>
-					<div className='absolute top-1/3 left-0 right-0 -translate-y-1/2'>{children}</div>
-				</div>
-			);
-		}
-
 		if (data == null && error == null) {
 			return <Page.Loading>Läser in match...</Page.Loading>;
 		}
@@ -187,35 +217,29 @@ function Component() {
 					<div className='flex flex-1 overflow-x-auto'>
 						<Table className='h-full w-full table-fixed border-separate border-spacing-0'>
 							<colgroup>
-								<col className='w-44 md:w-64' />
+								<col className='w-[7.5rem] sm:w-44 md:w-64' />
 								<col />
-								<col className='w-44 md:w-64' />
+								<col className='w-[7.5rem] sm:w-44 md:w-64' />
 							</colgroup>
 
 							<Table.Body className='h-full'>
-								<Table.Row className='h-full align-top'>
-									<Table.Cell className='pr-4 py-4 align-top'>
-										<VerticalAnchor>
-											<PlayerCell player={match.playerA} />
-										</VerticalAnchor>
+								<Table.Row className='h-full align-middle'>
+									<Table.Cell className='pr-4 py-4 align-middle'>
+										<PlayerCell player={match.playerA} />
 									</Table.Cell>
 
-									<Table.Cell className='px-2 py-4 align-top'>
-										<VerticalAnchor>
-											<ScoreCell
-												score={match.score}
-												winner={match.winner}
-												server={match.server}
-												comment={match.comment}
-												compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
-											/>
-										</VerticalAnchor>
+									<Table.Cell className='px-2 py-4 align-middle'>
+										<ScoreCell
+											score={match.score}
+											winner={match.winner}
+											server={match.server}
+											comment={match.comment}
+											compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
+										/>
 									</Table.Cell>
 
-									<Table.Cell className='pl-4 py-4 align-top'>
-										<VerticalAnchor>
-											<PlayerCell player={match.playerB} />
-										</VerticalAnchor>
+									<Table.Cell className='pl-4 py-4 align-middle'>
+										<PlayerCell player={match.playerB} />
 									</Table.Cell>
 								</Table.Row>
 							</Table.Body>
