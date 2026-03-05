@@ -162,6 +162,14 @@ function Component() {
 	function Content() {
 		let { data, error } = fetch();
 
+		function VerticalAnchor({ className = '', children }) {
+			return (
+				<div className={`relative h-full ${className}`}>
+					<div className='absolute top-1/3 left-0 right-0 -translate-y-1/2'>{children}</div>
+				</div>
+			);
+		}
+
 		if (data == null && error == null) {
 			return <Page.Loading>Läser in match...</Page.Loading>;
 		}
@@ -185,23 +193,29 @@ function Component() {
 							</colgroup>
 
 							<Table.Body className='h-full'>
-								<Table.Row className='h-full align-middle'>
-									<Table.Cell className='pr-4 py-4 align-middle'>
-										<PlayerCell player={match.playerA} />
+								<Table.Row className='h-full align-top'>
+									<Table.Cell className='pr-4 py-4 align-top'>
+										<VerticalAnchor>
+											<PlayerCell player={match.playerA} />
+										</VerticalAnchor>
 									</Table.Cell>
 
-									<Table.Cell className='px-2 py-4 align-middle'>
-										<ScoreCell
-											score={match.score}
-											winner={match.winner}
-											server={match.server}
-											comment={match.comment}
-											compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
-										/>
+									<Table.Cell className='px-2 py-4 align-top'>
+										<VerticalAnchor>
+											<ScoreCell
+												score={match.score}
+												winner={match.winner}
+												server={match.server}
+												comment={match.comment}
+												compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
+											/>
+										</VerticalAnchor>
 									</Table.Cell>
 
-									<Table.Cell className='pl-4 py-4 align-middle'>
-										<PlayerCell player={match.playerB} />
+									<Table.Cell className='pl-4 py-4 align-top'>
+										<VerticalAnchor>
+											<PlayerCell player={match.playerB} />
+										</VerticalAnchor>
 									</Table.Cell>
 								</Table.Row>
 							</Table.Body>
