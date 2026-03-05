@@ -40,9 +40,9 @@ function Component() {
 			const gameScore = match ? match[1] : score;
 			const setsSummary = match ? score.slice(0, match.index).trim() : '';
 
-			return { gameScore, setsSummary };
+			return { gameScore, setsSummary, hasLiveGameScore: Boolean(match) };
 		}
-		const { gameScore, setsSummary } = parseScore();
+		const { gameScore, setsSummary, hasLiveGameScore } = parseScore();
 
 		return (
 			<div className='flex flex-col items-center gap-4'>
@@ -62,7 +62,7 @@ function Component() {
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'player' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>
-						<div className='text-6xl font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50' style={scoreFont}>{gameScore}</div>
+						<div className='text-6xl font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50' style={!winner && hasLiveGameScore ? scoreFont : undefined}>{gameScore}</div>
 						<span className='flex h-4 w-4 items-center justify-center'>
 							{!winner && server === 'opponent' ? <span className='text-lg leading-none'>🎾</span> : null}
 						</span>

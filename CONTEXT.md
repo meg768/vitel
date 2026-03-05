@@ -3,6 +3,7 @@
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
 ## Recent Updates
+- 2026-03-05: `/live-match` now applies the Courier stack only to active live game-score values (the bracket score), while finished-match `Resultat` text keeps the default page typography.
 - 2026-03-05: `/live-match` large game score was reverted back to the Courier variant (`'Courier New', Courier, monospace`).
 - 2026-03-05: `/live-match` large game score now uses `Roboto Mono` (with monospace fallbacks), and `index.html` now loads `Roboto Mono` from Google Fonts.
 - 2026-03-05: `/live-match` large game score typography switched back again to a `ui-monospace` stack (SFMono/Menlo/Monaco/Consolas).
