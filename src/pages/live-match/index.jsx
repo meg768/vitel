@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router';
 
 import BarChartIcon from '../../assets/radix-icons/bar-chart.svg?react';
+import EnterFullScreenIcon from '../../assets/radix-icons/enter-full-screen.svg?react';
+import ExitFullScreenIcon from '../../assets/radix-icons/exit-full-screen.svg?react';
 import Avatar from '../../components/avatar';
 import Page from '../../components/page';
 import Flag from '../../components/flag';
@@ -10,6 +12,8 @@ import Table from '../../components/ui/table';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 function Component() {
+	const [showChrome, setShowChrome] = React.useState(true);
+
 	function PlayerCell({ player }) {
 		const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
 		const rankLabel = player.rank != null ? `#${player.rank}` : null;
@@ -32,7 +36,7 @@ function Component() {
 		);
 	}
 
-	function ScoreCell({ score, winner, server, comment, compareLink }) {
+	function ScoreCell({ score, winner, server, comment, compareLink, showChrome, onToggleChrome }) {
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -68,16 +72,27 @@ function Component() {
 		return (
 			<div className='flex flex-col items-center gap-4'>
 				<div className='relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-sm border border-primary-300 bg-primary-50 px-3 py-8 text-center shadow-sm sm:px-6 sm:py-10 dark:border-primary-600 dark:bg-primary-900'>
-					{compareLink ? (
-						<Link
-							to={compareLink}
-							className='absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
-							aria-label='Jämför spelare'
-							title='Jämför spelare'
-						>
-							<BarChartIcon className='h-4 w-4 bg-transparent' />
-						</Link>
-					) : null}
+						<div className='absolute top-3 right-3 flex items-center gap-2'>
+							{compareLink ? (
+								<Link
+									to={compareLink}
+									className='flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+									aria-label='Jämför spelare'
+									title='Jämför spelare'
+								>
+									<BarChartIcon className='h-4 w-4 bg-transparent' />
+								</Link>
+							) : null}
+							<button
+								type='button'
+								onClick={onToggleChrome}
+								className='flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+								aria-label={showChrome ? 'Dölj gränssnitt' : 'Visa gränssnitt'}
+								title={showChrome ? 'Dölj gränssnitt' : 'Visa gränssnitt'}
+							>
+								{showChrome ? <ExitFullScreenIcon className='h-4 w-4 bg-transparent' /> : <EnterFullScreenIcon className='h-4 w-4 bg-transparent' />}
+							</button>
+						</div>
 					<div className='text-xs font-semibold uppercase tracking-[0.3em] text-primary-500 dark:text-primary-300'>{winner ? 'Resultat' : 'Ställning'}</div>
 					<div className='mt-4 flex w-full max-w-full items-center justify-center gap-2 sm:gap-4'>
 						<span className='flex h-4 w-4 items-center justify-center'>
@@ -208,9 +223,9 @@ function Component() {
 		let match = data;
 		return (
 			<div className='flex flex-1 flex-col'>
-				<Page.Title>{match.event}</Page.Title>
+				{showChrome ? <Page.Title>{match.event}</Page.Title> : null}
 
-				<div className='mt-4 flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900'>
+				<div className={`${showChrome ? 'mt-4' : 'mt-0'} flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900`}>
 					<div className='flex flex-1 overflow-x-auto'>
 						<Table className='h-full w-full table-fixed border-separate border-spacing-0'>
 							<colgroup>
@@ -232,6 +247,8 @@ function Component() {
 											server={match.server}
 											comment={match.comment}
 											compareLink={`/head-to-head/${match.playerA.id}/${match.playerB.id}/`}
+											showChrome={showChrome}
+											onToggleChrome={() => setShowChrome(visible => !visible)}
 										/>
 									</Table.Cell>
 
@@ -249,8 +266,8 @@ function Component() {
 
 	return (
 		<Page id='live-match-page'>
-			<Page.Menu />
-			<Page.Content className='flex flex-col'>
+			{showChrome ? <Page.Menu /> : null}
+			<Page.Content className={`flex flex-col ${showChrome ? '' : 'px-1 py-1 lg:px-2'}`}>
 				<Content />
 			</Page.Content>
 		</Page>
