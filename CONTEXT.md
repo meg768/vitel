@@ -3,6 +3,7 @@
 Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
 
 ## Recent Updates
+- 2026-03-06: `AUTHOR.md` is a local developer profile file and must remain untracked; `.gitignore` now includes `AUTHOR.md`.
 - 2026-03-05: `/live-match` score text now stays on a single line (`whitespace-nowrap`), and both the main score/result and set-summary lines use dynamic font sizing based on text length so `Resultat/Ställning` content fits on small screens.
 - 2026-03-05: `/live-match` removed the experimental 33%-anchor placement and returned to standard vertical centering (`align-middle`) without absolute positioning, to keep scrolling and framing stable across small screens.
 - 2026-03-05: `/live-match` small-height scroll fix: 33%-ankaret är nu responsivt och används bara från `md` upp; på små skärmar kör korten i normalt flöde (ingen absolutpositionering), så vertikal scroll fungerar och övre ramen kapas inte.

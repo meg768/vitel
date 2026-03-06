@@ -33,8 +33,6 @@ function Component() {
 	}
 
 	function ScoreCell({ score, winner, server, comment, compareLink }) {
-		const scoreFont = { fontFamily: "'Courier New', Courier, monospace" };
-
 		function parseScore() {
 			const match = score.match(/\[(.+)\]\s*$/);
 			const gameScore = match ? match[1] : score;
@@ -88,8 +86,7 @@ function Component() {
 						<div
 							className='max-w-full whitespace-nowrap leading-none font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50'
 							style={{
-								fontSize: gameScoreSize,
-								...(!winner && hasLiveGameScore ? scoreFont : undefined)
+								fontSize: gameScoreSize
 							}}
 						>
 							{gameScore}
