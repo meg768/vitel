@@ -8,5 +8,5 @@
 Rules:
 
 - All project memory and future updates must be saved in `CONTEXT.md`.
-- `AUTHOR.md` should only change when developer context changes.
+- `AUTHOR.md` should only change whexn developer context changes.
 - `AGENTS.md` is a pointer file only and should not contain duplicated project memory.
