@@ -23,7 +23,7 @@ function Component() {
 			<div className='flex h-full flex-col items-center justify-center gap-4'>
 				<Avatar src={avatarSrc} className='h-16 w-16 border-2 border-primary-700 bg-primary-900 shadow-sm md:h-20 md:w-20 dark:border-primary-300' />
 				<div className='flex flex-col items-center gap-1'>
-					<div className='text-center text-lg font-semibold text-primary-900 md:text-xl dark:text-primary-100'>
+					<div className='text-center text-base font-semibold text-primary-900 md:text-lg dark:text-primary-100'>
 						<Link to={playerLink}>{player.name}</Link>
 					</div>
 					<div className='flex items-center justify-center gap-2 text-sm text-primary-700 dark:text-primary-300'>
@@ -60,6 +60,7 @@ function Component() {
 			targetWidthRem: 12.0,
 			charWidth: 0.62
 		});
+		const scoreFontFamily = "'Bebas Neue', 'Oswald', 'Roboto Condensed', 'Arial Narrow', sans-serif";
 		const setsSummarySize = setsSummary
 			? singleLineFontSize(setsSummary, {
 				min: 0.6,
@@ -70,7 +71,7 @@ function Component() {
 			: null;
 
 		return (
-			<div className='flex flex-col items-center gap-4'>
+			<div className='relative flex flex-col items-center'>
 				<div className='relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-sm border border-primary-300 bg-primary-50 px-3 py-8 text-center shadow-sm sm:px-6 sm:py-10 dark:border-primary-600 dark:bg-primary-900'>
 						<div className='absolute top-3 right-3 flex items-center gap-2'>
 							{compareLink ? (
@@ -101,7 +102,8 @@ function Component() {
 						<div
 							className='max-w-full whitespace-nowrap leading-none font-semibold tracking-[0.04em] text-primary-900 dark:text-primary-50'
 							style={{
-								fontSize: gameScoreSize
+								fontSize: gameScoreSize,
+								fontFamily: scoreFontFamily
 							}}
 						>
 							{gameScore}
@@ -113,17 +115,20 @@ function Component() {
 					{setsSummary ? (
 						<div
 							className='mt-4 max-w-full whitespace-nowrap font-medium tracking-[0.08em] text-primary-600 dark:text-primary-300'
-							style={{ fontSize: setsSummarySize }}
+							style={{
+								fontSize: setsSummarySize,
+								fontFamily: scoreFontFamily
+							}}
 						>
 							{setsSummary}
 						</div>
 					) : null}
-					{comment ? (
-						<div className={setsSummary ? 'mt-2 text-sm italic text-primary-600 dark:text-primary-300' : 'mt-4 text-sm italic text-primary-600 dark:text-primary-300'}>
-							{comment}
-						</div>
-					) : null}
 				</div>
+				{comment ? (
+					<div className='absolute top-full mt-2 w-full text-center text-sm italic text-primary-600 dark:text-primary-300'>
+						{comment}
+					</div>
+				) : null}
 			</div>
 		);
 	}
