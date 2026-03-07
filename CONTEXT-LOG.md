@@ -4,6 +4,19 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-07: Renamed live monitor route from `/live-match` to `/live-matches` (including `/live-matches/:A/:B`); `/live` CTA now links to `/live-matches`.
+- 2026-03-07: Moved `/live` CTA button `Visa live` to sit directly under the `Pågående` section instead of at the page bottom.
+- 2026-03-07: `/live-match` score panel no longer shows the zoom/fullscreen toggle; the head-to-head compare icon is now always shown and prioritized in the top-right action area.
+- 2026-03-07: `/live` bottom CTA was renamed from `Live matcher` to `Visa live` and now uses the shared `Button` component styling used across the project.
+- 2026-03-07: Removed the `Visa live` per-row column from `/live`; navigation to `/live-match` remains available via the bottom `Live matcher` CTA.
+- 2026-03-07: Replaced the temporary `XXXXX` set-summary fallback in `/live-match` with fixed-height score boxes (`ScoreCell`) so all point/score panels render at equal height.
+- 2026-03-07: `/live-match` now shows `XXXXX` in the set-summary line when a live score has game points but no completed set summary (blank set score).
+- 2026-03-07: Softened `/live` bottom CTA wording and styling from `Visa alla live-matcher` to `Live matcher` (removed uppercase/tracking emphasis).
+- 2026-03-07: Moved the `/live-match` entry point from the top menu to the `/live` page itself; `/live` now shows a bottom CTA button `Visa alla live-matcher` linking to `/live-match`.
+- 2026-03-07: `/live` now uses per-row `Visa live` actions for active matches (renamed from `Se live`), with `aria-label`/`title` on each button link to `/live-match/:A/:B`.
+- 2026-03-07: `/live` removed the global `Se på TV4-Play` and `Se på max.com` controls; ongoing rows now show a per-match `Se live` button linking to `/live-match/:A/:B`.
+- 2026-03-07: `/live-match` dashboard mode now lists all ongoing matches (instead of capping at four), while `/live-match/:A/:B` remains the single-match view.
+- 2026-03-07: `/live-match` was componentized via `src/components/live-match-monitor.jsx`, added compact mode for dashboard cards, and `/live-match` got a `Live x4` menu shortcut.
 - 2026-03-07: Clarified in `CONTEXT.md` `Overview` that database schema source of truth is `src/database/schema.sql`.
 - 2026-03-07: Migrated the running update log from `CONTEXT.md` to `CONTEXT-LOG.md`; `CONTEXT.md` now references this file, and new log entries should be added here.
 - 2026-03-07: `/live-match` scoreboard typography switched from `Barlow Condensed` to `Bebas Neue`; `index.html` now loads `Bebas Neue` from Google Fonts.

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router';
 
-import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
@@ -67,24 +65,16 @@ function LiveTable({ rows, finished = false }) {
 			return `${player.name} (${player.country})${ranking}`;
 		};
 
-		return (
-			<div className='flex items-center gap-2 bg-transparent'>
-				<Flag className={flagClassName} country={playerA.country}></Flag>
-				<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
-				<span>{' vs '}</span>
-				<Flag className={flagClassName} country={playerB.country}></Flag>
-				<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
-				<Link
-					to={`/live-match/${playerA.id}/${playerB.id}`}
-					className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100'
-					aria-label={`Följ matchen mellan ${playerA.name} och ${playerB.name} live`}
-					title='Följ matchen live'
-				>
-					<TriangleRightIcon className='block h-full w-full' />
-				</Link>
-			</div>
-		);
-	}
+			return (
+				<div className='flex items-center gap-2 bg-transparent'>
+					<Flag className={flagClassName} country={playerA.country}></Flag>
+					<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
+					<span>{' vs '}</span>
+					<Flag className={flagClassName} country={playerB.country}></Flag>
+					<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
+				</div>
+			);
+		}
 
 	function Content() {
 		return (
@@ -122,9 +112,9 @@ function LiveTable({ rows, finished = false }) {
 					<Table.Cell>{({ value }) => value}</Table.Cell>
 				</Table.Column>
 
-				<Table.Column id='varning' className=''>
-					<Table.Title className=''></Table.Title>
-					<Table.Cell className='text-center'>
+					<Table.Column id='varning' className=''>
+						<Table.Title className=''></Table.Title>
+						<Table.Cell className='text-center'>
 						{({ row, value }) => {
 							if (!value) {
 								return null;
@@ -136,12 +126,12 @@ function LiveTable({ rows, finished = false }) {
 								</span>
 							);
 						}}
-					</Table.Cell>
-				</Table.Column>
+						</Table.Cell>
+					</Table.Column>
 
-			</Table>
-		);
-	}
+				</Table>
+			);
+		}
 
 	return <Content />;
 }
@@ -150,7 +140,7 @@ let Component = () => {
 	// This component fetches and displays live ATP matches.
 	// It uses the ATP service to get the matches and displays them in a table format.
 	// It also splits the matches into active and finished matches.
-	// Active matches are displayed with a link to TV4-Play and max.com for viewing.
+	// Active matches include direct links to the live match monitor.
 
 	function FinishedMatches({ matches }) {
 		if (matches.length == 0) {
@@ -174,18 +164,8 @@ let Component = () => {
 			<>
 				<Page.Title level={2}>Pågående</Page.Title>
 				<LiveTable rows={matches} finished={false} />
-
-				<div className='flex justify-center pt-4 gap-4'>
-					<Button>
-						<RouterLink to={'https://www.tv4play.se/kategorier/atp-tour'} target={'_blank'} className=''>
-							Se på TV4-Play
-						</RouterLink>
-					</Button>
-					<Button>
-						<RouterLink to={'https://play.max.com/sports/tennis'} target={'_blank'} className=''>
-							Se på max.com
-						</RouterLink>
-					</Button>
+				<div className='pt-4 flex justify-center'>
+					<Button link='/live-matches'>Visa live</Button>
 				</div>
 			</>
 		);
@@ -321,15 +301,15 @@ let Component = () => {
 			};
 		});
 
-		return (
-			<>
-				<Page.Title>{`Dagens matcher`}</Page.Title>
-				<Page.Container>
-					<Matches matches={rows} />
-					<RefreshCountdown dataUpdatedAt={dataUpdatedAt} isFetching={isFetching} />
-				</Page.Container>
-			</>
-		);
+			return (
+				<>
+					<Page.Title>{`Dagens matcher`}</Page.Title>
+					<Page.Container>
+						<Matches matches={rows} />
+						<RefreshCountdown dataUpdatedAt={dataUpdatedAt} isFetching={isFetching} />
+					</Page.Container>
+				</>
+			);
 	}
 
 	return (

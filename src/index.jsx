@@ -116,8 +116,8 @@ class WebApp {
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
 						<Route path='/live' element={<Live />} />
-						<Route path='/live-match' element={<LiveMatch />} />
-						<Route path='/live-match/:A/:B' element={<LiveMatch />} />
+						<Route path='/live-matches' element={<LiveMatch />} />
+						<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
 						<Route path='/log' element={<Log />} />
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/qna' element={<QnA />} />
