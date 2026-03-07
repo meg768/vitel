@@ -4,6 +4,13 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-07: `/live-matches` now also hides the page menu in single-match route mode (`/live-matches/:A/:B`) in addition to focus mode.
+- 2026-03-07: In `/live-matches` focus mode (maximized match), the page-level menu and `Live Monitor` title are now hidden to maximize match area.
+- 2026-03-07: Fixed `/live-matches` hook-order crash (`Rendered more hooks than during the previous render`) by ensuring `useEffect` is declared before early-return branches in the page component.
+- 2026-03-07: `/live-matches` maximize button now enters a true focus mode: selected match expands to fill the page content area, and the button toggles back to the multi-match overview.
+- 2026-03-07: `/live-matches` fullscreen/zoom toggle was moved from inside `ScoreCell` to the same top-right action row as the head-to-head icon in `LiveMatchMonitor`.
+- 2026-03-07: Fixed `/live-matches` runtime error `ReferenceError: Can't find variable: comment` in `ScoreCell` by restoring `comment` in the component prop destructuring.
+- 2026-03-07: Reintroduced the zoom/fullscreen toggle button in `/live-matches` score panels, restoring per-card chrome visibility toggle while keeping the head-to-head icon in the card corner.
 - 2026-03-07: `/live-matches` dashboard page title is now fixed to `Live Monitor` (removed dynamic active-match count suffix).
 - 2026-03-07: Adjusted `/live-matches` head-to-head icon to sit inside the card border at the top-right corner (`top-3 right-3`) instead of offset outside.
 - 2026-03-07: Moved the `/live-matches` head-to-head icon from inside `ScoreCell` to the `LiveMatchMonitor` card corner (absolute top-right), so it sits at the component edge instead of the result box.

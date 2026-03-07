@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import React from 'react';
 
 import BarChartIcon from '../assets/radix-icons/bar-chart.svg?react';
+import EnterFullScreenIcon from '../assets/radix-icons/enter-full-screen.svg?react';
+import ExitFullScreenIcon from '../assets/radix-icons/exit-full-screen.svg?react';
 import Avatar from './avatar';
 import Flag from './flag';
 import Link from './ui/link';
@@ -150,7 +152,15 @@ function ScoreCell({ score, winner, server, comment, compact = false }) {
 	);
 }
 
-function LiveMatchMonitor({ match, className, defaultShowChrome = true, compact = false }) {
+function LiveMatchMonitor({
+	match,
+	className,
+	defaultShowChrome = true,
+	compact = false,
+	isFocused = false,
+	onToggleFocus = null,
+	showFocusToggle = true
+}) {
 	const showChrome = defaultShowChrome;
 
 	if (!match?.player || !match?.opponent) {
@@ -159,20 +169,31 @@ function LiveMatchMonitor({ match, className, defaultShowChrome = true, compact 
 
 	const compareLink = `/head-to-head/${match.player.id}/${match.opponent.id}`;
 
-		return (
-			<div className={clsx('relative flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
+	return (
+		<div className={clsx('relative flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
+			<div className='absolute top-3 right-3 z-10 flex items-center gap-2'>
 				{compareLink ? (
-					<div className='absolute top-3 right-3 z-10'>
-						<Link
-							to={compareLink}
-							className='flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 bg-primary-50 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+					<Link
+						to={compareLink}
+						className='flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 bg-primary-50 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
 						aria-label='Jämför spelare'
 						title='Jämför spelare'
 					>
 						<BarChartIcon className='h-4 w-4 bg-transparent' />
 					</Link>
-				</div>
-			) : null}
+				) : null}
+				{showFocusToggle ? (
+					<button
+						type='button'
+						onClick={onToggleFocus}
+						className='flex h-8 w-8 items-center justify-center rounded-sm border border-primary-300 bg-primary-50 text-primary-500 transition-colors hover:bg-primary-100 hover:text-primary-700 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+						aria-label={isFocused ? 'Minimera match' : 'Maximera match'}
+						title={isFocused ? 'Minimera match' : 'Maximera match'}
+					>
+						{isFocused ? <ExitFullScreenIcon className='h-4 w-4 bg-transparent' /> : <EnterFullScreenIcon className='h-4 w-4 bg-transparent' />}
+					</button>
+				) : null}
+			</div>
 			{showChrome ? <div className='mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-primary-600 dark:text-primary-300'>{match.event}</div> : null}
 
 			<div className='flex flex-1 overflow-x-auto'>
