@@ -106,6 +106,22 @@ function Component() {
 		}
 	}, [singleMatchMode, selectedMatches, focusedMatchKey, matches, rankingRows]);
 
+	React.useEffect(() => {
+		if (!focusMode) {
+			return;
+		}
+
+		function onKeyDown(event) {
+			if (event.key === 'Escape') {
+				setFocusedMatchKey(null);
+			}
+		}
+
+		window.addEventListener('keydown', onKeyDown);
+
+		return () => window.removeEventListener('keydown', onKeyDown);
+	}, [focusMode]);
+
 	if (liveError) {
 		return (
 			<Page id='live-match-page'>
@@ -164,18 +180,18 @@ function Component() {
 	return (
 		<Page id='live-match-page'>
 			{hidePageMenu ? null : <Page.Menu />}
-			<Page.Content className={`flex flex-col ${focusMode ? 'px-1 py-1 lg:px-2' : ''}`}>
+			<Page.Content className='flex flex-col'>
 				{singleMatchMode ? (
 					<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' showFocusToggle={false} />
 				) : (
 					<>
 						{focusMode ? null : <Page.Title>Live Monitor</Page.Title>}
 						{focusedMatch ? (
-							<div className={`${focusMode ? 'mt-0' : 'mt-4'} flex flex-1`}>
+							<div className='fixed inset-0 z-40 bg-primary-50 dark:bg-primary-900'>
 								<LiveMatchMonitor
 									match={focusedMatch}
-									className='flex-1'
-									defaultShowChrome={true}
+									className='h-full w-full rounded-none border-0 p-0 shadow-none'
+									defaultShowChrome={false}
 									compact={false}
 									isFocused={true}
 									onToggleFocus={() => setFocusedMatchKey(null)}

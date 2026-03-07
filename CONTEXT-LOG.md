@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-07: Added keyboard escape handling in `/live-matches` focus mode; pressing `Esc` now exits fullscreen focus and returns to the match overview grid.
+- 2026-03-07: `/live-matches` focus mode now renders as a true full-viewport overlay (`fixed inset-0`) with the selected match card stretched to `h-full w-full` and no border/padding.
 - 2026-03-07: `/live-matches` now also hides the page menu in single-match route mode (`/live-matches/:A/:B`) in addition to focus mode.
 - 2026-03-07: In `/live-matches` focus mode (maximized match), the page-level menu and `Live Monitor` title are now hidden to maximize match area.
 - 2026-03-07: Fixed `/live-matches` hook-order crash (`Rendered more hooks than during the previous render`) by ensuring `useEffect` is declared before early-return branches in the page component.
