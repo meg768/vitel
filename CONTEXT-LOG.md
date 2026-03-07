@@ -4,6 +4,16 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-07: `/live-matches` dashboard page title is now fixed to `Live Monitor` (removed dynamic active-match count suffix).
+- 2026-03-07: Adjusted `/live-matches` head-to-head icon to sit inside the card border at the top-right corner (`top-3 right-3`) instead of offset outside.
+- 2026-03-07: Moved the `/live-matches` head-to-head icon from inside `ScoreCell` to the `LiveMatchMonitor` card corner (absolute top-right), so it sits at the component edge instead of the result box.
+- 2026-03-07: Pushed the `/live-matches` head-to-head icon one additional step outward from the top-right corner (`translate` increased to ~70% diagonally).
+- 2026-03-07: Nudged the `/live-matches` head-to-head icon one step further outward from the top-right corner using diagonal translate positioning.
+- 2026-03-07: Moved the `/live-matches` head-to-head icon outside the score/result box and positioned it at the upper-right edge of the panel.
+- 2026-03-07: `/live-matches` top row alignment tweak: `STÄLLNING` now uses the same `top`/`h-8` vertical slot as the top-right compare button, so both are vertically centered on the same line.
+- 2026-03-07: `/live-matches` large score line is now absolutely centered vertically in the score box; `STÄLLNING` remains anchored at top and set-summary stays near bottom.
+- 2026-03-07: `/live-matches` score panel now anchors `STÄLLNING` immediately under the top border (centered), while score content remains vertically centered below it.
+- 2026-03-07: `/live-matches` score panel heading is now fixed to `STÄLLNING` (all caps), centered at the top of the panel.
 - 2026-03-07: Renamed live monitor route from `/live-match` to `/live-matches` (including `/live-matches/:A/:B`); `/live` CTA now links to `/live-matches`.
 - 2026-03-07: Moved `/live` CTA button `Visa live` to sit directly under the `Pågående` section instead of at the page bottom.
 - 2026-03-07: `/live-match` score panel no longer shows the zoom/fullscreen toggle; the head-to-head compare icon is now always shown and prioritized in the top-right action area.

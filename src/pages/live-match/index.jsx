@@ -140,7 +140,7 @@ function Component() {
 					<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' />
 				) : (
 					<>
-						<Page.Title>{`Live Monitor (${selectedMatches.length} pågående)`}</Page.Title>
+						<Page.Title>Live Monitor</Page.Title>
 						<div className='mt-4 grid h-full grid-cols-1 gap-4 xl:grid-cols-2'>
 							{selectedMatches.map(match => {
 								const key = `${match.player?.id}-${match.opponent?.id}`;
