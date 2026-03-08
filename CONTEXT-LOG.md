@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Increased `/live-matches` player avatars one more step for readability (compact: `h-14/md:h-16`, regular: `h-24/md:h-28`).
 - 2026-03-08: Added npm script `goto GitHub` in `package.json` to open the repository page (`open https://github.com/meg768/vitel`).
 - 2026-03-08: Renamed npm git helper scripts by removing `git-` prefix; `package.json` now uses `commit` and `revert`.
 - 2026-03-08: Reverted temporary uppercase git npm scripts; `package.json` uses `git-commit` and `git-revert`.

@@ -30,7 +30,7 @@ function PlayerCell({ player, compact = false }) {
 				src={avatarSrc}
 				className={clsx(
 					'border-2 border-primary-700 bg-primary-900 shadow-sm dark:border-primary-300',
-					compact ? 'h-12 w-12 md:h-14 md:w-14' : 'h-20 w-20 md:h-24 md:w-24'
+					compact ? 'h-14 w-14 md:h-16 md:w-16' : 'h-24 w-24 md:h-28 md:w-28'
 				)}
 			/>
 			<div className='flex flex-col items-center gap-1'>
