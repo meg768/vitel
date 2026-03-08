@@ -29,8 +29,8 @@ function Component() {
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/players'>Spelare</MenuItem>
 					<MenuItem link='/currently'>Pågående</MenuItem>
-					<MenuItem link='/qna'>Q&A</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
+					<MenuItem link='/qna'>Q&A</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center '>
 					<MenuItem link='/settings'>

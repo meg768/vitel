@@ -4,6 +4,10 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Main menu order adjusted so `Q&A` now appears directly after `Live`.
+- 2026-03-08: Renamed `/live-matches` page title from `Live Monitor` to `Livematcher`.
+- 2026-03-08: `/live-matches` dashboard now uses a general responsive auto-fit grid (`repeat(auto-fit, minmax(..., 1fr))`) so layout scales for any number of matches; compact cards are used only when more than two matches are shown.
+- 2026-03-08: `/live-matches` dashboard now uses a single-column full-width layout when exactly one ongoing match exists, and that lone card renders non-compact to fill available space.
 - 2026-03-08: Removed the final empty column from `/live` (former warning column); `/live` table now ends at `Ställning/Resultat`.
 - 2026-03-08: Reduced the inline `Spelare` play symbol (`/head-to-head/:A/:B`) size on `/live` from `h-6 w-6` to `h-5 w-5`.
 - 2026-03-08: `/live` now shows the `/head-to-head/:A/:B` link as the previous inline play symbol (`triangle-right`) inside the `Spelare` column; last `Varning` column is warning-only again.
