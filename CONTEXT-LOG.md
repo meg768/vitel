@@ -4,6 +4,13 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Fixed `/live-matches` list-card sizing by forcing dashboard cards to `flex-none`; a single ongoing match no longer expands to full-page height unless explicitly focused/zoomed.
+- 2026-03-08: Removed the single-match height-expansion special case from `/live-matches`; dashboard now always renders a consistent vertical list and uses the existing focus/zoom toggle for single-match emphasis.
+- 2026-03-08: `/live-matches` list view now expands a lone dashboard match to fill available page height (`flex-1`) instead of keeping the standard card minimum height.
+- 2026-03-08: Removed `/live-matches` simulation behavior (`?simulate=N` and auto-duplication); dashboard now always renders only real ongoing matches from the live endpoint.
+- 2026-03-08: `/live-matches` dashboard layout switched from responsive grid to a simple vertical list (one match card per row); compact mode now applies only when more than four cards are shown.
+- 2026-03-08: `/live-matches` simulation now auto-expands a single ongoing match to 3 cards by default (layout preview), while `?simulate=N` still overrides count (`0-12`).
+- 2026-03-08: `/live-matches` now supports a layout simulation mode via query param `?simulate=N` (1-12), duplicating the first ongoing match client-side so dashboard layout can be tested with arbitrary match counts.
 - 2026-03-08: Removed `/currently` from the frontend: deleted the page component, removed route wiring in `src/index.jsx`, and removed the main-menu link.
 - 2026-03-08: Main menu order adjusted so `Q&A` now appears directly after `Live`.
 - 2026-03-08: Renamed `/live-matches` page title from `Live Monitor` to `Livematcher`.

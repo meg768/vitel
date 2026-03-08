@@ -86,11 +86,7 @@ function Component() {
 	const focusMode = !singleMatchMode && Boolean(focusedMatch);
 	const hidePageMenu = focusMode || singleMatchMode;
 	const dashboardMatchCount = !singleMatchMode ? selectedMatches.length : 0;
-	const useCompactCards = dashboardMatchCount > 2;
-	const dashboardCardMinWidth = useCompactCards ? '24rem' : '30rem';
-	const dashboardGridStyle = {
-		gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, ${dashboardCardMinWidth}), 1fr))`
-	};
+	const useCompactCards = dashboardMatchCount > 4;
 
 	React.useEffect(() => {
 		if (!matches || !rankingRows) {
@@ -204,7 +200,7 @@ function Component() {
 								/>
 							</div>
 						) : (
-							<div className='mt-4 grid h-full gap-4' style={dashboardGridStyle}>
+							<div className='mt-4 flex h-full flex-col gap-4'>
 								{selectedMatches.map(match => {
 									const key = matchKey(match);
 
@@ -212,7 +208,7 @@ function Component() {
 										<LiveMatchMonitor
 											key={key}
 											match={match}
-											className='min-h-[22rem]'
+											className='flex-none min-h-[22rem]'
 											defaultShowChrome={false}
 											compact={useCompactCards}
 											isFocused={false}
