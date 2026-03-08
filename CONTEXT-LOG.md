@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Removed `/currently` from the frontend: deleted the page component, removed route wiring in `src/index.jsx`, and removed the main-menu link.
 - 2026-03-08: Main menu order adjusted so `Q&A` now appears directly after `Live`.
 - 2026-03-08: Renamed `/live-matches` page title from `Live Monitor` to `Livematcher`.
 - 2026-03-08: `/live-matches` dashboard now uses a general responsive auto-fit grid (`repeat(auto-fit, minmax(..., 1fr))`) so layout scales for any number of matches; compact cards are used only when more than two matches are shown.

@@ -28,7 +28,6 @@ function Component() {
 					</MenuItem>
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/players'>Spelare</MenuItem>
-					<MenuItem link='/currently'>Pågående</MenuItem>
 					<MenuItem link='/live'>Live</MenuItem>
 					<MenuItem link='/qna'>Q&A</MenuItem>
 				</div>

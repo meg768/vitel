@@ -4,7 +4,6 @@ import { HashRouter, Routes, Route } from 'react-router';
 
 import ABC from './pages/abc';
 import App from './pages/app';
-import Currently from './pages/currently';
 import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
@@ -124,7 +123,6 @@ class WebApp {
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />
-						<Route path='/currently' element={<Currently />} />
 						<Route path='/abc' element={<ABC />} />
 						<Route path='*' element={<NotFound />} />
 					</Routes>
