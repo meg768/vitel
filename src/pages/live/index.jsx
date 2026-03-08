@@ -1,12 +1,12 @@
 import React from 'react';
 
+import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useRequest, useSQL } from '../../js/vitel.js';
-import { ping } from './ping.js';
 const LIVE_REFRESH_INTERVAL_MS = 30 * 1000;
 const LIVE_REFRESH_STEPS = 6;
 
@@ -65,16 +65,26 @@ function LiveTable({ rows, finished = false }) {
 			return `${player.name} (${player.country})${ranking}`;
 		};
 
-			return (
-				<div className='flex items-center gap-2 bg-transparent'>
-					<Flag className={flagClassName} country={playerA.country}></Flag>
-					<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
-					<span>{' vs '}</span>
-					<Flag className={flagClassName} country={playerB.country}></Flag>
-					<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
-				</div>
-			);
-		}
+		return (
+			<div className='flex items-center gap-2 bg-transparent'>
+				<Flag className={flagClassName} country={playerA.country}></Flag>
+				<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
+				<span>{' vs '}</span>
+				<Flag className={flagClassName} country={playerB.country}></Flag>
+				<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
+				{playerA?.id && playerB?.id ? (
+					<Link
+						to={`/head-to-head/${playerA.id}/${playerB.id}`}
+						className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100'
+						aria-label={`Jämför ${playerA.name} mot ${playerB.name}`}
+						title='Jämför spelare'
+					>
+						<TriangleRightIcon className='block h-full w-full' />
+					</Link>
+				) : null}
+			</div>
+		);
+	}
 
 	function Content() {
 		return (
@@ -111,23 +121,6 @@ function LiveTable({ rows, finished = false }) {
 					<Table.Title className=''>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
 					<Table.Cell>{({ value }) => value}</Table.Cell>
 				</Table.Column>
-
-					<Table.Column id='varning' className=''>
-						<Table.Title className=''></Table.Title>
-						<Table.Cell className='text-center'>
-						{({ row, value }) => {
-							if (!value) {
-								return null;
-							}
-
-							return (
-								<span title={row.varningReason ?? undefined} aria-label='Varning'>
-									⚠️
-								</span>
-							);
-						}}
-						</Table.Cell>
-					</Table.Column>
 
 				</Table>
 			);
@@ -275,7 +268,6 @@ let Component = () => {
 			])
 		);
 		const rows = matches.map(match => {
-			const pinging = ping('lost-first-and-second-set', match.score); ;
 			const player = {
 				...match.player,
 				rank: ranks[match.player?.id]
@@ -295,9 +287,7 @@ let Component = () => {
 				const opponentWins = record?.[match.opponent?.id] ?? 0;
 
 				return `${playerWins}-${opponentWins}`;
-				})(),
-				varning: pinging,
-				varningReason: pinging ? 'Spelaren har forlorat forsta avslutade setet.' : null
+				})()
 			};
 		});
 

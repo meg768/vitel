@@ -4,6 +4,10 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Removed the final empty column from `/live` (former warning column); `/live` table now ends at `Ställning/Resultat`.
+- 2026-03-08: Reduced the inline `Spelare` play symbol (`/head-to-head/:A/:B`) size on `/live` from `h-6 w-6` to `h-5 w-5`.
+- 2026-03-08: `/live` now shows the `/head-to-head/:A/:B` link as the previous inline play symbol (`triangle-right`) inside the `Spelare` column; last `Varning` column is warning-only again.
+- 2026-03-07: `/live-matches` now shows set-score summary whenever score text exists before live game points (`[...]`), instead of requiring a completed-set validation step.
 - 2026-03-07: Added keyboard escape handling in `/live-matches` focus mode; pressing `Esc` now exits fullscreen focus and returns to the match overview grid.
 - 2026-03-07: `/live-matches` focus mode now renders as a true full-viewport overlay (`fixed inset-0`) with the selected match card stretched to `h-full w-full` and no border/padding.
 - 2026-03-07: `/live-matches` now also hides the page menu in single-match route mode (`/live-matches/:A/:B`) in addition to focus mode.

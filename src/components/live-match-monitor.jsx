@@ -19,33 +19,6 @@ function singleLineFontSize(text, { min = 0.65, max = 3.75, targetWidthRem = 12.
 	return `${clamped.toFixed(3)}rem`;
 }
 
-function getSetTokens(scorePart) {
-	if (!scorePart) {
-		return [];
-	}
-
-	return scorePart
-		.split(' ')
-		.filter(token => token && !token.startsWith('['))
-		.filter(token => /^\d+-\d+(\(\d+\))?$/.test(token));
-}
-
-function isCompletedSetToken(token) {
-	const normalized = token.replace(/\(\d+\)$/, '');
-	const [aRaw, bRaw] = normalized.split('-');
-	const a = Number(aRaw);
-	const b = Number(bRaw);
-
-	if (!Number.isFinite(a) || !Number.isFinite(b)) {
-		return false;
-	}
-
-	const diff = Math.abs(a - b);
-
-	// Standard completed-set rule plus explicit tie-break finals (7-6 / 6-7).
-	return (Math.max(a, b) >= 6 && diff >= 2) || ((a === 7 && b === 6) || (a === 6 && b === 7));
-}
-
 function PlayerCell({ player, compact = false }) {
 	const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
 	const rankLabel = player.rank != null ? `#${player.rank}` : null;
@@ -81,8 +54,7 @@ function ScoreCell({ score, winner, server, comment, compact = false }) {
 		const match = scoreValue.match(/\[(.+)\]\s*$/);
 		const gameScore = match ? match[1] : scoreValue;
 		const setsSummaryRaw = match ? scoreValue.slice(0, match.index).trim() : '';
-		const hasCompletedSet = getSetTokens(setsSummaryRaw).some(isCompletedSetToken);
-		const setsSummary = hasCompletedSet ? setsSummaryRaw : '';
+		const setsSummary = setsSummaryRaw;
 
 		return { gameScore, setsSummary };
 	}
