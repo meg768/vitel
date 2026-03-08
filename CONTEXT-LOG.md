@@ -4,6 +4,21 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-08: Added npm script `goto GitHub` in `package.json` to open the repository page (`open https://github.com/meg768/vitel`).
+- 2026-03-08: Renamed npm git helper scripts by removing `git-` prefix; `package.json` now uses `commit` and `revert`.
+- 2026-03-08: Reverted temporary uppercase git npm scripts; `package.json` uses `git-commit` and `git-revert`.
+- 2026-03-08: Renamed npm script `revert` to `git-revert` in `package.json` (same command: `git revert --no-edit HEAD && git push`).
+- 2026-03-08: Added npm script `revert` in `package.json` (`git revert --no-edit HEAD && git push`) for quickly reverting the latest commit with a safe revert commit workflow.
+- 2026-03-08: Removed `Trial` frontend page entirely: deleted `src/pages/trial/`, removed `/trial` route/import from `src/index.jsx`, and removed `/trial` from documented active routes.
+- 2026-03-08: Removed unused `/abc` frontend page: deleted `src/pages/abc/index.jsx`, removed route/import wiring from `src/index.jsx`, and removed `/abc` from documented active route lists.
+- 2026-03-08: Moved `getAutomaticSurface` to be maximally local by defining it inside `applyTheme` (`src/index.jsx`) and inside `applyClasses` (`src/pages/settings/index.jsx`), instead of as file-level helpers.
+- 2026-03-08: Inlined `getAutomaticSurface` as local functions in `src/index.jsx` and `src/pages/settings/index.jsx`; removed shared helper file `src/js/surface-auto.js`.
+- 2026-03-08: Removed the status helper text `Automatiskt underlag just nu: ...` from `/settings` under the `Underlag` selector; automatic surface mode remains available as a toggle option.
+- 2026-03-08: Added local automatic surface mode for themes: settings now includes `Automatiskt` under `Underlag`, and theme application resolves `surface=auto` via a frontend-only date heuristic (`src/js/surface-auto.js`) without API/DB calls.
+- 2026-03-08: Increased player avatar sizes in `/live-matches` monitor cards (compact: `h-12/md:h-14`, regular: `h-20/md:h-24`) to better use vertical list space.
+- 2026-03-08: Removed forced 3-card simulation from `/live-matches`; dashboard list now renders only real ongoing matches again.
+- 2026-03-08: `/live-matches` dashboard simulation is now forced to exactly 3 cards (duplicates of the first ongoing match) in non-parametric route mode, instead of requiring `?simulate=3`.
+- 2026-03-08: Reintroduced `/live-matches` test simulation via `?simulate=N` (0-12), duplicating the first ongoing match for layout preview; focus/zoom now uses per-card synthetic keys so duplicated cards can be focused reliably.
 - 2026-03-08: Fixed `/live-matches` list-card sizing by forcing dashboard cards to `flex-none`; a single ongoing match no longer expands to full-page height unless explicitly focused/zoomed.
 - 2026-03-08: Removed the single-match height-expansion special case from `/live-matches`; dashboard now always renders a consistent vertical list and uses the existing focus/zoom toggle for single-match emphasis.
 - 2026-03-08: `/live-matches` list view now expands a lone dashboard match to fill available page height (`flex-1`) instead of keeping the standard card minimum height.

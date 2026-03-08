@@ -48,7 +48,7 @@ VITE_API_URL=https://your-api-base-url
 
 ## Active Routes
 
-`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/log`, `/trial`, `/qna`, `/settings`, `/query/:name`, `/abc`, `/not-found`, and fallback `*` -> `NotFound`.
+`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound`.
 
 ## Key Files
 

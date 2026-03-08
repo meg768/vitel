@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router';
 
-import ABC from './pages/abc';
 import App from './pages/app';
 import Event from './pages/event';
 import Events from './pages/events';
@@ -17,7 +16,6 @@ import QnA from './pages/qna';
 import Query from './pages/query';
 import Ranking from './pages/ranking';
 import Settings from './pages/settings';
-import Trial from './pages/trial';
 
 // Application entrypoint: handles bootstrapping, theme setup, and route rendering.
 class WebApp {
@@ -42,7 +40,7 @@ class WebApp {
 		let theme = localStorage.getItem('theme');
 
 		// Accept any valid "mode surface" combination.
-		const validTheme = /^(light|dark|auto) (hard|clay|grass)$/;
+		const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
 
 		if (!theme || !validTheme.test(theme)) {
 			let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -56,6 +54,22 @@ class WebApp {
 	}
 
 	applyTheme(theme) {
+		function getAutomaticSurface(date = new Date()) {
+			const month = date.getMonth() + 1;
+			const day = date.getDate();
+			const md = month * 100 + day;
+
+			if (md >= 401 && md <= 615) {
+				return 'clay';
+			}
+
+			if (md >= 616 && md <= 720) {
+				return 'grass';
+			}
+
+			return 'hard';
+		}
+
 		const root = this.rootElement;
 		if (!root) return;
 
@@ -63,12 +77,13 @@ class WebApp {
 		root.classList.remove(...this.themeClasses);
 
 		const [mode, surface] = theme.split(' ');
+		const resolvedSurface = surface === 'auto' ? getAutomaticSurface() : surface;
 
 		// "auto" resolves to current OS preference.
 		const resolvedMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
 
 		root.classList.add(resolvedMode);
-		if (surface) root.classList.add(surface);
+		if (resolvedSurface) root.classList.add(resolvedSurface);
 
 		// In auto mode we subscribe to system theme changes.
 		if (mode === 'auto') {
@@ -118,12 +133,10 @@ class WebApp {
 						<Route path='/live-matches' element={<LiveMatch />} />
 						<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
 						<Route path='/log' element={<Log />} />
-						<Route path='/trial' element={<Trial />} />
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />
-						<Route path='/abc' element={<ABC />} />
 						<Route path='*' element={<NotFound />} />
 					</Routes>
 				</HashRouter>

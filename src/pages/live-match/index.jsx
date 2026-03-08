@@ -80,8 +80,12 @@ function Component() {
 	const rankedMatches = (matches ?? []).map(match => addRankingToMatch(match, ranks));
 	const { selectedMatches, error: selectionError } = selectMonitorMatches(rankedMatches, params);
 	const singleMatchMode = Boolean(params.A && params.B);
+	const displayEntries = React.useMemo(
+		() => selectedMatches.map((match, index) => ({ match, key: `${index}:${matchKey(match)}` })),
+		[selectedMatches]
+	);
 	const focusedMatch = !singleMatchMode && focusedMatchKey
-		? selectedMatches.find(match => matchKey(match) === focusedMatchKey) ?? null
+		? displayEntries.find(entry => entry.key === focusedMatchKey)?.match ?? null
 		: null;
 	const focusMode = !singleMatchMode && Boolean(focusedMatch);
 	const hidePageMenu = focusMode || singleMatchMode;
@@ -102,11 +106,11 @@ function Component() {
 			return;
 		}
 
-		const stillExists = selectedMatches.some(match => matchKey(match) === focusedMatchKey);
+		const stillExists = displayEntries.some(entry => entry.key === focusedMatchKey);
 		if (!stillExists) {
 			setFocusedMatchKey(null);
 		}
-	}, [singleMatchMode, selectedMatches, focusedMatchKey, matches, rankingRows]);
+	}, [singleMatchMode, displayEntries, focusedMatchKey, matches, rankingRows]);
 
 	React.useEffect(() => {
 		if (!focusMode) {
@@ -201,8 +205,7 @@ function Component() {
 							</div>
 						) : (
 							<div className='mt-4 flex h-full flex-col gap-4'>
-								{selectedMatches.map(match => {
-									const key = matchKey(match);
+								{displayEntries.map(({ match, key }) => {
 
 									return (
 										<LiveMatchMonitor

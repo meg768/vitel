@@ -6,7 +6,7 @@ import Button from '../../components/ui/button';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
 
 export default function SettingsPage() {
-	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass', 'auto'];
+	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
 
 	const [activeSurface, setActiveSurface] = useState(null);
 	const [activeMode, setActiveMode] = useState(null);
@@ -49,15 +49,32 @@ export default function SettingsPage() {
 	}, [activeMode]);
 
 	function applyClasses(mode, surface) {
+		function getAutomaticSurface(date = new Date()) {
+			const month = date.getMonth() + 1;
+			const day = date.getDate();
+			const md = month * 100 + day;
+
+			if (md >= 401 && md <= 615) {
+				return 'clay';
+			}
+
+			if (md >= 616 && md <= 720) {
+				return 'grass';
+			}
+
+			return 'hard';
+		}
+
 		const root = document.body;
 		if (!root) return;
 
 		root.classList.remove(...themeClasses);
 
 		const effectiveMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
+		const effectiveSurface = surface === 'auto' ? getAutomaticSurface() : surface;
 
 		root.classList.add(effectiveMode);
-		root.classList.add(surface);
+		root.classList.add(effectiveSurface);
 
 		localStorage.setItem('theme', `${mode} ${surface}`);
 	}
@@ -66,14 +83,15 @@ export default function SettingsPage() {
 		return (
 			<div>
 				<Page.Title level={4}>Underlag</Page.Title>
-				<ToggleGroup defaultValue={activeSurface} onChange={setActiveSurface}>
-					<ToggleGroup.Item value='hard'>Hardcourt</ToggleGroup.Item>
-					<ToggleGroup.Item value='clay'>Grus</ToggleGroup.Item>
-					<ToggleGroup.Item value='grass'>Gräs</ToggleGroup.Item>
-				</ToggleGroup>
-			</div>
-		);
-	}
+					<ToggleGroup defaultValue={activeSurface} onChange={setActiveSurface}>
+						<ToggleGroup.Item value='hard'>Hardcourt</ToggleGroup.Item>
+						<ToggleGroup.Item value='clay'>Grus</ToggleGroup.Item>
+						<ToggleGroup.Item value='grass'>Gräs</ToggleGroup.Item>
+						<ToggleGroup.Item value='auto'>Automatiskt</ToggleGroup.Item>
+					</ToggleGroup>
+				</div>
+			);
+		}
 
 	function ColorModeSelector() {
 		return (
