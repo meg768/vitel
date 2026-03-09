@@ -4,6 +4,25 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Extracted Oddset live odds logic into reusable module `src/js/live-oddset.js` and switched both `/live` and `/live-matches` to use it via shared query key, fetch function, and odds formatter.
+- 2026-03-09: Refactored `/live` and `/live-matches` odds integration helpers to be more local to their page components (name normalization, pair-key matching, and oddset fetch/parsing), matching the project's preferred locality style.
+- 2026-03-09: Removed `/oddset` as a standalone page by deleting its route, menu item, and page component (`src/pages/oddset/index.jsx`); odds remain available in `/live` and `/live-matches`.
+- 2026-03-09: Added Oddset ATP live odds to `/live-matches`; each monitor card now shows an `ODDS` badge and uses the same order-independent two-player name matching as `/live` (fallback `-` when unmatched).
+- 2026-03-09: Integrated Oddset live ATP odds into `/live` by adding an `Odds` column and matching markets against live matches via normalized two-player keys (order-independent); if odds are unavailable or unmatched, the row shows `-`.
+- 2026-03-09: Restored `/oddset` page title (`Oddset`) so the page follows the same title pattern as other pages in loading, error, empty, and data states.
+- 2026-03-09: Added `Visa live` CTA button to `/oddset`, matching `/live` page behavior and linking to `/live-matches`.
+- 2026-03-09: Extracted the live refresh-dot indicator into shared `src/components/refresh-countdown.jsx` and reused it in both `/live` and `/oddset`.
+- 2026-03-09: `/oddset` now shows `Page.Error` when no odds rows are available, matching error presentation used on other pages.
+- 2026-03-09: Restored `/oddset` list rendering to the shared `data-table` component while keeping inline flags and odds in the `Match` column.
+- 2026-03-09: Removed `/oddset` header/summary blocks and page title; the page now renders only a plain list of ongoing ATP matches with inline flags and odds.
+- 2026-03-09: Added country flags in `/oddset` `Match` column before player names by resolving name -> country from `/live` payload.
+- 2026-03-09: `/oddset` table simplified further by removing separate `Spelare 1`/`Spelare 2` columns and rendering each player's odds inline in the `Match` column.
+- 2026-03-09: Updated `/oddset` to use the shared `src/components/ui/data-table.jsx` component for the ongoing ATP match list.
+- 2026-03-09: Simplified `/oddset` UI to a minimal live list of ongoing ATP matches (removed filter, summary cards, and advanced table/card presentation).
+- 2026-03-09: Redesigned `/oddset` UI for readability and responsiveness: added live status header, ATP summary cards, text filter, highlighted favorites, desktop table view, and mobile card view.
+- 2026-03-09: Restricted `/oddset` to ATP by switching endpoint to `/tennis/atp/all/all/matches.json` (still filtered to ongoing `STARTED` matches).
+- 2026-03-09: Updated `/oddset` to fetch from broad tennis endpoint (`/tennis/all/all/all/matches.json`), filter to ongoing matches (`event.state === 'STARTED'`), and auto-refresh every 15 seconds.
+- 2026-03-09: Added new `/oddset` page with static ATP Indian Wells Matchodds results, wired route/import in `src/index.jsx`, and added an `Oddset` menu entry in `src/components/menu.jsx`.
 - 2026-03-08: Increased `/live-matches` player avatars one more step for readability (compact: `h-14/md:h-16`, regular: `h-24/md:h-28`).
 - 2026-03-08: Added npm script `goto GitHub` in `package.json` to open the repository page (`open https://github.com/meg768/vitel`).
 - 2026-03-08: Renamed npm git helper scripts by removing `git-` prefix; `package.json` now uses `commit` and `revert`.

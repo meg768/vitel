@@ -143,6 +143,9 @@ function LiveMatchMonitor({
 
 	return (
 		<div className={clsx('relative flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
+			<div className='absolute top-3 left-3 z-10 rounded-sm border border-primary-300 bg-primary-50 px-2 py-1 text-xs font-semibold tracking-[0.08em] text-primary-700 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-200'>
+				ODDS {match.odds ?? '-'}
+			</div>
 			<div className='absolute top-3 right-3 z-10 flex items-center gap-2'>
 				{compareLink ? (
 					<Link

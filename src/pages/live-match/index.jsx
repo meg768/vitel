@@ -1,67 +1,70 @@
 import React from 'react';
 import { useParams } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
+import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 5 * 1000;
+const ODDSET_REFRESH_INTERVAL_MS = 15 * 1000;
 
-function matchKey(match) {
-	return `${match.player?.id}-${match.opponent?.id}`;
-}
+function Component() {
+	function matchKey(match) {
+		return `${match.player?.id}-${match.opponent?.id}`;
+	}
 
-function addRankingToMatch(match, ranks) {
-	return {
-		...match,
-		event: match.name ?? match.event ?? '',
-		score: match.score ?? '',
-		comment: match.comment ?? null,
-		server: match.server ?? null,
-		player: {
-			...match.player,
-			rank: ranks[match.player?.id]
-		},
-		opponent: {
-			...match.opponent,
-			rank: ranks[match.opponent?.id]
-		}
-	};
-}
-
-function selectMonitorMatches(matches, params) {
-	if ((params.A && !params.B) || (!params.A && params.B)) {
+	function addRankingToMatch(match, ranks) {
 		return {
-			selectedMatches: [],
-			error: new Error(`Spelarna hittades inte (${params.A ?? '-'}, ${params.B ?? '-'})`)
+			...match,
+			event: match.name ?? match.event ?? '',
+			score: match.score ?? '',
+			comment: match.comment ?? null,
+			server: match.server ?? null,
+			player: {
+				...match.player,
+				rank: ranks[match.player?.id]
+			},
+			opponent: {
+				...match.opponent,
+				rank: ranks[match.opponent?.id]
+			}
 		};
 	}
 
-	if (params.A && params.B) {
-		const match = matches.find(row => row.player?.id === params.A && row.opponent?.id === params.B) ?? null;
-
-		if (!match) {
+	function selectMonitorMatches(matches, params) {
+		if ((params.A && !params.B) || (!params.A && params.B)) {
 			return {
 				selectedMatches: [],
-				error: new Error(`Matchen hittades inte bland live-matcherna (${params.A}, ${params.B})`)
+				error: new Error(`Spelarna hittades inte (${params.A ?? '-'}, ${params.B ?? '-'})`)
 			};
 		}
 
+		if (params.A && params.B) {
+			const match = matches.find(row => row.player?.id === params.A && row.opponent?.id === params.B) ?? null;
+
+			if (!match) {
+				return {
+					selectedMatches: [],
+					error: new Error(`Matchen hittades inte bland live-matcherna (${params.A}, ${params.B})`)
+				};
+			}
+
+			return {
+				selectedMatches: [match],
+				error: null
+			};
+		}
+
+		const selectedMatches = matches.filter(row => !row.winner);
+
 		return {
-			selectedMatches: [match],
+			selectedMatches,
 			error: null
 		};
 	}
 
-	const selectedMatches = matches.filter(row => !row.winner);
-
-	return {
-		selectedMatches,
-		error: null
-	};
-}
-
-function Component() {
 	const params = useParams();
 	const [focusedMatchKey, setFocusedMatchKey] = React.useState(null);
 	const { data: matches, error: liveError } = useRequest({
@@ -71,13 +74,30 @@ function Component() {
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true
 	});
+	const {
+		data: oddsByPlayers = {},
+		error: oddsError
+	} = useQuery({
+		queryKey: LIVE_ODDSET_QUERY_KEY,
+		queryFn: fetchLiveOddsetOddsByPlayers,
+		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
+		refetchIntervalInBackground: true,
+		retry: 0
+	});
 	const rankingSql = 'SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC';
 	const { data: rankingRows, error: rankError } = useSQL({
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
 	const ranks = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
-	const rankedMatches = (matches ?? []).map(match => addRankingToMatch(match, ranks));
+	const rankedMatches = (matches ?? []).map(match => {
+		const rankedMatch = addRankingToMatch(match, ranks);
+
+		return {
+			...rankedMatch,
+			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers)
+		};
+	});
 	const { selectedMatches, error: selectionError } = selectMonitorMatches(rankedMatches, params);
 	const singleMatchMode = Boolean(params.A && params.B);
 	const displayEntries = React.useMemo(
@@ -188,10 +208,14 @@ function Component() {
 			{hidePageMenu ? null : <Page.Menu />}
 			<Page.Content className='flex flex-col'>
 				{singleMatchMode ? (
-					<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' showFocusToggle={false} />
+					<>
+						{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
+						<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' showFocusToggle={false} />
+					</>
 				) : (
 					<>
 						{focusMode ? null : <Page.Title>Livematcher</Page.Title>}
+						{focusMode || !oddsError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div>}
 						{focusedMatch ? (
 							<div className='fixed inset-0 z-40 bg-primary-50 dark:bg-primary-900'>
 								<LiveMatchMonitor

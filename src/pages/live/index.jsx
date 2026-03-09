@@ -1,59 +1,16 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
+import RefreshCountdown from '../../components/refresh-countdown';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
+import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 const LIVE_REFRESH_INTERVAL_MS = 30 * 1000;
-const LIVE_REFRESH_STEPS = 6;
-
-function RefreshCountdown({ dataUpdatedAt, isFetching }) {
-	const [now, setNow] = React.useState(Date.now());
-
-	React.useEffect(() => {
-		const timer = window.setInterval(() => {
-			setNow(Date.now());
-		}, 1000);
-
-		return () => window.clearInterval(timer);
-	}, []);
-
-	const remainingMs = dataUpdatedAt
-		? Math.max(0, LIVE_REFRESH_INTERVAL_MS - (now - dataUpdatedAt))
-		: LIVE_REFRESH_INTERVAL_MS;
-	const elapsedMs = LIVE_REFRESH_INTERVAL_MS - remainingMs;
-	const filledSteps = isFetching
-		? LIVE_REFRESH_STEPS
-		: Math.min(LIVE_REFRESH_STEPS, Math.floor(elapsedMs / (LIVE_REFRESH_INTERVAL_MS / LIVE_REFRESH_STEPS)));
-	const label = isFetching
-		? 'Uppdaterar live-sidan'
-		: `Nästa uppdatering inom ${Math.ceil(remainingMs / 1000)} sekunder`;
-
-	return (
-		<div className='flex justify-center pt-4 pb-2' aria-label={label} title={label}>
-			<div className='flex items-center gap-2'>
-				{Array.from({ length: LIVE_REFRESH_STEPS }, (_, index) => {
-					const filled = index < filledSteps;
-
-					return (
-						<span
-							key={index}
-							className={[
-								'h-2.5 w-2.5 rounded-full border border-primary-500 transition-colors duration-500',
-								filled
-									? 'bg-primary-600 dark:bg-primary-300'
-									: 'bg-transparent dark:bg-transparent'
-							].join(' ')}
-						></span>
-					);
-				})}
-			</div>
-		</div>
-	);
-}
 
 
 function LiveTable({ rows, finished = false }) {
@@ -115,6 +72,11 @@ function LiveTable({ rows, finished = false }) {
 							return value ?? '0-0';
 						}}
 					</Table.Cell>
+				</Table.Column>
+
+				<Table.Column id='odds' className=''>
+					<Table.Title className=''>Odds</Table.Title>
+					<Table.Cell className='text-right'>{({ value }) => value ?? '-'}</Table.Cell>
 				</Table.Column>
 
 				<Table.Column id='score' className=''>
@@ -202,6 +164,16 @@ let Component = () => {
 			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 			refetchIntervalInBackground: true
 		});
+		const {
+			data: oddsByPlayers = {},
+			error: oddsError
+		} = useQuery({
+			queryKey: LIVE_ODDSET_QUERY_KEY,
+			queryFn: fetchLiveOddsetOddsByPlayers,
+			refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+			refetchIntervalInBackground: true,
+			retry: 0
+		});
 		const rankingSql = `SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC`;
 		const { data: rankingRows, error: rankError } = useSQL({ sql: rankingSql, cache: 5 * 60 * 1000 });
 		const pairs = matches
@@ -280,6 +252,7 @@ let Component = () => {
 				...match,
 				player,
 				opponent,
+				odds: formatLiveOddsetOddsForMatch(match, oddsByPlayers),
 				headToHead: (() => {
 					const key = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
 				const record = headToHead[key];
@@ -295,8 +268,14 @@ let Component = () => {
 				<>
 					<Page.Title>{`Dagens matcher`}</Page.Title>
 					<Page.Container>
+						{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
 						<Matches matches={rows} />
-						<RefreshCountdown dataUpdatedAt={dataUpdatedAt} isFetching={isFetching} />
+						<RefreshCountdown
+							dataUpdatedAt={dataUpdatedAt}
+							isFetching={isFetching}
+							intervalMs={LIVE_REFRESH_INTERVAL_MS}
+							labelUpdating='Uppdaterar live-sidan'
+						/>
 					</Page.Container>
 				</>
 			);
