@@ -39,13 +39,13 @@ function PlayerCell({ player, headToHead = '0-0', compact = false }) {
 				<div className={clsx('text-center font-semibold text-primary-900 dark:text-primary-100', compact ? 'text-xs md:text-sm' : 'text-sm md:text-base')}>
 					<Link to={playerLink}>{player.name}</Link>
 				</div>
-				<div className={clsx('text-center text-primary-600 dark:text-primary-300', compact ? 'text-xs' : 'text-sm')}>
-					{headToHeadLabel}
-				</div>
 				<div className={clsx('flex items-center justify-center gap-2 text-primary-700 dark:text-primary-300', compact ? 'text-xs' : 'text-sm')}>
 					<Flag className='h-5! w-5! border-current' country={player.country} />
 					<span>{player.country}</span>
 					{rankLabel ? <span>{rankLabel}</span> : null}
+				</div>
+				<div className={clsx('text-center text-primary-600 dark:text-primary-300', compact ? 'text-xs' : 'text-sm')}>
+					{headToHeadLabel}
 				</div>
 			</div>
 		</div>

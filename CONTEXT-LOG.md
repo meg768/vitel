@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Swapped subrow order in `/live-matches` player cards so flag/country/rank is shown before head-to-head (`[X - X]`) under each player name.
 - 2026-03-09: Reduced `/live-matches` player name font size slightly (compact: `text-xs/md:text-sm`, regular: `text-sm/md:text-base`) for a cleaner card hierarchy.
 - 2026-03-09: Reduced `/live-matches` player avatar sizes slightly for both layouts (compact: `h-12/md:h-14`, regular: `h-20/md:h-24`) to improve visual balance.
 - 2026-03-09: Increased `/live-matches` head-to-head sublabel font size under player names (compact: `text-xs`, regular: `text-sm`) for better readability.
