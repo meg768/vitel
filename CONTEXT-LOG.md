@@ -4,6 +4,15 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.65rem` (compact) and `2.00rem` (regular), keeping identical size regardless of set string length.
+- 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.50rem` (compact) and `1.80rem` (regular), keeping identical size regardless of set string length.
+- 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.15rem` (compact) and `1.35rem` (regular), while still keeping identical size for short and long set strings.
+- 2026-03-09: Changed `/live-matches` set-summary line to a fixed font size (compact `1.00rem`, regular `1.20rem`) so long set strings keep the same text size as short ones.
+- 2026-03-09: Reverted `/live-matches` set-summary size/style tuning and restored the original set line sizing profile (`min: 0.6`, `max: 2.1`, `targetWidthRem: 12.0`, `charWidth: 0.58`) with `font-medium`.
+- 2026-03-09: Increased `/live-matches` set-summary line again (`min: 0.9`, `max: 3.2`, `targetWidthRem: 15.0`, `charWidth: 0.52`) for stronger visual emphasis.
+- 2026-03-09: Increased `/live-matches` set-summary line one more step (`min/max/targetWidth` tuning in score sizing) to give completed set scores more visual space.
+- 2026-03-09: Increased set-summary prominence in `/live-matches` score panel by enlarging the dynamic set text sizing range and using `font-semibold` for the bottom set line.
+- 2026-03-09: Renamed main menu label `Live` to `Matcher` (same `/live` route).
 - 2026-03-09: Swapped subrow order in `/live-matches` player cards so flag/country/rank is shown before head-to-head (`[X - X]`) under each player name.
 - 2026-03-09: Reduced `/live-matches` player name font size slightly (compact: `text-xs/md:text-sm`, regular: `text-sm/md:text-base`) for a cleaner card hierarchy.
 - 2026-03-09: Reduced `/live-matches` player avatar sizes slightly for both layouts (compact: `h-12/md:h-14`, regular: `h-20/md:h-24`) to improve visual balance.

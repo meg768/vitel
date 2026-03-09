@@ -71,14 +71,7 @@ function ScoreCell({ score, winner, server, comment, compact = false }) {
 		targetWidthRem: 12.0,
 		charWidth: 0.62
 	});
-	const setsSummarySize = setsSummary
-		? singleLineFontSize(setsSummary, {
-			min: 0.6,
-			max: 2.1,
-			targetWidthRem: 12.0,
-			charWidth: 0.58
-		})
-		: null;
+	const setsSummarySize = compact ? '1.65rem' : '2.00rem';
 
 	return (
 		<div className='relative flex flex-col items-center'>
