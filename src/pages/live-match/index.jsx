@@ -34,11 +34,57 @@ function LoadingPage() {
 }
 
 function Component() {
+	function buildHeadToHeadQuery(matches) {
+		const pairIds = matches
+			.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
+			.filter(pair => pair.length === 2);
+		const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()];
+
+		if (uniquePairs.length === 0) {
+			return {
+				sql: `
+					SELECT
+						LEAST(winner_id, loser_id) AS player_a_id,
+						GREATEST(winner_id, loser_id) AS player_b_id,
+						SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
+						SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
+					FROM flatly
+					WHERE 1 = 0
+					GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
+				`,
+				format: []
+			};
+		}
+
+		const whereClauses = uniquePairs
+			.map(() => '((winner_id = ? AND loser_id = ?) OR (winner_id = ? AND loser_id = ?))')
+			.join(' OR ');
+		const format = uniquePairs.flatMap(([playerAId, playerBId]) => [playerAId, playerBId, playerBId, playerAId]);
+
+		return {
+			sql: `
+				SELECT
+					LEAST(winner_id, loser_id) AS player_a_id,
+					GREATEST(winner_id, loser_id) AS player_b_id,
+					SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
+					SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
+				FROM flatly
+				WHERE ${whereClauses}
+				GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
+			`,
+			format
+		};
+	}
+
 	function getMatchKey(match) {
 		return `${match.player?.id}-${match.opponent?.id}`;
 	}
 
-	function addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers) {
+	function addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair) {
+		const pairKey = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
+		const record = headToHeadByPair[pairKey];
+		const playerWins = record?.[match.player?.id] ?? 0;
+		const opponentWins = record?.[match.opponent?.id] ?? 0;
 		const rankedMatch = {
 			...match,
 			event: match.name ?? match.event ?? '',
@@ -57,7 +103,9 @@ function Component() {
 
 		return {
 			...rankedMatch,
-			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers)
+			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers),
+			headToHead: `${playerWins}-${opponentWins}`,
+			opponentHeadToHead: `${opponentWins}-${playerWins}`
 		};
 	}
 
@@ -114,13 +162,32 @@ function Component() {
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
+	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(matches ?? []), [matches]);
+	const { data: meetingRows, error: meetingError } = useSQL({
+		sql: headToHeadQuery.sql,
+		format: headToHeadQuery.format,
+		cache: 0,
+		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+		refetchIntervalInBackground: true
+	});
 
-	const hasLoadedCoreData = Boolean(matches && rankingRows);
+	const hasLoadedCoreData = Boolean(matches && rankingRows && meetingRows);
 	const ranksByPlayerId = hasLoadedCoreData
 		? Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]))
 		: {};
+	const headToHeadByPair = hasLoadedCoreData
+		? Object.fromEntries(
+			meetingRows.map(row => [
+				`${row.player_a_id}:${row.player_b_id}`,
+				{
+					[row.player_a_id]: row.wins_for_player_a,
+					[row.player_b_id]: row.wins_for_player_b
+				}
+			])
+		)
+		: {};
 	const monitorRows = hasLoadedCoreData
-		? (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers))
+		? (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
 		: [];
 	const selection = hasLoadedCoreData
 		? selectMonitorMatches(monitorRows, routeParams)
@@ -175,6 +242,10 @@ function Component() {
 
 	if (rankError) {
 		return <ErrorPage message={`Misslyckades med att läsa in ranking - ${rankError.message}`} />;
+	}
+
+	if (meetingError) {
+		return <ErrorPage message={`Misslyckades med att läsa in head-to-head - ${meetingError.message}`} />;
 	}
 
 	if (!hasLoadedCoreData) {

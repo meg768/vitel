@@ -4,6 +4,12 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Reduced `/live-matches` player name font size slightly (compact: `text-xs/md:text-sm`, regular: `text-sm/md:text-base`) for a cleaner card hierarchy.
+- 2026-03-09: Reduced `/live-matches` player avatar sizes slightly for both layouts (compact: `h-12/md:h-14`, regular: `h-20/md:h-24`) to improve visual balance.
+- 2026-03-09: Increased `/live-matches` head-to-head sublabel font size under player names (compact: `text-xs`, regular: `text-sm`) for better readability.
+- 2026-03-09: Updated `/live-matches` head-to-head sublabel format under player names to bracket style `[X - X]`.
+- 2026-03-09: Simplified `/live-matches` player sublabel under names by removing the `Tidigare möten:` prefix and showing only the head-to-head score value (e.g. `3-2`).
+- 2026-03-09: Added head-to-head to `/live-matches` cards by querying `flatly` for visible live pairs and rendering `Tidigare möten` directly under each player name (player-relative on each side, e.g. left `3-2`, right `2-3`).
 - 2026-03-09: Fixed `/live-matches` hook-order risk by ensuring all hooks run before early returns; this prevents potential runtime crashes when transitioning between loading/error/data states.
 - 2026-03-09: Performed readability cleanup on `/live` and `/live-matches`: simplified component structure, removed deeply nested render functions, clarified match splitting/head-to-head query flow, and reduced duplicated page-state rendering while keeping behavior unchanged.
 - 2026-03-09: Updated `/live-matches` `ODDS` badge link target to `https://spela.svenskaspel.se/odds/tennis`.

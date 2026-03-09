@@ -19,10 +19,12 @@ function singleLineFontSize(text, { min = 0.65, max = 3.75, targetWidthRem = 12.
 	return `${clamped.toFixed(3)}rem`;
 }
 
-function PlayerCell({ player, compact = false }) {
+function PlayerCell({ player, headToHead = '0-0', compact = false }) {
 	const avatarSrc = `https://www.atptour.com/-/media/alias/player-headshot/${player.id}`;
 	const rankLabel = player.rank != null ? `#${player.rank}` : null;
 	const playerLink = `/player/${player.id}`;
+	const [wins = '0', losses = '0'] = String(headToHead).split('-');
+	const headToHeadLabel = `[${wins} - ${losses}]`;
 
 	return (
 		<div className={clsx('flex h-full flex-col items-center justify-center', compact ? 'gap-2' : 'gap-4')}>
@@ -30,12 +32,15 @@ function PlayerCell({ player, compact = false }) {
 				src={avatarSrc}
 				className={clsx(
 					'border-2 border-primary-700 bg-primary-900 shadow-sm dark:border-primary-300',
-					compact ? 'h-14 w-14 md:h-16 md:w-16' : 'h-24 w-24 md:h-28 md:w-28'
+					compact ? 'h-12 w-12 md:h-14 md:w-14' : 'h-20 w-20 md:h-24 md:w-24'
 				)}
 			/>
 			<div className='flex flex-col items-center gap-1'>
-				<div className={clsx('text-center font-semibold text-primary-900 dark:text-primary-100', compact ? 'text-sm md:text-base' : 'text-base md:text-lg')}>
+				<div className={clsx('text-center font-semibold text-primary-900 dark:text-primary-100', compact ? 'text-xs md:text-sm' : 'text-sm md:text-base')}>
 					<Link to={playerLink}>{player.name}</Link>
+				</div>
+				<div className={clsx('text-center text-primary-600 dark:text-primary-300', compact ? 'text-xs' : 'text-sm')}>
+					{headToHeadLabel}
 				</div>
 				<div className={clsx('flex items-center justify-center gap-2 text-primary-700 dark:text-primary-300', compact ? 'text-xs' : 'text-sm')}>
 					<Flag className='h-5! w-5! border-current' country={player.country} />
@@ -190,7 +195,7 @@ function LiveMatchMonitor({
 					<Table.Body className='h-full'>
 						<Table.Row className='h-full align-middle'>
 							<Table.Cell className={clsx('align-middle', compact ? 'pr-2 py-2' : 'pr-4 py-4')}>
-								<PlayerCell player={match.player} compact={compact} />
+								<PlayerCell player={match.player} headToHead={match.headToHead} compact={compact} />
 							</Table.Cell>
 
 							<Table.Cell className={clsx('px-2 align-middle', compact ? 'py-2' : 'py-4')}>
@@ -204,7 +209,7 @@ function LiveMatchMonitor({
 							</Table.Cell>
 
 							<Table.Cell className={clsx('align-middle', compact ? 'pl-2 py-2' : 'pl-4 py-4')}>
-								<PlayerCell player={match.opponent} compact={compact} />
+								<PlayerCell player={match.opponent} headToHead={match.opponentHeadToHead} compact={compact} />
 							</Table.Cell>
 						</Table.Row>
 					</Table.Body>
