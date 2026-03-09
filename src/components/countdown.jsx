@@ -1,6 +1,6 @@
 import React from 'react';
 
-function RefreshCountdown({
+function Countdown({
 	dataUpdatedAt,
 	isFetching,
 	intervalMs = 30 * 1000,
@@ -51,4 +51,4 @@ function RefreshCountdown({
 	);
 }
 
-export default RefreshCountdown;
+export default Countdown;

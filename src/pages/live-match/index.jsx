@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 
+import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
@@ -67,7 +68,7 @@ function Component() {
 
 	const params = useParams();
 	const [focusedMatchKey, setFocusedMatchKey] = React.useState(null);
-	const { data: matches, error: liveError } = useRequest({
+	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
 		path: 'live',
 		method: 'GET',
 		cache: 0,
@@ -246,6 +247,14 @@ function Component() {
 							</div>
 						)}
 					</>
+				)}
+				{focusMode ? null : (
+					<Countdown
+						dataUpdatedAt={dataUpdatedAt}
+						isFetching={isFetching}
+						intervalMs={LIVE_REFRESH_INTERVAL_MS}
+						labelUpdating='Uppdaterar live-matches-sidan'
+					/>
 				)}
 			</Page.Content>
 		</Page>

@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Added `Countdown` to `/live-matches`, wired to `useRequest` refresh state (`dataUpdatedAt`/`isFetching`) with the page's 5-second live interval; countdown is hidden in focus mode.
+- 2026-03-09: Renamed `src/components/refresh-countdown.jsx` to `src/components/countdown.jsx` and renamed the component to `Countdown`; updated `/live` import and usage accordingly.
 - 2026-03-09: Extracted Oddset live odds logic into reusable module `src/js/live-oddset.js` and switched both `/live` and `/live-matches` to use it via shared query key, fetch function, and odds formatter.
 - 2026-03-09: Refactored `/live` and `/live-matches` odds integration helpers to be more local to their page components (name normalization, pair-key matching, and oddset fetch/parsing), matching the project's preferred locality style.
 - 2026-03-09: Removed `/oddset` as a standalone page by deleting its route, menu item, and page component (`src/pages/oddset/index.jsx`); odds remain available in `/live` and `/live-matches`.

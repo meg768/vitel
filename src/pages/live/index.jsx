@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Flag from '../../components/flag';
+import Countdown from '../../components/countdown';
 import Page from '../../components/page';
-import RefreshCountdown from '../../components/refresh-countdown';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
@@ -270,7 +270,7 @@ let Component = () => {
 					<Page.Container>
 						{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
 						<Matches matches={rows} />
-						<RefreshCountdown
+						<Countdown
 							dataUpdatedAt={dataUpdatedAt}
 							isFetching={isFetching}
 							intervalMs={LIVE_REFRESH_INTERVAL_MS}
