@@ -4,6 +4,10 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-09: Fixed `/live-matches` hook-order risk by ensuring all hooks run before early returns; this prevents potential runtime crashes when transitioning between loading/error/data states.
+- 2026-03-09: Performed readability cleanup on `/live` and `/live-matches`: simplified component structure, removed deeply nested render functions, clarified match splitting/head-to-head query flow, and reduced duplicated page-state rendering while keeping behavior unchanged.
+- 2026-03-09: Updated `/live-matches` `ODDS` badge link target to `https://spela.svenskaspel.se/odds/tennis`.
+- 2026-03-09: Made the `ODDS` badge in `/live-matches` clickable; it now opens Svenska Spel Oddset Tennis in a new tab (`https://www.svenskaspel.se/oddset/sport/tennis`).
 - 2026-03-09: Added `Countdown` to `/live-matches`, wired to `useRequest` refresh state (`dataUpdatedAt`/`isFetching`) with the page's 5-second live interval; countdown is hidden in focus mode.
 - 2026-03-09: Renamed `src/components/refresh-countdown.jsx` to `src/components/countdown.jsx` and renamed the component to `Countdown`; updated `/live` import and usage accordingly.
 - 2026-03-09: Extracted Oddset live odds logic into reusable module `src/js/live-oddset.js` and switched both `/live` and `/live-matches` to use it via shared query key, fetch function, and odds formatter.

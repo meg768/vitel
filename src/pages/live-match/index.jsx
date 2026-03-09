@@ -1,6 +1,6 @@
 import React from 'react';
-import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router';
 
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
@@ -11,13 +11,35 @@ import { useRequest, useSQL } from '../../js/vitel.js';
 const LIVE_REFRESH_INTERVAL_MS = 5 * 1000;
 const ODDSET_REFRESH_INTERVAL_MS = 15 * 1000;
 
+function ErrorPage({ message }) {
+	return (
+		<Page id='live-match-page'>
+			<Page.Menu />
+			<Page.Content>
+				<Page.Error>{message}</Page.Error>
+			</Page.Content>
+		</Page>
+	);
+}
+
+function LoadingPage() {
+	return (
+		<Page id='live-match-page'>
+			<Page.Menu />
+			<Page.Content>
+				<Page.Loading>Läser in matcher...</Page.Loading>
+			</Page.Content>
+		</Page>
+	);
+}
+
 function Component() {
-	function matchKey(match) {
+	function getMatchKey(match) {
 		return `${match.player?.id}-${match.opponent?.id}`;
 	}
 
-	function addRankingToMatch(match, ranks) {
-		return {
+	function addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers) {
+		const rankedMatch = {
 			...match,
 			event: match.name ?? match.event ?? '',
 			score: match.score ?? '',
@@ -25,48 +47,53 @@ function Component() {
 			server: match.server ?? null,
 			player: {
 				...match.player,
-				rank: ranks[match.player?.id]
+				rank: ranksByPlayerId[match.player?.id]
 			},
 			opponent: {
 				...match.opponent,
-				rank: ranks[match.opponent?.id]
+				rank: ranksByPlayerId[match.opponent?.id]
 			}
+		};
+
+		return {
+			...rankedMatch,
+			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers)
 		};
 	}
 
-	function selectMonitorMatches(matches, params) {
-		if ((params.A && !params.B) || (!params.A && params.B)) {
+	function selectMonitorMatches(matches, routeParams) {
+		if ((routeParams.A && !routeParams.B) || (!routeParams.A && routeParams.B)) {
 			return {
 				selectedMatches: [],
-				error: new Error(`Spelarna hittades inte (${params.A ?? '-'}, ${params.B ?? '-'})`)
+				error: new Error(`Spelarna hittades inte (${routeParams.A ?? '-'}, ${routeParams.B ?? '-'})`)
 			};
 		}
 
-		if (params.A && params.B) {
-			const match = matches.find(row => row.player?.id === params.A && row.opponent?.id === params.B) ?? null;
+		if (routeParams.A && routeParams.B) {
+			const requestedA = String(routeParams.A);
+			const requestedB = String(routeParams.B);
+			const selectedMatch = matches.find(match => String(match.player?.id) === requestedA && String(match.opponent?.id) === requestedB) ?? null;
 
-			if (!match) {
+			if (!selectedMatch) {
 				return {
 					selectedMatches: [],
-					error: new Error(`Matchen hittades inte bland live-matcherna (${params.A}, ${params.B})`)
+					error: new Error(`Matchen hittades inte bland live-matcherna (${routeParams.A}, ${routeParams.B})`)
 				};
 			}
 
 			return {
-				selectedMatches: [match],
+				selectedMatches: [selectedMatch],
 				error: null
 			};
 		}
 
-		const selectedMatches = matches.filter(row => !row.winner);
-
 		return {
-			selectedMatches,
+			selectedMatches: matches.filter(match => !match.winner),
 			error: null
 		};
 	}
 
-	const params = useParams();
+	const routeParams = useParams();
 	const [focusedMatchKey, setFocusedMatchKey] = React.useState(null);
 	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
 		path: 'live',
@@ -75,10 +102,7 @@ function Component() {
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true
 	});
-	const {
-		data: oddsByPlayers = {},
-		error: oddsError
-	} = useQuery({
+	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
 		queryKey: LIVE_ODDSET_QUERY_KEY,
 		queryFn: fetchLiveOddsetOddsByPlayers,
 		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
@@ -90,21 +114,22 @@ function Component() {
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
-	const ranks = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
-	const rankedMatches = (matches ?? []).map(match => {
-		const rankedMatch = addRankingToMatch(match, ranks);
 
-		return {
-			...rankedMatch,
-			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers)
-		};
-	});
-	const { selectedMatches, error: selectionError } = selectMonitorMatches(rankedMatches, params);
-	const singleMatchMode = Boolean(params.A && params.B);
-	const displayEntries = React.useMemo(
-		() => selectedMatches.map((match, index) => ({ match, key: `${index}:${matchKey(match)}` })),
-		[selectedMatches]
-	);
+	const hasLoadedCoreData = Boolean(matches && rankingRows);
+	const ranksByPlayerId = hasLoadedCoreData
+		? Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]))
+		: {};
+	const monitorRows = hasLoadedCoreData
+		? (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers))
+		: [];
+	const selection = hasLoadedCoreData
+		? selectMonitorMatches(monitorRows, routeParams)
+		: { selectedMatches: [], error: null };
+	const selectedMatches = selection.selectedMatches;
+	const selectionError = selection.error;
+
+	const singleMatchMode = Boolean(routeParams.A && routeParams.B);
+	const displayEntries = selectedMatches.map((match, index) => ({ match, key: `${index}:${getMatchKey(match)}` }));
 	const focusedMatch = !singleMatchMode && focusedMatchKey
 		? displayEntries.find(entry => entry.key === focusedMatchKey)?.match ?? null
 		: null;
@@ -114,10 +139,6 @@ function Component() {
 	const useCompactCards = dashboardMatchCount > 4;
 
 	React.useEffect(() => {
-		if (!matches || !rankingRows) {
-			return;
-		}
-
 		if (singleMatchMode) {
 			setFocusedMatchKey(null);
 			return;
@@ -131,7 +152,7 @@ function Component() {
 		if (!stillExists) {
 			setFocusedMatchKey(null);
 		}
-	}, [singleMatchMode, displayEntries, focusedMatchKey, matches, rankingRows]);
+	}, [singleMatchMode, displayEntries, focusedMatchKey]);
 
 	React.useEffect(() => {
 		if (!focusMode) {
@@ -145,63 +166,27 @@ function Component() {
 		}
 
 		window.addEventListener('keydown', onKeyDown);
-
 		return () => window.removeEventListener('keydown', onKeyDown);
 	}, [focusMode]);
 
 	if (liveError) {
-		return (
-			<Page id='live-match-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>Misslyckades med att läsa in live-match - {liveError.message}</Page.Error>
-				</Page.Content>
-			</Page>
-		);
+		return <ErrorPage message={`Misslyckades med att läsa in live-match - ${liveError.message}`} />;
 	}
 
 	if (rankError) {
-		return (
-			<Page id='live-match-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>
-				</Page.Content>
-			</Page>
-		);
+		return <ErrorPage message={`Misslyckades med att läsa in ranking - ${rankError.message}`} />;
 	}
 
-	if (!matches || !rankingRows) {
-		return (
-			<Page id='live-match-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Loading>Läser in matcher...</Page.Loading>
-				</Page.Content>
-			</Page>
-		);
+	if (!hasLoadedCoreData) {
+		return <LoadingPage />;
 	}
 
 	if (selectionError) {
-		return (
-			<Page id='live-match-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>{selectionError.message}</Page.Error>
-				</Page.Content>
-			</Page>
-		);
+		return <ErrorPage message={selectionError.message} />;
 	}
 
-	if (!selectedMatches.length) {
-		return (
-			<Page id='live-match-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>Det finns inga pågående matcher att övervaka just nu.</Page.Error>
-				</Page.Content>
-			</Page>
-		);
+	if (selectedMatches.length === 0) {
+		return <ErrorPage message='Det finns inga pågående matcher att övervaka just nu.' />;
 	}
 
 	return (
@@ -217,6 +202,7 @@ function Component() {
 					<>
 						{focusMode ? null : <Page.Title>Livematcher</Page.Title>}
 						{focusMode || !oddsError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div>}
+
 						{focusedMatch ? (
 							<div className='fixed inset-0 z-40 bg-primary-50 dark:bg-primary-900'>
 								<LiveMatchMonitor
@@ -230,24 +216,22 @@ function Component() {
 							</div>
 						) : (
 							<div className='mt-4 flex h-full flex-col gap-4'>
-								{displayEntries.map(({ match, key }) => {
-
-									return (
-										<LiveMatchMonitor
-											key={key}
-											match={match}
-											className='flex-none min-h-[22rem]'
-											defaultShowChrome={false}
-											compact={useCompactCards}
-											isFocused={false}
-											onToggleFocus={() => setFocusedMatchKey(key)}
-										/>
-									);
-								})}
+								{displayEntries.map(({ match, key }) => (
+									<LiveMatchMonitor
+										key={key}
+										match={match}
+										className='flex-none min-h-[22rem]'
+										defaultShowChrome={false}
+										compact={useCompactCards}
+										isFocused={false}
+										onToggleFocus={() => setFocusedMatchKey(key)}
+									/>
+								))}
 							</div>
 						)}
 					</>
 				)}
+
 				{focusMode ? null : (
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
