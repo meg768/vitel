@@ -4,6 +4,25 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-10: Removed the `Status` column from `/oddset`; grouping by `Live` and `Kommande` now carries match phase context.
+- 2026-03-10: `/oddset` is now grouped into two separate tables like `/live`: one `Live` section and one `Kommande` section.
+- 2026-03-10: `/oddset` `Status` now renders `Live` as a clickable link for started matches, routing to `/live-matches/:A/:B` when both player ids are matched (otherwise `/live-matches`).
+- 2026-03-10: Simplified `/oddset` explanation text to a less technical market overview and moved it to sit as a header directly above the table.
+- 2026-03-10: Added an explanatory info panel under `/oddset` describing data sources, odds conversion (`odds/1000`), player/rank matching logic, and auto-refresh countdown behavior.
+- 2026-03-10: Reordered `/oddset` columns so `Start` is now column 2 (immediately after `Turnering`).
+- 2026-03-10: Updated `/oddset` countdown/refresh timing to 5 dots with 5 seconds per dot by setting refresh interval to 25 seconds and countdown steps to 5.
+- 2026-03-10: Added `Countdown` to `/oddset` title, wired to query refresh state (`dataUpdatedAt`/`isFetching`) with a 60-second interval and 12 progress dots.
+- 2026-03-10: Updated `/oddset` `Spelare` column to match `/live` style: player labels now render as `Namn (LAND) #RANK`, include compare icon linking to `/head-to-head/:A/:B`, and derive rank from the same id-based ranking map strategy as `/live`.
+- 2026-03-10: Updated `/oddset` `Start` to full weekday names with capitalized first letter (e.g. `Måndag 21:00`).
+- 2026-03-10: Changed `/oddset` `Start` formatting to show only weekday + time (for example `tis 21:00`) instead of full date/time.
+- 2026-03-10: `/oddset` player names are now linked to `/player/:id` when a name match exists in `players`; unmatched names still render as plain text while flags remain.
+- 2026-03-10: Added player flags on `/oddset` by resolving `homeName`/`awayName` against `players.name -> country` and rendering `Flag` before each player name in the `Spelare` column.
+- 2026-03-10: Removed the `Namn` column from `/oddset`; the table now shows tournament, players, odds, status, and start time.
+- 2026-03-10: Added an `Odds` column on `/oddset` by reading `Matchodds` (`OT_ONE`/`OT_TWO`) from each pipeline event and rendering decimal odds as `x.xx - y.yy`.
+- 2026-03-10: Added a new `/oddset` page that lists all ATP matches from Oddset's pipeline endpoint (`listView/tennis/atp/all/all/matches.json`) with tournament, match name, players, status, and start time.
+- 2026-03-10: Added `Oddset` to the main menu and wired the `/oddset` route in `src/index.jsx`.
+- 2026-03-10: Combined Oddset odds sources for `/live-matches` by merging ATP `matches.json` (including `NOT_STARTED`) with `event/live/open.json` (tennis live), and added `ODDS LIVE` / `ODDS PRE` badge states so prematch odds are shown before start.
+- 2026-03-10: Reduced Oddset polling aggressiveness on `/live-matches` by increasing interval to 30 seconds and disabling background/focus/reconnect refetches for the Oddset query.
 - 2026-03-10: Removed `Tidigare möten` from `/live` entirely (column removed and all head-to-head query/loading/error logic deleted).
 - 2026-03-10: Removed odds from `/live` entirely (no odds fetch, no odds warning message, and no `Odds` table column).
 - 2026-03-10: Updated `/live-matches` refresh interval to 15 seconds so the 5-dot title countdown advances every 3 seconds per dot.
