@@ -4,6 +4,13 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-10: `/oddset` now also always shows the `Kommande` section header and renders an explicit empty state (`Inga kommande matcher just nu`) when no upcoming matches exist.
+- 2026-03-10: Simplified `/oddset` live empty state by removing the extra helper line under `Inga pågående matcher just nu`.
+- 2026-03-10: `/oddset` now always shows the `Live` section header and renders a clear empty state (`Inga pågående matcher just nu`) when no live matches are available.
+- 2026-03-10: Reduced `/oddset` refresh flicker by removing the nested local `<Content />` component and rendering content directly, avoiding full subtree remounts on query refetch updates.
+- 2026-03-10: Added a `Visa live` button under the `/oddset` `Live` table, linking to `/live-matches` in the same style as `/live`.
+- 2026-03-10: Reordered `/oddset` columns so `Odds` is always the last column; in `Live` tables the order is now `Turnering`, `Start`, `Spelare`, `Ställning`, `Odds`.
+- 2026-03-10: Added live score rendering on `/oddset` live matches (`Ställning` column): set scores from `liveData.statistics.sets` plus current game score from `liveData.score` (e.g. `3-6 3-2 [30-40]`).
 - 2026-03-10: Removed the `Status` column from `/oddset`; grouping by `Live` and `Kommande` now carries match phase context.
 - 2026-03-10: `/oddset` is now grouped into two separate tables like `/live`: one `Live` section and one `Kommande` section.
 - 2026-03-10: `/oddset` `Status` now renders `Live` as a clickable link for started matches, routing to `/live-matches/:A/:B` when both player ids are matched (otherwise `/live-matches`).

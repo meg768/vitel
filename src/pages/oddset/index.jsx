@@ -5,6 +5,7 @@ import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react
 import Countdown from '../../components/countdown';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
+import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel.js';
@@ -67,6 +68,47 @@ function formatStart(value) {
 	return `${weekdayLabel} ${time}`;
 }
 
+function formatLiveScore(item) {
+	const score = item.liveData?.score || {};
+	const setHomeScores = item.liveData?.statistics?.sets?.home;
+	const setAwayScores = item.liveData?.statistics?.sets?.away;
+	const setScores = [];
+
+	if (Array.isArray(setHomeScores) && Array.isArray(setAwayScores)) {
+		const length = Math.max(setHomeScores.length, setAwayScores.length);
+
+		for (let index = 0; index < length; index += 1) {
+			const home = setHomeScores[index];
+			const away = setAwayScores[index];
+
+			if (!Number.isFinite(home) || !Number.isFinite(away)) {
+				continue;
+			}
+
+			if (home < 0 || away < 0) {
+				continue;
+			}
+
+			setScores.push(`${home}-${away}`);
+		}
+	}
+
+	const gameHome = score.home;
+	const gameAway = score.away;
+	const hasGameScore = gameHome != null && gameAway != null && gameHome !== '' && gameAway !== '';
+	const gameScore = hasGameScore ? `[${gameHome}-${gameAway}]` : null;
+
+	if (setScores.length === 0 && !gameScore) {
+		return '-';
+	}
+
+	if (setScores.length > 0 && gameScore) {
+		return `${setScores.join(' ')} ${gameScore}`;
+	}
+
+	return setScores.length > 0 ? setScores.join(' ') : gameScore;
+}
+
 async function fetchOddsetPipelineMatches() {
 	const response = await fetch(ODDSET_PIPELINE_URL);
 
@@ -86,6 +128,7 @@ async function fetchOddsetPipelineMatches() {
 		const one = offer?.outcomes?.find(outcome => outcome.type === 'OT_ONE');
 		const two = offer?.outcomes?.find(outcome => outcome.type === 'OT_TWO');
 		const odds = `${toDecimalOdds(one?.odds)} - ${toDecimalOdds(two?.odds)}`;
+		const liveScore = event.state === 'STARTED' ? formatLiveScore(item) : '-';
 
 		return {
 			id: event.id ?? `${event.name ?? '-'}-${event.start ?? '-'}`,
@@ -93,6 +136,7 @@ async function fetchOddsetPipelineMatches() {
 			playerAName: event.homeName || '-',
 			playerBName: event.awayName || '-',
 			odds,
+			liveScore,
 			status: formatState(event.state),
 			start: formatStart(event.start),
 			_startTimestamp: startTimestamp
@@ -212,7 +256,23 @@ function SourceExplanation() {
 	);
 }
 
-function OddsetTable({ rows }) {
+function EmptyLiveState() {
+	return (
+		<div className='rounded-sm border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
+			<div className='text-base font-semibold text-primary-900 dark:text-primary-100'>Inga pågående matcher just nu</div>
+		</div>
+	);
+}
+
+function EmptyUpcomingState() {
+	return (
+		<div className='rounded-sm border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
+			<div className='text-base font-semibold text-primary-900 dark:text-primary-100'>Inga kommande matcher just nu</div>
+		</div>
+	);
+}
+
+function OddsetTable({ rows, showLiveScore = false }) {
 	return (
 		<Table rows={rows}>
 			<Table.Column id='turnering'>
@@ -225,6 +285,11 @@ function OddsetTable({ rows }) {
 				<Table.Title>Spelare</Table.Title>
 				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
 			</Table.Column>
+			{showLiveScore ? (
+				<Table.Column id='liveScore'>
+					<Table.Title>Ställning</Table.Title>
+				</Table.Column>
+			) : null}
 			<Table.Column id='odds'>
 				<Table.Title>Odds</Table.Title>
 			</Table.Column>
@@ -276,21 +341,16 @@ function Component() {
 		[rows, playerDetailsByName, ranksByPlayerId]
 	);
 	const { liveMatches, upcomingMatches } = React.useMemo(() => splitRowsByStatus(enrichedRows), [enrichedRows]);
+	let content = null;
 
-	function Content() {
-		if (error) {
-			return <Page.Error>Misslyckades med att läsa oddset - {error.message}</Page.Error>;
-		}
-
-		if (!rows) {
-			return <Page.Loading>Läser in oddset...</Page.Loading>;
-		}
-
-		if (rows.length === 0) {
-			return <Page.Error>Inga oddset-matcher hittades just nu.</Page.Error>;
-		}
-
-		return (
+	if (error) {
+		content = <Page.Error>Misslyckades med att läsa oddset - {error.message}</Page.Error>;
+	} else if (!rows) {
+		content = <Page.Loading>Läser in oddset...</Page.Loading>;
+	} else if (rows.length === 0) {
+		content = <Page.Error>Inga oddset-matcher hittades just nu.</Page.Error>;
+	} else {
+		content = (
 			<>
 				<Page.Title className='flex items-center justify-between gap-3'>
 					<span className='bg-transparent'>Oddset</span>
@@ -305,18 +365,28 @@ function Component() {
 				</Page.Title>
 				<Page.Container>
 					<SourceExplanation />
+					<Page.Title level={2}>Live</Page.Title>
 					{liveMatches.length > 0 ? (
 						<>
-							<Page.Title level={2}>Live</Page.Title>
-							<OddsetTable rows={liveMatches} />
+							<OddsetTable rows={liveMatches} showLiveScore={true} />
+							<div className='flex justify-center pt-4'>
+								<Button link='/live-matches'>Visa live</Button>
+							</div>
 						</>
-					) : null}
+					) : (
+						<EmptyLiveState />
+					)}
 					{upcomingMatches.length > 0 ? (
 						<>
 							<Page.Title level={2}>Kommande</Page.Title>
 							<OddsetTable rows={upcomingMatches} />
 						</>
-					) : null}
+					) : (
+						<>
+							<Page.Title level={2}>Kommande</Page.Title>
+							<EmptyUpcomingState />
+						</>
+					)}
 				</Page.Container>
 			</>
 		);
@@ -326,7 +396,7 @@ function Component() {
 		<Page id='oddset-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Content />
+				{content}
 			</Page.Content>
 		</Page>
 	);
