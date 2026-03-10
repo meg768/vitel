@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 
 import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Countdown from '../../components/countdown';
@@ -8,10 +7,10 @@ import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 30 * 1000;
+const LIVE_REFRESH_INTERVAL_MS = 25 * 1000;
+const LIVE_COUNTDOWN_STEPS = 5;
 
 function PlayersCell({ playerA, playerB }) {
 	const flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
@@ -54,16 +53,6 @@ function LiveTable({ rows, finished = false }) {
 				<Table.Value>{({ row }) => <PlayersCell playerA={row.player} playerB={row.opponent} />}</Table.Value>
 			</Table.Column>
 
-			<Table.Column id='headToHead'>
-				<Table.Title>Tidigare möten</Table.Title>
-				<Table.Cell className='text-right'>{({ value }) => value ?? '0-0'}</Table.Cell>
-			</Table.Column>
-
-			<Table.Column id='odds'>
-				<Table.Title>Odds</Table.Title>
-				<Table.Cell className='text-right'>{({ value }) => value ?? '-'}</Table.Cell>
-			</Table.Column>
-
 			<Table.Column id='score'>
 				<Table.Title>{finished ? 'Resultat' : 'Ställning'}</Table.Title>
 				<Table.Cell>{({ value }) => value}</Table.Cell>
@@ -96,48 +85,6 @@ function splitMatchesByStatus(matches) {
 	return { activeMatches, finishedMatches };
 }
 
-function buildHeadToHeadQuery(matches) {
-	const pairIds = matches
-		.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
-		.filter(pair => pair.length === 2);
-	const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()];
-
-	if (uniquePairs.length === 0) {
-		return {
-			sql: `
-				SELECT
-					LEAST(winner_id, loser_id) AS player_a_id,
-					GREATEST(winner_id, loser_id) AS player_b_id,
-					SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
-					SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
-				FROM flatly
-				WHERE 1 = 0
-				GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
-			`,
-			format: []
-		};
-	}
-
-	const whereClauses = uniquePairs
-		.map(() => '((winner_id = ? AND loser_id = ?) OR (winner_id = ? AND loser_id = ?))')
-		.join(' OR ');
-	const format = uniquePairs.flatMap(([playerAId, playerBId]) => [playerAId, playerBId, playerBId, playerAId]);
-
-	return {
-		sql: `
-			SELECT
-				LEAST(winner_id, loser_id) AS player_a_id,
-				GREATEST(winner_id, loser_id) AS player_b_id,
-				SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
-				SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
-			FROM flatly
-			WHERE ${whereClauses}
-			GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
-		`,
-		format
-	};
-}
-
 function Component() {
 	const { data: matches, error, dataUpdatedAt, isFetching } = useRequest({
 		path: 'live',
@@ -146,26 +93,10 @@ function Component() {
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true
 	});
-	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
-		queryKey: LIVE_ODDSET_QUERY_KEY,
-		queryFn: fetchLiveOddsetOddsByPlayers,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true,
-		retry: 0
-	});
 	const rankingSql = 'SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC';
 	const { data: rankingRows, error: rankError } = useSQL({
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
-	});
-
-	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(matches ?? []), [matches]);
-	const { data: meetingRows, error: meetingError } = useSQL({
-		sql: headToHeadQuery.sql,
-		format: headToHeadQuery.format,
-		cache: 0,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true
 	});
 
 	if (error) {
@@ -201,17 +132,6 @@ function Component() {
 		);
 	}
 
-	if (meetingError) {
-		return (
-			<Page>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>Misslyckades med att läsa in head-to-head - {meetingError.message}</Page.Error>
-				</Page.Content>
-			</Page>
-		);
-	}
-
 	if (!rankingRows) {
 		return (
 			<Page>
@@ -223,27 +143,7 @@ function Component() {
 		);
 	}
 
-	if (!meetingRows) {
-		return (
-			<Page>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Loading>Läser in head-to-head...</Page.Loading>
-				</Page.Content>
-			</Page>
-		);
-	}
-
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
-	const headToHeadByPair = Object.fromEntries(
-		meetingRows.map(row => [
-			`${row.player_a_id}:${row.player_b_id}`,
-			{
-				[row.player_a_id]: row.wins_for_player_a,
-				[row.player_b_id]: row.wins_for_player_b
-			}
-		])
-	);
 
 	const rows = matches.map(match => {
 		const player = {
@@ -254,17 +154,11 @@ function Component() {
 			...match.opponent,
 			rank: ranksByPlayerId[match.opponent?.id]
 		};
-		const pairKey = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
-		const record = headToHeadByPair[pairKey];
-		const playerWins = record?.[match.player?.id] ?? 0;
-		const opponentWins = record?.[match.opponent?.id] ?? 0;
 
 		return {
 			...match,
 			player,
-			opponent,
-			odds: formatLiveOddsetOddsForMatch(match, oddsByPlayers),
-			headToHead: `${playerWins}-${opponentWins}`
+			opponent
 		};
 	});
 
@@ -275,10 +169,18 @@ function Component() {
 		<Page>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Title>Dagens matcher</Page.Title>
+				<Page.Title className='flex items-center justify-between gap-3'>
+					<span className='bg-transparent'>Dagens matcher</span>
+					<Countdown
+						dataUpdatedAt={dataUpdatedAt}
+						isFetching={isFetching}
+						intervalMs={LIVE_REFRESH_INTERVAL_MS}
+						steps={LIVE_COUNTDOWN_STEPS}
+						labelUpdating='Uppdaterar live-sidan'
+						inline={true}
+					/>
+				</Page.Title>
 				<Page.Container>
-					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
-
 					{hasNoMatches ? <EmptyMatchesState /> : null}
 
 					{activeMatches.length > 0 ? (
@@ -297,13 +199,6 @@ function Component() {
 							<LiveTable rows={finishedMatches} finished={true} />
 						</>
 					) : null}
-
-					<Countdown
-						dataUpdatedAt={dataUpdatedAt}
-						isFetching={isFetching}
-						intervalMs={LIVE_REFRESH_INTERVAL_MS}
-						labelUpdating='Uppdaterar live-sidan'
-					/>
 				</Page.Container>
 			</Page.Content>
 		</Page>

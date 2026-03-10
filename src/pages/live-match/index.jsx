@@ -8,8 +8,9 @@ import Page from '../../components/page';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 5 * 1000;
+const LIVE_REFRESH_INTERVAL_MS = 15 * 1000;
 const ODDSET_REFRESH_INTERVAL_MS = 15 * 1000;
+const LIVE_COUNTDOWN_STEPS = 5;
 
 function ErrorPage({ message }) {
 	return (
@@ -271,7 +272,19 @@ function Component() {
 					</>
 				) : (
 					<>
-						{focusMode ? null : <Page.Title>Livematcher</Page.Title>}
+						{focusMode ? null : (
+							<Page.Title className='flex items-center justify-between gap-3'>
+								<span className='bg-transparent'>Livematcher</span>
+								<Countdown
+									dataUpdatedAt={dataUpdatedAt}
+									isFetching={isFetching}
+									intervalMs={LIVE_REFRESH_INTERVAL_MS}
+									steps={LIVE_COUNTDOWN_STEPS}
+									labelUpdating='Uppdaterar live-matches-sidan'
+									inline={true}
+								/>
+							</Page.Title>
+						)}
 						{focusMode || !oddsError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div>}
 
 						{focusedMatch ? (
@@ -301,15 +314,6 @@ function Component() {
 							</div>
 						)}
 					</>
-				)}
-
-				{focusMode ? null : (
-					<Countdown
-						dataUpdatedAt={dataUpdatedAt}
-						isFetching={isFetching}
-						intervalMs={LIVE_REFRESH_INTERVAL_MS}
-						labelUpdating='Uppdaterar live-matches-sidan'
-					/>
 				)}
 			</Page.Content>
 		</Page>

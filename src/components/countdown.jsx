@@ -5,7 +5,8 @@ function Countdown({
 	isFetching,
 	intervalMs = 30 * 1000,
 	steps = 6,
-	labelUpdating = 'Uppdaterar live-sidan'
+	labelUpdating = 'Uppdaterar live-sidan',
+	inline = false
 }) {
 	const [now, setNow] = React.useState(Date.now());
 
@@ -27,10 +28,13 @@ function Countdown({
 	const label = isFetching
 		? labelUpdating
 		: `Nästa uppdatering inom ${Math.ceil(remainingMs / 1000)} sekunder`;
+	const rootClassName = inline ? 'flex justify-end py-0' : 'flex justify-center pt-4 pb-2';
+	const dotsClassName = inline ? 'flex items-center gap-1.5' : 'flex items-center gap-2';
+	const dotSizeClassName = inline ? 'h-2 w-2' : 'h-2.5 w-2.5';
 
 	return (
-		<div className='flex justify-center pt-4 pb-2' aria-label={label} title={label}>
-			<div className='flex items-center gap-2'>
+		<div className={rootClassName} aria-label={label} title={label}>
+			<div className={dotsClassName}>
 				{Array.from({ length: steps }, (_, index) => {
 					const filled = index < filledSteps;
 
@@ -38,10 +42,10 @@ function Countdown({
 						<span
 							key={index}
 							className={[
-								'h-2.5 w-2.5 rounded-full border border-primary-500 transition-colors duration-500',
+								`${dotSizeClassName} rounded-full border border-current transition-colors duration-500`,
 								filled
-									? 'bg-primary-600 dark:bg-primary-300'
-									: 'bg-transparent dark:bg-transparent'
+									? 'bg-current'
+									: 'bg-transparent'
 							].join(' ')}
 						></span>
 					);

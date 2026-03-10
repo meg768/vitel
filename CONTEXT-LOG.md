@@ -4,6 +4,14 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-10: Removed `Tidigare möten` from `/live` entirely (column removed and all head-to-head query/loading/error logic deleted).
+- 2026-03-10: Removed odds from `/live` entirely (no odds fetch, no odds warning message, and no `Odds` table column).
+- 2026-03-10: Updated `/live-matches` refresh interval to 15 seconds so the 5-dot title countdown advances every 3 seconds per dot.
+- 2026-03-10: Adjusted `/live` title countdown timing to 5 seconds per dot by setting refresh interval to 25 seconds with 5 dots.
+- 2026-03-10: Updated `/live` refresh interval to every 10 seconds (from 30s) while keeping the title countdown at 5 dots.
+- 2026-03-10: Set live title countdown to a fixed 5-dot progress indicator on both `/live` and `/live-matches`.
+- 2026-03-10: Standardized live title countdown density to 1 dot per 5 seconds by setting step counts from each page refresh interval (`/live`: 30s -> 6 dots, `/live-matches`: 5s -> 1 dot).
+- 2026-03-10: Moved live refresh `Countdown` progress dots into page titles, right-aligned in `/live` (`Dagens matcher`) and `/live-matches` (`Livematcher`), and removed the previous bottom-of-page countdown placement.
 - 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.65rem` (compact) and `2.00rem` (regular), keeping identical size regardless of set string length.
 - 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.50rem` (compact) and `1.80rem` (regular), keeping identical size regardless of set string length.
 - 2026-03-09: Increased fixed `/live-matches` set-summary font sizes to `1.15rem` (compact) and `1.35rem` (regular), while still keeping identical size for short and long set strings.
