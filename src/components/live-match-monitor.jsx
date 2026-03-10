@@ -6,6 +6,7 @@ import EnterFullScreenIcon from '../assets/radix-icons/enter-full-screen.svg?rea
 import ExitFullScreenIcon from '../assets/radix-icons/exit-full-screen.svg?react';
 import Avatar from './avatar';
 import Flag from './flag';
+import OddsetOddsLink from './oddset-odds-link';
 import Link from './ui/link';
 import Table from './ui/table';
 
@@ -142,16 +143,7 @@ function LiveMatchMonitor({
 
 	return (
 		<div className={clsx('relative flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
-			<a
-				href={oddsetTennisLink}
-				target='_blank'
-				rel='noreferrer'
-				aria-label='Öppna Svenska Spel Oddset Tennis'
-				title='Öppna Svenska Spel Oddset Tennis'
-				className='absolute top-3 left-3 z-10 rounded-sm border border-primary-300 bg-primary-50 px-2 py-1 text-xs font-semibold tracking-[0.08em] text-primary-700 transition-colors hover:bg-primary-100 hover:text-primary-800 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-200 dark:hover:bg-primary-800 dark:hover:text-primary-100'
-			>
-				ODDS {match.odds ?? '-'}
-			</a>
+			<OddsetOddsLink href={oddsetTennisLink} odds={match.odds ?? '-'} oddsState={match.oddsState ?? null} />
 			<div className='absolute top-3 right-3 z-10 flex items-center gap-2'>
 				{compareLink ? (
 					<Link

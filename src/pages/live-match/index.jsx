@@ -5,11 +5,11 @@ import { useParams } from 'react-router';
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch } from '../../js/live-oddset.js';
+import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch, getLiveOddsetOddsStateForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 15 * 1000;
-const ODDSET_REFRESH_INTERVAL_MS = 15 * 1000;
+const ODDSET_REFRESH_INTERVAL_MS = 30 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 
 function ErrorPage({ message }) {
@@ -105,6 +105,7 @@ function Component() {
 		return {
 			...rankedMatch,
 			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers),
+			oddsState: getLiveOddsetOddsStateForMatch(rankedMatch, oddsByPlayers),
 			headToHead: `${playerWins}-${opponentWins}`,
 			opponentHeadToHead: `${opponentWins}-${playerWins}`
 		};
@@ -154,8 +155,11 @@ function Component() {
 	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
 		queryKey: LIVE_ODDSET_QUERY_KEY,
 		queryFn: fetchLiveOddsetOddsByPlayers,
+		staleTime: ODDSET_REFRESH_INTERVAL_MS,
 		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
 		retry: 0
 	});
 	const rankingSql = 'SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC';

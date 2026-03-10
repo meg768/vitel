@@ -10,6 +10,7 @@ import Live from './pages/live';
 import LiveMatch from './pages/live-match';
 import Log from './pages/log';
 import NotFound from './pages/not-found';
+import Oddset from './pages/oddset';
 import Player from './pages/player';
 import Players from './pages/players';
 import QnA from './pages/qna';
@@ -120,20 +121,21 @@ class WebApp {
 		this.render(
 			<QueryClientProvider client={new QueryClient()}>
 				<HashRouter>
-					<Routes>
-						<Route path='/' element={<App />} />
-						<Route path='/app' element={<App />} />
-						<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
-						<Route path='/event/:id' element={<Event />} />
-						<Route path='/player/:id' element={<Player />} />
-						<Route path='/ranking' element={<Ranking />} />
-						<Route path='/events' element={<Events />} />
-						<Route path='/players' element={<Players />} />
-						<Route path='/live' element={<Live />} />
-						<Route path='/live-matches' element={<LiveMatch />} />
-						<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
-						<Route path='/log' element={<Log />} />
-						<Route path='/qna' element={<QnA />} />
+						<Routes>
+							<Route path='/' element={<App />} />
+							<Route path='/app' element={<App />} />
+							<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
+							<Route path='/event/:id' element={<Event />} />
+							<Route path='/player/:id' element={<Player />} />
+							<Route path='/ranking' element={<Ranking />} />
+							<Route path='/events' element={<Events />} />
+							<Route path='/players' element={<Players />} />
+							<Route path='/live' element={<Live />} />
+							<Route path='/oddset' element={<Oddset />} />
+							<Route path='/live-matches' element={<LiveMatch />} />
+							<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
+							<Route path='/log' element={<Log />} />
+							<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />
