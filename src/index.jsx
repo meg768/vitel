@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router';
+import { HashRouter, Routes, Route, Navigate } from 'react-router';
 
 import App from './pages/app';
 import Event from './pages/event';
@@ -131,7 +131,8 @@ class WebApp {
 							<Route path='/events' element={<Events />} />
 							<Route path='/players' element={<Players />} />
 							<Route path='/live' element={<Live />} />
-							<Route path='/oddset' element={<Oddset />} />
+							<Route path='/matches' element={<Oddset />} />
+							<Route path='/oddset' element={<Navigate to='/matches' replace />} />
 							<Route path='/live-matches' element={<LiveMatch />} />
 							<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
 							<Route path='/log' element={<Log />} />

@@ -4,6 +4,24 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-11: Updated `/matches` page main title from `Oddset` to `Matcher` while keeping all other oddset-related copy unchanged.
+- 2026-03-11: Renamed the Oddset route from `/oddset` to `/matches`, updated the menu link to `/matches`, and added a backward-compatible redirect from `/oddset` to `/matches`.
+- 2026-03-11: Moved the `/oddset` link-to-ATP button to the bottom of the page content and renamed it to `Visa matcher från atptour.com` (temporary label).
+- 2026-03-11: Adjusted the match-page transition: `/live` is available again as its own ATP page, `/oddset` now links to it via a new `Visa ATP-sidan` button, and the temporary embedded `Nyligen avslutade` section was removed from `/oddset`.
+- 2026-03-11: Made `/oddset` the primary match page in navigation (`Matcher` now links to `/oddset`), redirected `/live` to `/oddset`, and added `Nyligen avslutade` to `/oddset` by loading finished rows from `GET /live`.
+- 2026-03-11: Reflected the file rename in code by renaming the component symbol from `MatchPlayersRow` to `PlayersHeadToHead` and updating `/live` and `/oddset` imports/usages.
+- 2026-03-11: Renamed `src/components/match-players-row.jsx` to `src/components/players-head-to-head.jsx` and updated `/live` and `/oddset` imports.
+- 2026-03-11: Simplified `MatchPlayersRow` API to only accept `playerA` and `playerB`; removed customizable label/style props and updated `/live` and `/oddset` call sites accordingly.
+- 2026-03-11: Simplified `match-players-row` by removing top-level `DEFAULT_*` constants and inlining default class/title values directly in `ComparePlayersLink` and `MatchPlayersRow` parameter defaults, with unchanged behavior.
+- 2026-03-11: Stopped exporting `ComparePlayersLink` from `match-players-row`; `live-match-monitor` now keeps its compare-button link local again while `MatchPlayersRow` still uses the internal helper.
+- 2026-03-11: Reused the new player-compare link logic in `LiveMatchMonitor` by extracting `ComparePlayersLink` from `match-players-row`, so `/live`, `/oddset`, and `live-match-monitor` share the same head-to-head link behavior.
+- 2026-03-11: Extracted a reusable `MatchPlayersRow` component (`src/components/match-players-row.jsx`) for the shared `flag + player A vs player B + compare` row, and switched both `/live` and `/oddset` to use it.
+- 2026-03-11: Moved the `Start` column to the first position in `/oddset` `Kommande matcher` while keeping `Pågående matcher` without a `Start` column.
+- 2026-03-11: Updated `/oddset` section labels to `Pågående matcher` and `Kommande matcher`, and removed the `Start` column from the `Pågående matcher` table.
+- 2026-03-11: Started a new work session scoped to `/oddset`; continue from the latest `/oddset` entries below.
+- 2026-03-10: Removed the `/oddset` `Oddset just nu` info panel entirely.
+- 2026-03-10: Moved the `/oddset` `Oddset just nu` information panel to the bottom of the page content, below both `Live` and `Kommande` sections.
+- 2026-03-10: Reduced visual blinking on `/oddset` flags by using stable table row keys (`row.id`) and adding `rowKey` support in the shared data table instead of index-based keys.
 - 2026-03-10: `/oddset` now also always shows the `Kommande` section header and renders an explicit empty state (`Inga kommande matcher just nu`) when no upcoming matches exist.
 - 2026-03-10: Simplified `/oddset` live empty state by removing the extra helper line under `Inga pågående matcher just nu`.
 - 2026-03-10: `/oddset` now always shows the `Live` section header and renders a clear empty state (`Inga pågående matcher just nu`) when no live matches are available.

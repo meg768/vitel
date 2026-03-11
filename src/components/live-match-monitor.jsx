@@ -10,6 +10,7 @@ import OddsetOddsLink from './oddset-odds-link';
 import Link from './ui/link';
 import Table from './ui/table';
 
+
 const SCORE_FONT_FAMILY = "'Bebas Neue', 'Oswald', 'Roboto Condensed', 'Arial Narrow', sans-serif";
 
 function singleLineFontSize(text, { min = 0.65, max = 3.75, targetWidthRem = 12.0, charWidth = 0.62 } = {}) {
@@ -138,7 +139,7 @@ function LiveMatchMonitor({
 		return null;
 	}
 
-	const compareLink = `/head-to-head/${match.player.id}/${match.opponent.id}`;
+	const compareLink = match.player.id && match.opponent.id ? `/head-to-head/${match.player.id}/${match.opponent.id}` : null;
 	const oddsetTennisLink = 'https://spela.svenskaspel.se/odds/tennis';
 
 	return (

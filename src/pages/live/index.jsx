@@ -1,8 +1,7 @@
 import React from 'react';
 
-import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Countdown from '../../components/countdown';
-import Flag from '../../components/flag';
+import PlayersHeadToHead from '../../components/players-head-to-head';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
@@ -13,31 +12,7 @@ const LIVE_REFRESH_INTERVAL_MS = 25 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 
 function PlayersCell({ playerA, playerB }) {
-	const flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
-	const formatPlayerLabel = player => {
-		const ranking = player.rank ? ` #${player.rank}` : '';
-		return `${player.name} (${player.country})${ranking}`;
-	};
-
-	return (
-		<div className='flex items-center gap-2 bg-transparent'>
-			<Flag className={flagClassName} country={playerA.country}></Flag>
-			<Link to={`/player/${playerA.id}`}>{formatPlayerLabel(playerA)}</Link>
-			<span>vs</span>
-			<Flag className={flagClassName} country={playerB.country}></Flag>
-			<Link to={`/player/${playerB.id}`}>{formatPlayerLabel(playerB)}</Link>
-			{playerA?.id && playerB?.id ? (
-				<Link
-					to={`/head-to-head/${playerA.id}/${playerB.id}`}
-					className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100'
-					aria-label={`Jämför ${playerA.name} mot ${playerB.name}`}
-					title='Jämför spelare'
-				>
-					<TriangleRightIcon className='block h-full w-full' />
-				</Link>
-			) : null}
-		</div>
-	);
+	return <PlayersHeadToHead playerA={playerA} playerB={playerB} />;
 }
 
 function LiveTable({ rows, finished = false }) {

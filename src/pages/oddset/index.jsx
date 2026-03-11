@@ -1,13 +1,11 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import TriangleRightIcon from '../../assets/radix-icons/triangle-right.svg?react';
 import Countdown from '../../components/countdown';
-import Flag from '../../components/flag';
+import PlayersHeadToHead from '../../components/players-head-to-head';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
-import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel.js';
 
 const ODDSET_PIPELINE_URL =
@@ -191,69 +189,10 @@ function resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId) {
 }
 
 function PlayersCell({ row }) {
-	const flagClassName = 'w-5! h-5! border-primary-800 dark:border-primary-200';
-	const playerLinkClassName = 'bg-transparent';
-	const compareLinkClassName = 'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100';
 	const playerA = row.playerA;
 	const playerB = row.playerB;
-	const compareLink = playerA.id && playerB.id ? `/head-to-head/${playerA.id}/${playerB.id}` : null;
 
-	function formatPlayerLabel(player) {
-		if (!player.country) {
-			return player.name;
-		}
-
-		const ranking = player.rank ? ` #${player.rank}` : '';
-		return `${player.name} (${player.country})${ranking}`;
-	}
-
-	function renderPlayer(player) {
-		const label = formatPlayerLabel(player);
-
-		if (!player.id) {
-			return <span>{label}</span>;
-		}
-
-		return (
-			<Link className={playerLinkClassName} to={`/player/${player.id}`}>
-				{label}
-			</Link>
-		);
-	}
-
-	return (
-		<div className='flex items-center gap-2 bg-transparent'>
-			{playerA.country ? <Flag className={flagClassName} country={playerA.country} /> : null}
-			{renderPlayer(playerA)}
-			<span>vs</span>
-			{playerB.country ? <Flag className={flagClassName} country={playerB.country} /> : null}
-			{renderPlayer(playerB)}
-			{compareLink ? (
-				<Link
-					to={compareLink}
-					className={compareLinkClassName}
-					aria-label={`Jämför ${playerA.name} mot ${playerB.name}`}
-					title='Jämför spelare'
-				>
-					<TriangleRightIcon className='block h-full w-full' />
-				</Link>
-			) : null}
-		</div>
-	);
-}
-
-function SourceExplanation() {
-	return (
-		<div className='mb-3 rounded-sm border border-primary-300 bg-primary-50 p-3 text-sm text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
-			<div className='text-base font-semibold text-primary-900 dark:text-primary-100'>Oddset just nu</div>
-			<div className='mt-1'>
-				Här ser du en snabb överblick av ATP-matcher som finns hos Oddset, med starttid, aktuella odds och spelare.
-			</div>
-			<div className='mt-1 text-primary-700 dark:text-primary-300'>
-				Listan uppdateras löpande, så använd den som en färsk lägesbild av marknaden.
-			</div>
-		</div>
-	);
+	return <PlayersHeadToHead playerA={playerA} playerB={playerB} />;
 }
 
 function EmptyLiveState() {
@@ -272,15 +211,22 @@ function EmptyUpcomingState() {
 	);
 }
 
-function OddsetTable({ rows, showLiveScore = false }) {
+function OddsetTable({ rows, showLiveScore = false, showStartColumn = true, startFirst = false }) {
 	return (
-		<Table rows={rows}>
+		<Table rows={rows} rowKey={row => row.id}>
+			{showStartColumn && startFirst ? (
+				<Table.Column id='start'>
+					<Table.Title>Start</Table.Title>
+				</Table.Column>
+			) : null}
 			<Table.Column id='turnering'>
 				<Table.Title>Turnering</Table.Title>
 			</Table.Column>
-			<Table.Column id='start'>
-				<Table.Title>Start</Table.Title>
-			</Table.Column>
+			{showStartColumn && !startFirst ? (
+				<Table.Column id='start'>
+					<Table.Title>Start</Table.Title>
+				</Table.Column>
+			) : null}
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
 				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
@@ -353,7 +299,7 @@ function Component() {
 		content = (
 			<>
 				<Page.Title className='flex items-center justify-between gap-3'>
-					<span className='bg-transparent'>Oddset</span>
+					<span className='bg-transparent'>Matcher</span>
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
 						isFetching={isFetching}
@@ -364,11 +310,10 @@ function Component() {
 					/>
 				</Page.Title>
 				<Page.Container>
-					<SourceExplanation />
-					<Page.Title level={2}>Live</Page.Title>
+					<Page.Title level={2}>Pågående matcher</Page.Title>
 					{liveMatches.length > 0 ? (
 						<>
-							<OddsetTable rows={liveMatches} showLiveScore={true} />
+							<OddsetTable rows={liveMatches} showLiveScore={true} showStartColumn={false} />
 							<div className='flex justify-center pt-4'>
 								<Button link='/live-matches'>Visa live</Button>
 							</div>
@@ -378,15 +323,18 @@ function Component() {
 					)}
 					{upcomingMatches.length > 0 ? (
 						<>
-							<Page.Title level={2}>Kommande</Page.Title>
-							<OddsetTable rows={upcomingMatches} />
+							<Page.Title level={2}>Kommande matcher</Page.Title>
+							<OddsetTable rows={upcomingMatches} startFirst={true} />
 						</>
 					) : (
 						<>
-							<Page.Title level={2}>Kommande</Page.Title>
+							<Page.Title level={2}>Kommande matcher</Page.Title>
 							<EmptyUpcomingState />
 						</>
 					)}
+					<div className='flex justify-center pt-6'>
+						<Button link='/live'>Visa matcher från atptour.com</Button>
+					</div>
 				</Page.Container>
 			</>
 		);
