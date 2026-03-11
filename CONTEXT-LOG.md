@@ -4,6 +4,10 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-11: `/matches` `Start` now uses relative day labels instead of weekday names (for example `Idag`, `I morgon`, `I övermorgon`) followed by time.
+- 2026-03-11: `/live-matches` now shows the message `Det finns inga pågående matcher att övervaka just nu.` as `Page.Information` instead of `Page.Error` when no monitorable matches are selected.
+- 2026-03-11: Replaced selected non-failure `Page.Error` states with `Page.Information` (not-found/empty-state cases on `/matches`, `/player/:id`, `/event/:id`, `/query/:name`, and `/not-found`) while keeping true fetch/runtime failures as `Page.Error`.
+- 2026-03-11: Added `Page.Information` in `src/components/page.jsx` as a softer informational callout variant (using `info-circled` icon and non-error styling) alongside existing `Page.Error`.
 - 2026-03-11: Updated `/matches` page main title from `Oddset` to `Matcher` while keeping all other oddset-related copy unchanged.
 - 2026-03-11: Renamed the Oddset route from `/oddset` to `/matches`, updated the menu link to `/matches`, and added a backward-compatible redirect from `/oddset` to `/matches`.
 - 2026-03-11: Moved the `/oddset` link-to-ATP button to the bottom of the page content and renamed it to `Visa matcher från atptour.com` (temporary label).

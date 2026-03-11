@@ -59,11 +59,35 @@ function formatStart(value) {
 		return '-';
 	}
 
-	const weekday = date.toLocaleDateString('sv-SE', { weekday: 'long' });
-	const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-	const weekdayLabel = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+	function startOfLocalDay(d) {
+		return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+	}
 
-	return `${weekdayLabel} ${time}`;
+	const today = startOfLocalDay(new Date());
+	const targetDay = startOfLocalDay(date);
+	const diffDays = Math.round((targetDay - today) / (24 * 60 * 60 * 1000));
+	const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+	let dayLabel = '';
+
+	switch (diffDays) {
+		case -1:
+			dayLabel = 'I går';
+			break;
+		case 0:
+			dayLabel = 'Idag';
+			break;
+		case 1:
+			dayLabel = 'I morgon';
+			break;
+		case 2:
+			dayLabel = 'I övermorgon';
+			break;
+		default:
+			dayLabel = diffDays > 0 ? `Om ${diffDays} dagar` : `${Math.abs(diffDays)} dagar sedan`;
+			break;
+	}
+
+	return `${dayLabel} ${time}`;
 }
 
 function formatLiveScore(item) {
@@ -294,7 +318,7 @@ function Component() {
 	} else if (!rows) {
 		content = <Page.Loading>Läser in oddset...</Page.Loading>;
 	} else if (rows.length === 0) {
-		content = <Page.Error>Inga oddset-matcher hittades just nu.</Page.Error>;
+		content = <Page.Information>Inga oddset-matcher hittades just nu.</Page.Information>;
 	} else {
 		content = (
 			<>

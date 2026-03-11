@@ -45,7 +45,7 @@ function Component() {
 
 	function Content() {
 		if (!query) {
-			return <Page.Error>Frågan hittades inte ({name}).</Page.Error>;
+			return <Page.Information>Frågan hittades inte ({name}).</Page.Information>;
 		}
 		return <QueryContent />;
 	}

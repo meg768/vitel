@@ -147,7 +147,7 @@ function Component () {
 		let player = response[1][0];
 
 		if (!player) {
-			return <Page.Error>Spelaren hittades inte ({id}).</Page.Error>;
+			return <Page.Information>Spelaren hittades inte ({id}).</Page.Information>;
 		}
 
 		return (

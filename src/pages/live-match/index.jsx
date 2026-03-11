@@ -23,6 +23,17 @@ function ErrorPage({ message }) {
 	);
 }
 
+function InformationPage({ message }) {
+	return (
+		<Page id='live-match-page'>
+			<Page.Menu />
+			<Page.Content>
+				<Page.Information>{message}</Page.Information>
+			</Page.Content>
+		</Page>
+	);
+}
+
 function LoadingPage() {
 	return (
 		<Page id='live-match-page'>
@@ -262,7 +273,7 @@ function Component() {
 	}
 
 	if (selectedMatches.length === 0) {
-		return <ErrorPage message='Det finns inga pågående matcher att övervaka just nu.' />;
+		return <InformationPage message='Det finns inga pågående matcher att övervaka just nu.' />;
 	}
 
 	return (

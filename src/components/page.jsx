@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
 import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
+import InfoCircledIcon from '../assets/radix-icons/info-circled.svg?react';
 import Layout from './layout';
 import Menu from './menu';
 
@@ -54,6 +55,27 @@ Component.Error = function ({ className, ...props }) {
 		<div className={className}>
 			<div className='bg-transparent '>
 				<CrossCircledIcon className='w-8 h-8 bg-transparent' />
+			</div>
+			<div className='bg-transparent '>
+				<div {...props} />
+			</div>
+		</div>
+	);
+};
+
+Component.Information = function ({ className, ...props }) {
+	className = clsx('', className);
+
+	className = clsx(className, [
+		'border rounded-sm border-primary-500 bg-primary-100! text-primary-900 p-3',
+		'dark:border-primary-600 dark:bg-primary-900! dark:text-primary-100',
+		'flex items-center gap-3'
+	]);
+
+	return (
+		<div className={className}>
+			<div className='bg-transparent '>
+				<InfoCircledIcon className='w-8 h-8 bg-transparent' />
 			</div>
 			<div className='bg-transparent '>
 				<div {...props} />

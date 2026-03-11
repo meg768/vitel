@@ -6,10 +6,10 @@ let Component = () => {
 
 		return (
 			<>
-					<Page.Error>
+					<Page.Information>
 						<p className='font-bold text-xl'>Sidan kunde inte hittas</p>
 						<p>Antagligen för att funktionen inte finns tillgänglig än.</p>
-					</Page.Error>
+					</Page.Information>
 			</>
 		);
 	}

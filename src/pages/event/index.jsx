@@ -43,10 +43,10 @@ export default function EventPage() {
 
 		if (!event) {
 			return (
-				<Page.Error>
+				<Page.Information>
 					<p className='font-bold text-xl'>Kunde inte hitta turnering med ID '{id}'.</p>
 					<p>Antagligen är det en ny turnering som ännu inte importerats.</p>
-				</Page.Error>
+				</Page.Information>
 			);
 		}
 
