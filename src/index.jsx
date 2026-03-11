@@ -44,10 +44,7 @@ class WebApp {
 		const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
 
 		if (!theme || !validTheme.test(theme)) {
-			let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			// Current product default overrides system preference.
-			prefersDark = false;
-			theme = prefersDark ? 'dark hard' : 'light hard';
+			theme = 'auto auto';
 			localStorage.setItem('theme', theme);
 		}
 

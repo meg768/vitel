@@ -91,7 +91,7 @@ class Column {
     }
 }
 
-function Table({ rows, className, children, rowKey, ...props }) {
+function Table({ rows, className, children, ...props }) {
     let [sort, setSort] = React.useState(null);
     let [columns, setColumns] = React.useState(null);
 
@@ -202,28 +202,6 @@ function Table({ rows, className, children, rowKey, ...props }) {
     }
 
     function Rows() {
-        function getRowKey(row, index) {
-            if (typeof rowKey === 'function') {
-                const computed = rowKey(row, index);
-                if (computed != null && computed !== '') {
-                    return computed;
-                }
-            }
-
-            if (typeof rowKey === 'string') {
-                const value = row?.[rowKey];
-                if (value != null && value !== '') {
-                    return value;
-                }
-            }
-
-            if (row?.id != null && row.id !== '') {
-                return row.id;
-            }
-
-            return index;
-        }
-
         if (sort) {
             // Special compare, nulls are always last
             function compare(A, B, reverse) {
@@ -261,7 +239,7 @@ function Table({ rows, className, children, rowKey, ...props }) {
         }
 
         return rows.map((row, index) => {
-            return <Row row={row} index={index} key={getRowKey(row, index)}></Row>;
+            return <Row row={row} index={index} key={index}></Row>;
         });
     }
 

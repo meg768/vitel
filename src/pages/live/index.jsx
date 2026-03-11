@@ -17,7 +17,7 @@ function PlayersCell({ playerA, playerB }) {
 
 function LiveTable({ rows, finished = false }) {
 	return (
-		<Table rows={rows} rowKey={row => `${row.player?.id ?? row.player?.name ?? '-'}-${row.opponent?.id ?? row.opponent?.name ?? '-'}-${row.event ?? '-'}`}>
+		<Table rows={rows}>
 			<Table.Column id='name'>
 				<Table.Title>Turnering</Table.Title>
 				<Table.Cell>{({ row, value }) => <Link to={`/event/${row.event}`}>{value}</Link>}</Table.Cell>

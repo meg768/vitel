@@ -4,6 +4,10 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-11: Corrected localStorage namespace in `src/pages/app/index.jsx` from `vite` to `vitel`; migration now also reads `vite` in addition to legacy `AppPage-2` variants.
+- 2026-03-11: Replaced legacy localStorage namespace `AppPage-2` with `vite` in `src/pages/app/index.jsx` and added one-time migration from both legacy key variants (`AppPage-2` and `AppPage-2\t`) to preserve saved player selections.
+- 2026-03-11: Changed default theme fallback to `auto auto` (`Färgläge=Automatiskt`, `Underlag=Automatiskt`) in app bootstrap and aligned `/settings` to initialize/validate local theme storage against the same default.
+- 2026-03-11: Removed the recent blink-mitigation code paths by reverting `PlayersHeadToHead` memoization, removing custom `rowKey` usage on `/live` and `/matches`, and simplifying `data-table` back to index keys.
 - 2026-03-11: Further reduced `/matches` row flicker by switching `OddsetTable` to a deterministic row key based on tournament + player names + start timestamp, instead of relying primarily on external event id.
 - 2026-03-11: Reduced remaining `players-head-to-head` flicker by memoizing `PlayersHeadToHead` with prop equality checks and adding a stable `rowKey` to the `/live` table.
 - 2026-03-11: `/matches` `Start` now uses relative day labels instead of weekday names (for example `Idag`, `I morgon`, `I övermorgon`) followed by time.

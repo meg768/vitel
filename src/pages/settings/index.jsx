@@ -7,22 +7,26 @@ import ToggleGroup from '../../components/ui/toggle-group.jsx';
 
 export default function SettingsPage() {
 	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
+	const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
+	const defaultTheme = 'auto auto';
 
-	const [activeSurface, setActiveSurface] = useState(null);
-	const [activeMode, setActiveMode] = useState(null);
+	const [activeSurface, setActiveSurface] = useState('auto');
+	const [activeMode, setActiveMode] = useState('auto');
 	const [initialized, setInitialized] = useState(false);
 
 	// Load theme from localStorage on first mount
 	useEffect(() => {
 		const stored = localStorage.getItem('theme');
-		if (stored) {
-			const parts = stored.split(' ');
-			if (parts.length === 2) {
-				const [mode, surface] = parts;
-				setActiveMode(mode);
-				setActiveSurface(surface);
-			}
+		const theme = stored && validTheme.test(stored) ? stored : defaultTheme;
+		const [mode, surface] = theme.split(' ');
+
+		setActiveMode(mode);
+		setActiveSurface(surface);
+
+		if (!stored || !validTheme.test(stored)) {
+			localStorage.setItem('theme', theme);
 		}
+
 		setInitialized(true);
 	}, []);
 

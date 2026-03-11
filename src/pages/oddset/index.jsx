@@ -236,25 +236,8 @@ function EmptyUpcomingState() {
 }
 
 function OddsetTable({ rows, showLiveScore = false, showStartColumn = true, startFirst = false }) {
-	function getRowKey(row, index) {
-		const tournament = row?.turnering || '';
-		const playerAName = row?.playerAName || row?.playerA?.name || '';
-		const playerBName = row?.playerBName || row?.playerB?.name || '';
-		const start = row?._startTimestamp || row?.start || '';
-
-		if (tournament || playerAName || playerBName || start) {
-			return `${tournament}|${playerAName}|${playerBName}|${start}`;
-		}
-
-		if (row?.id != null && row.id !== '') {
-			return row.id;
-		}
-
-		return index;
-	}
-
 	return (
-		<Table rows={rows} rowKey={getRowKey}>
+		<Table rows={rows}>
 			{showStartColumn && startFirst ? (
 				<Table.Column id='start'>
 					<Table.Title>Start</Table.Title>
