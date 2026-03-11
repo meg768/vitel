@@ -60,4 +60,12 @@ function PlayersHeadToHead({ playerA = {}, playerB = {} }) {
 	);
 }
 
-export default PlayersHeadToHead;
+function samePlayer(A = {}, B = {}) {
+	return A.id === B.id && A.name === B.name && A.country === B.country && A.rank === B.rank;
+}
+
+function propsAreEqual(previousProps, nextProps) {
+	return samePlayer(previousProps.playerA, nextProps.playerA) && samePlayer(previousProps.playerB, nextProps.playerB);
+}
+
+export default React.memo(PlayersHeadToHead, propsAreEqual);

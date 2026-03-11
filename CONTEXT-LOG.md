@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-11: Further reduced `/matches` row flicker by switching `OddsetTable` to a deterministic row key based on tournament + player names + start timestamp, instead of relying primarily on external event id.
+- 2026-03-11: Reduced remaining `players-head-to-head` flicker by memoizing `PlayersHeadToHead` with prop equality checks and adding a stable `rowKey` to the `/live` table.
 - 2026-03-11: `/matches` `Start` now uses relative day labels instead of weekday names (for example `Idag`, `I morgon`, `I övermorgon`) followed by time.
 - 2026-03-11: `/live-matches` now shows the message `Det finns inga pågående matcher att övervaka just nu.` as `Page.Information` instead of `Page.Error` when no monitorable matches are selected.
 - 2026-03-11: Replaced selected non-failure `Page.Error` states with `Page.Information` (not-found/empty-state cases on `/matches`, `/player/:id`, `/event/:id`, `/query/:name`, and `/not-found`) while keeping true fetch/runtime failures as `Page.Error`.
