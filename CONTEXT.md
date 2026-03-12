@@ -13,6 +13,7 @@ For chronological project updates, see [CONTEXT-LOG.md](./CONTEXT-LOG.md).
 - Data fetching/cache: TanStack Query
 - Backend: API with base URL via `VITE_API_URL`
 - SQL endpoint: `POST /query` (via `src/js/service.js` and `src/js/vitel.js`)
+- Odds page (`/matches`): direct fetch from Oddset ATP pipeline endpoint
 - Database schema source of truth: `src/database/schema.sql`
 
 ## Getting Started
@@ -59,6 +60,7 @@ VITE_API_URL=https://your-api-base-url
 
 - `src/index.jsx` - app bootstrap, theme handling, and route wiring
 - `src/pages/app/index.jsx` - landing page
+- `src/pages/oddset/index.jsx` - `/matches` page (Oddset ATP pipeline rendering)
 - `src/js/service.js` - low-level API requests
 - `src/js/vitel.js` - exports `service`, `useSQL`, `useRequest`
 - `src/js/queries.js` - loads/parses `src/queries/*.sql`

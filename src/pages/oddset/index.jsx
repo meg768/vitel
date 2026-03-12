@@ -6,10 +6,8 @@ import PlayersHeadToHead from '../../components/players-head-to-head';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
-import { useSQL } from '../../js/vitel.js';
+import { service, useSQL } from '../../js/vitel.js';
 
-const ODDSET_PIPELINE_URL =
-	'https://eu1.offering-api.kambicdn.com/offering/v2018/svenskaspel/listView/tennis/atp/all/all/matches.json?channel_id=1&client_id=200&lang=sv_SE&market=SE&useCombined=true&useCombinedLive=true';
 const ODDSET_PIPELINE_QUERY_KEY = ['oddset', 'pipeline', 'atp'];
 const ODDSET_PIPELINE_REFRESH_INTERVAL_MS = 25 * 1000;
 const ODDSET_COUNTDOWN_STEPS = 5;
@@ -26,16 +24,12 @@ function normalizeName(name = '') {
 		.trim();
 }
 
-function toDecimalOdds(odds) {
+function formatOddsValue(odds) {
 	if (typeof odds !== 'number') {
 		return '-';
 	}
 
-	return (odds / 1000).toFixed(2);
-}
-
-function getMatchOddsOffer(item) {
-	return item.betOffers?.find(offer => offer.criterion?.label === 'Matchodds' || offer.criterion?.englishLabel === 'Match Odds');
+	return odds.toFixed(2);
 }
 
 function formatState(state) {
@@ -90,84 +84,63 @@ function formatStart(value) {
 	return `${dayLabel} ${time}`;
 }
 
-function formatLiveScore(item) {
-	const score = item.liveData?.score || {};
-	const setHomeScores = item.liveData?.statistics?.sets?.home;
-	const setAwayScores = item.liveData?.statistics?.sets?.away;
-	const setScores = [];
+function parseStartTimestamp(value) {
+	const ts = Date.parse(value);
+	return Number.isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts;
+}
 
-	if (Array.isArray(setHomeScores) && Array.isArray(setAwayScores)) {
-		const length = Math.max(setHomeScores.length, setAwayScores.length);
-
-		for (let index = 0; index < length; index += 1) {
-			const home = setHomeScores[index];
-			const away = setAwayScores[index];
-
-			if (!Number.isFinite(home) || !Number.isFinite(away)) {
-				continue;
-			}
-
-			if (home < 0 || away < 0) {
-				continue;
-			}
-
-			setScores.push(`${home}-${away}`);
-		}
+function normalizeOddsetRowsPayload(payload) {
+	if (Array.isArray(payload)) {
+		return payload;
 	}
 
-	const gameHome = score.home;
-	const gameAway = score.away;
-	const hasGameScore = gameHome != null && gameAway != null && gameHome !== '' && gameAway !== '';
-	const gameScore = hasGameScore ? `[${gameHome}-${gameAway}]` : null;
-
-	if (setScores.length === 0 && !gameScore) {
-		return '-';
+	if (Array.isArray(payload?.matches)) {
+		return payload.matches;
 	}
 
-	if (setScores.length > 0 && gameScore) {
-		return `${setScores.join(' ')} ${gameScore}`;
+	if (Array.isArray(payload?.rows)) {
+		return payload.rows;
 	}
 
-	return setScores.length > 0 ? setScores.join(' ') : gameScore;
+	return null;
+}
+
+function toUiRow(row) {
+	const hasNestedPlayers = row && typeof row === 'object' && row.playerA && typeof row.playerA === 'object' && row.playerB && typeof row.playerB === 'object';
+	const playerAName = hasNestedPlayers ? row.playerA?.name : (row.playerAName ?? row.playerA);
+	const playerBName = hasNestedPlayers ? row.playerB?.name : (row.playerBName ?? row.playerB);
+	const oddsA = hasNestedPlayers ? row.playerA?.odds : row.oddsA;
+	const oddsB = hasNestedPlayers ? row.playerB?.odds : row.oddsB;
+	const liveScore = row.liveScore ?? row.score ?? null;
+	const rawState = row.state ?? row.status ?? (liveScore ? 'STARTED' : 'NOT_STARTED');
+
+	return {
+		id: row.id ?? `${playerAName ?? '-'}-${playerBName ?? '-'}-${row.start ?? '-'}`,
+		turnering: row.turnering ?? row.tournament ?? '-',
+		playerAName: playerAName || '-',
+		playerBName: playerBName || '-',
+		odds: `${formatOddsValue(oddsA)} - ${formatOddsValue(oddsB)}`,
+		liveScore: liveScore || '-',
+		status: formatState(rawState),
+		start: formatStart(row.start),
+		_startTimestamp: Number.isFinite(row._startTimestamp) ? row._startTimestamp : parseStartTimestamp(row.start)
+	};
+}
+
+function toSortedUiRows(rows = []) {
+	const mapped = rows.map(toUiRow);
+	mapped.sort((a, b) => a._startTimestamp - b._startTimestamp);
+	return mapped;
 }
 
 async function fetchOddsetPipelineMatches() {
-	const response = await fetch(ODDSET_PIPELINE_URL);
-
-	if (response.status === 404) {
-		return [];
+	const payload = await service.get('oddset');
+	const rows = normalizeOddsetRowsPayload(payload);
+	if (!rows) {
+		throw new Error('Kunde inte läsa oddset från /oddset');
 	}
 
-	if (!response.ok) {
-		throw new Error(`Kunde inte läsa oddset (${response.status})`);
-	}
-
-	const payload = await response.json();
-	const rows = (payload.events || []).map(item => {
-		const event = item.event || {};
-		const startTimestamp = Number.isNaN(Date.parse(event.start)) ? Number.MAX_SAFE_INTEGER : Date.parse(event.start);
-		const offer = getMatchOddsOffer(item);
-		const one = offer?.outcomes?.find(outcome => outcome.type === 'OT_ONE');
-		const two = offer?.outcomes?.find(outcome => outcome.type === 'OT_TWO');
-		const odds = `${toDecimalOdds(one?.odds)} - ${toDecimalOdds(two?.odds)}`;
-		const liveScore = event.state === 'STARTED' ? formatLiveScore(item) : '-';
-
-		return {
-			id: event.id ?? `${event.name ?? '-'}-${event.start ?? '-'}`,
-			turnering: event.group || '-',
-			playerAName: event.homeName || '-',
-			playerBName: event.awayName || '-',
-			odds,
-			liveScore,
-			status: formatState(event.state),
-			start: formatStart(event.start),
-			_startTimestamp: startTimestamp
-		};
-	});
-
-	rows.sort((a, b) => a._startTimestamp - b._startTimestamp);
-
-	return rows;
+	return toSortedUiRows(rows);
 }
 
 function buildPlayerDetailsByName(rows = []) {

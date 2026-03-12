@@ -4,6 +4,37 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-12: Deleted unused `src/js/fetch-oddset.js` after removing `/matches` fallback; app now relies solely on backend `GET /oddset`.
+- 2026-03-12: Removed `/matches` fallback to local `FetchOddset`; page now depends strictly on backend `GET /oddset` response shape (`array|matches|rows`).
+- 2026-03-12: Updated `/matches` fetch flow to call backend `GET /oddset` first (`service.get('oddset')`), with fallback to local `FetchOddset.fetchRows()` when endpoint fails or returns unexpected shape.
+- 2026-03-12: Copied `trial/fetch-oddset.js` to `src/js/fetch-oddset.js` and updated `/matches` to import from `src/js`, so app code and `trial/` are separated again.
+- 2026-03-12: Wired site `/matches` (`src/pages/oddset/index.jsx`) to use `trial/fetch-oddset.js` (`FetchOddset.fetchRows()`), replacing duplicated in-page Oddset parsing/fetch logic.
+- 2026-03-12: Restored `score` in `trial/fetch-oddset.js` output rows (`score: row.liveScore`).
+- 2026-03-12: Switched `trial/fetch-oddset.js` to `default` export for `FetchOddset` and updated `trial/oddset.js` import accordingly.
+- 2026-03-12: Removed `fetchImpl` from `trial/FetchOddset`; class now uses global `fetch` directly and `trial/oddset.js` instantiates `new FetchOddset()` without arguments.
+- 2026-03-12: Refactored `trial/fetch-oddset.js` to use local helper functions inside `FetchOddset` methods (`parse`, `fetchPayload`, `fetch`) instead of top-level utility functions.
+- 2026-03-12: Renamed class `OddsetCurrent` to `FetchOddset` in `trial/fetch-oddset.js`; `fetch()` remains the public method for retrieving formatted results.
+- 2026-03-12: Added `FetchOddset` class in `trial/fetch-oddset.js` with `fetch()` method that returns the final formatted match array; `trial/oddset.js` now uses this class.
+- 2026-03-12: Changed `trial/oddset.js` output from an object with `matches` to a root JSON array.
+- 2026-03-12: Renamed `trial/oddset-current.js` to `trial/fetch-oddset.js` and updated `trial/oddset.js` import accordingly.
+- 2026-03-12: Removed `requestTimeoutMs` usage from `trial/oddset.js`; `OddsetCurrent` is now instantiated with only `fetchImpl`.
+- 2026-03-12: Removed helper `toPublicRow` from `trial/oddset.js`; match transformation is now inlined in `rows.map(...)`.
+- 2026-03-12: Removed `generatedAt` from `trial/oddset.js` output; script now returns only a `matches` array.
+- 2026-03-12: Changed `trial/oddset.js` output shape from split `live`/`upcoming` arrays to a single `matches` array.
+- 2026-03-12: Stopped exporting `ODDSET_CURRENT_STATES` from `trial/oddset-current.js`; `trial/oddset.js` now imports only `OddsetCurrent`.
+- 2026-03-12: Updated `trial/oddset.js` output schema to group match player data under `playerA` and `playerB` objects (`{ name, odds }`).
+- 2026-03-12: Updated `trial/oddset.js` output schema to omit `state` from each match row since rows are already grouped in `live` and `upcoming`.
+- 2026-03-12: Updated `trial/oddset.js` output schema to omit `id` from each match row (`live`/`upcoming`).
+- 2026-03-12: Repaired `/matches` by keeping Oddset pipeline logic local in `src/pages/oddset/index.jsx`, removed untracked app-level experiment files `src/js/oddset-current.js` and `src/js/oddset-pipeline.js`, and kept `trial/` as a standalone sandbox.
+- 2026-03-12: Updated `README.md` and `CONTEXT.md` to remove stale references to shared `src/js/oddset-*` modules and `VITE_ODDSET_SOURCE`, and documented `/matches` as direct Oddset pipeline fetch.
+- 2026-03-12: Saved restart context: `trial/` is now isolated from `src/` (local imports only), frontend still builds successfully, and Vite dev server starts without compile errors.
+- 2026-03-12: Isolated `trial` as a standalone sandbox by moving Oddset class logic into `trial/oddset-current.js` and changing `trial/oddset.js` to use only local imports.
+- 2026-03-11: Refactored shared Oddset module to expose reusable class `OddsetCurrent` (`src/js/oddset-current.js`) and updated `trial/oddset.js` to use class-based fetching while keeping JSON output (`live` + `upcoming`).
+- 2026-03-11: Updated `trial/oddset.js` to output strict JSON only (`generatedAt`, `live`, `upcoming`) instead of human-readable text sections.
+- 2026-03-11: Moved the new Oddset CLI script from project root to `trial/oddset.js`.
+- 2026-03-11: Added root CLI script `oddset.js` that fetches Oddset ATP current matches (`STARTED` + `NOT_STARTED`) and prints ongoing/upcoming matches with decimal odds in terminal output.
+- 2026-03-11: Added isomorphic Oddset black-box module `src/js/oddset-current.js` (shared parsing/fetch for current ATP matches and odds, `STARTED` + `NOT_STARTED`) and refactored `src/js/oddset-pipeline.js` to consume it for both client and server transports.
+- 2026-03-11: Extracted `/matches` Oddset pipeline + player/rank mapping into `src/js/oddset-pipeline.js`, updated `src/pages/oddset/index.jsx` to consume that module, and added optional server-transport support via `GET /oddset` with `VITE_ODDSET_SOURCE` (`auto|server|client`).
 - 2026-03-11: Corrected localStorage namespace in `src/pages/app/index.jsx` from `vite` to `vitel`; migration now also reads `vite` in addition to legacy `AppPage-2` variants.
 - 2026-03-11: Replaced legacy localStorage namespace `AppPage-2` with `vite` in `src/pages/app/index.jsx` and added one-time migration from both legacy key variants (`AppPage-2` and `AppPage-2\t`) to preserve saved player selections.
 - 2026-03-11: Changed default theme fallback to `auto auto` (`Färgläge=Automatiskt`, `Underlag=Automatiskt`) in app bootstrap and aligned `/settings` to initialize/validate local theme storage against the same default.
