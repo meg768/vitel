@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-12: Removed the `trial/` directory from the repository.
 - 2026-03-12: Deleted unused `src/js/fetch-oddset.js` after removing `/matches` fallback; app now relies solely on backend `GET /oddset`.
 - 2026-03-12: Removed `/matches` fallback to local `FetchOddset`; page now depends strictly on backend `GET /oddset` response shape (`array|matches|rows`).
 - 2026-03-12: Updated `/matches` fetch flow to call backend `GET /oddset` first (`service.get('oddset')`), with fallback to local `FetchOddset.fetchRows()` when endpoint fails or returns unexpected shape.
