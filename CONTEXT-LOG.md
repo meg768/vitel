@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-12: Rewrote `README.md` to a public GitHub format with updated stack, setup, routes, backend API contract (`/oddset`, `/live`, `/query`), scripts, deployment notes, and troubleshooting.
 - 2026-03-12: Removed legacy `/matches` oddset payload mapping; page now strictly expects nested `playerA/playerB` objects from backend and derives status from `score`.
 - 2026-03-12: Removed the `trial/` directory from the repository.
 - 2026-03-12: Deleted unused `src/js/fetch-oddset.js` after removing `/matches` fallback; app now relies solely on backend `GET /oddset`.

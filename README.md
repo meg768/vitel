@@ -1,108 +1,177 @@
 # Vitel
 
-Vitel is a React-based web app for ATP tennis statistics. The app fetches data from a backend API and powers many views through SQL files that are loaded automatically in the frontend.
+Vitel is a React + Vite web application for ATP tennis stats, live match monitoring, and odds overview.
 
-## Overview
+The frontend is statically served and talks to a backend API for SQL data, live match data, and Oddset data.
 
-- Frontend: React 19 + Vite 6 + Tailwind CSS v4
-- Routing: `HashRouter` (React Router)
-- Data fetching/cache: TanStack Query
-- Backend: API with base URL via `VITE_API_URL`
-- SQL endpoint: `POST /query` (via `src/js/service.js` and `src/js/vitel.js`)
-- Odds page (`/matches`): direct fetch from Oddset ATP pipeline endpoint
+## Highlights
 
-## Getting Started
+- ATP-focused dashboards and pages (`/live`, `/matches`, `/players`, `/ranking`, `/events`, etc.)
+- Live monitor view for active matches (`/live-matches`)
+- Odds page (`/matches`) powered by backend `GET /oddset`
+- SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
+- Theme system with auto mode (`light|dark` + `hard|clay|grass`)
 
-1. Install dependencies:
+## Tech Stack
+
+- React 19
+- Vite 6
+- Tailwind CSS v4
+- TanStack Query
+- React Router (`HashRouter`)
+
+## Requirements
+
+- Node.js 18+ (recommended: latest LTS)
+- npm
+- A running backend API reachable via `VITE_API_URL`
+
+## Quick Start
 
 ```bash
 npm install
-```
-
-2. Start locally:
-
-```bash
+cp .env.local .env
 npm run run
 ```
 
-3. Build for production:
-
-```bash
-npm run build
-```
+Open the app in your browser at the URL shown by Vite (usually `http://localhost:5173`).
 
 ## Environment Variables
 
-Create a `.env` file with at least:
+Create `.env` (or use `.env.local`/`.env.production`) with:
 
 ```bash
-VITE_API_URL=https://your-api-base-url
+VITE_API_URL=http://localhost:3004/api
 ```
 
-## NPM Scripts
+`VITE_API_URL` is required. The frontend uses it for backend calls like:
 
-- `npm run run` - starts the Vite dev server
-- `npm run build` - builds to `dist/`
-- `npm run preview` - previews the built app
-- `npm run upload` - builds and uploads `dist/*` via `scp` to `router.egelberg.se`
-- `npm run git-commit` - add/commit/push in one step
+- `GET {VITE_API_URL}/live`
+- `GET {VITE_API_URL}/oddset`
+- `POST {VITE_API_URL}/query`
 
-## Active Routes
+## Backend API Contract
 
-`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/matches`, `/live-matches`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound` (`/oddset` redirects to `/matches`).
+### `GET /oddset`
 
-## Key Files
+Expected response: JSON array where each row has nested `playerA`/`playerB`.
 
-- `src/index.jsx` - app bootstrap, theme handling, and route wiring
-- `src/pages/app/index.jsx` - landing page
-- `src/pages/oddset/index.jsx` - `/matches` page (Oddset ATP pipeline rendering)
-- `src/js/service.js` - low-level API requests
-- `src/js/vitel.js` - exports `service`, `useSQL`, `useRequest`
-- `src/js/queries.js` - loads/parses `src/queries/*.sql`
-- `src/database/schema.sql` - database source of truth
-- `src/components/ui/markdown.jsx` - markdown rendering in the UI
+```json
+[
+  {
+    "start": "2026-03-12T01:00:00Z",
+    "tournament": "Indian Wells",
+    "score": null,
+    "playerA": { "name": "Novak Djokovic", "odds": 1.71 },
+    "playerB": { "name": "Jack Draper", "odds": 2.18 }
+  }
+]
+```
 
-## Trial Sandbox
+Notes:
 
-`trial/` is intentionally isolated from frontend app code and can be used for standalone endpoint experiments.
+- `/matches` currently expects this nested shape.
+- `score` is used to infer live/upcoming grouping (`score != null` => live).
 
-## SQL Queries in Frontend
+### `GET /live`
 
-SQL files in `src/queries/*.sql` are loaded via `import.meta.glob` and used on `/query/:name`. The filename (without `.sql`) becomes the URL id.
+Expected response: JSON array of live/finished ATP match rows used by `/live` and `/live-matches`.
 
-Each SQL file can include metadata in the first comment block:
+### `POST /query`
+
+Request body:
+
+```json
+{
+  "sql": "SELECT ...",
+  "format": []
+}
+```
+
+Response: JSON rows from your database query.
+
+## Routes
+
+Main client routes:
+
+- `/` and `/app`
+- `/player/:id`
+- `/head-to-head/:A/:B`
+- `/event/:id`
+- `/ranking`
+- `/events`
+- `/players`
+- `/live`
+- `/matches`
+- `/live-matches`
+- `/live-matches/:A/:B`
+- `/log`
+- `/qna`
+- `/settings`
+- `/query/:name`
+- `/not-found`
+- `/oddset` redirects to `/matches`
+
+## SQL Query System
+
+- SQL files live in `src/queries/*.sql`
+- Loaded via `import.meta.glob` in `src/js/queries.js`
+- Filename (without `.sql`) becomes route id for `/query/:name`
+- Metadata can be included in the first SQL block comment:
 
 ```sql
 /*
 @title
-Title shown in the UI
+Your title
 
 @description
-Description rendered as Markdown
+Markdown description
 */
 ```
 
-Current query files:
-`best-form`, `biggest-upsets`, `decenial-slams`, `longest-matches-ever`, `match-turn-arounds`, `monthly-salary-indexed`, `prize-money`, `prospects`, `ranking-climbers`, `titles-under-age-21`, `top-10-players`, `top-50-dropouts`, `underranked-players`, `who-is-the-goat`.
+## Project Structure
 
-## Database (Summary)
+```text
+src/
+  components/      Reusable UI and domain components
+  pages/           Route pages
+  js/              Data/services/helpers
+  queries/         SQL files used by /query/:name
+  database/        Schema and routines source of truth
+```
 
-Source of truth: `src/database/schema.sql`.
+Important files:
 
-Key tables:
-- `players`
-- `matches`
-- `events`
-- `queries`
-- `log`
-- `settings`
-- `storage`
-- `archive`
+- `src/index.jsx` - app bootstrap, theme handling, route wiring
+- `src/js/service.js` - API wrapper based on `VITE_API_URL`
+- `src/js/vitel.js` - `useRequest`, `useSQL`, shared service export
+- `src/pages/oddset/index.jsx` - `/matches` page
+- `src/pages/live/index.jsx` - `/live` page
+- `src/pages/live-match/index.jsx` - `/live-matches` monitor page
+- `src/database/schema.sql` - DB schema baseline
 
-Views:
-- `flatly` (denormalized match/event/player view)
-- `currently` (ongoing events/players)
+## Scripts
 
-Routines:
-- Stored procedures such as `sp_update`, `sp_update_match_status`, `sp_update_match_duration`, `sp_update_surface_factors`
-- Functions such as `IS_MATCH_COMPLETED`, `NUMBER_OF_SETS_PLAYED`, `NUMBER_OF_GAMES_PLAYED`, `NUMBER_OF_MINUTES_PLAYED`, `NUMBER_OF_SETS`, `NUMBER_OF_TIEBREAKS_PLAYED`
+- `npm run run` - start Vite dev server
+- `npm run build` - production build to `dist/`
+- `npm run preview` - preview built app
+- `npm run upload` - build and upload `dist/*` to server via `scp`
+- `npm run commit` - add/commit/push helper
+- `npm run revert` - revert latest commit and push
+- `npm run "goto GitHub"` - open repository in browser (macOS `open`)
+
+## Deployment Notes
+
+- The app uses `HashRouter`, which is suitable for static hosting without server-side route rewrites.
+- Build output is generated in `dist/`.
+- The included `upload` script deploys static assets to `router.egelberg.se`.
+
+## Troubleshooting
+
+- `Failed to fetch url ...` in UI:
+  - Verify backend is running and `VITE_API_URL` is correct.
+- `/matches` error:
+  - Verify `GET /api/oddset` returns HTTP 200 and the nested `playerA`/`playerB` shape above.
+- Missing player links/flags/rank on `/matches`:
+  - Name matching against DB is normalization-based; unmatched names will not resolve to `id/country/rank`.
+
