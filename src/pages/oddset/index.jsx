@@ -105,7 +105,7 @@ function normalizeOddsetRowsPayload(payload) {
 	);
 
 	if (!isValid) {
-		throw new Error('Oddset endpoint har ovantat format');
+		throw new Error('Oddset endpoint har oväntat format');
 	}
 
 	return payload;
