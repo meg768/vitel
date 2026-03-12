@@ -4,7 +4,7 @@ Vitel is a React-based web app for ATP tennis statistics. The app fetches data f
 
 ## Recent Updates
 
-For chronological project updates, see [CONTEXT-LOG.md](./CONTEXT-LOG.md).
+For chronological project updates, see [LOG.md](./LOG.md).
 
 ## Overview
 

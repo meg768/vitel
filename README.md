@@ -8,9 +8,18 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 
 - ATP-focused dashboards and pages (`/live`, `/matches`, `/players`, `/ranking`, `/events`, etc.)
 - Live monitor view for active matches (`/live-matches`)
-- Odds page (`/matches`) powered by backend `GET /oddset`
+- Odds page (`/matches`) powered by backend `GET /api/oddset`
 - SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
 - Theme system with auto mode (`light|dark` + `hard|clay|grass`)
+
+## Related Repositories
+
+- Frontend (this repo): `meg768/vitel`
+- Backend API: [`meg768/atp-tennis`](https://github.com/meg768/atp-tennis)
+
+`/matches` depends on the backend endpoint implemented in the server repo:
+
+- `GET /api/oddset`
 
 ## Tech Stack
 
@@ -51,6 +60,8 @@ VITE_API_URL=http://localhost:3004/api
 - `POST {VITE_API_URL}/query`
 
 ## Backend API Contract
+
+All paths below are relative to `VITE_API_URL` (for example `VITE_API_URL=http://localhost:3004/api`).
 
 ### `GET /oddset`
 
@@ -174,4 +185,3 @@ Important files:
   - Verify `GET /api/oddset` returns HTTP 200 and the nested `playerA`/`playerB` shape above.
 - Missing player links/flags/rank on `/matches`:
   - Name matching against DB is normalization-based; unmatched names will not resolve to `id/country/rank`.
-

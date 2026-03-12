@@ -1,9 +1,10 @@
-# CONTEXT Log
+# LOG
 
 Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-12: Updated `README.md` with backend repository reference (`meg768/atp-tennis`) and clarified `/matches` dependency on `GET /api/oddset`.
 - 2026-03-12: Rewrote `README.md` to a public GitHub format with updated stack, setup, routes, backend API contract (`/oddset`, `/live`, `/query`), scripts, deployment notes, and troubleshooting.
 - 2026-03-12: Removed legacy `/matches` oddset payload mapping; page now strictly expects nested `playerA/playerB` objects from backend and derives status from `score`.
 - 2026-03-12: Removed the `trial/` directory from the repository.
@@ -206,7 +207,7 @@ Add new update entries here.
 - 2026-03-07: `/live-match` dashboard mode now lists all ongoing matches (instead of capping at four), while `/live-match/:A/:B` remains the single-match view.
 - 2026-03-07: `/live-match` was componentized via `src/components/live-match-monitor.jsx`, added compact mode for dashboard cards, and `/live-match` got a `Live x4` menu shortcut.
 - 2026-03-07: Clarified in `CONTEXT.md` `Overview` that database schema source of truth is `src/database/schema.sql`.
-- 2026-03-07: Migrated the running update log from `CONTEXT.md` to `CONTEXT-LOG.md`; `CONTEXT.md` now references this file, and new log entries should be added here.
+- 2026-03-07: Migrated the running update log from `CONTEXT.md` to `LOG.md`; `CONTEXT.md` now references this file, and new log entries should be added here.
 - 2026-03-07: `/live-match` scoreboard typography switched from `Barlow Condensed` to `Bebas Neue`; `index.html` now loads `Bebas Neue` from Google Fonts.
 - 2026-03-07: `/live-match` scoreboard typography switched from `Rajdhani` to `Barlow Condensed`; `index.html` now loads `Barlow Condensed` from Google Fonts.
 - 2026-03-07: `/live-match` scoreboard typography switched from `Teko` to `Rajdhani`; `index.html` now loads `Rajdhani` from Google Fonts.
