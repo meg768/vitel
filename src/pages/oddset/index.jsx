@@ -90,33 +90,38 @@ function parseStartTimestamp(value) {
 }
 
 function normalizeOddsetRowsPayload(payload) {
-	if (Array.isArray(payload)) {
-		return payload;
+	if (!Array.isArray(payload)) {
+		throw new Error('Oddset endpoint returnerade inte en array');
 	}
 
-	if (Array.isArray(payload?.matches)) {
-		return payload.matches;
+	const isValid = payload.every(
+		row =>
+			row &&
+			typeof row === 'object' &&
+			row.playerA &&
+			typeof row.playerA === 'object' &&
+			row.playerB &&
+			typeof row.playerB === 'object'
+	);
+
+	if (!isValid) {
+		throw new Error('Oddset endpoint har ovantat format');
 	}
 
-	if (Array.isArray(payload?.rows)) {
-		return payload.rows;
-	}
-
-	return null;
+	return payload;
 }
 
 function toUiRow(row) {
-	const hasNestedPlayers = row && typeof row === 'object' && row.playerA && typeof row.playerA === 'object' && row.playerB && typeof row.playerB === 'object';
-	const playerAName = hasNestedPlayers ? row.playerA?.name : (row.playerAName ?? row.playerA);
-	const playerBName = hasNestedPlayers ? row.playerB?.name : (row.playerBName ?? row.playerB);
-	const oddsA = hasNestedPlayers ? row.playerA?.odds : row.oddsA;
-	const oddsB = hasNestedPlayers ? row.playerB?.odds : row.oddsB;
-	const liveScore = row.liveScore ?? row.score ?? null;
-	const rawState = row.state ?? row.status ?? (liveScore ? 'STARTED' : 'NOT_STARTED');
+	const playerAName = row.playerA?.name;
+	const playerBName = row.playerB?.name;
+	const oddsA = row.playerA?.odds;
+	const oddsB = row.playerB?.odds;
+	const liveScore = row.score ?? null;
+	const rawState = liveScore ? 'STARTED' : 'NOT_STARTED';
 
 	return {
 		id: row.id ?? `${playerAName ?? '-'}-${playerBName ?? '-'}-${row.start ?? '-'}`,
-		turnering: row.turnering ?? row.tournament ?? '-',
+		turnering: row.tournament ?? '-',
 		playerAName: playerAName || '-',
 		playerBName: playerBName || '-',
 		odds: `${formatOddsValue(oddsA)} - ${formatOddsValue(oddsB)}`,
@@ -136,10 +141,6 @@ function toSortedUiRows(rows = []) {
 async function fetchOddsetPipelineMatches() {
 	const payload = await service.get('oddset');
 	const rows = normalizeOddsetRowsPayload(payload);
-	if (!rows) {
-		throw new Error('Kunde inte läsa oddset från /oddset');
-	}
-
 	return toSortedUiRows(rows);
 }
 
