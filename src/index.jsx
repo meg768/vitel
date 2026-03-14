@@ -128,8 +128,8 @@ class WebApp {
 							<Route path='/events' element={<Events />} />
 							<Route path='/players' element={<Players />} />
 							<Route path='/live' element={<Live />} />
-							<Route path='/matches' element={<Oddset />} />
-							<Route path='/oddset' element={<Navigate to='/matches' replace />} />
+							<Route path='/oddset' element={<Oddset />} />
+							<Route path='/matches' element={<Navigate to='/oddset' replace />} />
 							<Route path='/live-matches' element={<LiveMatch />} />
 							<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
 							<Route path='/log' element={<Log />} />

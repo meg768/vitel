@@ -4,6 +4,9 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-14: Removed the `Visa matcher från atptour.com` button from `/oddset`.
+- 2026-03-14: Added `/live` back to the main menu with the label `Live`.
+- 2026-03-14: Renamed the primary Oddset page route back to `/oddset`, changed the main menu label to `Oddset`, restored the page title to `Oddset`, and kept `/matches` as a backward-compatible redirect to `/oddset`.
 - 2026-03-12: Updated `README.md` with backend repository reference (`meg768/atp-tennis`) and clarified `/matches` dependency on `GET /api/oddset`.
 - 2026-03-12: Rewrote `README.md` to a public GitHub format with updated stack, setup, routes, backend API contract (`/oddset`, `/live`, `/query`), scripts, deployment notes, and troubleshooting.
 - 2026-03-12: Removed legacy `/matches` oddset payload mapping; page now strictly expects nested `playerA/playerB` objects from backend and derives status from `score`.

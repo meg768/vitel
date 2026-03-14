@@ -13,7 +13,7 @@ For chronological project updates, see [LOG.md](./LOG.md).
 - Data fetching/cache: TanStack Query
 - Backend: API with base URL via `VITE_API_URL`
 - SQL endpoint: `POST /query` (via `src/js/service.js` and `src/js/vitel.js`)
-- Odds page (`/matches`): direct fetch from Oddset ATP pipeline endpoint
+- Odds page (`/oddset`): direct fetch from Oddset ATP pipeline endpoint
 - Database schema source of truth: `src/database/schema.sql`
 
 ## Getting Started
@@ -54,13 +54,13 @@ VITE_API_URL=https://your-api-base-url
 
 ## Active Routes
 
-`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/matches`, `/live-matches`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound` (`/oddset` redirects to `/matches`).
+`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/events`, `/players`, `/live`, `/oddset`, `/live-matches`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound` (`/matches` redirects to `/oddset`).
 
 ## Key Files
 
 - `src/index.jsx` - app bootstrap, theme handling, and route wiring
 - `src/pages/app/index.jsx` - landing page
-- `src/pages/oddset/index.jsx` - `/matches` page (Oddset ATP pipeline rendering)
+- `src/pages/oddset/index.jsx` - `/oddset` page (Oddset ATP pipeline rendering)
 - `src/js/service.js` - low-level API requests
 - `src/js/vitel.js` - exports `service`, `useSQL`, `useRequest`
 - `src/js/queries.js` - loads/parses `src/queries/*.sql`

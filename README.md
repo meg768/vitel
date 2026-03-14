@@ -6,9 +6,9 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 
 ## Highlights
 
-- ATP-focused dashboards and pages (`/live`, `/matches`, `/players`, `/ranking`, `/events`, etc.)
+- ATP-focused dashboards and pages (`/live`, `/oddset`, `/players`, `/ranking`, `/events`, etc.)
 - Live monitor view for active matches (`/live-matches`)
-- Odds page (`/matches`) powered by backend `GET /api/oddset`
+- Odds page (`/oddset`) powered by backend `GET /api/oddset`
 - SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
 - Theme system with auto mode (`light|dark` + `hard|clay|grass`)
 
@@ -17,7 +17,7 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 - Frontend (this repo): `meg768/vitel`
 - Backend API: [`meg768/atp-tennis`](https://github.com/meg768/atp-tennis)
 
-`/matches` depends on the backend endpoint implemented in the server repo:
+`/oddset` depends on the backend endpoint implemented in the server repo:
 
 - `GET /api/oddset`
 
@@ -81,7 +81,7 @@ Expected response: JSON array where each row has nested `playerA`/`playerB`.
 
 Notes:
 
-- `/matches` currently expects this nested shape.
+- `/oddset` currently expects this nested shape.
 - `score` is used to infer live/upcoming grouping (`score != null` => live).
 
 ### `GET /live`
@@ -113,7 +113,7 @@ Main client routes:
 - `/events`
 - `/players`
 - `/live`
-- `/matches`
+- `/oddset`
 - `/live-matches`
 - `/live-matches/:A/:B`
 - `/log`
@@ -121,7 +121,7 @@ Main client routes:
 - `/settings`
 - `/query/:name`
 - `/not-found`
-- `/oddset` redirects to `/matches`
+- `/matches` redirects to `/oddset`
 
 ## SQL Query System
 
@@ -156,7 +156,7 @@ Important files:
 - `src/index.jsx` - app bootstrap, theme handling, route wiring
 - `src/js/service.js` - API wrapper based on `VITE_API_URL`
 - `src/js/vitel.js` - `useRequest`, `useSQL`, shared service export
-- `src/pages/oddset/index.jsx` - `/matches` page
+- `src/pages/oddset/index.jsx` - `/oddset` page
 - `src/pages/live/index.jsx` - `/live` page
 - `src/pages/live-match/index.jsx` - `/live-matches` monitor page
 - `src/database/schema.sql` - DB schema baseline
@@ -181,7 +181,7 @@ Important files:
 
 - `Failed to fetch url ...` in UI:
   - Verify backend is running and `VITE_API_URL` is correct.
-- `/matches` error:
+- `/oddset` error:
   - Verify `GET /api/oddset` returns HTTP 200 and the nested `playerA`/`playerB` shape above.
-- Missing player links/flags/rank on `/matches`:
+- Missing player links/flags/rank on `/oddset`:
   - Name matching against DB is normalization-based; unmatched names will not resolve to `id/country/rank`.

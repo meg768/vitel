@@ -28,7 +28,8 @@ function Component() {
 						</MenuItem>
 						<MenuItem link='/events'>Turneringar</MenuItem>
 						<MenuItem link='/players'>Spelare</MenuItem>
-						<MenuItem link='/matches'>Matcher</MenuItem>
+						<MenuItem link='/live'>Live</MenuItem>
+						<MenuItem link='/oddset'>Oddset</MenuItem>
 						<MenuItem link='/qna'>Q&A</MenuItem>
 					</div>
 					<div className='flex space-x-1 items-center '>
