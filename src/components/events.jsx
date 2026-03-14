@@ -2,6 +2,23 @@
 import Table from './ui/data-table';
 import Link from '../components/ui/link';
 
+function translateSurface(surface) {
+	const normalizedSurface = typeof surface === 'string' ? surface.trim().toLowerCase() : '';
+
+	switch (normalizedSurface) {
+		case 'hard':
+			return 'Hardcourt';
+		case 'clay':
+			return 'Grus';
+		case 'grass':
+			return 'Gräs';
+		case 'carpet':
+			return 'Matta';
+		default:
+			return 'Okänt underlag';
+	}
+}
+
 function Component({ events }) {
 	function Content() {
 		function getSurfaceEventsQuery(row) {
@@ -81,31 +98,24 @@ function Component({ events }) {
 					<Table.Title className=''>Underlag</Table.Title>
 					<Table.Cell>
 						{({ row, value }) => {
-							function translateSurface(surface) {
-								switch (surface.toLowerCase()) {
-									case 'hard':
-										return 'Hardcourt';
-									case 'clay':
-										return 'Grus';
-									case 'grass':
-										return 'Gräs';
-									case 'carpet':
-										return 'Matta';
-								}
-								return 'Okänt underlag';
-							}
+							const label = translateSurface(value);
+							const hasSurface = typeof value === 'string' && value.trim() !== '';
 
 							function query() {
 								return {
 									sql: `SELECT * FROM events WHERE surface = ? ORDER BY date DESC`,
 									format: [row.surface],
-									title: `Turneringar - ${translateSurface(value)}`
+									title: `Turneringar - ${label}`
 								};
+							}
+
+							if (!hasSurface) {
+								return label;
 							}
 
 							return (
 								<Link to={`/events`} query={query()}>
-									{translateSurface(value)}
+									{label}
 								</Link>
 							);
 						}}
