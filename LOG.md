@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-15: Swapped the `/calendar` columns so `Turnering` now appears before `Plats`.
+- 2026-03-15: Centered the `/calendar` event-type logos within the `Typ` column cells.
 - 2026-03-15: Restored `/calendar` to always use the original SVG logos for supported events and added per-logo sizing so wide wordmarks stay readable.
 - 2026-03-15: Kept `/calendar` compact by falling back to badges for extra-wide event logos like `Davis Cup`, `United Cup`, and `Laver Cup`, which were rendering too short in the fixed logo slot.
 - 2026-03-15: Reduced `/calendar` type marks again by constraining both SVG logos and fallback badges to a smaller fixed logo-sized box.

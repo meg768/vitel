@@ -210,9 +210,9 @@ function TypeMark({ event }) {
 function CalendarTable({ rows }) {
 	return (
 		<Table rows={rows} className='striped [&_tbody_tr_*]:bg-transparent'>
-			<Table.Column id='type' className='w-1 whitespace-nowrap'>
+			<Table.Column id='type' className='w-1 whitespace-nowrap text-center'>
 				<Table.Title>Typ</Table.Title>
-				<Table.Cell>
+				<Table.Cell className='text-center'>
 					{({ row }) => {
 						return <TypeMark event={row} />;
 					}}
@@ -223,10 +223,6 @@ function CalendarTable({ rows }) {
 				<Table.Title>Datum</Table.Title>
 			</Table.Column>
 
-			<Table.Column id='location'>
-				<Table.Title>Plats</Table.Title>
-			</Table.Column>
-
 			<Table.Column id='name' className='min-w-56'>
 				<Table.Title>Turnering</Table.Title>
 				<Table.Cell>
@@ -234,6 +230,10 @@ function CalendarTable({ rows }) {
 						return <Link to={`/event/${row.id}`}>{value}</Link>;
 					}}
 				</Table.Cell>
+			</Table.Column>
+
+			<Table.Column id='location'>
+				<Table.Title>Plats</Table.Title>
 			</Table.Column>
 
 		</Table>
