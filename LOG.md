@@ -4,6 +4,7 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-15: Removed the lingering `Visa matcher från atptour.com` button from `/oddset`.
 - 2026-03-15: Deleted unused `src/assets/info.svg`.
 - 2026-03-15: Deleted unused `src/assets/tennis-ball.png` after restoring the loading animation to the `🎾` emoji.
 - 2026-03-15: Restored the filled pulsing loading animation behind the `🎾` emoji while keeping the in-page placement that avoids overlap with the menu.

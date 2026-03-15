@@ -330,9 +330,6 @@ function Component() {
 							<EmptyUpcomingState />
 						</>
 					)}
-					<div className='flex justify-center pt-6'>
-						<Button link='/live'>Visa matcher från atptour.com</Button>
-					</div>
 				</Page.Container>
 			</>
 		);
