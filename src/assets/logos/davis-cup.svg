@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 800 132" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <ellipse cx="67.37" cy="65.59" rx="67.367" ry="65.598" style="fill:white;"/>
     <g>
         <path d="M9.39,98.73L9.022,98.159L9.39,98.73Z" style="fill:rgb(37,146,113);"/>
         <path d="M67.38,0C44.098,0 23.564,11.504 11.478,28.988C66.239,31.709 118.058,42.703 117.288,65.59C118.067,88.477 65.627,99.696 11.478,102.214C23.591,119.692 44.097,131.196 67.38,131.196C104.575,131.196 134.737,101.808 134.737,65.59C134.737,29.372 104.575,0 67.38,0ZM80.426,65.596C80.426,50.296 43.879,36.488 9.624,31.797C-3.184,52.477 -3.184,78.731 9.624,99.411C43.884,94.715 80.426,80.907 80.426,65.596Z" style="fill:rgb(37,146,113);"/>

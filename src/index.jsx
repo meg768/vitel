@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route, Navigate } from 'react-router';
 
 import App from './pages/app';
+import Calendar from './pages/calendar';
 import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
@@ -125,6 +126,7 @@ class WebApp {
 							<Route path='/event/:id' element={<Event />} />
 							<Route path='/player/:id' element={<Player />} />
 							<Route path='/ranking' element={<Ranking />} />
+							<Route path='/calendar' element={<Calendar />} />
 							<Route path='/events' element={<Events />} />
 							<Route path='/players' element={<Players />} />
 							<Route path='/live' element={<Live />} />

@@ -31,7 +31,8 @@ function EventLogo({ event, ...props }) {
 	}
 
 	switch (event.type) {
-		case 'Rod Laver Cup': {
+		case 'Rod Laver Cup':
+		case 'Laver Cup': {
 			return <LogoLaverCup {...props} />;
 		}
 		case 'Masters': {
@@ -51,6 +52,9 @@ function EventLogo({ event, ...props }) {
 		}
 		case 'Next Gen Finals': {
 			return <LogoNextGenFinals {...props} />;
+		}
+		case 'World Championship': {
+			return <LogoAtpNittoFinals {...props} />;
 		}
 	}
 

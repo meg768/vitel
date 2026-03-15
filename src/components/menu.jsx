@@ -29,6 +29,7 @@ function Component() {
 						<MenuItem link='/events'>Turneringar</MenuItem>
 						<MenuItem link='/players'>Spelare</MenuItem>
 						<MenuItem link='/live'>Live</MenuItem>
+						<MenuItem link='/calendar'>Kalender</MenuItem>
 						<MenuItem link='/oddset'>Oddset</MenuItem>
 						<MenuItem link='/qna'>Q&A</MenuItem>
 					</div>

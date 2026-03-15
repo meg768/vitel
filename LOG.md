@@ -4,6 +4,27 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-15: Restored `/calendar` to always use the original SVG logos for supported events and added per-logo sizing so wide wordmarks stay readable.
+- 2026-03-15: Kept `/calendar` compact by falling back to badges for extra-wide event logos like `Davis Cup`, `United Cup`, and `Laver Cup`, which were rendering too short in the fixed logo slot.
+- 2026-03-15: Reduced `/calendar` type marks again by constraining both SVG logos and fallback badges to a smaller fixed logo-sized box.
+- 2026-03-15: Reduced the `/calendar` `Typ` mark width so the column now hugs the logo/content instead of reserving extra horizontal space.
+- 2026-03-15: Removed the descriptive info callout text from the top of `/calendar`.
+- 2026-03-15: Moved the `/calendar` `Typ` column to the first position in the table.
+- 2026-03-15: Tightened the `/calendar` type column so its width now follows the content instead of using a fixed column width.
+- 2026-03-15: Tightened the `/calendar` date column so its width now follows the content instead of using a fixed minimum width.
+- 2026-03-15: Kept hover on `/calendar` rows but forced deeper row descendants transparent so the mouseover color no longer propagates down the hierarchy.
+- 2026-03-15: Removed the built-in white background shape from `src/assets/logos/davis-cup.svg` so the `/calendar` SVG mark renders fully transparent.
+- 2026-03-15: Removed the row hover styling from the `/calendar` table.
+- 2026-03-15: Removed the background and border chrome from `/calendar` type marks while keeping the fixed-size layout.
+- 2026-03-15: Updated `/calendar` to use matching SVG logo assets in `src/assets/logos` for supported event types and names, with badges kept as fallback.
+- 2026-03-15: Standardized `/calendar` tournament-type badges to a uniform size and moved the `Typ` column to position 2.
+- 2026-03-15: Turned the `/calendar` type column into custom visual badges for tournament categories like `Masters`, `ATP-500`, `ATP-250`, `Grand Slam`, and cup events.
+- 2026-03-15: Swapped the `Kalender` table columns so `Plats` appears before `Turnering`.
+- 2026-03-15: Updated `/calendar` to show only upcoming events plus tournaments started within the last 14 days, using the endpoint's start-date field.
+- 2026-03-15: Moved the `Kalender` main-menu link to sit after `Live`.
+- 2026-03-15: Moved the `Kalender` main-menu link to sit after `Oddset` and before `Q&A`.
+- 2026-03-15: Updated `/calendar` to use the backend `GET /calendar` endpoint and its `{ events: [...] }` payload instead of a frontend SQL query.
+- 2026-03-15: Added a new `/calendar` page with upcoming ATP events, wired the route in the app, and added a `Kalender` link to the main menu.
 - 2026-03-15: Removed the lingering `Visa matcher från atptour.com` button from `/oddset`.
 - 2026-03-15: Deleted unused `src/assets/info.svg`.
 - 2026-03-15: Deleted unused `src/assets/tennis-ball.png` after restoring the loading animation to the `🎾` emoji.
