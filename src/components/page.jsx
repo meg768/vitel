@@ -112,7 +112,7 @@ Component.Loading = function (props) {
 	}
 
 	return (
-		<div className='fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4 text-lg'>
+		<div className='flex min-h-[40vh] items-center justify-center gap-4 text-lg'>
 			<TennisBall ping={true} />
 		</div>
 	);

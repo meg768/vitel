@@ -4,6 +4,22 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-15: Deleted unused `src/assets/info.svg`.
+- 2026-03-15: Deleted unused `src/assets/tennis-ball.png` after restoring the loading animation to the `🎾` emoji.
+- 2026-03-15: Restored the filled pulsing loading animation behind the `🎾` emoji while keeping the in-page placement that avoids overlap with the menu.
+- 2026-03-15: Restored the `🎾` emoji in `Page.Loading` and stopped using `src/assets/tennis-ball.png`, while keeping the in-page loading placement that avoids overlapping the menu.
+- 2026-03-15: Changed `Page.Loading` from a fixed viewport overlay to centered in-page content so the loading animation no longer overlaps the sticky top menu on small screens.
+- 2026-03-15: Changed the shared light-mode layout background from `bg-white` to `bg-primary-50` so transparent loading assets no longer sit on a pure white page background.
+- 2026-03-15: Made the loading ping animation transparent by changing it from a filled circle to a pulsing ring behind `src/assets/tennis-ball.png`.
+- 2026-03-15: Switched `Page.Loading` from the `🎾` emoji to `src/assets/tennis-ball.png` while keeping the pulsing ping animation.
+- 2026-03-15: Switched `Page.Loading` back to the `🎾` emoji and stopped using `src/assets/tennis-ball.svg`.
+- 2026-03-15: Rebuilt `src/assets/tennis-ball.svg` as a real vector tennis ball with transparent background after discovering the added SVG still only contained emoji text.
+- 2026-03-15: Switched `Page.Loading` from the tennis-ball emoji to the new transparent `src/assets/tennis-ball.svg` asset while keeping the existing pulsing ping effect.
+- 2026-03-15: Reverted the loading tennis-ball back to the original emoji after the inline SVG version looked worse.
+- 2026-03-15: Replaced the loading tennis-ball emoji in `Page.Loading` with a transparent inline SVG tennis ball to keep the yellow tennis-ball look without the opaque emoji background artifact.
+- 2026-03-15: Restored the original loading tennis-ball emoji in `Page.Loading` after the alternative implementations looked worse.
+- 2026-03-15: Replaced the loading-ball PNG with a CSS-drawn yellow tennis ball in `Page.Loading`, keeping the transparent background while restoring the classic yellow-ball look.
+- 2026-03-15: Replaced the pulsing loading tennis-ball emoji with the transparent `src/assets/tennis-ball.png` image in `Page.Loading` to avoid opaque background artifacts on small screens.
 - 2026-03-14: Removed the `Visa matcher från atptour.com` button from `/oddset`.
 - 2026-03-14: Added `/live` back to the main menu with the label `Live`.
 - 2026-03-14: Renamed the primary Oddset page route back to `/oddset`, changed the main menu label to `Oddset`, restored the page title to `Oddset`, and kept `/matches` as a backward-compatible redirect to `/oddset`.
