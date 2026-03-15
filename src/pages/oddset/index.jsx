@@ -297,7 +297,7 @@ function Component() {
 		content = (
 			<>
 				<Page.Title className='flex items-center justify-between gap-3'>
-					<span className='bg-transparent'>Matcher</span>
+					<span className='bg-transparent'>Oddset</span>
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
 						isFetching={isFetching}
