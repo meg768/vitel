@@ -4,6 +4,14 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-17: Updated the `/matches` odds footnote to clarify that the name mismatch is against ATP tournament naming rather than the database in general.
+- 2026-03-17: Centered and italicized the `/matches` odds footnote so it reads more like a gentle note than a content block.
+- 2026-03-17: Added a small `/matches` footnote explaining that some odds may be missing because Oddset player names do not always match the database naming.
+- 2026-03-17: Removed `/calendar` entirely, including its route, top-menu link, documentation references, and the page source under `src/pages`.
+- 2026-03-17: Renamed the main-menu link for `/matches` from `Live` to `Matcher`.
+- 2026-03-17: Renamed `/live-matches-detail` to `/scoreboard`, moved the page code to `src/pages/scoreboard`, updated route links/buttons, and kept the old detail route as a backward-compatible redirect.
+- 2026-03-16: Renamed the `/live-matches-overview` route and page code to `/matches`, updated the main menu link, and kept `/live-matches-overview` as a backward-compatible redirect.
+- 2026-03-16: Expanded `/live-matches-overview` into a hybrid view with ATP live matches plus upcoming matches and odds from `/oddset`, and extracted the Oddset pipeline helpers into shared frontend utilities.
 - 2026-03-16: Ended the temporary `/live-matches-detail` empty-state simulation so the page now renders real selected live matches again while keeping the new `Page.Emoji` empty state for truly empty data.
 - 2026-03-16: Shortened the `/live-matches-detail` empty-state copy to `Inga livematcher just nu` for a less formal tone.
 - 2026-03-16: Replaced the `/live-matches-detail` empty-state info banner with the shared `Page.Emoji` presentation while keeping the same no-live-matches message.

@@ -9,17 +9,25 @@ import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/live-oddset.js';
 import { addRankingAndDisplayFields, buildHeadToHeadQuery } from '../../js/live-match-rows.js';
+import {
+	ODDSET_PIPELINE_QUERY_KEY,
+	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+	buildPlayerDetailsByName,
+	fetchOddsetPipelineMatches,
+	resolveMatchPlayers,
+	splitOddsetRowsByStatus
+} from '../../js/oddset-pipeline.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
-const ODDSET_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
+const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
 
 function PlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} />;
 }
 
-function LiveMatchesOverviewTable({ rows }) {
+function MatchesTable({ rows }) {
 	return (
 		<Table rows={rows}>
 			<Table.Column id='event'>
@@ -47,6 +55,33 @@ function LiveMatchesOverviewTable({ rows }) {
 	);
 }
 
+function UpcomingPlayersCell({ row }) {
+	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} />;
+}
+
+function UpcomingMatchesTable({ rows }) {
+	return (
+		<Table rows={rows}>
+			<Table.Column id='start'>
+				<Table.Title>Start</Table.Title>
+			</Table.Column>
+
+			<Table.Column id='turnering'>
+				<Table.Title>Turnering</Table.Title>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>Spelare</Table.Title>
+				<Table.Value>{({ row }) => <UpcomingPlayersCell row={row} />}</Table.Value>
+			</Table.Column>
+
+			<Table.Column id='odds'>
+				<Table.Title>Odds</Table.Title>
+			</Table.Column>
+		</Table>
+	);
+}
+
 function Component() {
 	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
 		path: 'live',
@@ -58,12 +93,24 @@ function Component() {
 	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
 		queryKey: LIVE_ODDSET_QUERY_KEY,
 		queryFn: fetchLiveOddsetOddsByPlayers,
-		staleTime: ODDSET_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
+		staleTime: LIVE_REFRESH_INTERVAL_MS,
+		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retry: 0
+	});
+	const { data: oddsetRows, error: oddsetPipelineError } = useQuery({
+		queryKey: ODDSET_PIPELINE_QUERY_KEY,
+		queryFn: fetchOddsetPipelineMatches,
+		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchOnWindowFocus: false,
+		retry: 0
+	});
+	const { data: playerRows, error: playerError } = useSQL({
+		sql: 'SELECT id, name, country FROM players',
+		cache: PLAYERS_COUNTRY_CACHE_MS
 	});
 	const rankingSql = 'SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC';
 	const { data: rankingRows, error: rankError } = useSQL({
@@ -81,7 +128,7 @@ function Component() {
 
 	if (liveError) {
 		return (
-			<Page id='live-matches-overview-page'>
+			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in livematcher - {liveError.message}</Page.Error>
@@ -92,7 +139,7 @@ function Component() {
 
 	if (rankError) {
 		return (
-			<Page id='live-matches-overview-page'>
+			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>
@@ -101,9 +148,20 @@ function Component() {
 		);
 	}
 
+	if (playerError) {
+		return (
+			<Page id='matches-page'>
+				<Page.Menu />
+				<Page.Content>
+					<Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>
+				</Page.Content>
+			</Page>
+		);
+	}
+
 	if (meetingError) {
 		return (
-			<Page id='live-matches-overview-page'>
+			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in head-to-head - {meetingError.message}</Page.Error>
@@ -112,12 +170,12 @@ function Component() {
 		);
 	}
 
-	if (!matches || !rankingRows || !meetingRows) {
+	if (!matches || !rankingRows || !meetingRows || !playerRows) {
 		return (
-			<Page id='live-matches-overview-page'>
+			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
-					<Page.Loading>Läser in livematcher...</Page.Loading>
+					<Page.Loading>Läser in matcher...</Page.Loading>
 				</Page.Content>
 			</Page>
 		);
@@ -136,34 +194,56 @@ function Component() {
 	const rows = (matches ?? [])
 		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
 		.filter(match => !match.winner);
+	const playerDetailsByName = buildPlayerDetailsByName(playerRows);
+	const upcomingRows = (oddsetRows ?? []).map(row => {
+		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
+		return { ...row, playerA, playerB };
+	});
+	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
 
 	return (
-		<Page id='live-matches-overview-page'>
+		<Page id='matches-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Title className='flex items-center justify-between gap-3'>
-					<span className='bg-transparent'>Livematcher</span>
+					<span className='bg-transparent'>Matcher</span>
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
 						isFetching={isFetching}
 						intervalMs={LIVE_REFRESH_INTERVAL_MS}
 						steps={LIVE_COUNTDOWN_STEPS}
-						labelUpdating='Uppdaterar live-matches-overview-sidan'
+						labelUpdating='Uppdaterar matches-sidan'
 						inline={true}
 					/>
 				</Page.Title>
 				<Page.Container>
 					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
+					<Page.Title level={2}>Pågående matcher</Page.Title>
 					{rows.length > 0 ? (
 						<>
-							<LiveMatchesOverviewTable rows={rows} />
+							<MatchesTable rows={rows} />
 							<div className='flex justify-center pt-4'>
-								<Button link='/live-matches-detail'>Visa mer detaljerat</Button>
+								<Button link='/scoreboard'>Visa scoreboard</Button>
 							</div>
 						</>
 					) : (
-						<Page.Emoji emoji='😢' message='Det finns inga livematcher just nu' />
+						<Page.Emoji emoji='😢' message='Inga livematcher just nu' />
 					)}
+
+					<Page.Title level={2}>Kommande matcher</Page.Title>
+					{oddsetPipelineError ? (
+						<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
+					) : !oddsetRows ? (
+						<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
+					) : upcomingMatches.length > 0 ? (
+						<UpcomingMatchesTable rows={upcomingMatches} />
+					) : (
+						<Page.Emoji emoji='📅' message='Inga kommande matcher just nu' />
+					)}
+
+					<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
+						Odds visas inte alltid, eftersom namn från Oddset inte alltid matchar namnen från ATP-turneringen.
+					</div>
 				</Page.Container>
 			</Page.Content>
 		</Page>

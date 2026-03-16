@@ -15,7 +15,7 @@ const LIVE_COUNTDOWN_STEPS = 5;
 
 function ErrorPage({ message }) {
 	return (
-		<Page id='live-matches-detail-page'>
+		<Page id='scoreboard-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Error>{message}</Page.Error>
@@ -26,7 +26,7 @@ function ErrorPage({ message }) {
 
 function InformationPage({ message }) {
 	return (
-		<Page id='live-matches-detail-page'>
+		<Page id='scoreboard-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Emoji emoji='😢' message={message} />
@@ -37,7 +37,7 @@ function InformationPage({ message }) {
 
 function LoadingPage() {
 	return (
-		<Page id='live-matches-detail-page'>
+		<Page id='scoreboard-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Loading>Läser in matcher...</Page.Loading>
@@ -150,7 +150,7 @@ function Component() {
 	}, [focusMode]);
 
 	if (liveError) {
-		return <ErrorPage message={`Misslyckades med att läsa in live-matches-detail - ${liveError.message}`} />;
+		return <ErrorPage message={`Misslyckades med att läsa in scoreboard - ${liveError.message}`} />;
 	}
 
 	if (rankError) {
@@ -174,7 +174,7 @@ function Component() {
 	}
 
 	return (
-		<Page id='live-matches-detail-page'>
+		<Page id='scoreboard-page'>
 			{hidePageMenu ? null : <Page.Menu />}
 			<Page.Content className='flex flex-col pb-4'>
 				{singleMatchMode ? (
@@ -186,13 +186,13 @@ function Component() {
 					<>
 						{focusMode ? null : (
 							<Page.Title className='flex items-center justify-between gap-3'>
-								<span className='bg-transparent'>Livematcher</span>
+								<span className='bg-transparent'>Scoreboard</span>
 								<Countdown
 									dataUpdatedAt={dataUpdatedAt}
 									isFetching={isFetching}
 									intervalMs={LIVE_REFRESH_INTERVAL_MS}
 									steps={LIVE_COUNTDOWN_STEPS}
-									labelUpdating='Uppdaterar live-matches-detail-sidan'
+									labelUpdating='Uppdaterar scoreboard-sidan'
 									inline={true}
 								/>
 							</Page.Title>
