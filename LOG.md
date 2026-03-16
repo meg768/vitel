@@ -4,6 +4,32 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-16: Moved the extra bottom spacing on `/live-matches-detail` to the scrollable page content and removed the list container's forced full height, so the space is visible at the very bottom when scrolling.
+- 2026-03-16: Added bottom spacing after the `/live-matches-detail` match list so the page ends with the same visual breathing room as the gap between match cards.
+- 2026-03-16: Removed leftover unused files from `src/pages`, including old live ping helpers, the unused `live-sample.json`, stray `.DS_Store` files, and now-empty placeholder directories.
+- 2026-03-16: Renamed the `/live-matches-overview` page title from `Livematcher översikt` to `Livematcher`.
+- 2026-03-16: Simplified `/settings` log-clearing UX so `Rensa loggen` only disables during the delete request, with no extra inline status text.
+- 2026-03-16: Refined the `/settings` debugging-button spacing to use a simpler vertical button group with status messages separated below, matching the page rhythm better.
+- 2026-03-16: Added a little more vertical spacing between the two `/settings` debugging buttons.
+- 2026-03-16: Moved the `/settings` `Rensa loggen` button onto its own row under the log-view button in the `Felsökning` section.
+- 2026-03-16: Added a `Rensa loggen` button under `/settings` > `Felsökning`; it clears the `log` table via backend SQL and drops the cached `/log` query so the next log view reloads fresh data.
+- 2026-03-16: Renamed the `/live-matches` detail route to `/live-matches-detail`, renamed the page code to match, and updated links/docs accordingly.
+- 2026-03-16: Removed the `/more` page and its top-menu link after deciding the extra hub was no longer needed.
+- 2026-03-16: Added `Kalender` to the top menu and placed it directly before `Q&A`.
+- 2026-03-16: Moved `Live` in the top menu so it now sits directly before `Q&A`.
+- 2026-03-16: Added `Live` back to the top menu and pointed it to `/live-matches-overview`.
+- 2026-03-16: Added a `Visa mer detaljerat` button at the bottom of `/live-matches-overview` linking back to `/live-matches`.
+- 2026-03-16: Added `/live-matches-overview`, a compact data-table view of the same live-match rows shown on `/live-matches`, and linked it from `/more`.
+- 2026-03-16: Renamed the `/more` button for `/oddset` from `Oddset` to `Matcher från Oddset`.
+- 2026-03-16: Renamed the `/more` button for `/live` from `Live` to `Matcher från ATP`.
+- 2026-03-16: Added a separate `Live` button to `/more` while keeping `Visa livematcher` linked to `/live-matches`.
+- 2026-03-16: Renamed the `/more` live button from `Pågående matcher` to `Visa livematcher`.
+- 2026-03-16: Renamed the `/more` page title to `Övrigt` to match the top-menu label.
+- 2026-03-16: Renamed the top-menu link from `Mer` to `Övrigt`.
+- 2026-03-16: Replaced the `Mer` dropdown with a dedicated `/more` page that shows `Pågående matcher`, `Oddset`, and `Kalender` as centered buttons in the same theme.
+- 2026-03-16: Refined the top menu: `Spelare`, `Turneringar`, and `Q&A` now stay in the main row, while `Pågående matcher` (`/live-matches`), `Oddset`, and `Kalender` live under `Mer`.
+- 2026-03-16: Fixed the `Mer` dropdown to render above the scrollable menu and follow the active light/dark theme colors.
+- 2026-03-16: Removed the temporary client-side `/oddset` fallback fetches again; the page now relies solely on backend `GET /oddset`.
 - 2026-03-16: Added reusable `Page.Emoji` for centered emoji-with-message empty states and switched `/live` and the fully empty `/oddset` view to use it.
 - 2026-03-16: Updated the fully empty `/oddset` view to keep the normal page title/countdown and show a centered sad-smiley empty state instead of the info banner.
 - 2026-03-15: Swapped the `/calendar` columns so `Turnering` now appears before `Plats`.

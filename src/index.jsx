@@ -8,7 +8,8 @@ import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
 import Live from './pages/live';
-import LiveMatch from './pages/live-match';
+import LiveMatchesDetail from './pages/live-matches-detail';
+import LiveMatchesOverview from './pages/live-matches-overview';
 import Log from './pages/log';
 import NotFound from './pages/not-found';
 import Oddset from './pages/oddset';
@@ -132,8 +133,9 @@ class WebApp {
 							<Route path='/live' element={<Live />} />
 							<Route path='/oddset' element={<Oddset />} />
 							<Route path='/matches' element={<Navigate to='/oddset' replace />} />
-							<Route path='/live-matches' element={<LiveMatch />} />
-							<Route path='/live-matches/:A/:B' element={<LiveMatch />} />
+							<Route path='/live-matches-detail' element={<LiveMatchesDetail />} />
+							<Route path='/live-matches-detail/:A/:B' element={<LiveMatchesDetail />} />
+							<Route path='/live-matches-overview' element={<LiveMatchesOverview />} />
 							<Route path='/log' element={<Log />} />
 							<Route path='/qna' element={<QnA />} />
 						<Route path='/settings' element={<Settings />} />

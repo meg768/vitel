@@ -154,7 +154,7 @@ function Component() {
 							<Page.Title level={2}>Pågående</Page.Title>
 							<LiveTable rows={activeMatches} finished={false} />
 							<div className='flex justify-center pt-4'>
-								<Button link='/live-matches'>Visa live</Button>
+								<Button link='/live-matches-detail'>Visa live</Button>
 							</div>
 						</>
 					) : null}

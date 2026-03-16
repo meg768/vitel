@@ -1,11 +1,12 @@
 .ui.dropdownmenu {
 
 	&.content {
-		background-color: var(--color-white) !important;
+		background-color: var(--color-primary-50);
+		color: var(--color-primary-900);
 		padding: calc(var(--spacing) * 1);
 		border-width: 0.1em;
 		border-radius: var(--radius-sm);
-		border-color: var(--color-neutral-300);
+		border-color: var(--color-primary-300);
 	}
 
 	&:focus {
@@ -13,7 +14,7 @@
 		box-shadow: none;;
 	}
 	&.arrow {
-		fill: var(--color-neutral-300);
+		fill: var(--color-primary-300);
 	}
 	&.item {
 		color: inherit;
@@ -29,5 +30,17 @@
 			color: var(--color-primary-100);
 			background-color: var(--color-primary-500);
 		}
+	}
+}
+
+.dark .ui.dropdownmenu {
+	&.content {
+		background-color: var(--color-primary-900);
+		color: var(--color-primary-100);
+		border-color: var(--color-primary-700);
+	}
+
+	&.arrow {
+		fill: var(--color-primary-700);
 	}
 }

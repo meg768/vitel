@@ -5,7 +5,8 @@ import { useParams } from 'react-router';
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch, getLiveOddsetOddsStateForMatch } from '../../js/live-oddset.js';
+import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/live-oddset.js';
+import { addRankingAndDisplayFields, buildHeadToHeadQuery, selectMonitorMatches } from '../../js/live-match-rows.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
@@ -14,7 +15,7 @@ const LIVE_COUNTDOWN_STEPS = 5;
 
 function ErrorPage({ message }) {
 	return (
-		<Page id='live-match-page'>
+		<Page id='live-matches-detail-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Error>{message}</Page.Error>
@@ -25,7 +26,7 @@ function ErrorPage({ message }) {
 
 function InformationPage({ message }) {
 	return (
-		<Page id='live-match-page'>
+		<Page id='live-matches-detail-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Information>{message}</Page.Information>
@@ -36,7 +37,7 @@ function InformationPage({ message }) {
 
 function LoadingPage() {
 	return (
-		<Page id='live-match-page'>
+		<Page id='live-matches-detail-page'>
 			<Page.Menu />
 			<Page.Content>
 				<Page.Loading>Läser in matcher...</Page.Loading>
@@ -46,112 +47,8 @@ function LoadingPage() {
 }
 
 function Component() {
-	function buildHeadToHeadQuery(matches) {
-		const pairIds = matches
-			.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
-			.filter(pair => pair.length === 2);
-		const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()];
-
-		if (uniquePairs.length === 0) {
-			return {
-				sql: `
-					SELECT
-						LEAST(winner_id, loser_id) AS player_a_id,
-						GREATEST(winner_id, loser_id) AS player_b_id,
-						SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
-						SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
-					FROM flatly
-					WHERE 1 = 0
-					GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
-				`,
-				format: []
-			};
-		}
-
-		const whereClauses = uniquePairs
-			.map(() => '((winner_id = ? AND loser_id = ?) OR (winner_id = ? AND loser_id = ?))')
-			.join(' OR ');
-		const format = uniquePairs.flatMap(([playerAId, playerBId]) => [playerAId, playerBId, playerBId, playerAId]);
-
-		return {
-			sql: `
-				SELECT
-					LEAST(winner_id, loser_id) AS player_a_id,
-					GREATEST(winner_id, loser_id) AS player_b_id,
-					SUM(winner_id = LEAST(winner_id, loser_id)) AS wins_for_player_a,
-					SUM(winner_id = GREATEST(winner_id, loser_id)) AS wins_for_player_b
-				FROM flatly
-				WHERE ${whereClauses}
-				GROUP BY LEAST(winner_id, loser_id), GREATEST(winner_id, loser_id)
-			`,
-			format
-		};
-	}
-
 	function getMatchKey(match) {
 		return `${match.player?.id}-${match.opponent?.id}`;
-	}
-
-	function addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair) {
-		const pairKey = [match.player?.id, match.opponent?.id].filter(Boolean).sort().join(':');
-		const record = headToHeadByPair[pairKey];
-		const playerWins = record?.[match.player?.id] ?? 0;
-		const opponentWins = record?.[match.opponent?.id] ?? 0;
-		const rankedMatch = {
-			...match,
-			event: match.name ?? match.event ?? '',
-			score: match.score ?? '',
-			comment: match.comment ?? null,
-			server: match.server ?? null,
-			player: {
-				...match.player,
-				rank: ranksByPlayerId[match.player?.id]
-			},
-			opponent: {
-				...match.opponent,
-				rank: ranksByPlayerId[match.opponent?.id]
-			}
-		};
-
-		return {
-			...rankedMatch,
-			odds: formatLiveOddsetOddsForMatch(rankedMatch, oddsByPlayers),
-			oddsState: getLiveOddsetOddsStateForMatch(rankedMatch, oddsByPlayers),
-			headToHead: `${playerWins}-${opponentWins}`,
-			opponentHeadToHead: `${opponentWins}-${playerWins}`
-		};
-	}
-
-	function selectMonitorMatches(matches, routeParams) {
-		if ((routeParams.A && !routeParams.B) || (!routeParams.A && routeParams.B)) {
-			return {
-				selectedMatches: [],
-				error: new Error(`Spelarna hittades inte (${routeParams.A ?? '-'}, ${routeParams.B ?? '-'})`)
-			};
-		}
-
-		if (routeParams.A && routeParams.B) {
-			const requestedA = String(routeParams.A);
-			const requestedB = String(routeParams.B);
-			const selectedMatch = matches.find(match => String(match.player?.id) === requestedA && String(match.opponent?.id) === requestedB) ?? null;
-
-			if (!selectedMatch) {
-				return {
-					selectedMatches: [],
-					error: new Error(`Matchen hittades inte bland live-matcherna (${routeParams.A}, ${routeParams.B})`)
-				};
-			}
-
-			return {
-				selectedMatches: [selectedMatch],
-				error: null
-			};
-		}
-
-		return {
-			selectedMatches: matches.filter(match => !match.winner),
-			error: null
-		};
 	}
 
 	const routeParams = useParams();
@@ -253,7 +150,7 @@ function Component() {
 	}, [focusMode]);
 
 	if (liveError) {
-		return <ErrorPage message={`Misslyckades med att läsa in live-match - ${liveError.message}`} />;
+		return <ErrorPage message={`Misslyckades med att läsa in live-matches-detail - ${liveError.message}`} />;
 	}
 
 	if (rankError) {
@@ -277,9 +174,9 @@ function Component() {
 	}
 
 	return (
-		<Page id='live-match-page'>
+		<Page id='live-matches-detail-page'>
 			{hidePageMenu ? null : <Page.Menu />}
-			<Page.Content className='flex flex-col'>
+			<Page.Content className='flex flex-col pb-4'>
 				{singleMatchMode ? (
 					<>
 						{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
@@ -295,7 +192,7 @@ function Component() {
 									isFetching={isFetching}
 									intervalMs={LIVE_REFRESH_INTERVAL_MS}
 									steps={LIVE_COUNTDOWN_STEPS}
-									labelUpdating='Uppdaterar live-matches-sidan'
+									labelUpdating='Uppdaterar live-matches-detail-sidan'
 									inline={true}
 								/>
 							</Page.Title>
@@ -314,7 +211,7 @@ function Component() {
 								/>
 							</div>
 						) : (
-							<div className='mt-4 flex h-full flex-col gap-4'>
+							<div className='mt-4 flex flex-col gap-4'>
 								{displayEntries.map(({ match, key }) => (
 									<LiveMatchMonitor
 										key={key}

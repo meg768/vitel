@@ -7,7 +7,7 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 ## Highlights
 
 - ATP-focused dashboards and pages (`/live`, `/oddset`, `/players`, `/ranking`, `/events`, etc.)
-- Live monitor view for active matches (`/live-matches`)
+- Live monitor view for active matches (`/live-matches-detail`)
 - Odds page (`/oddset`) powered by backend `GET /api/oddset`
 - SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
 - Theme system with auto mode (`light|dark` + `hard|clay|grass`)
@@ -86,7 +86,7 @@ Notes:
 
 ### `GET /live`
 
-Expected response: JSON array of live/finished ATP match rows used by `/live` and `/live-matches`.
+Expected response: JSON array of live/finished ATP match rows used by `/live` and `/live-matches-detail`.
 
 ### `POST /query`
 
@@ -114,8 +114,8 @@ Main client routes:
 - `/players`
 - `/live`
 - `/oddset`
-- `/live-matches`
-- `/live-matches/:A/:B`
+- `/live-matches-detail`
+- `/live-matches-detail/:A/:B`
 - `/log`
 - `/qna`
 - `/settings`
@@ -158,7 +158,7 @@ Important files:
 - `src/js/vitel.js` - `useRequest`, `useSQL`, shared service export
 - `src/pages/oddset/index.jsx` - `/oddset` page
 - `src/pages/live/index.jsx` - `/live` page
-- `src/pages/live-match/index.jsx` - `/live-matches` monitor page
+- `src/pages/live-matches-detail/index.jsx` - `/live-matches-detail` monitor page
 - `src/database/schema.sql` - DB schema baseline
 
 ## Scripts

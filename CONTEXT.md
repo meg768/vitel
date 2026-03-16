@@ -14,7 +14,7 @@ For chronological project updates, see [LOG.md](./LOG.md).
 - Backend: API with base URL via `VITE_API_URL`
 - SQL endpoint: `POST /query` (via `src/js/service.js` and `src/js/vitel.js`)
 - Calendar page (`/calendar`): `GET /calendar` returning `{ events: [...] }`
-- Odds page (`/oddset`): direct fetch from Oddset ATP pipeline endpoint
+- Odds page (`/oddset`): backend `GET /oddset` is the single source of truth
 - Database schema source of truth: `src/database/schema.sql`
 
 ## Getting Started
@@ -55,14 +55,24 @@ VITE_API_URL=https://your-api-base-url
 
 ## Active Routes
 
-`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/calendar`, `/events`, `/players`, `/live`, `/oddset`, `/live-matches`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound` (`/matches` redirects to `/oddset`).
+`/`, `/app`, `/player/:id`, `/head-to-head/:A/:B`, `/event/:id`, `/ranking`, `/calendar`, `/events`, `/players`, `/live`, `/oddset`, `/live-matches-detail`, `/live-matches-overview`, `/log`, `/qna`, `/settings`, `/query/:name`, `/not-found`, and fallback `*` -> `NotFound` (`/matches` redirects to `/oddset`).
+
+## Current Navigation
+
+- Main menu is intentionally short and currently shows `Spelare`, `Turneringar`, `Live`, `Kalender`, and `Q&A`, plus the settings gear.
+- `Live` in the main menu links to `/live-matches-overview`.
+- `/live-matches-overview` is the compact table view of live matches.
+- `/live-matches-detail` is the more detailed card-based live monitor view.
+- The old `/more` page and dropdown flow were removed.
 
 ## Key Files
 
 - `src/index.jsx` - app bootstrap, theme handling, and route wiring
 - `src/pages/app/index.jsx` - landing page
 - `src/pages/calendar/index.jsx` - `/calendar` page (ATP event calendar)
-- `src/pages/oddset/index.jsx` - `/oddset` page (Oddset ATP pipeline rendering)
+- `src/pages/oddset/index.jsx` - `/oddset` page (backend-driven Oddset rendering)
+- `src/pages/live-matches-overview/index.jsx` - compact live matches table view
+- `src/pages/live-matches-detail/index.jsx` - detailed live match monitor view
 - `src/js/service.js` - low-level API requests
 - `src/js/vitel.js` - exports `service`, `useSQL`, `useRequest`
 - `src/js/queries.js` - loads/parses `src/queries/*.sql`

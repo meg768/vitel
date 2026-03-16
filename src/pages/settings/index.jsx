@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import hash from 'object-hash';
 
 import Menu from '../../components/menu';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
+import { service } from '../../js/vitel';
+
+const LOG_SQL = `SELECT * FROM log WHERE timestamp >= CURDATE() - INTERVAL 1 DAY ORDER BY timestamp ASC;`;
 
 export default function SettingsPage() {
 	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
 	const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
 	const defaultTheme = 'auto auto';
+	const queryClient = useQueryClient();
 
 	const [activeSurface, setActiveSurface] = useState('auto');
 	const [activeMode, setActiveMode] = useState('auto');
 	const [initialized, setInitialized] = useState(false);
+	const [isClearingLog, setIsClearingLog] = useState(false);
 
 	// Load theme from localStorage on first mount
 	useEffect(() => {
@@ -83,6 +90,27 @@ export default function SettingsPage() {
 		localStorage.setItem('theme', `${mode} ${surface}`);
 	}
 
+	function getLogQueryKey() {
+		return ['request', hash({ path: 'query', method: 'POST', body: JSON.stringify({ sql: LOG_SQL, format: [] }) })];
+	}
+
+	async function clearLog() {
+		if (isClearingLog || !window.confirm('Vill du rensa loggen?')) {
+			return;
+		}
+
+		setIsClearingLog(true);
+
+		try {
+			await service.query({ sql: 'DELETE FROM log;' });
+			queryClient.removeQueries({ queryKey: getLogQueryKey() });
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsClearingLog(false);
+		}
+	}
+
 	function SurfaceSelector() {
 		return (
 			<div>
@@ -114,9 +142,14 @@ export default function SettingsPage() {
 		return (
 			<div>
 				<Page.Title level={4}>Felsökning</Page.Title>
-				<Button className='' link={'/log'}>
-					Visa logg senaste dygnet
-				</Button>
+				<div className='flex flex-col items-start gap-2'>
+					<Button className='' link={'/log'}>
+						Visa logg senaste dygnet
+					</Button>
+					<Button className='' onClick={clearLog} disabled={isClearingLog}>
+						Rensa loggen
+					</Button>
+				</div>
 			</div>
 		);
 	}

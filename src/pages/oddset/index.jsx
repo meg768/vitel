@@ -117,7 +117,7 @@ function toUiRow(row) {
 	const oddsA = row.playerA?.odds;
 	const oddsB = row.playerB?.odds;
 	const liveScore = row.score ?? null;
-	const rawState = liveScore ? 'STARTED' : 'NOT_STARTED';
+	const rawState = row.state ?? (liveScore ? 'STARTED' : 'NOT_STARTED');
 
 	return {
 		id: row.id ?? `${playerAName ?? '-'}-${playerBName ?? '-'}-${row.start ?? '-'}`,
@@ -330,7 +330,7 @@ function Component() {
 						<>
 							<OddsetTable rows={liveMatches} showLiveScore={true} showStartColumn={false} />
 							<div className='flex justify-center pt-4'>
-								<Button link='/live-matches'>Visa live</Button>
+								<Button link='/live-matches-detail'>Visa live</Button>
 							</div>
 						</>
 					) : (
