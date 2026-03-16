@@ -8,8 +8,8 @@ import Page from '../../components/page';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers, formatLiveOddsetOddsForMatch, getLiveOddsetOddsStateForMatch } from '../../js/live-oddset.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 15 * 1000;
-const ODDSET_REFRESH_INTERVAL_MS = 30 * 1000;
+const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
+const ODDSET_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 
 function ErrorPage({ message }) {
