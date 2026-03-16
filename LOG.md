@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-16: Updated the `/not-found` emoji message from `Sidan kunde inte hittas` to `What?!` to better match the shrugging empty state.
+- 2026-03-16: Switched `/not-found` to use the shared centered `Page.Emoji` empty-state component instead of the older info-banner layout.
 - 2026-03-16: Moved the extra bottom spacing on `/live-matches-detail` to the scrollable page content and removed the list container's forced full height, so the space is visible at the very bottom when scrolling.
 - 2026-03-16: Added bottom spacing after the `/live-matches-detail` match list so the page ends with the same visual breathing room as the gap between match cards.
 - 2026-03-16: Removed leftover unused files from `src/pages`, including old live ping helpers, the unused `live-sample.json`, stray `.DS_Store` files, and now-empty placeholder directories.
