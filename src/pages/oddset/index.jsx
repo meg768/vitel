@@ -292,7 +292,24 @@ function Component() {
 	} else if (!rows) {
 		content = <Page.Loading>Läser in oddset...</Page.Loading>;
 	} else if (rows.length === 0) {
-		content = <Page.Information>Inga oddset-matcher hittades just nu.</Page.Information>;
+		content = (
+			<>
+				<Page.Title className='flex items-center justify-between gap-3'>
+					<span className='bg-transparent'>Oddset</span>
+					<Countdown
+						dataUpdatedAt={dataUpdatedAt}
+						isFetching={isFetching}
+						intervalMs={ODDSET_PIPELINE_REFRESH_INTERVAL_MS}
+						steps={ODDSET_COUNTDOWN_STEPS}
+						labelUpdating='Uppdaterar oddset-sidan'
+						inline={true}
+					/>
+				</Page.Title>
+				<Page.Container>
+					<Page.Emoji emoji='😢' message='Svenska Spel har inga odds just nu på ATP-touren' />
+				</Page.Container>
+			</>
+		);
 	} else {
 		content = (
 			<>

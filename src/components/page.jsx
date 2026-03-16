@@ -118,6 +118,17 @@ Component.Loading = function (props) {
 	);
 };
 
+Component.Emoji = function ({ className, emoji, message, ...props }) {
+	className = clsx('flex flex-col items-center justify-center py-12 text-center', className);
+
+	return (
+		<div className={className} {...props}>
+			<div className='text-8xl'>{emoji}</div>
+			<div className='mt-4 text-xl text-primary-700 dark:text-primary-300'>{message}</div>
+		</div>
+	);
+};
+
 
 Component.Container = function ({ className, ...props }) {
 	className = clsx('p-3', className);

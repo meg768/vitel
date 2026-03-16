@@ -36,15 +36,6 @@ function LiveTable({ rows, finished = false }) {
 	);
 }
 
-function EmptyMatchesState() {
-	return (
-		<div className='flex flex-col items-center justify-center py-12 text-center'>
-			<div className='text-8xl'>😢</div>
-			<div className='mt-4 text-xl text-primary-700 dark:text-primary-300'>Inga matcher idag</div>
-		</div>
-	);
-}
-
 function splitMatchesByStatus(matches) {
 	const activeMatches = [];
 	const finishedMatches = [];
@@ -156,7 +147,7 @@ function Component() {
 					/>
 				</Page.Title>
 				<Page.Container>
-					{hasNoMatches ? <EmptyMatchesState /> : null}
+					{hasNoMatches ? <Page.Emoji emoji='😢' message='Inga matcher idag' /> : null}
 
 					{activeMatches.length > 0 ? (
 						<>

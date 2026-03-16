@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-16: Added reusable `Page.Emoji` for centered emoji-with-message empty states and switched `/live` and the fully empty `/oddset` view to use it.
+- 2026-03-16: Updated the fully empty `/oddset` view to keep the normal page title/countdown and show a centered sad-smiley empty state instead of the info banner.
 - 2026-03-15: Swapped the `/calendar` columns so `Turnering` now appears before `Plats`.
 - 2026-03-15: Centered the `/calendar` event-type logos within the `Typ` column cells.
 - 2026-03-15: Restored `/calendar` to always use the original SVG logos for supported events and added per-logo sizing so wide wordmarks stay readable.
