@@ -29,7 +29,7 @@ function InformationPage({ message }) {
 		<Page id='live-matches-detail-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Information>{message}</Page.Information>
+				<Page.Emoji emoji='😢' message={message} />
 			</Page.Content>
 		</Page>
 	);
@@ -170,7 +170,7 @@ function Component() {
 	}
 
 	if (selectedMatches.length === 0) {
-		return <InformationPage message='Det finns inga pågående matcher att övervaka just nu.' />;
+		return <InformationPage message='Inga livematcher just nu' />;
 	}
 
 	return (

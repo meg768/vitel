@@ -162,7 +162,7 @@ function Component() {
 							</div>
 						</>
 					) : (
-						<Page.Information>Det finns inga pågående matcher att övervaka just nu.</Page.Information>
+						<Page.Emoji emoji='😢' message='Det finns inga livematcher just nu' />
 					)}
 				</Page.Container>
 			</Page.Content>

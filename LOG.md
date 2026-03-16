@@ -4,6 +4,14 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-16: Ended the temporary `/live-matches-detail` empty-state simulation so the page now renders real selected live matches again while keeping the new `Page.Emoji` empty state for truly empty data.
+- 2026-03-16: Shortened the `/live-matches-detail` empty-state copy to `Inga livematcher just nu` for a less formal tone.
+- 2026-03-16: Replaced the `/live-matches-detail` empty-state info banner with the shared `Page.Emoji` presentation while keeping the same no-live-matches message.
+- 2026-03-16: Temporarily forced `/live-matches-detail` into its empty-state path by overriding the rendered selected live matches to an empty list for UI simulation.
+- 2026-03-16: Ended the temporary `/live-matches-overview` empty-state simulation so the page now renders real live rows again while keeping the new `Page.Emoji` empty state for truly empty data.
+- 2026-03-16: Shortened the `/live-matches-overview` empty-state copy to `Det finns inga livematcher just nu`.
+- 2026-03-16: Replaced the `/live-matches-overview` empty-state info banner with the shared `Page.Emoji` presentation while keeping the same no-live-matches message.
+- 2026-03-16: Temporarily forced `/live-matches-overview` into its empty-state path by overriding the rendered live rows to an empty list for UI simulation.
 - 2026-03-16: Updated the `/not-found` emoji message from `Sidan kunde inte hittas` to `What?!` to better match the shrugging empty state.
 - 2026-03-16: Switched `/not-found` to use the shared centered `Page.Emoji` empty-state component instead of the older info-banner layout.
 - 2026-03-16: Moved the extra bottom spacing on `/live-matches-detail` to the scrollable page content and removed the list container's forced full height, so the space is visible at the very bottom when scrolling.
