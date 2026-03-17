@@ -4,6 +4,25 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-17: Replaced the custom tennis-ball favicon drawing with an emoji-based SVG so the browser icon uses the `🎾` glyph directly.
+- 2026-03-17: Tweaked the `/matches` odds footnote to use singular ATP tour naming (`namnet`) instead of plural (`namnen`).
+- 2026-03-17: Updated the `/matches` odds footnote to say ATP tour naming instead of ATP tournament naming.
+- 2026-03-17: Replaced the site's browser icon with a tennis-ball SVG favicon wired through `index.html`.
+- 2026-03-17: Ended the temporary `/matches` live-matches simulation so the page now renders real live rows again while keeping the current empty-state behavior.
+- 2026-03-17: Temporarily forced the `/matches` live section into its empty state again by overriding only the rendered live rows to an empty list for UI simulation.
+- 2026-03-17: Ended the temporary `/matches` all-empty simulation so the page now renders real live and upcoming data again while keeping the shared `Page.Emoji` empty state for genuine no-match cases.
+- 2026-03-17: Fixed the shared `/matches` all-empty state to pass its copy through `Page.Emoji`'s `message` prop so the text actually renders.
+- 2026-03-17: Changed the shared `/matches` all-empty state to use `😢` with the copy `Det finns inget att visa`.
+- 2026-03-17: Added a shared `/matches` all-empty state that shows `Page.Emoji` when both live and upcoming sections are empty at the same time.
+- 2026-03-17: Updated the `/matches` live empty-state copy from `Inga livematcher just nu` to `Inga pågående matcher just nu`.
+- 2026-03-17: Switched the simulated `/matches` no-upcoming state from `Page.Emoji` to `Page.Information`.
+- 2026-03-17: Temporarily forced both `/matches` sections into their empty states by overriding the rendered live and upcoming rows to empty lists for UI simulation.
+- 2026-03-17: Ended the temporary `/matches` live-matches simulation so the section now renders real live rows again while keeping the `Page.Information` empty state.
+- 2026-03-17: Switched the simulated `/matches` no-live state from `Page.Emoji` to `Page.Information`.
+- 2026-03-17: Temporarily forced the `/matches` live-matches section into its empty state by overriding the rendered live rows to an empty list for UI simulation.
+- 2026-03-17: Ended the temporary `/matches` upcoming-matches simulation so the section now renders real upcoming rows again.
+- 2026-03-17: Changed the temporary `/matches` upcoming-matches simulation to hide the entire section instead of showing its empty state.
+- 2026-03-17: Temporarily forced the `/matches` upcoming-matches section into its empty state by overriding the rendered upcoming rows to an empty list for UI simulation.
 - 2026-03-17: Updated the `/matches` odds footnote to clarify that the name mismatch is against ATP tournament naming rather than the database in general.
 - 2026-03-17: Centered and italicized the `/matches` odds footnote so it reads more like a gentle note than a content block.
 - 2026-03-17: Added a small `/matches` footnote explaining that some odds may be missing because Oddset player names do not always match the database naming.

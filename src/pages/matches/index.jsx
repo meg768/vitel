@@ -200,6 +200,7 @@ function Component() {
 		return { ...row, playerA, playerB };
 	});
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
+	const hasNoMatches = rows.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -218,32 +219,38 @@ function Component() {
 				</Page.Title>
 				<Page.Container>
 					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
-					<Page.Title level={2}>Pågående matcher</Page.Title>
-					{rows.length > 0 ? (
+					{hasNoMatches ? (
+						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
+					) : (
 						<>
-							<MatchesTable rows={rows} />
-							<div className='flex justify-center pt-4'>
-								<Button link='/scoreboard'>Visa scoreboard</Button>
+							<Page.Title level={2}>Pågående matcher</Page.Title>
+							{rows.length > 0 ? (
+								<>
+									<MatchesTable rows={rows} />
+									<div className='flex justify-center pt-4'>
+										<Button link='/scoreboard'>Visa scoreboard</Button>
+									</div>
+								</>
+							) : (
+								<Page.Information>Inga pågående matcher just nu</Page.Information>
+							)}
+
+						<Page.Title level={2}>Kommande matcher</Page.Title>
+							{oddsetPipelineError ? (
+								<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
+							) : !oddsetRows ? (
+								<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
+							) : upcomingMatches.length > 0 ? (
+								<UpcomingMatchesTable rows={upcomingMatches} />
+							) : (
+								<Page.Information>Inga kommande matcher just nu</Page.Information>
+							)}
+
+							<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
+								Odds visas inte alltid, eftersom namn från Oddset inte alltid matchar namnet från ATP-touren.
 							</div>
 						</>
-					) : (
-						<Page.Emoji emoji='😢' message='Inga livematcher just nu' />
 					)}
-
-					<Page.Title level={2}>Kommande matcher</Page.Title>
-					{oddsetPipelineError ? (
-						<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
-					) : !oddsetRows ? (
-						<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
-					) : upcomingMatches.length > 0 ? (
-						<UpcomingMatchesTable rows={upcomingMatches} />
-					) : (
-						<Page.Emoji emoji='📅' message='Inga kommande matcher just nu' />
-					)}
-
-					<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
-						Odds visas inte alltid, eftersom namn från Oddset inte alltid matchar namnen från ATP-turneringen.
-					</div>
 				</Page.Container>
 			</Page.Content>
 		</Page>
