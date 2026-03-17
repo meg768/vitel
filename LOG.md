@@ -4,6 +4,13 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-17: Restored equal vertical spacing between the `/matches` data tables by using the same fixed inter-table gap for all sections, with the scoreboard button occupying the gap after `Pågående matcher`.
+- 2026-03-17: Added `Tidigare möten` to the `/matches` `Nyligen avslutade` table by reusing the already loaded ATP head-to-head data.
+- 2026-03-17: Normalized `/matches` vertical spacing to match the rest of the app by removing the custom section spacer and using the simpler section rhythm already used on pages like `/live` and `/oddset`.
+- 2026-03-17: Increased the extra top spacing above the `/matches` `Visa scoreboard` button one more step while keeping the overall section-gap rhythm unchanged.
+- 2026-03-17: Added a little more top space above the `/matches` `Visa scoreboard` button while keeping the section-gap height aligned with the other table spacings.
+- 2026-03-17: Standardized `/matches` section spacing so the vertical gap between its data tables is consistent; the scoreboard button now occupies the same fixed-height gap used between table sections.
+- 2026-03-17: Added a `Nyligen avslutade` section on `/matches` using the ATP live endpoint so the page now shows recently finished ATP results alongside ongoing and upcoming matches.
 - 2026-03-17: Stabilized `/matches` live polling renders by keeping previous head-to-head rows during query-key transitions and disabling extra focus/reconnect refetches for the timer-driven live queries.
 - 2026-03-17: Stabilized `/scoreboard` polling renders by sorting head-to-head query pairs deterministically, keeping previous head-to-head rows during query-key transitions, and removing index-based match-card keys that could trigger avoidable remounts.
 - 2026-03-17: Replaced the custom tennis-ball favicon drawing with an emoji-based SVG so the browser icon uses the `🎾` glyph directly.

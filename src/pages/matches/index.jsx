@@ -55,6 +55,30 @@ function MatchesTable({ rows }) {
 	);
 }
 
+function FinishedMatchesTable({ rows }) {
+	return (
+		<Table rows={rows}>
+			<Table.Column id='event'>
+				<Table.Title>Turnering</Table.Title>
+				<Table.Cell>{({ row, value }) => (row.eventId ? <Link to={`/event/${row.eventId}`}>{value}</Link> : value)}</Table.Cell>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>Spelare</Table.Title>
+				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
+			</Table.Column>
+
+			<Table.Column id='headToHead'>
+				<Table.Title>Tidigare möten</Table.Title>
+			</Table.Column>
+
+			<Table.Column id='score'>
+				<Table.Title>Resultat</Table.Title>
+			</Table.Column>
+		</Table>
+	);
+}
+
 function UpcomingPlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} />;
 }
@@ -80,6 +104,29 @@ function UpcomingMatchesTable({ rows }) {
 			</Table.Column>
 		</Table>
 	);
+}
+
+function DataTableGap({ children = null }) {
+	return (
+		<div className='flex h-14 items-end justify-center'>
+			{children}
+		</div>
+	);
+}
+
+function splitMatchesByStatus(matches) {
+	const activeMatches = [];
+	const finishedMatches = [];
+
+	for (const match of matches) {
+		if (match.winner) {
+			finishedMatches.push(match);
+		} else {
+			activeMatches.push(match);
+		}
+	}
+
+	return { activeMatches, finishedMatches };
 }
 
 function Component() {
@@ -197,15 +244,15 @@ function Component() {
 		])
 	);
 	const rows = (matches ?? [])
-		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
-		.filter(match => !match.winner);
+		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
+	const { activeMatches, finishedMatches } = splitMatchesByStatus(rows);
 	const playerDetailsByName = buildPlayerDetailsByName(playerRows);
 	const upcomingRows = (oddsetRows ?? []).map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
 		return { ...row, playerA, playerB };
 	});
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
-	const hasNoMatches = rows.length === 0 && upcomingMatches.length === 0;
+	const hasNoMatches = activeMatches.length === 0 && finishedMatches.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -228,28 +275,44 @@ function Component() {
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
 					) : (
 						<>
-							<Page.Title level={2}>Pågående matcher</Page.Title>
-							{rows.length > 0 ? (
-								<>
-									<MatchesTable rows={rows} />
-									<div className='flex justify-center pt-4'>
-										<Button link='/scoreboard'>Visa scoreboard</Button>
-									</div>
-								</>
-							) : (
-								<Page.Information>Inga pågående matcher just nu</Page.Information>
-							)}
+							<div>
+								<Page.Title level={2}>Pågående matcher</Page.Title>
+								{activeMatches.length > 0 ? (
+									<>
+										<MatchesTable rows={activeMatches} />
+										<DataTableGap>
+											<Button link='/scoreboard'>Visa scoreboard</Button>
+										</DataTableGap>
+									</>
+								) : (
+									<Page.Information>Inga pågående matcher just nu</Page.Information>
+								)}
+							</div>
 
-						<Page.Title level={2}>Kommande matcher</Page.Title>
-							{oddsetPipelineError ? (
-								<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
-							) : !oddsetRows ? (
-								<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
-							) : upcomingMatches.length > 0 ? (
-								<UpcomingMatchesTable rows={upcomingMatches} />
-							) : (
-								<Page.Information>Inga kommande matcher just nu</Page.Information>
-							)}
+							<div>
+								<Page.Title level={2}>Nyligen avslutade</Page.Title>
+								{finishedMatches.length > 0 ? (
+									<>
+										<FinishedMatchesTable rows={finishedMatches} />
+										<DataTableGap />
+									</>
+								) : (
+									<Page.Information>Inga nyligen avslutade matcher just nu</Page.Information>
+								)}
+							</div>
+
+							<div>
+								<Page.Title level={2}>Kommande matcher</Page.Title>
+								{oddsetPipelineError ? (
+									<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
+								) : !oddsetRows ? (
+									<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
+								) : upcomingMatches.length > 0 ? (
+									<UpcomingMatchesTable rows={upcomingMatches} />
+								) : (
+									<Page.Information>Inga kommande matcher just nu</Page.Information>
+								)}
+							</div>
 
 							<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
 								Odds visas inte alltid, eftersom namn från Oddset inte alltid matchar namnet från ATP-touren.
