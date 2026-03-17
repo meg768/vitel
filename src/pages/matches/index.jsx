@@ -88,7 +88,9 @@ function Component() {
 		method: 'GET',
 		cache: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true
+		refetchIntervalInBackground: true,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
 	});
 	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
 		queryKey: LIVE_ODDSET_QUERY_KEY,
@@ -123,7 +125,10 @@ function Component() {
 		format: headToHeadQuery.format,
 		cache: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true
+		refetchIntervalInBackground: true,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		placeholderData: previousData => previousData
 	});
 
 	if (liveError) {

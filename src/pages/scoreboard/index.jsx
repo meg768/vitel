@@ -81,7 +81,8 @@ function Component() {
 		format: headToHeadQuery.format,
 		cache: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true
+		refetchIntervalInBackground: true,
+		placeholderData: previousData => previousData
 	});
 
 	const hasLoadedCoreData = Boolean(matches && rankingRows && meetingRows);
@@ -109,7 +110,7 @@ function Component() {
 	const selectionError = selection.error;
 
 	const singleMatchMode = Boolean(routeParams.A && routeParams.B);
-	const displayEntries = selectedMatches.map((match, index) => ({ match, key: `${index}:${getMatchKey(match)}` }));
+	const displayEntries = selectedMatches.map(match => ({ match, key: getMatchKey(match) }));
 	const focusedMatch = !singleMatchMode && focusedMatchKey
 		? displayEntries.find(entry => entry.key === focusedMatchKey)?.match ?? null
 		: null;

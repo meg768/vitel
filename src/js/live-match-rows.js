@@ -5,7 +5,13 @@ function buildHeadToHeadQuery(matches) {
 	const pairIds = matches
 		.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
 		.filter(pair => pair.length === 2);
-	const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()];
+	const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()]
+		.sort((pairA, pairB) => {
+			const keyA = `${pairA[0]}:${pairA[1]}`;
+			const keyB = `${pairB[0]}:${pairB[1]}`;
+
+			return keyA.localeCompare(keyB, 'sv');
+		});
 
 	if (uniquePairs.length === 0) {
 		return {

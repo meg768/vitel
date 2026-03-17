@@ -4,6 +4,8 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-17: Stabilized `/matches` live polling renders by keeping previous head-to-head rows during query-key transitions and disabling extra focus/reconnect refetches for the timer-driven live queries.
+- 2026-03-17: Stabilized `/scoreboard` polling renders by sorting head-to-head query pairs deterministically, keeping previous head-to-head rows during query-key transitions, and removing index-based match-card keys that could trigger avoidable remounts.
 - 2026-03-17: Replaced the custom tennis-ball favicon drawing with an emoji-based SVG so the browser icon uses the `🎾` glyph directly.
 - 2026-03-17: Tweaked the `/matches` odds footnote to use singular ATP tour naming (`namnet`) instead of plural (`namnen`).
 - 2026-03-17: Updated the `/matches` odds footnote to say ATP tour naming instead of ATP tournament naming.
