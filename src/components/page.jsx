@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 
 import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
-import InfoCircledIcon from '../assets/radix-icons/info-circled.svg?react';
 import Layout from './layout';
 import Menu from './menu';
 
@@ -63,7 +62,7 @@ Component.Error = function ({ className, ...props }) {
 	);
 };
 
-Component.Information = function ({ className, ...props }) {
+Component.Information = function ({ className, emoji = 'ℹ️', ...props }) {
 	className = clsx('', className);
 
 	className = clsx(className, [
@@ -74,8 +73,8 @@ Component.Information = function ({ className, ...props }) {
 
 	return (
 		<div className={className}>
-			<div className='bg-transparent '>
-				<InfoCircledIcon className='w-8 h-8 bg-transparent' />
+			<div className='bg-transparent text-3xl leading-none' aria-hidden='true'>
+				{emoji}
 			</div>
 			<div className='bg-transparent '>
 				<div {...props} />

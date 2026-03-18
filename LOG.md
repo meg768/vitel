@@ -4,6 +4,12 @@ Chronological project change log for `vitel`.
 Add new update entries here.
 
 ## Recent Updates
+- 2026-03-18: Replaced the shared `Page.Information` icon with an emoji-based indicator so informational callouts now use the same lighter visual language across the app.
+- 2026-03-18: Switched `/matches` `Nyligen avslutade` back to an always-visible section with `Page.Information` when no finished rows are visible, replacing the temporary empty-table rendering.
+- 2026-03-18: Restored `/matches` `Nyligen avslutade` as an always-visible section and now renders the section with an empty table when there are no visible finished rows.
+- 2026-03-18: Hid the entire `/matches` `Nyligen avslutade` section whenever it has no visible rows, including during the temporary empty-state simulation.
+- 2026-03-18: Temporarily simulated an empty `Nyligen avslutade` state on `/matches` with a local page flag so the section shows its empty-state message without changing live data sources.
+- 2026-03-18: Unified `/matches` section spacing by stacking `Pågående matcher`, `Nyligen avslutade`, and `Kommande matcher` in one fixed-gap layout and giving the scoreboard button its own inline top spacing inside the ongoing section.
 - 2026-03-17: Restored equal vertical spacing between the `/matches` data tables by using the same fixed inter-table gap for all sections, with the scoreboard button occupying the gap after `Pågående matcher`.
 - 2026-03-17: Added `Tidigare möten` to the `/matches` `Nyligen avslutade` table by reusing the already loaded ATP head-to-head data.
 - 2026-03-17: Normalized `/matches` vertical spacing to match the rest of the app by removing the custom section spacer and using the simpler section rhythm already used on pages like `/live` and `/oddset`.
