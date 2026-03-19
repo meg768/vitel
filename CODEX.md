@@ -96,9 +96,11 @@ Viktiga scripts i `package.json`:
 - `npm run run`
 - `npm run build`
 - `npm run preview`
+- `npm run git-backup`
+- `npm run git-commit`
+- `npm run git-delete-backup`
+- `npm run git-restore`
 - `npm run upload`
-- `npm run commit`
-- `npm run revert`
 - `npm run "goto GitHub"`
 
 ## Viktiga filer
@@ -199,6 +201,7 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-18: `package.json` uppdaterades med git-skripten `git-backup`, `git-commit`, `git-delete-backup` och `git-restore` för att matcha delad personlig workflow i `AUTHOR.md`.
 - 2026-03-18: Bekräftade att `AUTHOR.md` nu delas mellan flera projekt via symlink till `~/.codex/shared/AUTHOR.md`. Detta är den föredragna modellen för personlig, icke versionsstyrd utvecklarkontext.
 - 2026-03-18: Konsoliderade versionsstyrt projektminne till `CODEX.md`. `AUTHOR.md` lämnas kvar som lokal personlig fil som inte ska versionsstyras.
 - 2026-03-18: `/matches` och gemensamma informationslägen finputsades vidare. Fokus låg på sektionen `Nyligen avslutade`, spacing mellan sektioner och att använda lättare informationspresentation via emoji-/info-komponenter.
