@@ -7,6 +7,7 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 ## Highlights
 
 - ATP-focused dashboards and pages (`/live`, `/oddset`, `/players`, `/ranking`, `/events`, etc.)
+- Player pages and head-to-head summaries share a reusable player title with country flag and optional Wikipedia link
 - Live monitor view for active matches (`/scoreboard`)
 - Odds page (`/oddset`) powered by backend `GET /api/oddset`
 - SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
@@ -158,11 +159,12 @@ Important files:
 - `src/index.jsx` - app bootstrap, theme handling, route wiring
 - `src/js/service.js` - API wrapper based on `VITE_API_URL`
 - `src/js/vitel.js` - `useRequest`, `useSQL`, shared service export
+- `src/components/player-title.jsx` - shared player title used on player pages and head-to-head summaries
 - `src/pages/oddset/index.jsx` - `/oddset` page
 - `src/pages/live/index.jsx` - `/live` page
 - `src/pages/matches/index.jsx` - `/matches` overview page
 - `src/pages/scoreboard/index.jsx` - `/scoreboard` monitor page
-- `src/database/schema.sql` - DB schema baseline
+- `src/database/schema.sql` - DB schema baseline, including the `players.wikipedia` field used by the UI
 
 ## Scripts
 

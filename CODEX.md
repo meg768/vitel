@@ -34,6 +34,12 @@ Appen fokuserar just nu på:
 - SQL-drivna query-sidor
 - Q&A och enklare drift/debug via settings/log
 
+Nuvarande spelartitlar:
+
+- `src/components/player-title.jsx` är den gemensamma titeln för spelare
+- används både på `/player/:id` och i spelarsektionerna på `/head-to-head/:A/:B`
+- visar flagga, namn, land och en Wikipedia-knapp när `players.wikipedia` är satt och inte är tom
+
 Nuvarande huvudsidor i routing:
 
 - `/` och `/app`
@@ -113,6 +119,7 @@ Viktiga scripts i `package.json`:
 - `src/pages/matches/index.jsx` - kompakt matchöversikt
 - `src/pages/scoreboard/index.jsx` - detaljerad live monitor
 - `src/pages/query/index.jsx` - SQL-querysida
+- `src/components/player-title.jsx` - gemensam spelartitel för spelarsidor och head-to-head
 - `src/js/service.js` - låg nivå för API-anrop
 - `src/js/vitel.js` - `service`, `useRequest`, `useSQL`
 - `src/js/queries.js` - laddar `src/queries/*.sql`
@@ -164,29 +171,23 @@ Kärntabeller:
 - `players`
 - `matches`
 - `events`
-- `queries`
 - `log`
 - `settings`
-- `storage`
-- `archive`
 
 Viktiga views:
 
 - `flatly`
-- `currently`
 
 Exempel på procedurer/funktioner som återkommer i projektet:
 
-- `sp_update`
-- `sp_update_match_status`
-- `sp_update_match_duration`
-- `sp_update_surface_factors`
-- `IS_MATCH_COMPLETED`
-- `NUMBER_OF_SETS_PLAYED`
-- `NUMBER_OF_GAMES_PLAYED`
-- `NUMBER_OF_MINUTES_PLAYED`
+- `NUMBER_OF_GAMES`
 - `NUMBER_OF_SETS`
-- `NUMBER_OF_TIEBREAKS_PLAYED`
+- `NUMBER_OF_TIE_BREAKS`
+
+Viktigt om `players`:
+
+- kolumnen `wikipedia` används i UI:t för att visa en Wikipedia-knapp i den gemensamma `PlayerTitle`-komponenten
+- knappen visas bara när värdet inte är `NULL` och inte är en tom sträng
 
 ## Arbetsminne
 
@@ -201,6 +202,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-19: `README.md` och `CODEX.md` uppdaterades för den nya gemensamma `src/components/player-title.jsx` och för att dokumentera att `players.wikipedia` nu används i UI:t på `/player/:id` och `/head-to-head/:A/:B`.
+- 2026-03-19: `CODEX.md` synkades med uppdaterat `src/database/schema.sql`. Gamla tabeller/views/procedurer som inte längre finns i schemat togs bort ur databasöversikten och funktionsnamnen justerades till `NUMBER_OF_GAMES`, `NUMBER_OF_SETS` och `NUMBER_OF_TIE_BREAKS`.
 - 2026-03-18: `package.json` uppdaterades med git-skripten `git-backup`, `git-commit`, `git-delete-backup` och `git-restore` för att matcha delad personlig workflow i `AUTHOR.md`.
 - 2026-03-18: Bekräftade att `AUTHOR.md` nu delas mellan flera projekt via symlink till `~/.codex/shared/AUTHOR.md`. Detta är den föredragna modellen för personlig, icke versionsstyrd utvecklarkontext.
 - 2026-03-18: Konsoliderade versionsstyrt projektminne till `CODEX.md`. `AUTHOR.md` lämnas kvar som lokal personlig fil som inte ska versionsstyras.

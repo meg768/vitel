@@ -1,11 +1,10 @@
 import { useParams } from 'react-router';
 
-import Flag from '../../components/flag';
 import Matches from '../../components/matches';
 import Page from '../../components/page';
 import { PlayerRankingChart } from '../../components/player-ranking-charts';
 import PlayerSummary from '../../components/player-summary';
-import Link from '../../components/ui/link';
+import PlayerTitle from '../../components/player-title';
 import Tabs from '../../components/ui/tabs';
 import { useSQL } from '../../js/vitel';
 
@@ -118,14 +117,8 @@ function Component () {
 
 	function Title({ player }) {
 		return (
-			<Page.Title className='flex justify-left items-center gap-2'>
-				<Flag className='h-10! border-1 border-current' country={player.country}></Flag>
-				<div className='bg-transparent'>
-					<Link target='_blank' to={`https://www.atptour.com/en/players/X/${player.id}/overview`}>
-						{player.name}
-					</Link>
-					{`, ${player.country} `}
-				</div>
+			<Page.Title>
+				<PlayerTitle player={player} />
 			</Page.Title>
 		);
 	}
