@@ -22,7 +22,6 @@ import { useRequest, useSQL } from '../../js/vitel.js';
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
-const SIMULATE_EMPTY_FINISHED_MATCHES = true;
 
 function PlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} />;
@@ -239,14 +238,13 @@ function Component() {
 	const rows = (matches ?? [])
 		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
 	const { activeMatches, finishedMatches } = splitMatchesByStatus(rows);
-	const visibleFinishedMatches = SIMULATE_EMPTY_FINISHED_MATCHES ? [] : finishedMatches;
 	const playerDetailsByName = buildPlayerDetailsByName(playerRows);
 	const upcomingRows = (oddsetRows ?? []).map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
 		return { ...row, playerA, playerB };
 	});
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
-	const hasNoMatches = activeMatches.length === 0 && visibleFinishedMatches.length === 0 && upcomingMatches.length === 0;
+	const hasNoMatches = activeMatches.length === 0 && finishedMatches.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -286,8 +284,8 @@ function Component() {
 
 								<section className='space-y-2'>
 									<Page.Title level={2}>Nyligen avslutade</Page.Title>
-									{visibleFinishedMatches.length > 0 ? (
-										<FinishedMatchesTable rows={visibleFinishedMatches} />
+									{finishedMatches.length > 0 ? (
+										<FinishedMatchesTable rows={finishedMatches} />
 									) : (
 										<Page.Information>Inga nyligen avslutade matcher just nu</Page.Information>
 									)}
