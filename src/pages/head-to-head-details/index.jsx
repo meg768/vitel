@@ -2,7 +2,6 @@ import { useParams } from 'react-router';
 
 import Flag from '../../components/flag';
 import Page from '../../components/page';
-import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import { buildHeadToHeadQueryBatch, headToHeadQueries } from './queries';
 import { useSQL } from '../../js/vitel';
@@ -10,6 +9,10 @@ import { useSQL } from '../../js/vitel';
 function formatValue(value) {
 	if (value == null) {
 		return '-';
+	}
+
+	if (value instanceof Date && !Number.isNaN(value.getTime())) {
+		return value.toLocaleDateString('sv-SE');
 	}
 
 	if (typeof value === 'number') {
@@ -40,6 +43,21 @@ function formatValue(value) {
 		}
 
 		return trimmed;
+	}
+
+	if (typeof value === 'object') {
+		const entries = Object.values(value).filter(item => item != null && item !== '');
+
+		if (entries.length === 1) {
+			return formatValue(entries[0]);
+		}
+
+		try {
+			return JSON.stringify(value);
+		}
+		catch {
+			return '-';
+		}
 	}
 
 	return String(value);
@@ -168,10 +186,6 @@ function Component() {
 				<Title playerOne={playerOne} playerTwo={playerTwo} />
 				<Page.Container>
 					<DetailsTable rows={rows} playerOne={playerOne} playerTwo={playerTwo} />
-
-					<div className='flex justify-center pt-4'>
-						<Button link={`/head-to-head/${playerOne.id}/${playerTwo.id}`}>Gå tillbaka</Button>
-					</div>
 				</Page.Container>
 			</Page.Content>
 		</Page>
