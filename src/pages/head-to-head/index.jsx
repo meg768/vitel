@@ -4,6 +4,7 @@ import Matches from '../../components/matches';
 import Page from '../../components/page';
 import { PlayerRankingComparisonChart } from '../../components/player-ranking-charts';
 import PlayerSummary from '../../components/player-summary';
+import Button from '../../components/ui/button';
 import PlayerTitle from '../../components/player-title';
 import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel';
@@ -113,6 +114,9 @@ let Component = () => {
 					<HeadToHeadRankingChart {...response} />
 					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
+					<div className='flex justify-center pt-4'>
+						<Button link={`/head-to-head-details/${playerOne.id}/${playerTwo.id}`}>Detaljer</Button>
+					</div>
 				</Page.Container>
 			</>
 		);

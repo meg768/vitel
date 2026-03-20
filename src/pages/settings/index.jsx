@@ -6,14 +6,12 @@ import Menu from '../../components/menu';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
+import { theme } from '../../js/theme';
 import { service } from '../../js/vitel';
 
 const LOG_SQL = `SELECT * FROM log WHERE timestamp >= CURDATE() - INTERVAL 1 DAY ORDER BY timestamp ASC;`;
 
 export default function SettingsPage() {
-	const themeClasses = ['light', 'dark', 'hard', 'clay', 'grass'];
-	const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
-	const defaultTheme = 'auto auto';
 	const queryClient = useQueryClient();
 
 	const [activeSurface, setActiveSurface] = useState('auto');
@@ -24,14 +22,14 @@ export default function SettingsPage() {
 	// Load theme from localStorage on first mount
 	useEffect(() => {
 		const stored = localStorage.getItem('theme');
-		const theme = stored && validTheme.test(stored) ? stored : defaultTheme;
-		const [mode, surface] = theme.split(' ');
+		const themeValue = stored && theme.validTheme.test(stored) ? stored : theme.defaultTheme;
+		const [mode, surface] = themeValue.split(' ');
 
 		setActiveMode(mode);
 		setActiveSurface(surface);
 
-		if (!stored || !validTheme.test(stored)) {
-			localStorage.setItem('theme', theme);
+		if (!stored || !theme.validTheme.test(stored)) {
+			localStorage.setItem('theme', themeValue);
 		}
 
 		setInitialized(true);
@@ -60,32 +58,17 @@ export default function SettingsPage() {
 	}, [activeMode]);
 
 	function applyClasses(mode, surface) {
-		function getAutomaticSurface(date = new Date()) {
-			const month = date.getMonth() + 1;
-			const day = date.getDate();
-			const md = month * 100 + day;
-
-			if (md >= 401 && md <= 615) {
-				return 'clay';
-			}
-
-			if (md >= 616 && md <= 720) {
-				return 'grass';
-			}
-
-			return 'hard';
-		}
-
 		const root = document.body;
 		if (!root) return;
 
-		root.classList.remove(...themeClasses);
+		root.classList.remove(...theme.classes);
 
-		const effectiveMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
-		const effectiveSurface = surface === 'auto' ? getAutomaticSurface() : surface;
+		const { resolvedMode, resolvedSurface } = theme.resolve(`${mode} ${surface}`, {
+			prefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches
+		});
 
-		root.classList.add(effectiveMode);
-		root.classList.add(effectiveSurface);
+		root.classList.add(resolvedMode);
+		root.classList.add(resolvedSurface);
 
 		localStorage.setItem('theme', `${mode} ${surface}`);
 	}

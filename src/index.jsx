@@ -6,6 +6,7 @@ import App from './pages/app';
 import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
+import HeadToHeadDetails from './pages/head-to-head-details';
 import Live from './pages/live';
 import Log from './pages/log';
 import Matches from './pages/matches';
@@ -18,6 +19,7 @@ import Query from './pages/query';
 import Ranking from './pages/ranking';
 import Scoreboard from './pages/scoreboard';
 import Settings from './pages/settings';
+import { theme } from './js/theme';
 
 function LegacyScoreboardRedirect() {
 	const { A, B } = useParams();
@@ -34,7 +36,7 @@ class WebApp {
 		// Keep rootId fallback for quick switch back to #root mounting if needed.
 		//this.rootElement = document.getElementById(rootId);
 		// Classes that may be toggled by theme/surface handling.
-		this.themeClasses = ['dark', 'light', 'clay', 'grass', 'hard'];
+		this.themeClasses = theme.classes;
 		this.mql = null;
 
 		// Load persisted theme and apply it before first render.
@@ -46,47 +48,35 @@ class WebApp {
 
 	getInitialTheme() {
 		// Stored format: "<mode> <surface>", e.g. "dark clay".
-		let theme = localStorage.getItem('theme');
+		let themeValue = localStorage.getItem('theme');
 
 		// Accept any valid "mode surface" combination.
-		const validTheme = /^(light|dark|auto) (hard|clay|grass|auto)$/;
-
-		if (!theme || !validTheme.test(theme)) {
-			theme = 'auto auto';
-			localStorage.setItem('theme', theme);
+		if (!themeValue || !this.isValidTheme(themeValue)) {
+			themeValue = this.getDefaultTheme();
+			localStorage.setItem('theme', themeValue);
 		}
 
-		return theme;
+		return themeValue;
 	}
 
-	applyTheme(theme) {
-		function getAutomaticSurface(date = new Date()) {
-			const month = date.getMonth() + 1;
-			const day = date.getDate();
-			const md = month * 100 + day;
+	isValidTheme(themeValue) {
+		return theme.validTheme.test(themeValue);
+	}
 
-			if (md >= 401 && md <= 615) {
-				return 'clay';
-			}
+	getDefaultTheme() {
+		return theme.defaultTheme;
+	}
 
-			if (md >= 616 && md <= 720) {
-				return 'grass';
-			}
-
-			return 'hard';
-		}
-
+	applyTheme(themeValue) {
 		const root = this.rootElement;
 		if (!root) return;
 
 		// Remove all known theme/surface classes, then apply current selection.
 		root.classList.remove(...this.themeClasses);
 
-		const [mode, surface] = theme.split(' ');
-		const resolvedSurface = surface === 'auto' ? getAutomaticSurface() : surface;
-
-		// "auto" resolves to current OS preference.
-		const resolvedMode = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
+		const { mode, surface, resolvedMode, resolvedSurface } = theme.resolve(themeValue, {
+			prefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches
+		});
 
 		root.classList.add(resolvedMode);
 		if (resolvedSurface) root.classList.add(resolvedSurface);
@@ -130,6 +120,7 @@ class WebApp {
 							<Route path='/' element={<App />} />
 							<Route path='/app' element={<App />} />
 							<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
+							<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
 							<Route path='/event/:id' element={<Event />} />
 							<Route path='/player/:id' element={<Player />} />
 							<Route path='/ranking' element={<Ranking />} />

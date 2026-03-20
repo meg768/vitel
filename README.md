@@ -109,6 +109,7 @@ Main client routes:
 - `/` and `/app`
 - `/player/:id`
 - `/head-to-head/:A/:B`
+- `/head-to-head-details/:A/:B`
 - `/event/:id`
 - `/ranking`
 - `/events`
@@ -131,6 +132,8 @@ Main client routes:
 - SQL files live in `src/queries/*.sql`
 - Loaded via `import.meta.glob` in `src/js/queries.js`
 - Filename (without `.sql`) becomes route id for `/query/:name`
+- Head-to-head detail questions live locally in `src/pages/head-to-head-details/queries/*.sql`
+- These are loaded by `src/pages/head-to-head-details/queries.js` for `/head-to-head-details/:A/:B`
 - Metadata can be included in the first SQL block comment:
 
 ```sql
@@ -160,6 +163,8 @@ Important files:
 - `src/js/service.js` - API wrapper based on `VITE_API_URL`
 - `src/js/vitel.js` - `useRequest`, `useSQL`, shared service export
 - `src/components/player-title.jsx` - shared player title used on player pages and head-to-head summaries
+- `src/pages/head-to-head-details/index.jsx` - SQL-driven head-to-head details page
+- `src/pages/head-to-head-details/queries.js` - loader for local head-to-head detail queries
 - `src/pages/oddset/index.jsx` - `/oddset` page
 - `src/pages/live/index.jsx` - `/live` page
 - `src/pages/matches/index.jsx` - `/matches` overview page

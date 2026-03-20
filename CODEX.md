@@ -40,11 +40,19 @@ Nuvarande spelartitlar:
 - används både på `/player/:id` och i spelarsektionerna på `/head-to-head/:A/:B`
 - visar flagga, namn, land och en Wikipedia-knapp när `players.wikipedia` är satt och inte är tom
 
+Nuvarande head-to-head-fördjupning:
+
+- `/head-to-head/:A/:B` hålls lätt och fokuserar på översikt
+- `/head-to-head-details/:A/:B` är den separata fördjupningssidan för jämförande frågor mellan två spelare
+- detaljsidan är SQL-driven och bygger en enda trekolumnstabell via `src/components/ui/data-table.jsx`
+- frågorna ligger lokalt i `src/pages/head-to-head-details/queries/*.sql` och laddas av en lokal loader
+
 Nuvarande huvudsidor i routing:
 
 - `/` och `/app`
 - `/player/:id`
 - `/head-to-head/:A/:B`
+- `/head-to-head-details/:A/:B`
 - `/event/:id`
 - `/ranking`
 - `/events`
@@ -118,6 +126,8 @@ Viktiga scripts i `package.json`:
 - `src/pages/oddset/index.jsx` - Oddset-sida
 - `src/pages/matches/index.jsx` - kompakt matchöversikt
 - `src/pages/scoreboard/index.jsx` - detaljerad live monitor
+- `src/pages/head-to-head-details/index.jsx` - SQL-driven head-to-head-sida med jämförande frågor
+- `src/pages/head-to-head-details/queries.js` - laddar och kompilerar lokala frågor för head-to-head-detaljsidan
 - `src/pages/query/index.jsx` - SQL-querysida
 - `src/components/player-title.jsx` - gemensam spelartitel för spelarsidor och head-to-head
 - `src/js/service.js` - låg nivå för API-anrop
@@ -141,6 +151,15 @@ SQL-filer i `src/queries/*.sql` laddas via `import.meta.glob` och används på `
 - filnamnet utan `.sql` blir route-id
 - metadata kan ligga i första kommentarblocket
 - stödda metadatafält är i praktiken `@title` och `@description`
+
+Separata head-to-head-frågor:
+
+- SQL-filer i `src/pages/head-to-head-details/queries/*.sql` används bara på `/head-to-head-details/:A/:B`
+- varje fil motsvarar exakt en rad i detaljtabellen
+- `@title` blir kolumnen `Fråga`
+- SQL returnerar exakt en rad med kolumnerna `player_a_value` och `player_b_value`
+- filordningen styrs av filnamnsprefix som `01-...`, `02-...`
+- plats­hållarna `:playerA` och `:playerB` kompileras till `?` i `src/pages/head-to-head-details/queries.js`
 
 Exempel:
 
@@ -210,6 +229,10 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-20: Auto-underlaget i `src/js/theme.js` justerades från 2026-specifika datum till återkommande säsongsfönster över året. Logiken är fortfarande ATP-kalenderstyrd, men uttrycks nu som månad/dag-intervall så att Miami-perioden blir hardcourt varje år utan årlig kodändring.
+- 2026-03-20: Temalogiken bröts ut till `src/js/theme.js`, och auto-underlag styrs nu via kuraterade datumfönster för ATP-säsongen 2026 i stället för den tidigare enkla månadslogiken. Syftet är att bättre matcha stora turneringsperioder som Miami (hard), grussvingen, grässvingen och sommarens sena hardcourtperiod.
+- 2026-03-20: `/head-to-head-details/:A/:B` refaktorerades till en SQL-driven sida. Frågorna ligger lokalt i `src/pages/head-to-head-details/queries/*.sql`, en lokal loader `src/pages/head-to-head-details/queries.js` lades till och sidan visar nu en enda trekolumnstabell (`Fråga`, spelare A, spelare B).
+- 2026-03-20: En ny route `/head-to-head-details/:A/:B` lades till som separat fördjupningssida för head-to-head. `/head-to-head/:A/:B` behölls lättare och fick bara en knapp längst ned som länkar vidare till den nya sidan.
 - 2026-03-20: `README.md` synkades med `package.json` så att scriptlistan nu dokumenterar `git-backup`, `git-commit`, `git-delete-backup` och `git-restore` i stället för gamla `commit`/`revert`.
 - 2026-03-20: `CODEX.md` uppdaterades efter ny genomläsning av projektet. Det dokumenterades uttryckligen att `src/pages/calendar`, `src/pages/more` och `src/pages/plj` fortfarande ligger kvar i trädet men inte är aktiva routes i `src/index.jsx`.
 - 2026-03-19: `README.md` och `CODEX.md` uppdaterades för den nya gemensamma `src/components/player-title.jsx` och för att dokumentera att `players.wikipedia` nu används i UI:t på `/player/:id` och `/head-to-head/:A/:B`.
