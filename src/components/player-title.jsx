@@ -29,11 +29,11 @@ function Component({ player, className, nameTo, nameTarget }) {
 							<Link
 								target='_blank'
 								to={player.wikipedia}
-								className='inline-flex items-center justify-center rounded-full border border-primary-300! bg-primary-100! p-2 transition-opacity hover:opacity-80 dark:border-primary-200! dark:bg-primary-600!'
+								className='inline-flex items-center justify-center rounded-full border border-primary-300! bg-primary-100! p-1 transition-opacity hover:opacity-80 dark:border-primary-200! dark:bg-primary-600!'
 								title='Wikipedia'
 								aria-label={`Wikipedia for ${player.name}`}
 							>
-								<WikipediaLogo className='h-5 w-5 text-primary-950 [fill:currentColor] dark:text-primary-50' />
+								<WikipediaLogo className='h-3.5 w-3.5 text-primary-950 [fill:currentColor] dark:text-primary-50' />
 							</Link>
 						) : null}
 				</div>

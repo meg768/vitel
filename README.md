@@ -171,9 +171,11 @@ Important files:
 - `npm run run` - start Vite dev server
 - `npm run build` - production build to `dist/`
 - `npm run preview` - preview built app
+- `npm run git-backup` - commit dirty changes as `backup`, push current branch, and force-push a `backup/<branch>` branch
+- `npm run git-commit` - add all changes, commit with `-`, and push
+- `npm run git-delete-backup` - delete the remote `backup/<branch>` branch and prune refs
+- `npm run git-restore` - hard-reset current branch to `origin/backup/<branch>` and force-push it back
 - `npm run upload` - build and upload `dist/*` to server via `scp`
-- `npm run commit` - add/commit/push helper
-- `npm run revert` - revert latest commit and push
 - `npm run "goto GitHub"` - open repository in browser (macOS `open`)
 
 ## Deployment Notes

@@ -127,6 +127,13 @@ Viktiga scripts i `package.json`:
 - `src/database/schema.sql` - databasschema, views, funktioner och procedurer
 - `src/components/ui/markdown.jsx` - markdownrendering i UI
 
+Kataloger som fortfarande finns i `src/pages/` men inte är aktiva routes i `src/index.jsx`:
+
+- `src/pages/calendar`
+- `src/pages/more`
+- `src/pages/plj`
+- de ska behandlas som historiska/inaktiva tills de uttryckligen tas i bruk igen
+
 ## Query-system
 
 SQL-filer i `src/queries/*.sql` laddas via `import.meta.glob` och används på `/query/:name`.
@@ -195,6 +202,7 @@ Det som är viktigt att komma ihåg framåt:
 
 - Backend `GET /oddset` är den tänkta källan för odds i UI:t.
 - `/matches` och `/scoreboard` är de namn som gäller nu; äldre `live-matches-*` lever bara som redirects.
+- Det finns fortfarande några äldre sidkataloger kvar i trädet, men de är inte del av den aktiva routingen.
 - Menyn är medvetet kort och ska hållas enkel.
 - `AUTHOR.md` ska inte återintroduceras i Git eller blandas in i versionsstyrd projektkontext.
 - Lokal `AUTHOR.md` kan vara en symlink till `~/.codex/shared/AUTHOR.md` för att dela samma personliga utvecklarkontext mellan flera projekt.
@@ -202,6 +210,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-20: `README.md` synkades med `package.json` så att scriptlistan nu dokumenterar `git-backup`, `git-commit`, `git-delete-backup` och `git-restore` i stället för gamla `commit`/`revert`.
+- 2026-03-20: `CODEX.md` uppdaterades efter ny genomläsning av projektet. Det dokumenterades uttryckligen att `src/pages/calendar`, `src/pages/more` och `src/pages/plj` fortfarande ligger kvar i trädet men inte är aktiva routes i `src/index.jsx`.
 - 2026-03-19: `README.md` och `CODEX.md` uppdaterades för den nya gemensamma `src/components/player-title.jsx` och för att dokumentera att `players.wikipedia` nu används i UI:t på `/player/:id` och `/head-to-head/:A/:B`.
 - 2026-03-19: `CODEX.md` synkades med uppdaterat `src/database/schema.sql`. Gamla tabeller/views/procedurer som inte längre finns i schemat togs bort ur databasöversikten och funktionsnamnen justerades till `NUMBER_OF_GAMES`, `NUMBER_OF_SETS` och `NUMBER_OF_TIE_BREAKS`.
 - 2026-03-18: `package.json` uppdaterades med git-skripten `git-backup`, `git-commit`, `git-delete-backup` och `git-restore` för att matcha delad personlig workflow i `AUTHOR.md`.
