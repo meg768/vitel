@@ -1,6 +1,6 @@
 /*
 @title
-Head-to-head totalt
+Inbördes möte
 
 @description
 Visar den totala head-to-head-ställningen mellan spelarna, räknat som antal segrar mot just den andra spelaren.
