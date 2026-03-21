@@ -1,8 +1,12 @@
+import React from 'react';
 import { useParams } from 'react-router';
 
+import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
+import InfoCircledIcon from '../../assets/radix-icons/info-circled.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
+import Markdown from '../../components/ui/markdown';
 import { buildHeadToHeadQueryBatch, headToHeadQueries } from './queries';
 import { useSQL } from '../../js/vitel';
 
@@ -63,21 +67,98 @@ function formatValue(value) {
 	return String(value);
 }
 
-function DetailsTable({ rows, playerOne, playerTwo }) {
+function QueryDescriptionDialog({ query, onClose }) {
+	React.useEffect(() => {
+		function onKeyDown(event) {
+			if (event.key === 'Escape') {
+				onClose();
+			}
+		}
+
+		document.addEventListener('keydown', onKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', onKeyDown);
+		};
+	}, [onClose]);
+
 	return (
-		<Table rows={rows}>
-			<Table.Column id='question'>
-				<Table.Title>Fråga</Table.Title>
-			</Table.Column>
+		<div
+			className='fixed inset-0 z-50 flex items-center justify-center bg-primary-950/30 p-4 backdrop-blur-[1px]'
+			onClick={onClose}
+			role='dialog'
+			aria-label={`Beskrivning för ${query.title}`}
+		>
+			<div
+				className='w-full max-w-xl rounded-sm border border-primary-300 bg-primary-50 p-4 shadow-xl dark:border-primary-600 dark:bg-primary-900'
+				onClick={event => event.stopPropagation()}
+			>
+				<div className='flex items-start justify-between gap-3'>
+					<div className='min-w-0'>
+						<div className='text-sm font-semibold text-primary-900 dark:text-primary-50'>{query.title}</div>
+					</div>
+					<button
+						type='button'
+						onClick={onClose}
+						className='flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-primary-600 hover:bg-primary-100 hover:text-primary-900 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-50'
+						aria-label='Stäng beskrivning'
+					>
+						<Cross2Icon className='h-4 w-4 bg-transparent' />
+					</button>
+				</div>
+				<div className='mt-3 max-h-[min(24rem,calc(100vh-8rem))] overflow-auto text-sm text-primary-800 dark:text-primary-100'>
+					<Markdown className='prose-sm'>
+						{query.description}
+					</Markdown>
+				</div>
+			</div>
+		</div>
+	);
+}
 
-			<Table.Column id='playerOneValue'>
-				<Table.Title>{playerOne.name}</Table.Title>
-			</Table.Column>
+function QuestionCell({ row, onOpenQuestionChange }) {
+	return (
+		<div className='flex items-center gap-2 bg-transparent'>
+			<span className='bg-transparent'>{row.question}</span>
+			{row.query?.description ? (
+				<button
+					type='button'
+					onClick={() => onOpenQuestionChange(row.query)}
+					className='flex h-6 w-6 shrink-0 items-center justify-center bg-transparent text-primary-700 hover:opacity-60 dark:text-primary-100'
+					aria-label={`Visa beskrivning för ${row.query.title}`}
+					title='Visa beskrivning'
+				>
+					<InfoCircledIcon className='h-4.5 w-4.5 bg-transparent' />
+				</button>
+			) : null}
+		</div>
+	);
+}
 
-			<Table.Column id='playerTwoValue'>
-				<Table.Title>{playerTwo.name}</Table.Title>
-			</Table.Column>
-		</Table>
+function DetailsTable({ rows, playerOne, playerTwo }) {
+	const [openQuery, setOpenQuery] = React.useState(null);
+
+	return (
+		<>
+			<Table rows={rows}>
+				<Table.Column id='question'>
+					<Table.Title>Fråga</Table.Title>
+					<Table.Cell>
+						{({ row }) => <QuestionCell row={row} onOpenQuestionChange={setOpenQuery} />}
+					</Table.Cell>
+				</Table.Column>
+
+				<Table.Column id='playerOneValue'>
+					<Table.Title>{playerOne.name}</Table.Title>
+				</Table.Column>
+
+				<Table.Column id='playerTwoValue'>
+					<Table.Title>{playerTwo.name}</Table.Title>
+				</Table.Column>
+			</Table>
+
+			{openQuery ? <QueryDescriptionDialog query={openQuery} onClose={() => setOpenQuery(null)} /> : null}
+		</>
 	);
 }
 
@@ -173,6 +254,7 @@ function Component() {
 		const resultRow = queryResults[index]?.[0] ?? {};
 
 		return {
+			query,
 			question: query.title,
 			playerOneValue: formatValue(resultRow.player_a_value),
 			playerTwoValue: formatValue(resultRow.player_b_value)

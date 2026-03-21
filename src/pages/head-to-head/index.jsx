@@ -115,7 +115,7 @@ let Component = () => {
 					<Page.Title level={2}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
 					<div className='flex justify-center pt-4'>
-						<Button link={`/head-to-head-details/${playerOne.id}/${playerTwo.id}`}>Detaljer</Button>
+						<Button link={`/head-to-head-details/${playerOne.id}/${playerTwo.id}`}>Visa mer statistik</Button>
 					</div>
 				</Page.Container>
 			</>

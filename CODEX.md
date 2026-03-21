@@ -229,6 +229,7 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-21: `/head-to-head-details/:A/:B` fick en diskret beskrivnings-popup per fråga. `@description` från query-filerna kan nu öppnas via en liten info-knapp bredvid frågetexten och renderas som Markdown utan att tabellayouten ändras.
 - 2026-03-21: Numreringen för `src/pages/head-to-head-details/queries/*.sql` ändrades till steg om 10 (`10-...`, `20-...`, `30-...`) för att göra det enklare att placera in nya frågor mellan befintliga.
 - 2026-03-21: En ny head-to-head-detaljfråga lades till i `src/pages/head-to-head-details/queries/30-win-rate-vs-better-ranked-last-12-months.sql`. Den visar vinstprocent mot bättre rankade motståndare över 3/6/12 månader och kräver minst 5 sådana matcher i respektive period för att visa ett värde.
 - 2026-03-20: Auto-underlaget i `src/js/theme.js` justerades från 2026-specifika datum till återkommande säsongsfönster över året. Logiken är fortfarande ATP-kalenderstyrd, men uttrycks nu som månad/dag-intervall så att Miami-perioden blir hardcourt varje år utan årlig kodändring.
