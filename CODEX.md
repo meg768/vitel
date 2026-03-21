@@ -158,7 +158,7 @@ Separata head-to-head-frågor:
 - varje fil motsvarar exakt en rad i detaljtabellen
 - `@title` blir kolumnen `Fråga`
 - SQL returnerar exakt en rad med kolumnerna `player_a_value` och `player_b_value`
-- filordningen styrs av filnamnsprefix som `01-...`, `02-...`
+- filordningen styrs av filnamnsprefix som `10-...`, `20-...`
 - plats­hållarna `:playerA` och `:playerB` kompileras till `?` i `src/pages/head-to-head-details/queries.js`
 
 Exempel:
@@ -229,7 +229,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
-- 2026-03-21: En ny head-to-head-detaljfråga lades till i `src/pages/head-to-head-details/queries/03-win-rate-vs-better-ranked-last-12-months.sql`. Den visar vinstprocent mot bättre rankade motståndare över 3/6/12 månader och kräver minst 5 sådana matcher i respektive period för att visa ett värde.
+- 2026-03-21: Numreringen för `src/pages/head-to-head-details/queries/*.sql` ändrades till steg om 10 (`10-...`, `20-...`, `30-...`) för att göra det enklare att placera in nya frågor mellan befintliga.
+- 2026-03-21: En ny head-to-head-detaljfråga lades till i `src/pages/head-to-head-details/queries/30-win-rate-vs-better-ranked-last-12-months.sql`. Den visar vinstprocent mot bättre rankade motståndare över 3/6/12 månader och kräver minst 5 sådana matcher i respektive period för att visa ett värde.
 - 2026-03-20: Auto-underlaget i `src/js/theme.js` justerades från 2026-specifika datum till återkommande säsongsfönster över året. Logiken är fortfarande ATP-kalenderstyrd, men uttrycks nu som månad/dag-intervall så att Miami-perioden blir hardcourt varje år utan årlig kodändring.
 - 2026-03-20: Temalogiken bröts ut till `src/js/theme.js`, och auto-underlag styrs nu via kuraterade datumfönster för ATP-säsongen 2026 i stället för den tidigare enkla månadslogiken. Syftet är att bättre matcha stora turneringsperioder som Miami (hard), grussvingen, grässvingen och sommarens sena hardcourtperiod.
 - 2026-03-20: `/head-to-head-details/:A/:B` refaktorerades till en SQL-driven sida. Frågorna ligger lokalt i `src/pages/head-to-head-details/queries/*.sql`, en lokal loader `src/pages/head-to-head-details/queries.js` lades till och sidan visar nu en enda trekolumnstabell (`Fråga`, spelare A, spelare B).
