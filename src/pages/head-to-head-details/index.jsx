@@ -84,13 +84,13 @@ function QueryDescriptionDialog({ query, onClose }) {
 
 	return (
 		<div
-			className='fixed inset-0 z-50 flex items-center justify-center bg-primary-950/30 p-4 backdrop-blur-[1px]'
+			className='fixed inset-0 z-50 bg-primary-950/30 p-4'
 			onClick={onClose}
 			role='dialog'
 			aria-label={`Beskrivning för ${query.title}`}
 		>
 			<div
-				className='w-full max-w-xl rounded-sm border border-primary-300 bg-primary-50 p-4 shadow-xl dark:border-primary-600 dark:bg-primary-900'
+				className='fixed top-[33dvh] left-1/2 w-[min(calc(100vw-2rem),36rem)] -translate-x-1/2 -translate-y-1/2 rounded-sm border border-primary-300 bg-primary-100 p-4 shadow-xl dark:border-primary-600 dark:bg-primary-800'
 				onClick={event => event.stopPropagation()}
 			>
 				<div className='flex items-start justify-between gap-3'>
