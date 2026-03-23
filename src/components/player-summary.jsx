@@ -198,9 +198,9 @@ function Component({ player, matches }) {
 	}
 
 	function SurfaceStats() {
-		let A = player.hard_factor || '-';
-		let B = player.clay_factor || '-';
-		let C = player.grass_factor || '-';
+		let A = player.elo_rank_hard || '-';
+		let B = player.elo_rank_clay || '-';
+		let C = player.elo_rank_grass || '-';
 		return <SummaryTable.Cell name={'Hard/Clay/Grass'} value={`${A}/${B}/${C}`} />;
 	}
 
