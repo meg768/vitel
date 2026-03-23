@@ -117,7 +117,7 @@ class WebApp {
 			<QueryClientProvider client={new QueryClient()}>
 				<HashRouter>
 						<Routes>
-							<Route path='/' element={<App />} />
+							<Route path='/' element={<Navigate to='/matches' replace />} />
 							<Route path='/app' element={<App />} />
 							<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
 							<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
