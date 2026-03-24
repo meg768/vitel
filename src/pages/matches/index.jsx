@@ -209,7 +209,7 @@ function UpcomingMatchesTable({ rows }) {
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>Rek</Table.Title>
+				<Table.Title>Tips</Table.Title>
 				<Table.Value>{({ row }) => row.recommendation ?? '-'}</Table.Value>
 			</Table.Column>
 		</Table>
