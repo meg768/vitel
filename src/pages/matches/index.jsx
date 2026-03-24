@@ -24,6 +24,72 @@ const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
 
+function parseOddsValue(value) {
+	if (typeof value === 'number' && Number.isFinite(value)) {
+		return value;
+	}
+
+	if (typeof value !== 'string') {
+		return null;
+	}
+
+	const normalized = value.trim().replace(',', '.');
+	if (!normalized || normalized === '-') {
+		return null;
+	}
+
+	const parsed = Number(normalized);
+	return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseOddsPair(value) {
+	if (typeof value !== 'string') {
+		return [null, null];
+	}
+
+	const [left, right] = value.split(' - ');
+	return [parseOddsValue(left), parseOddsValue(right)];
+}
+
+function formatEdgePercent(value) {
+	if (!Number.isFinite(value)) {
+		return null;
+	}
+
+	return String(Math.round(value));
+}
+
+function getRecommendationFromOdds(bookmakerOdds, myOdds) {
+	const [bookmakerA, bookmakerB] = parseOddsPair(bookmakerOdds);
+	const [myA, myB] = parseOddsPair(myOdds);
+	const candidates = [
+		{ offeredOdds: bookmakerA, myOdds: myA },
+		{ offeredOdds: bookmakerB, myOdds: myB }
+	]
+		.map(candidate => {
+			if (!candidate.offeredOdds || !candidate.myOdds) {
+				return null;
+			}
+
+			return {
+				offeredOdds: candidate.offeredOdds,
+				edgePercent: ((1 / candidate.myOdds) - (1 / candidate.offeredOdds)) * 100
+			};
+		})
+		.filter(Boolean)
+		.filter(candidate => candidate.edgePercent > 0)
+		.sort((a, b) => b.edgePercent - a.edgePercent);
+
+	const bestCandidate = candidates[0];
+
+	if (!bestCandidate) {
+		return '-';
+	}
+
+	const edgePercent = formatEdgePercent(bestCandidate.edgePercent);
+	return `${bestCandidate.offeredOdds.toFixed(2)} (${edgePercent}%)`;
+}
+
 function PlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} />;
 }
@@ -101,12 +167,17 @@ function UpcomingMatchesTable({ rows }) {
 			</Table.Column>
 
 			<Table.Column id='odds'>
-				<Table.Title>Odds</Table.Title>
+				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>Vitel odds</Table.Title>
+				<Table.Title>Vitel</Table.Title>
 				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>Rek</Table.Title>
+				<Table.Value>{({ row }) => row.recommendation ?? '-'}</Table.Value>
 			</Table.Column>
 		</Table>
 	);
@@ -262,7 +333,11 @@ function Component() {
 		...row,
 		myOdds: getCalculatedOddsForMatch(row, calculatedOddsByMatch)
 	}));
-	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
+	const upcomingRowsWithRecommendation = upcomingRows.map(row => ({
+		...row,
+		recommendation: getRecommendationFromOdds(row.odds, row.myOdds)
+	}));
+	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRowsWithRecommendation);
 	const hasNoMatches = activeMatches.length === 0 && finishedMatches.length === 0 && upcomingMatches.length === 0;
 
 	return (
