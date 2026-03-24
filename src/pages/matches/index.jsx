@@ -25,6 +25,38 @@ const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
 
+function normalizeName(name = '') {
+	return String(name)
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.replace(/[^a-z0-9 ]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+function createPlayersKey(playerA, playerB) {
+	const left = normalizeName(playerA);
+	const right = normalizeName(playerB);
+
+	if (!left || !right) {
+		return null;
+	}
+
+	return [left, right].sort().join('::');
+}
+
+function createPlayersIdentityKey(playerA, playerB) {
+	const idA = playerA?.id ? String(playerA.id).trim().toUpperCase() : '';
+	const idB = playerB?.id ? String(playerB.id).trim().toUpperCase() : '';
+
+	if (idA && idB) {
+		return [idA, idB].sort().join('::');
+	}
+
+	return createPlayersKey(playerA?.name, playerB?.name);
+}
+
 function parseOddsValue(value) {
 	if (typeof value === 'number' && Number.isFinite(value)) {
 		return value;
@@ -330,7 +362,17 @@ function Component() {
 	const rows = (matches ?? [])
 		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
 	const { activeMatches, finishedMatches } = splitMatchesByStatus(rows);
-	const upcomingRows = resolvedUpcomingRows.map(row => ({
+	const activeMatchKeys = new Set(
+		activeMatches
+			.map(match => createPlayersIdentityKey(match.player, match.opponent))
+			.filter(Boolean)
+	);
+	const upcomingRows = resolvedUpcomingRows
+		.filter(row => {
+			const key = createPlayersIdentityKey(row.playerA, row.playerB);
+			return key ? !activeMatchKeys.has(key) : true;
+		})
+		.map(row => ({
 		...row,
 		myOdds: getCalculatedOddsForMatch(row, calculatedOddsByMatch)
 	}));
