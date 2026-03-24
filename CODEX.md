@@ -22,6 +22,8 @@ Nuvarande huvudbild:
 - Backendkontrakt som används i frontenden: `GET /live`, `GET /oddset`, `POST /query`
 - Databasschema source of truth: `src/database/schema.sql`
 - Backendrepo: `meg768/atp-tennis`
+- Lokal backend i utveckling ligger i syskonmappen `../atp-tennis`
+- Oddset ska betraktas som backendägt: frontend får inte hämta Oddset/Kambi direkt utan ska gå via backendens `GET /api/oddset`
 
 ## Nuvarande produktbild
 
