@@ -7,7 +7,7 @@ import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { CALCULATED_ODDS_QUERY_KEY, fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from '../../js/calculated-odds.js';
+import { CALCULATED_ODDS_QUERY_KEY, fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from './calculated-odds.js';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/live-oddset.js';
 import { addRankingAndDisplayFields, buildHeadToHeadQuery } from '../../js/live-match-rows.js';
 import {

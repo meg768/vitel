@@ -1,5 +1,5 @@
-import { service } from './vitel.js';
-import { theme } from './theme.js';
+import { theme } from '../../js/theme.js';
+import { service } from '../../js/vitel.js';
 
 const CALCULATED_ODDS_QUERY_KEY = ['odds', 'calculated', 'matches'];
 
