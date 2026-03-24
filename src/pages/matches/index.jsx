@@ -123,8 +123,25 @@ function getRecommendationFromOdds(bookmakerOdds, myOdds) {
 	return `${bestCandidate.offeredOdds.toFixed(2)} (${edgePercent}%)`;
 }
 
-function PlayersCell({ row }) {
-	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} />;
+function PlayersCell({ row, showHeadToHead = false }) {
+	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} suffix={showHeadToHead && row.headToHead ? `[${row.headToHead}]` : null} />;
+}
+
+function ActivePlayersCell({ row }) {
+	return <PlayersHeadToHead playerA={row.player} playerB={row.opponent} suffix={row.headToHead ? `[${row.headToHead}]` : null} />;
+}
+
+function getHeadToHeadValue(playerA, playerB, headToHeadByPair) {
+	if (!playerA?.id || !playerB?.id) {
+		return null;
+	}
+
+	const pairKey = [playerA.id, playerB.id].sort().join(':');
+	const record = headToHeadByPair[pairKey];
+	const playerAWins = record?.[playerA.id] ?? 0;
+	const playerBWins = record?.[playerB.id] ?? 0;
+
+	return `${playerAWins}-${playerBWins}`;
 }
 
 function MatchesTable({ rows }) {
@@ -137,11 +154,7 @@ function MatchesTable({ rows }) {
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
-				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
-			</Table.Column>
-
-			<Table.Column id='headToHead'>
-				<Table.Title>Tidigare möten</Table.Title>
+				<Table.Value>{({ row }) => <ActivePlayersCell row={row} />}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='score'>
@@ -165,7 +178,7 @@ function FinishedMatchesTable({ rows }) {
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
-				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
+				<Table.Value>{({ row }) => <PlayersCell row={row} showHeadToHead={true} />}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='score'>
@@ -176,7 +189,7 @@ function FinishedMatchesTable({ rows }) {
 }
 
 function UpcomingPlayersCell({ row }) {
-	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} />;
+	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} suffix={row.headToHead ? `[${row.headToHead}]` : null} />;
 }
 
 function UpcomingMatchesTable({ rows }) {
@@ -264,7 +277,21 @@ function Component() {
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
-	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(matches ?? []), [matches]);
+	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
+	const playerDetailsByName = buildPlayerDetailsByName(playerRows ?? []);
+	const resolvedUpcomingRows = (oddsetRows ?? []).map(row => {
+		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
+		return { ...row, playerA, playerB };
+	});
+	const headToHeadRows = React.useMemo(() => {
+		const upcomingMatches = resolvedUpcomingRows.map(row => ({
+			player: row.playerA,
+			opponent: row.playerB
+		}));
+
+		return [...(matches ?? []), ...upcomingMatches];
+	}, [matches, resolvedUpcomingRows]);
+	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(headToHeadRows), [headToHeadRows]);
 	const { data: meetingRows, error: meetingError } = useSQL({
 		sql: headToHeadQuery.sql,
 		format: headToHeadQuery.format,
@@ -274,12 +301,6 @@ function Component() {
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		placeholderData: previousData => previousData
-	});
-	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
-	const playerDetailsByName = buildPlayerDetailsByName(playerRows ?? []);
-	const resolvedUpcomingRows = (oddsetRows ?? []).map(row => {
-		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
-		return { ...row, playerA, playerB };
 	});
 	const { data: calculatedOddsByMatch = {} } = useQuery({
 		queryKey: [CALCULATED_ODDS_QUERY_KEY, resolvedUpcomingRows.map(row => [row.playerA?.id, row.playerB?.id, row._startTimestamp ?? null])],
@@ -369,9 +390,10 @@ function Component() {
 			return key ? !activeMatchKeys.has(key) : true;
 		})
 		.map(row => ({
-		...row,
-		myOdds: getCalculatedOddsForMatch(row, calculatedOddsByMatch)
-	}));
+			...row,
+			myOdds: getCalculatedOddsForMatch(row, calculatedOddsByMatch),
+			headToHead: getHeadToHeadValue(row.playerA, row.playerB, headToHeadByPair)
+		}));
 	const upcomingRowsWithRecommendation = upcomingRows.map(row => ({
 		...row,
 		recommendation: getRecommendationFromOdds(row.odds, row.myOdds)

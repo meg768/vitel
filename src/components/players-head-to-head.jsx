@@ -47,7 +47,7 @@ function ComparePlayersLink({ playerA = {}, playerB = {} }) {
 	);
 }
 
-function PlayersHeadToHead({ playerA = {}, playerB = {} }) {
+function PlayersHeadToHead({ playerA = {}, playerB = {}, suffix = null }) {
 	return (
 		<div className='flex items-center gap-2 bg-transparent'>
 			{playerA.country ? <Flag className='w-5! h-5! border-primary-800 dark:border-primary-200' country={playerA.country} /> : null}
@@ -55,6 +55,7 @@ function PlayersHeadToHead({ playerA = {}, playerB = {} }) {
 			<span>vs</span>
 			{playerB.country ? <Flag className='w-5! h-5! border-primary-800 dark:border-primary-200' country={playerB.country} /> : null}
 			{renderPlayerName(playerB)}
+			{suffix ? <span>{suffix}</span> : null}
 			<ComparePlayersLink playerA={playerA} playerB={playerB} />
 		</div>
 	);
