@@ -168,10 +168,6 @@ function FinishedMatchesTable({ rows }) {
 				<Table.Value>{({ row }) => <PlayersCell row={row} />}</Table.Value>
 			</Table.Column>
 
-			<Table.Column id='headToHead'>
-				<Table.Title>Tidigare möten</Table.Title>
-			</Table.Column>
-
 			<Table.Column id='score'>
 				<Table.Title>Resultat</Table.Title>
 			</Table.Column>
