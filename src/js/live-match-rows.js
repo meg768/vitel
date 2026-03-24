@@ -1,4 +1,4 @@
-import { formatLiveOddsetOddsForMatch, getLiveOddsetOddsStateForMatch } from './live-oddset.js';
+import { formatLiveOddsetOddsForMatch, getLiveOddsetOddsStateForMatch } from './oddset-pipeline.js';
 
 
 function buildHeadToHeadQuery(matches) {

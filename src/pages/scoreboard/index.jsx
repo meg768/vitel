@@ -5,8 +5,8 @@ import { useParams } from 'react-router';
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/live-oddset.js';
 import { addRankingAndDisplayFields, buildHeadToHeadQuery, selectMonitorMatches } from '../../js/live-match-rows.js';
+import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/oddset-pipeline.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;

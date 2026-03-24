@@ -8,13 +8,14 @@ import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
 import { CALCULATED_ODDS_QUERY_KEY, fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from './calculated-odds.js';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/live-oddset.js';
 import { addRankingAndDisplayFields, buildHeadToHeadQuery } from '../../js/live-match-rows.js';
 import {
+	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 	buildPlayerDetailsByName,
 	fetchOddsetPipelineMatches,
+	fetchLiveOddsetOddsByPlayers,
 	resolveMatchPlayers,
 	splitOddsetRowsByStatus
 } from '../../js/oddset-pipeline.js';

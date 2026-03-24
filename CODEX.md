@@ -220,6 +220,7 @@ Viktigt om `players`:
 Det som är viktigt att komma ihåg framåt:
 
 - Backend `GET /oddset` är den tänkta källan för odds i UI:t.
+- Liveodds i `/matches` och `/scoreboard` hämtas också via backendens `GET /oddset`, med `states=STARTED`.
 - `/matches` och `/scoreboard` är de namn som gäller nu; äldre `live-matches-*` lever bara som redirects.
 - Det finns fortfarande några äldre sidkataloger kvar i trädet, men de är inte del av den aktiva routingen.
 - Menyn är medvetet kort och ska hållas enkel.
@@ -229,6 +230,7 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-24: `src/js/live-oddset.js` slutade hämta Oddset direkt från Kambi i browsern. Liveodds för `/matches` och `/scoreboard` går nu via backendens `GET /oddset?states=STARTED`, vilket gör `/oddset` till den gemensamma odds-endpointen i frontenden.
 - 2026-03-21: `/head-to-head-details/:A/:B` fick en diskret beskrivnings-popup per fråga. `@description` från query-filerna kan nu öppnas via en liten info-knapp bredvid frågetexten och renderas som Markdown utan att tabellayouten ändras.
 - 2026-03-21: Numreringen för `src/pages/head-to-head-details/queries/*.sql` ändrades till steg om 10 (`10-...`, `20-...`, `30-...`) för att göra det enklare att placera in nya frågor mellan befintliga.
 - 2026-03-21: En ny head-to-head-detaljfråga lades till i `src/pages/head-to-head-details/queries/30-win-rate-vs-better-ranked-last-12-months.sql`. Den visar vinstprocent mot bättre rankade motståndare över 3/6/12 månader och kräver minst 5 sådana matcher i respektive period för att visa ett värde.

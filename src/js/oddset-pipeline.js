@@ -1,6 +1,7 @@
 import { service } from './vitel.js';
 
 const ODDSET_PIPELINE_QUERY_KEY = ['oddset', 'pipeline', 'atp'];
+const LIVE_ODDSET_QUERY_KEY = ['oddset', 'live', 'atp'];
 const ODDSET_PIPELINE_REFRESH_INTERVAL_MS = 25 * 1000;
 
 function normalizeName(name = '') {
@@ -11,6 +12,17 @@ function normalizeName(name = '') {
 		.replace(/[^a-z0-9 ]/g, ' ')
 		.replace(/\s+/g, ' ')
 		.trim();
+}
+
+function createPlayersKey(playerAName, playerBName) {
+	const playerA = normalizeName(playerAName);
+	const playerB = normalizeName(playerBName);
+
+	if (!playerA || !playerB) {
+		return null;
+	}
+
+	return [playerA, playerB].sort().join('::');
 }
 
 function formatOddsValue(odds) {
@@ -78,6 +90,18 @@ function parseStartTimestamp(value) {
 	return Number.isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts;
 }
 
+async function fetchOddsetRows({ states } = {}) {
+	const params = new URLSearchParams();
+
+	if (Array.isArray(states) && states.length > 0) {
+		params.set('states', states.join(','));
+	}
+
+	const path = params.size > 0 ? `oddset?${params.toString()}` : 'oddset';
+	const payload = await service.get(path);
+	return normalizeOddsetRowsPayload(payload);
+}
+
 function normalizeOddsetRowsPayload(payload) {
 	if (!Array.isArray(payload)) {
 		throw new Error('Oddset endpoint returnerade inte en array');
@@ -128,9 +152,72 @@ function toSortedUiRows(rows = []) {
 }
 
 async function fetchOddsetPipelineMatches() {
-	const payload = await service.get('oddset');
-	const rows = normalizeOddsetRowsPayload(payload);
+	const rows = await fetchOddsetRows();
 	return toSortedUiRows(rows);
+}
+
+function upsertOddsRow(oddsByPlayers, { oneName, twoName, oneOdds, twoOdds, state }) {
+	const key = createPlayersKey(oneName, twoName);
+	if (!key) {
+		return;
+	}
+
+	oddsByPlayers[key] = {
+		[normalizeName(oneName)]: formatOddsValue(oneOdds),
+		[normalizeName(twoName)]: formatOddsValue(twoOdds),
+		_state: state ?? null
+	};
+}
+
+async function fetchLiveOddsetOddsByPlayers() {
+	const rows = await fetchOddsetRows({ states: ['STARTED'] });
+	const oddsByPlayers = {};
+
+	for (const row of rows) {
+		if (!row || typeof row !== 'object') {
+			continue;
+		}
+
+		upsertOddsRow(oddsByPlayers, {
+			oneName: row.playerA?.name,
+			twoName: row.playerB?.name,
+			oneOdds: row.playerA?.odds,
+			twoOdds: row.playerB?.odds,
+			state: row.state
+		});
+	}
+
+	return oddsByPlayers;
+}
+
+function formatLiveOddsetOddsForMatch(match, oddsByPlayers) {
+	const key = createPlayersKey(match.player?.name, match.opponent?.name);
+	if (!key) {
+		return '-';
+	}
+
+	const oddsForMatch = oddsByPlayers?.[key];
+	if (!oddsForMatch) {
+		return '-';
+	}
+
+	const playerOdds = oddsForMatch[normalizeName(match.player?.name)] ?? '-';
+	const opponentOdds = oddsForMatch[normalizeName(match.opponent?.name)] ?? '-';
+
+	if (playerOdds === '-' && opponentOdds === '-') {
+		return '-';
+	}
+
+	return `${playerOdds} - ${opponentOdds}`;
+}
+
+function getLiveOddsetOddsStateForMatch(match, oddsByPlayers) {
+	const key = createPlayersKey(match.player?.name, match.opponent?.name);
+	if (!key) {
+		return null;
+	}
+
+	return oddsByPlayers?.[key]?._state ?? null;
 }
 
 function buildPlayerDetailsByName(rows = []) {
@@ -191,11 +278,15 @@ function splitOddsetRowsByStatus(rows) {
 }
 
 export {
+	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 	buildPlayerDetailsByName,
 	buildRanksByPlayerId,
 	fetchOddsetPipelineMatches,
+	fetchLiveOddsetOddsByPlayers,
+	formatLiveOddsetOddsForMatch,
+	getLiveOddsetOddsStateForMatch,
 	resolveMatchPlayers,
 	splitOddsetRowsByStatus
 };
