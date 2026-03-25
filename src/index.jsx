@@ -19,6 +19,7 @@ import Query from './pages/query';
 import Ranking from './pages/ranking';
 import Scoreboard from './pages/scoreboard';
 import Settings from './pages/settings';
+import Trial from './pages/trial';
 import { theme } from './js/theme';
 
 function LegacyScoreboardRedirect() {
@@ -116,26 +117,27 @@ class WebApp {
 		this.render(
 			<QueryClientProvider client={new QueryClient()}>
 				<HashRouter>
-						<Routes>
-							<Route path='/' element={<Navigate to='/matches' replace />} />
-							<Route path='/app' element={<App />} />
-							<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
-							<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
-							<Route path='/event/:id' element={<Event />} />
-							<Route path='/player/:id' element={<Player />} />
-							<Route path='/ranking' element={<Ranking />} />
-							<Route path='/events' element={<Events />} />
-							<Route path='/players' element={<Players />} />
-							<Route path='/live' element={<Live />} />
-							<Route path='/oddset' element={<Oddset />} />
-							<Route path='/matches' element={<Matches />} />
-							<Route path='/scoreboard' element={<Scoreboard />} />
-							<Route path='/scoreboard/:A/:B' element={<Scoreboard />} />
-							<Route path='/live-matches-detail' element={<LegacyScoreboardRedirect />} />
-							<Route path='/live-matches-detail/:A/:B' element={<LegacyScoreboardRedirect />} />
-							<Route path='/live-matches-overview' element={<Navigate to='/matches' replace />} />
-							<Route path='/log' element={<Log />} />
-							<Route path='/qna' element={<QnA />} />
+					<Routes>
+						<Route path='/' element={<Navigate to='/matches' replace />} />
+						<Route path='/app' element={<App />} />
+						<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
+						<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
+						<Route path='/event/:id' element={<Event />} />
+						<Route path='/player/:id' element={<Player />} />
+						<Route path='/ranking' element={<Ranking />} />
+						<Route path='/events' element={<Events />} />
+						<Route path='/players' element={<Players />} />
+						<Route path='/live' element={<Live />} />
+						<Route path='/oddset' element={<Oddset />} />
+						<Route path='/matches' element={<Matches />} />
+						<Route path='/scoreboard' element={<Scoreboard />} />
+						<Route path='/scoreboard/:A/:B' element={<Scoreboard />} />
+						<Route path='/live-matches-detail' element={<LegacyScoreboardRedirect />} />
+						<Route path='/live-matches-detail/:A/:B' element={<LegacyScoreboardRedirect />} />
+						<Route path='/live-matches-overview' element={<Navigate to='/matches' replace />} />
+						<Route path='/log' element={<Log />} />
+						<Route path='/qna' element={<QnA />} />
+						<Route path='/trial' element={<Trial />} />
 						<Route path='/settings' element={<Settings />} />
 						<Route path='/not-found' element={<NotFound />} />
 						<Route path='/query/:name' element={<Query />} />

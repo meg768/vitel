@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 
 import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
+import ExclamationTriangleIcon from '../assets/radix-icons/exclamation-triangle.svg?react';
+import InfoCircledIcon from '../assets/radix-icons/info-circled.svg?react';
 import Layout from './layout';
 import Menu from './menu';
 
@@ -10,6 +12,12 @@ function Component({ className, ...props }) {
 
 	return <Layout className={className} {...props} />;
 }
+
+const statusBoxClassName = [
+	'border rounded-sm border-primary-300 bg-primary-50! text-primary-900 p-3',
+	'dark:border-primary-700 dark:bg-primary-950! dark:text-primary-100',
+	'flex items-center gap-3'
+];
 
 
 Component.Title = function ({ className, level = 1, ...props }) {
@@ -43,17 +51,13 @@ Component.Title = function ({ className, level = 1, ...props }) {
 Component.Error = function ({ className, ...props }) {
 	className = clsx('', className);
 
-	className = clsx(className, [
-		'border rounded-sm border-error-600 bg-error-500! text-error-100 p-3',
-		'dark:bg-error-600! dark:text-error-50',
-		'flex items-center gap-3'
-	]);
+	className = clsx(className, statusBoxClassName);
 
 
 	return (
 		<div className={className}>
-			<div className='bg-transparent '>
-				<CrossCircledIcon className='w-8 h-8 bg-transparent' />
+			<div className='bg-transparent' aria-hidden='true'>
+				<CrossCircledIcon className='w-8 h-8 bg-transparent text-error-500 dark:text-error-400 shrink-0' />
 			</div>
 			<div className='bg-transparent '>
 				<div {...props} />
@@ -62,19 +66,32 @@ Component.Error = function ({ className, ...props }) {
 	);
 };
 
-Component.Information = function ({ className, emoji = 'ℹ️', ...props }) {
+Component.Information = function ({ className, ...props }) {
 	className = clsx('', className);
 
-	className = clsx(className, [
-		'border rounded-sm border-primary-500 bg-primary-100! text-primary-900 p-3',
-		'dark:border-primary-600 dark:bg-primary-900! dark:text-primary-100',
-		'flex items-center gap-3'
-	]);
+	className = clsx(className, statusBoxClassName);
 
 	return (
 		<div className={className}>
-			<div className='bg-transparent text-3xl leading-none' aria-hidden='true'>
-				{emoji}
+			<div className='bg-transparent' aria-hidden='true'>
+				<InfoCircledIcon className='w-8 h-8 bg-transparent text-primary-500 dark:text-primary-400 shrink-0' />
+			</div>
+			<div className='bg-transparent '>
+				<div {...props} />
+			</div>
+		</div>
+	);
+};
+
+Component.Warning = function ({ className, ...props }) {
+	className = clsx('', className);
+
+	className = clsx(className, statusBoxClassName);
+
+	return (
+		<div className={className}>
+			<div className='bg-transparent' aria-hidden='true'>
+				<ExclamationTriangleIcon className='w-8 h-8 bg-transparent text-warning-600 dark:text-warning-400 shrink-0' />
 			</div>
 			<div className='bg-transparent '>
 				<div {...props} />

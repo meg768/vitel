@@ -126,6 +126,9 @@ export default function SettingsPage() {
 			<div>
 				<Page.Title level={4}>Felsökning</Page.Title>
 				<div className='flex flex-col items-start gap-2'>
+					<Button className='' link={'/trial'}>
+						Visa testsida
+					</Button>
 					<Button className='' link={'/log'}>
 						Visa logg senaste dygnet
 					</Button>
