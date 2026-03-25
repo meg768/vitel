@@ -17,6 +17,7 @@ import Players from './pages/players';
 import QnA from './pages/qna';
 import Query from './pages/query';
 import Ranking from './pages/ranking';
+import Search from './pages/search';
 import Scoreboard from './pages/scoreboard';
 import Settings from './pages/settings';
 import Trial from './pages/trial';
@@ -132,6 +133,12 @@ class WebApp {
 			if (event.key === 'F3') {
 				event.preventDefault();
 				this.toggleThemeSurface();
+				return;
+			}
+
+			if (event.key === 'F4') {
+				event.preventDefault();
+				window.location.hash = '#/search';
 			}
 		});
 	}
@@ -185,6 +192,7 @@ class WebApp {
 						<Route path='/ranking' element={<Ranking />} />
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
+						<Route path='/search' element={<Search />} />
 						<Route path='/live' element={<Live />} />
 						<Route path='/oddset' element={<Oddset />} />
 						<Route path='/matches' element={<Matches />} />
