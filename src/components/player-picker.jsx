@@ -61,7 +61,7 @@ function PlayerSelect({ players, children, onChange }) {
 	}
 
 	let contentClassName = '';
-	contentClassName = clsx(contentClassName, 'rounded-md border-1! shadow-md p-2 text-base');
+	contentClassName = clsx(contentClassName, 'rounded-sm border-1! shadow-md p-2 text-base');
 	contentClassName = clsx(contentClassName, 'border-primary-300! bg-primary-50!');
 	contentClassName = clsx(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
 	contentClassName = clsx(contentClassName, 'w-[var(--radix-dropdown-menu-trigger-width)] min-w-[18rem]');
