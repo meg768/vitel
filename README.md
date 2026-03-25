@@ -12,6 +12,8 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 - Odds page (`/oddset`) powered by backend `GET /api/oddset`
 - SQL-driven query explorer (`/query/:name`) loading SQL files from `src/queries/*.sql`
 - Theme system with auto mode (`light|dark` + `hard|clay|grass`)
+- Theme keyboard shortcuts: `F6` toggles light/dark mode and `F3` cycles `hard / grass / clay`
+- Trial page (`/trial`) for quick UI and component experiments
 
 ## Related Repositories
 
@@ -123,11 +125,17 @@ Main client routes:
 - `/scoreboard/:A/:B`
 - `/log`
 - `/qna`
+- `/trial`
 - `/settings`
 - `/query/:name`
 - `/not-found`
 - `/live-matches-overview` redirects to `/matches`
 - `/live-matches-detail` redirects to `/scoreboard`
+
+## Keyboard Shortcuts
+
+- `F3` cycles between `hard`, `grass`, and `clay`
+- `F6` toggles between light and dark mode
 
 ## SQL Query System
 

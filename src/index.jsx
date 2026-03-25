@@ -43,6 +43,7 @@ class WebApp {
 		// Load persisted theme and apply it before first render.
 		this.theme = this.getInitialTheme();
 		this.applyTheme(this.theme);
+		this.setupKeyboardShortcuts();
 
 		this.root = ReactDOM.createRoot(this.rootElement);
 	}
@@ -88,6 +89,15 @@ class WebApp {
 		}
 	}
 
+	setTheme(themeValue) {
+		const normalizedTheme = theme.normalizeTheme(themeValue);
+
+		this.theme = normalizedTheme;
+		localStorage.setItem('theme', normalizedTheme);
+		this.applyTheme(normalizedTheme);
+		window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: normalizedTheme } }));
+	}
+
 	setupAutoListener(surface) {
 		// Ensure we never keep multiple listeners alive.
 		if (this.mql) {
@@ -101,6 +111,54 @@ class WebApp {
 		};
 
 		this.mql.addEventListener('change', this._autoListener);
+	}
+
+	setupKeyboardShortcuts() {
+		window.addEventListener('keydown', event => {
+			if (event.defaultPrevented) {
+				return;
+			}
+
+			if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) {
+				return;
+			}
+
+			if (event.key === 'F6') {
+				event.preventDefault();
+				this.toggleThemeMode();
+				return;
+			}
+
+			if (event.key === 'F3') {
+				event.preventDefault();
+				this.toggleThemeSurface();
+			}
+		});
+	}
+
+	toggleThemeMode() {
+		const storedTheme = localStorage.getItem('theme');
+		const currentTheme = theme.normalizeTheme(storedTheme ?? this.theme);
+		const { surface, resolvedMode } = theme.resolve(currentTheme, {
+			prefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches
+		});
+		const nextMode = resolvedMode === 'dark' ? 'light' : 'dark';
+
+		this.setTheme(`${nextMode} ${surface}`);
+	}
+
+	toggleThemeSurface() {
+		const storedTheme = localStorage.getItem('theme');
+		const currentTheme = theme.normalizeTheme(storedTheme ?? this.theme);
+		const { mode, resolvedSurface } = theme.resolve(currentTheme, {
+			prefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches
+		});
+		const surfaces = ['hard', 'grass', 'clay'];
+		const currentSurfaceIndex = surfaces.indexOf(resolvedSurface);
+		const nextSurfaceIndex = currentSurfaceIndex === -1 ? 0 : (currentSurfaceIndex + 1) % surfaces.length;
+		const nextSurface = surfaces[nextSurfaceIndex];
+
+		this.setTheme(`${mode} ${nextSurface}`);
 	}
 
 	toggleTheme() {

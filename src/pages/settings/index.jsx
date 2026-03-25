@@ -35,6 +35,25 @@ export default function SettingsPage() {
 		setInitialized(true);
 	}, []);
 
+	useEffect(() => {
+		function onThemeChange(event) {
+			const themeValue = event.detail?.theme;
+			if (!themeValue || !theme.validTheme.test(themeValue)) {
+				return;
+			}
+
+			const [mode, surface] = themeValue.split(' ');
+			setActiveMode(mode);
+			setActiveSurface(surface);
+		}
+
+		window.addEventListener('themechange', onThemeChange);
+
+		return () => {
+			window.removeEventListener('themechange', onThemeChange);
+		};
+	}, []);
+
 	// Apply theme once values are set
 	useEffect(() => {
 		if (!initialized || !activeMode || !activeSurface) return;
@@ -70,7 +89,10 @@ export default function SettingsPage() {
 		root.classList.add(resolvedMode);
 		root.classList.add(resolvedSurface);
 
-		localStorage.setItem('theme', `${mode} ${surface}`);
+		const themeValue = `${mode} ${surface}`;
+
+		localStorage.setItem('theme', themeValue);
+		window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: themeValue } }));
 	}
 
 	function getLogQueryKey() {
