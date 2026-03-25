@@ -157,12 +157,12 @@ function MatchesTable({ rows }) {
 				<Table.Value>{({ row }) => <ActivePlayersCell row={row} />}</Table.Value>
 			</Table.Column>
 
-			<Table.Column id='score'>
-				<Table.Title>Ställning</Table.Title>
+			<Table.Column id='odds'>
+				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
-			<Table.Column id='odds'>
-				<Table.Title>Odds</Table.Title>
+			<Table.Column id='score'>
+				<Table.Title>Ställning</Table.Title>
 			</Table.Column>
 		</Table>
 	);
