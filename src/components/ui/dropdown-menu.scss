@@ -7,6 +7,7 @@
 		border-width: 0.1em;
 		border-radius: var(--radius-sm);
 		border-color: var(--color-primary-300);
+		z-index: 60;
 	}
 
 	&:focus {

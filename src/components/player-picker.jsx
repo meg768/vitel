@@ -61,7 +61,7 @@ function PlayerSelect({ players, children, onChange }) {
 	}
 
 	let contentClassName = '';
-	contentClassName = clsx(contentClassName, 'rounded-sm border-1! shadow-md p-2 text-base');
+	contentClassName = clsx(contentClassName, 'rounded-sm border-1! p-2 text-base');
 	contentClassName = clsx(contentClassName, 'border-primary-300! bg-primary-50!');
 	contentClassName = clsx(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
 	contentClassName = clsx(contentClassName, 'w-[var(--radix-dropdown-menu-trigger-width)] min-w-[18rem]');
@@ -71,7 +71,7 @@ function PlayerSelect({ players, children, onChange }) {
 			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
 
 			<DropdownMenu.Content align='start' sideOffset={5} className={contentClassName}>
-				<Input className='w-full px-2 py-1 border rounded-sm my-1' value={filter} autoFocus spellCheck={false} placeholder={'Sök spelare'} onChange={onFilterChange} />
+				<Input className='my-1 w-full rounded-sm border px-2 py-1' value={filter} autoFocus spellCheck={false} placeholder={'Sök spelare'} onChange={onFilterChange} />
 				<Items />
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
