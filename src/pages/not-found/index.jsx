@@ -1,6 +1,6 @@
 import Page from '../../components/page';
 
-let Component = () => {
+export default function NotFoundPage() {
 	return (
 		<Page id='not-found-page'>
 			<Page.Menu />
@@ -9,6 +9,4 @@ let Component = () => {
 			</Page.Content>
 		</Page>
 	);
-};
-
-export default Component;
+}
