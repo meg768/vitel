@@ -4,7 +4,7 @@ import Page from '../../components/page';
 import Players from '../../components/players';
 import { useSQL } from '../../js/vitel.js';
 
-let Component = () => {
+export default function PlayersPage() {
 	const [searchParams] = useSearchParams();
 	let query = searchParams.get('query') || {};
 
@@ -16,15 +16,15 @@ let Component = () => {
 		}
 	}
 
+	let { sql, format } = query;
+
+	if (!sql) {
+		sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
+	}
+
+	const { data: players, error } = useSQL({ sql, format });
+
 	function Content() {
-		let { sql, format } = query;
-
-		if (!sql) {
-			sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
-		}
-
-		let { data: players, error } = useSQL({ sql, format});
-
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
 		}
@@ -44,13 +44,11 @@ let Component = () => {
 	}
 
 	return (
-		<Page className=''>
-			<Page.Menu className='' />
-			<Page.Content className=''>
+		<Page>
+			<Page.Menu />
+			<Page.Content>
 				<Content />
 			</Page.Content>
 		</Page>
 	);
-};
-
-export default Component;
+}
