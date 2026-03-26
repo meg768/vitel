@@ -8,7 +8,7 @@ import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
 import Flag from '../../components/flag';
 import Page from '../../components/page';
 import PlayerPicker from '../../components/player-picker';
-import { Button } from '../../components/ui';
+import Button from '../../components/ui/button';
 import LocalStorage from '../../js/local-storage';
 import { service as atp, useSQL } from '../../js/vitel.js';
 

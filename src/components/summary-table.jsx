@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 
-import { Table } from '../components/ui';
+import Table from './ui/table';
 let Component = ({ children }) => {
 	return (
 		<div className='overflow-auto'>

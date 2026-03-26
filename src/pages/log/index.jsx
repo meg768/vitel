@@ -2,54 +2,43 @@ import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
 import { useSQL } from '../../js/vitel';
 
-function Component() {
-	const queryKey = `logs`;
+const LOG_SQL = 'SELECT * FROM log WHERE timestamp >= CURDATE() - INTERVAL 1 DAY ORDER BY timestamp ASC;';
 
-	function fetch() {
-		let sql = '';
-		sql += `SELECT * FROM log WHERE timestamp >= CURDATE() - INTERVAL 1 DAY ORDER BY timestamp ASC;`;
+function LogTable({ rows }) {
+	return (
+		<Table rows={rows}>
+			<Table.Column id='timestamp'>
+				<Table.Title>Datum/tid</Table.Title>
 
-		return useSQL({ sql });
-	}
+				<Table.Value>
+					{({ row }) => {
+						return new Date(row.timestamp).toLocaleString();
+					}}
+				</Table.Value>
 
-	function LogTable({ rows }) {
-		function Content() {
-			return (
-				<Table rows={rows} className=''>
-					<Table.Column id='timestamp'>
-						<Table.Title className=''>Datum/tid</Table.Title>
+				<Table.Cell className='w-1 whitespace-nowrap'>
+					{({ value }) => {
+						return value;
+					}}
+				</Table.Cell>
+			</Table.Column>
 
-						<Table.Value className=''>
-							{({ row }) => {
-								return new Date(row.timestamp).toLocaleString();
-							}}
-						</Table.Value>
+			<Table.Column id='message'>
+				<Table.Title>Meddelande</Table.Title>
+			</Table.Column>
+		</Table>
+	);
+}
 
-						<Table.Cell className='whitespace-nowrap w-1'>
-							{({ row, value }) => {
-								return value;
-							}}
-						</Table.Cell>
-					</Table.Column>
-
-					<Table.Column id='message' className=''>
-						<Table.Title className=''>Meddelande</Table.Title>
-					</Table.Column>
-				</Table>
-			);
-		}
-
-		return <Content />;
-	}
+export default function LogPage() {
+	const { data: logRows, error } = useSQL({ sql: LOG_SQL });
 
 	function Content() {
-		let { data: log, error } = fetch();
-
 		if (error) {
 			return <Page.Error>{error.message}</Page.Error>;
 		}
 
-		if (!log) {
+		if (!logRows) {
 			return <Page.Loading>Läser in...</Page.Loading>;
 		}
 
@@ -57,7 +46,7 @@ function Component() {
 			<>
 				<Page.Title>Logg senaste dygnet</Page.Title>
 				<Page.Container>
-					<LogTable rows={log} />
+					<LogTable rows={logRows} />
 				</Page.Container>
 			</>
 		);
@@ -72,5 +61,3 @@ function Component() {
 		</Page>
 	);
 }
-
-export default Component;
