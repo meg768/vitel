@@ -2,7 +2,6 @@ import React from 'react';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router';
 
-import AtpTourLogo from '../../assets/logos/atp-tour.svg?react';
 import CheckIcon from '../../assets/radix-icons/check.svg?react';
 import ChevronDownIcon from '../../assets/radix-icons/chevron-down.svg?react';
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
@@ -85,7 +84,7 @@ export default function SearchPage() {
 		}
 
 		let triggerClassName = '';
-		triggerClassName = clsx(triggerClassName, 'flex cursor-pointer items-center rounded-sm py-4 px-5 text-inherit border gap-4');
+		triggerClassName = clsx(triggerClassName, 'flex cursor-pointer items-center rounded-sm py-2.5 px-4 text-inherit border gap-3');
 		triggerClassName = clsx(triggerClassName, 'border-primary-200 bg-primary-50/85');
 		triggerClassName = clsx(triggerClassName, 'dark:border-primary-800 dark:bg-primary-950/92');
 		triggerClassName = clsx(triggerClassName, 'w-full');
@@ -93,11 +92,11 @@ export default function SearchPage() {
 		return (
 			<PlayerPicker className='' onChange={onPlayerChange} players={players}>
 				<div className={triggerClassName}>
-					<div className='flex h-11 w-11 items-center justify-center rounded-full bg-primary-200/80 text-primary-600 dark:bg-primary-900 dark:text-primary-300'>
-						<SearchIcon className='w-6 h-6 bg-transparent' />
+					<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary-200/80 text-primary-600 dark:bg-primary-900 dark:text-primary-300'>
+						<SearchIcon className='w-5 h-5 bg-transparent' />
 					</div>
 					<div className='flex-1 bg-transparent text-left'>
-						<div className='bg-transparent text-sm text-primary-600 dark:text-primary-300'>Skriv några bokstäver och välj en spelare</div>
+						<div className='bg-transparent text-[0.9375rem]'>Skriv några bokstäver och välj en spelare</div>
 					</div>
 					<div className='bg-transparent'>
 						<ChevronDownIcon className='w-5 h-5 bg-transparent text-primary-500 dark:text-primary-400' />
@@ -198,14 +197,10 @@ export default function SearchPage() {
 
 		return (
 			<>
-				<Page.Container className='py-8 lg:py-12'>
+				<Page.Title>Sök Spelare</Page.Title>
+				<Page.Container className='pt-3 pb-8 lg:pb-12'>
 					<div>
-						<div className='flex justify-center'>
-							<AtpTourLogo className='h-14 w-auto text-primary-700 dark:text-primary-200' fill='currentColor' />
-						</div>
-
-						<div className='mt-8 space-y-2'>
-							<Page.Title level={4} className='pt-0'>Sök Spelare</Page.Title>
+						<div className='space-y-2'>
 							<SearchPlayer players={players} />
 						</div>
 

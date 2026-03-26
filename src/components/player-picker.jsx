@@ -49,7 +49,7 @@ function PlayerSelect({ players, children, onChange }) {
 			className = clsx(className, 'cursor-pointer!');
 
 			return (
-				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index} title={player.name}>
+				<DropdownMenu.Item className={className} onClick={onClick.bind(this, player)} key={index}>
 					{player.name}
 				</DropdownMenu.Item>
 			);
@@ -71,33 +71,16 @@ function PlayerSelect({ players, children, onChange }) {
 			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
 
 			<DropdownMenu.Content align='start' sideOffset={5} className={contentClassName}>
-				<Input className='my-1 w-full rounded-sm border px-2 py-1' value={filter} autoFocus spellCheck={false} placeholder={'Sök spelare'} onChange={onFilterChange} />
+				<Input
+					className='my-1 w-full rounded-sm border px-2 py-1 text-base'
+					value={filter}
+					autoFocus
+					spellCheck={false}
+					placeholder={'Sök spelare'}
+					onChange={onFilterChange}
+				/>
 				<Items />
 			</DropdownMenu.Content>
-		</DropdownMenu.Root>
-	);
-
-	return (
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
-
-			<DropdownMenu.Portal container={document.getElementById('layout')}>
-				<DropdownMenu.Content align='start' sideOffset={5} className='' asChild>
-					<div className=' rounded-md shadow-md p-2'>
-						<div className=''>
-							<Input
-								className='px-2 py-1 border-1 rounded-sm my-1 mx-1'
-								value={filter}
-								autoFocus
-								spellCheck={false}
-								placeholder={'Sök spelare'}
-								onChange={onFilterChange}
-							/>
-						</div>
-						<Items />
-					</div>
-				</DropdownMenu.Content>
-			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
 	);
 }
