@@ -61,7 +61,7 @@ function PlayerSelect({ players, children, onChange }) {
 	}
 
 	let contentClassName = '';
-	contentClassName = clsx(contentClassName, 'rounded-sm border-1! p-2 text-base');
+	contentClassName = clsx(contentClassName, 'rounded-sm border-1! p-2');
 	contentClassName = clsx(contentClassName, 'border-primary-300! bg-primary-50!');
 	contentClassName = clsx(contentClassName, 'dark:border-primary-700! dark:bg-primary-900!');
 	contentClassName = clsx(contentClassName, 'min-w-[18rem] max-w-[calc(100vw-2rem)]');
@@ -72,7 +72,7 @@ function PlayerSelect({ players, children, onChange }) {
 
 			<DropdownMenu.Content align='start' sideOffset={5} className={contentClassName}>
 				<Input
-					className='my-1 w-full rounded-sm border px-2 py-1 text-base'
+					className='my-1 w-full rounded-sm border px-2 py-1'
 					value={filter}
 					autoFocus
 					spellCheck={false}
