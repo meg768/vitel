@@ -19,22 +19,17 @@ function Component() {
 
 		return query || {};
 	}
+	let query = getQuery();
+	let { sql, format } = query;
 
-	function fetch(query) {
-		let { sql, format } = query;
-
-		if (!sql) {
-			sql = `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC LIMIT 100`;
-			format = [];
-		}
-
-		return useSQL({ sql, format });
+	if (!sql) {
+		sql = `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC LIMIT 100`;
+		format = [];
 	}
 
-	function Content() {
-		let query = getQuery();
-		let { data: events, error } = fetch(query);
+	const { data: events, error } = useSQL({ sql, format });
 
+	function Content() {
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>;
 		}
