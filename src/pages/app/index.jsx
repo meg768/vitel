@@ -6,11 +6,9 @@ import AtpTourLogo from '../../assets/logos/atp-tour.svg?react';
 import ChevronDownIcon from '../../assets/radix-icons/chevron-down.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
 import Flag from '../../components/flag';
-import { Info } from '../../components/icons';
 import Page from '../../components/page';
 import PlayerPicker from '../../components/player-picker';
 import { Button } from '../../components/ui';
-import Link from '../../components/ui/link';
 import LocalStorage from '../../js/local-storage';
 import { service as atp, useSQL } from '../../js/vitel.js';
 
@@ -38,20 +36,6 @@ migrateLegacyStorage();
 
 let locals = new LocalStorage({ key: STORAGE_KEY });
 
-// Get all players sorted by rank/date
-async function getTopPlayers() {
-	//let sql = `SELECT * FROM players ORDER BY ISNULL(rank), rank ASC`;
-	let sql = `SELECT id, name, country FROM players ORDER BY ISNULL(rank), rank ASC`;
-	//let sql = `SELECT * FROM players `;
-	return await atp.query({ sql });
-}
-
-async function getEvents() {
-	let sql = `SELECT * FROM events ORDER BY date DESC`;
-	let events = await atp.query({ sql });
-	return events;
-}
-
 async function getPlayer(name) {
 	let sql = `SELECT * FROM players WHERE ?? = ?`;
 	let format = ['name', name];
@@ -75,51 +59,12 @@ function App() {
 			}
 			setPlayerList(list);
 		}
-		getPlayerList();
-	}, []);
+			getPlayerList();
+		}, []);
 
-	async function fetch() {
-		try {
-			let players = await getTopPlayers();
-			/*
-			let events = await getEvents();
-			let latestEvent = await getLatestEvent();
-			let latestImport = await getLatestImport();
-			*/
-
-			return { players };
-		} catch (error) {
-			console.log(error);
-			return { players: null, events: null, latestEvent: null };
-		}
-	}
-
-	function GoButton(properties) {
-		let { id } = properties;
-		let player = playerList[id];
-
-		let url = '';
-
-		if (player) {
-			url = `/player/${player.id}`;
-		}
-
-		let className = '';
-		className = clsx(className, 'w-[1.5em] h-[1.5em] fill-primary-500 hover:fill-primary-400 ');
-		className = clsx(className, url ? '' : 'opacity-50!');
-
-		return (
-			<div className={className}>
-				<Link to={url}>
-					<Info />
-				</Link>
-			</div>
-		);
-	}
-
-	function CompareButton() {
-		let url = '';
-		let playerA = playerList['A'];
+		function CompareButton() {
+			let url = '';
+			let playerA = playerList['A'];
 		let playerB = playerList['B'];
 
 		if (playerA && playerB) {

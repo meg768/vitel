@@ -29,12 +29,12 @@ Nuvarande huvudbild:
 
 Appen fokuserar just nu på:
 
-- spelarsidor och ranking
+- spelarsidor och head-to-head
 - turneringar och event
 - live- och nyligen avslutade matcher
 - detaljerad scoreboardvy
 - SQL-drivna query-sidor
-- Q&A och enklare drift/debug via settings/log
+- Q&A, testsida samt enklare drift/debug via settings/log
 
 Nuvarande spelartitlar:
 
@@ -56,7 +56,6 @@ Nuvarande huvudsidor i routing:
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`
 - `/event/:id`
-- `/ranking`
 - `/events`
 - `/players`
 - `/live`
@@ -66,6 +65,7 @@ Nuvarande huvudsidor i routing:
 - `/scoreboard/:A/:B`
 - `/log`
 - `/qna`
+- `/trial`
 - `/settings`
 - `/query/:name`
 - `/not-found`
@@ -91,6 +91,7 @@ Rollfördelning mellan matchsidorna:
 - `/scoreboard` är den mer detaljerade live-monitorn
 - `/oddset` finns kvar som egen route
 - `/live` finns kvar som ATP-livevy
+- `/trial` är en aktiv, intern testsida för snabba UI-/komponentexperiment
 
 ## Körning
 
@@ -131,11 +132,13 @@ Viktiga scripts i `package.json`:
 - `src/pages/head-to-head-details/index.jsx` - SQL-driven head-to-head-sida med jämförande frågor
 - `src/pages/head-to-head-details/queries.js` - laddar och kompilerar lokala frågor för head-to-head-detaljsidan
 - `src/pages/query/index.jsx` - SQL-querysida
+- `src/pages/search/index.jsx` - enkel spelarsökning med lokal historik
+- `src/pages/trial/index.jsx` - intern testsida för UI-/komponentexperiment
 - `src/components/player-title.jsx` - gemensam spelartitel för spelarsidor och head-to-head
 - `src/js/service.js` - låg nivå för API-anrop
 - `src/js/vitel.js` - `service`, `useRequest`, `useSQL`
 - `src/js/queries.js` - laddar `src/queries/*.sql`
-- `src/js/live-oddset.js` - delad logik för liveodds
+- `src/js/oddset-pipeline.js` - delad logik för Oddset/live-odds
 - `src/database/schema.sql` - databasschema, views, funktioner och procedurer
 - `src/components/ui/markdown.jsx` - markdownrendering i UI
 
@@ -224,6 +227,9 @@ Det som är viktigt att komma ihåg framåt:
 - Backend `GET /oddset` är den tänkta källan för odds i UI:t.
 - Liveodds i `/matches` och `/scoreboard` hämtas också via backendens `GET /oddset`, med `states=STARTED`.
 - `/matches` och `/scoreboard` är de namn som gäller nu; äldre `live-matches-*` lever bara som redirects.
+- `/ranking` är borttagen som egen sida och route; ranking används fortfarande som data i flera vyer men inte som separat destinationssida.
+- Söksidan är medvetet förenklad: sök, öppna spelare, visa/rensa senaste sökningar. Jämförflödet togs bort därifrån för att hålla sidan rak.
+- `/trial` ska betraktas som en aktiv intern testsida och får finnas kvar även om den inte är produktnavigation för slutanvändare.
 - Det finns fortfarande några äldre sidkataloger kvar i trädet, men de är inte del av den aktiva routingen.
 - Menyn är medvetet kort och ska hållas enkel.
 - `AUTHOR.md` ska inte återintroduceras i Git eller blandas in i versionsstyrd projektkontext.
@@ -232,6 +238,10 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-26: `CODEX.md` synkades med aktuellt läge. `/trial` dokumenteras nu uttryckligen som aktiv intern testsida, `/ranking` som borttagen route och söksidan som förenklad till ett renare sökflöde utan jämförfunktion.
+- 2026-03-26: Söksidan förenklades. Historiken begränsades till sex senaste sökningar, jämförflödet togs bort, text/styling justerades och sidan ska nu läsas som en ren spelarsökning snarare än ett sekundärt head-to-head-verktyg.
+- 2026-03-26: `/ranking` togs bort helt som separat sida och route eftersom den inte längre nåddes från appen och inte gav tillräckligt egenvärde jämfört med rankinginformation inbäddad i övriga vyer.
+- 2026-03-26: Mindre kodsanering genomfördes i UI-lagret: död kod togs bort från startsidan, `events` och `settings` standardiserades till `Page.Menu`, och tillfälliga `console.*`-loggar rensades bort för att hålla klientkoden tystare som default.
 - 2026-03-24: `src/js/live-oddset.js` slutade hämta Oddset direkt från Kambi i browsern. Liveodds för `/matches` och `/scoreboard` går nu via backendens `GET /oddset?states=STARTED`, vilket gör `/oddset` till den gemensamma odds-endpointen i frontenden.
 - 2026-03-21: `/head-to-head-details/:A/:B` fick en diskret beskrivnings-popup per fråga. `@description` från query-filerna kan nu öppnas via en liten info-knapp bredvid frågetexten och renderas som Markdown utan att tabellayouten ändras.
 - 2026-03-21: Numreringen för `src/pages/head-to-head-details/queries/*.sql` ändrades till steg om 10 (`10-...`, `20-...`, `30-...`) för att göra det enklare att placera in nya frågor mellan befintliga.

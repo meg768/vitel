@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import hash from 'object-hash';
 
-import Menu from '../../components/menu';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import ToggleGroup from '../../components/ui/toggle-group.jsx';
@@ -109,8 +108,7 @@ export default function SettingsPage() {
 		try {
 			await service.query({ sql: 'DELETE FROM log;' });
 			queryClient.removeQueries({ queryKey: getLogQueryKey() });
-		} catch (error) {
-			console.error(error);
+		} catch {
 		} finally {
 			setIsClearingLog(false);
 		}
@@ -177,7 +175,7 @@ export default function SettingsPage() {
 
 	return (
 		<Page id='settings-page'>
-			<Menu />
+			<Page.Menu />
 			<Page.Content>
 				<Content />
 			</Page.Content>

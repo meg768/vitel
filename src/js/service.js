@@ -17,8 +17,6 @@ class Service {
 	async fetch(url, options) {
 
 		try {
-			console.log(`Fetching from '${url}' with options ${JSON.stringify(options)}`);
-
 			const start = Date.now();
 	
 			let response = await fetch(url, options);

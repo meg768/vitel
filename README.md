@@ -6,7 +6,7 @@ The frontend is statically served and talks to a backend API for SQL data, live 
 
 ## Highlights
 
-- ATP-focused dashboards and pages (`/live`, `/oddset`, `/players`, `/ranking`, `/events`, etc.)
+- ATP-focused dashboards and pages (`/live`, `/oddset`, `/players`, `/events`, etc.)
 - Player pages and head-to-head summaries share a reusable player title with country flag and optional Wikipedia link
 - Live monitor view for active matches (`/scoreboard`)
 - Odds page (`/oddset`) powered by backend `GET /api/oddset`
@@ -115,7 +115,6 @@ Main client routes:
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`
 - `/event/:id`
-- `/ranking`
 - `/events`
 - `/players`
 - `/live`

@@ -17,9 +17,7 @@ class Module {
 				}
 
 				return await response.json();
-			} catch (error) {
-				console.log(error.message);
-				console.log('Retrying...');
+			} catch {
 				await this.pause(30000);
 				continue;
 			}

@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route, Navigate, useParams } from 'react-router';
+import { HashRouter, Routes, Route, Navigate } from 'react-router';
 
 import App from './pages/app';
 import Event from './pages/event';
@@ -16,19 +16,11 @@ import Player from './pages/player';
 import Players from './pages/players';
 import QnA from './pages/qna';
 import Query from './pages/query';
-import Ranking from './pages/ranking';
 import Search from './pages/search';
 import Scoreboard from './pages/scoreboard';
 import Settings from './pages/settings';
 import Trial from './pages/trial';
 import { theme } from './js/theme';
-
-function LegacyScoreboardRedirect() {
-	const { A, B } = useParams();
-	const to = A && B ? `/scoreboard/${A}/${B}` : '/scoreboard';
-
-	return <Navigate to={to} replace />;
-}
 
 // Application entrypoint: handles bootstrapping, theme setup, and route rendering.
 class WebApp {
@@ -170,7 +162,6 @@ class WebApp {
 
 	toggleTheme() {
 		// Optional: implement if you want to cycle through themes
-		console.warn('toggleTheme not implemented for flexible theme list');
 	}
 
 	render(element) {
@@ -189,7 +180,6 @@ class WebApp {
 						<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
 						<Route path='/event/:id' element={<Event />} />
 						<Route path='/player/:id' element={<Player />} />
-						<Route path='/ranking' element={<Ranking />} />
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
 						<Route path='/search' element={<Search />} />
@@ -198,9 +188,6 @@ class WebApp {
 						<Route path='/matches' element={<Matches />} />
 						<Route path='/scoreboard' element={<Scoreboard />} />
 						<Route path='/scoreboard/:A/:B' element={<Scoreboard />} />
-						<Route path='/live-matches-detail' element={<LegacyScoreboardRedirect />} />
-						<Route path='/live-matches-detail/:A/:B' element={<LegacyScoreboardRedirect />} />
-						<Route path='/live-matches-overview' element={<Navigate to='/matches' replace />} />
 						<Route path='/log' element={<Log />} />
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/trial' element={<Trial />} />

@@ -1,7 +1,6 @@
 import { useSearchParams } from 'react-router';
 
 import Events from '../../components/events';
-import Menu from '../../components/menu';
 import Page from '../../components/page';
 import { useSQL } from '../../js/vitel.js';
 
@@ -56,7 +55,7 @@ function Component() {
 
 	return (
 		<Page id='events-page'>
-			<Menu></Menu>
+			<Page.Menu />
 			<Page.Content>
 				<Content />
 			</Page.Content>
