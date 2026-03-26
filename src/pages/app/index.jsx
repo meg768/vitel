@@ -13,26 +13,6 @@ import LocalStorage from '../../js/local-storage';
 import { service as atp, useSQL } from '../../js/vitel.js';
 
 const STORAGE_KEY = 'vitel';
-const LEGACY_STORAGE_KEYS = ['vite', 'AppPage-2', 'AppPage-2\t'];
-
-function migrateLegacyStorage() {
-	if (localStorage.getItem(STORAGE_KEY) != null) {
-		return;
-	}
-
-	for (const legacyKey of LEGACY_STORAGE_KEYS) {
-		const legacyValue = localStorage.getItem(legacyKey);
-		if (legacyValue == null) {
-			continue;
-		}
-
-		localStorage.setItem(STORAGE_KEY, legacyValue);
-		localStorage.removeItem(legacyKey);
-		return;
-	}
-}
-
-migrateLegacyStorage();
 
 let locals = new LocalStorage({ key: STORAGE_KEY });
 
