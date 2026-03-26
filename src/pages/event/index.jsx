@@ -9,27 +9,18 @@ import { useSQL } from '../../js/vitel';
 
 
 export default function EventPage() {
-	function fetch() {
-		const { id } = useParams();
+	const { id } = useParams();
+	const sql = `
+		SELECT * FROM flatly WHERE event_id = ? 
+		ORDER BY event_date DESC,
+		FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR');
 
-		let sql = `
-			SELECT * FROM flatly WHERE event_id = ? 
-			ORDER BY event_date DESC,
-			FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR');
-
-			SELECT * FROM events WHERE id = ?
-		`;
-
-		let format = [id, id];
-
-		return useSQL({ sql, format });
-	}
+		SELECT * FROM events WHERE id = ?
+	`;
+	const format = [id, id];
+	const { data: response, error } = useSQL({ sql, format });
 
 	function Content() {
-		const { id } = useParams();
-
-		let { data: response, error } = fetch();
-
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in turnering - {error.message}</Page.Error>;
 		}
@@ -80,7 +71,7 @@ export default function EventPage() {
 
 	return (
 		<Page id='event-page'>
-			<Page.Menu></Page.Menu>
+			<Page.Menu />
 			<Page.Content>
 				<Content />
 			</Page.Content>

@@ -10,39 +10,32 @@ import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel';
 
 let Component = () => {
-	function fetch() {
-		const params = useParams();
+	const params = useParams();
+	let sql = '';
+	let format = [];
 
-		let sql = '';
-		let format = [];
+	sql += 'SELECT * FROM flatly ';
+	sql += `WHERE  `;
+	sql += `(winner_id = ? AND loser_id = ?) `;
+	sql += `OR  `;
+	sql += `(winner_id = ? AND loser_id = ?) `;
+	sql += 'ORDER BY event_date DESC; ';
 
-		sql = '';
-		sql += 'SELECT * FROM flatly ';
-		sql += `WHERE  `;
-		sql += `(winner_id = ? AND loser_id = ?) `;
-		sql += `OR  `;
-		sql += `(winner_id = ? AND loser_id = ?) `;
-		sql += 'ORDER BY event_date DESC; ';
+	format = format.concat([params.A, params.B, params.B, params.A]);
 
-		format = format.concat([params.A, params.B, params.B, params.A]);
+	sql += 'SELECT * FROM players WHERE id = ?; ';
+	format = format.concat([params.A]);
 
-		sql += 'SELECT * FROM players WHERE id = ?; ';
-		format = format.concat([params.A]);
+	sql += 'SELECT * FROM players WHERE id = ?; ';
+	format = format.concat([params.B]);
 
-		sql += 'SELECT * FROM players WHERE id = ?; ';
-		format = format.concat([params.B]);
+	sql += 'SELECT * FROM flatly WHERE winner_id = ? OR loser_id = ?; ';
+	format = format.concat([params.A, params.A]);
 
-		sql += 'SELECT * FROM flatly WHERE winner_id = ? OR loser_id = ?; ';
-		format = format.concat([params.A, params.A]);
+	sql += 'SELECT * FROM flatly WHERE winner_id = ? OR loser_id = ?; ';
+	format = format.concat([params.B, params.B]);
 
-		sql += 'SELECT * FROM flatly WHERE winner_id = ? OR loser_id = ?; ';
-		format = format.concat([params.B, params.B]);
-
-		return useSQL({ sql: sql, format: format });
-
-		//let [matches, [playerOne], [playerTwo], playerOneMatches, playerTwoMatches] = await mysql.query({ sql: sql, format: format });
-		//let response = { matches: matches, playerOne: playerOne, playerTwo: playerTwo, playerOneMatches: playerOneMatches, playerTwoMatches: playerTwoMatches };
-	}
+	const { data, error } = useSQL({ sql, format });
 
 	function Title({ matches, playerOne, playerTwo }) {
 		let link = '';
@@ -92,8 +85,6 @@ let Component = () => {
 		);
 	}
 	function Content() {
-		let { data, error } = fetch();
-
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
 		}

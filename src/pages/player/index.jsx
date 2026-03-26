@@ -96,24 +96,19 @@ function PlayerMatchTabs({ matches, player }) {
 }
 
 function Component () {
+	const { id } = useParams();
+	let sql = '';
+	sql += `SELECT * FROM flatly `;
+	sql += `WHERE winner_id = ? `;
+	sql += `OR loser_id = ? `;
+	sql += `ORDER BY event_date DESC, `;
+	sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR') ASC; `;
 
-	function fetch() {
-		const params = useParams();
+	sql += `SELECT * FROM players `;
+	sql += `WHERE id = ?; `;
 
-		let sql = '';
-		sql += `SELECT * FROM flatly `;
-		sql += `WHERE winner_id = ? `;
-		sql += `OR loser_id = ? `;
-		sql += `ORDER BY event_date DESC, `;
-		sql += `FIELD(round, 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'Q3', 'Q2', 'Q1', 'BR') ASC; `;
-
-		sql += `SELECT * FROM players `;
-		sql += `WHERE id = ?; `;
-
-		let format = [params.id, params.id, params.id];
-
-		return useSQL({ sql, format});
-	}
+	let format = [id, id, id];
+	const { data: response, error } = useSQL({ sql, format });
 
 	function Title({ player }) {
 		return (
@@ -124,9 +119,6 @@ function Component () {
 	}
 
 	function Content() {
-		const { id } = useParams();
-		let { data:response, error } = fetch();
-
 		if (error) {
 			return <Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>;
 		}
