@@ -110,7 +110,8 @@ Response: JSON rows from your database query.
 
 Main client routes:
 
-- `/` and `/app`
+- `/` redirects to `/app`
+- `/app`
 - `/player/:id`
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`

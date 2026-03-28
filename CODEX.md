@@ -51,7 +51,8 @@ Nuvarande head-to-head-fördjupning:
 
 Nuvarande huvudsidor i routing:
 
-- `/` och `/app`
+- `/` redirectar till `/app`
+- `/app`
 - `/player/:id`
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`
