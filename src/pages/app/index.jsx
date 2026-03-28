@@ -158,9 +158,9 @@ function App() {
 			<>
 				<Title />
 				<Page.Container>
-					<div className='flex text-xl items-center justify-left gap-2 py-2'>
+					<div className='flex items-center justify-left gap-2 py-2'>
 						<SearchPlayer players={players} />
-						<div className=''>Sök en spelare eller välj två spelare och jämför matchstatistik</div>
+						<div className='text-xl'>Sök en spelare eller välj två spelare och jämför matchstatistik</div>
 					</div>
 					<div className='justify-center'>
 						<div className='flex justify-center'>

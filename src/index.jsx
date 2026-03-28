@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route, Navigate } from 'react-router';
+import { HashRouter, Routes, Route } from 'react-router';
 
 import App from './pages/app';
 import Event from './pages/event';

@@ -60,7 +60,6 @@ VITE_API_URL=http://localhost:3004/api
 
 - `GET {VITE_API_URL}/live`
 - `GET {VITE_API_URL}/oddset`
-- `GET {VITE_API_URL}/oddset?states=STARTED`
 - `POST {VITE_API_URL}/query`
 
 ## Backend API Contract
@@ -87,7 +86,7 @@ Notes:
 
 - `/oddset` currently expects this nested shape.
 - `score` is used to infer live/upcoming grouping (`score != null` => live).
-- The same endpoint is also used by `/matches` and `/scoreboard` with `states=STARTED`, so the frontend no longer fetches Oddset/Kambi directly for live odds.
+- The same endpoint is also used by `/matches` and `/scoreboard`, which now filter live rows in the frontend instead of sending a separate state filter.
 
 ### `GET /live`
 
@@ -110,8 +109,7 @@ Response: JSON rows from your database query.
 
 Main client routes:
 
-- `/` redirects to `/app`
-- `/app`
+- `/`
 - `/player/:id`
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`

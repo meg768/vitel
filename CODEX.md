@@ -51,8 +51,7 @@ Nuvarande head-to-head-fördjupning:
 
 Nuvarande huvudsidor i routing:
 
-- `/` redirectar till `/app`
-- `/app`
+- `/`
 - `/player/:id`
 - `/head-to-head/:A/:B`
 - `/head-to-head-details/:A/:B`
@@ -226,7 +225,7 @@ Viktigt om `players`:
 Det som är viktigt att komma ihåg framåt:
 
 - Backend `GET /oddset` är den tänkta källan för odds i UI:t.
-- Liveodds i `/matches` och `/scoreboard` hämtas också via backendens `GET /oddset`, med `states=STARTED`.
+- Liveodds i `/matches` och `/scoreboard` hämtas också via backendens `GET /oddset`, och filtreras på `state === 'STARTED'` i frontend.
 - `/matches` och `/scoreboard` är de namn som gäller nu; äldre `live-matches-*` lever bara som redirects.
 - `/ranking` är borttagen som egen sida och route; ranking används fortfarande som data i flera vyer men inte som separat destinationssida.
 - Söksidan är medvetet förenklad: sök, öppna spelare, visa/rensa senaste sökningar. Jämförflödet togs bort därifrån för att hålla sidan rak.
@@ -243,7 +242,7 @@ Det som är viktigt att komma ihåg framåt:
 - 2026-03-26: Söksidan förenklades. Historiken begränsades till sex senaste sökningar, jämförflödet togs bort, text/styling justerades och sidan ska nu läsas som en ren spelarsökning snarare än ett sekundärt head-to-head-verktyg.
 - 2026-03-26: `/ranking` togs bort helt som separat sida och route eftersom den inte längre nåddes från appen och inte gav tillräckligt egenvärde jämfört med rankinginformation inbäddad i övriga vyer.
 - 2026-03-26: Mindre kodsanering genomfördes i UI-lagret: död kod togs bort från startsidan, `events` och `settings` standardiserades till `Page.Menu`, och tillfälliga `console.*`-loggar rensades bort för att hålla klientkoden tystare som default.
-- 2026-03-24: `src/js/live-oddset.js` slutade hämta Oddset direkt från Kambi i browsern. Liveodds för `/matches` och `/scoreboard` går nu via backendens `GET /oddset?states=STARTED`, vilket gör `/oddset` till den gemensamma odds-endpointen i frontenden.
+- 2026-03-24: `src/js/live-oddset.js` slutade hämta Oddset direkt från Kambi i browsern. Liveodds för `/matches` och `/scoreboard` går nu via backendens `GET /oddset`, och frontend filtrerar själv ut rader med `state === 'STARTED'`, vilket gör `/oddset` till den gemensamma odds-endpointen i frontenden.
 - 2026-03-21: `/head-to-head-details/:A/:B` fick en diskret beskrivnings-popup per fråga. `@description` från query-filerna kan nu öppnas via en liten info-knapp bredvid frågetexten och renderas som Markdown utan att tabellayouten ändras.
 - 2026-03-21: Numreringen för `src/pages/head-to-head-details/queries/*.sql` ändrades till steg om 10 (`10-...`, `20-...`, `30-...`) för att göra det enklare att placera in nya frågor mellan befintliga.
 - 2026-03-21: En ny head-to-head-detaljfråga lades till i `src/pages/head-to-head-details/queries/30-win-rate-vs-better-ranked-last-12-months.sql`. Den visar vinstprocent mot bättre rankade motståndare över 3/6/12 månader och kräver minst 5 sådana matcher i respektive period för att visa ett värde.

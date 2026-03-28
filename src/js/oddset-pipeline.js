@@ -90,15 +90,8 @@ function parseStartTimestamp(value) {
 	return Number.isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts;
 }
 
-async function fetchOddsetRows({ states } = {}) {
-	const params = new URLSearchParams();
-
-	if (Array.isArray(states) && states.length > 0) {
-		params.set('states', states.join(','));
-	}
-
-	const path = params.size > 0 ? `oddset?${params.toString()}` : 'oddset';
-	const payload = await service.get(path);
+async function fetchOddsetRows() {
+	const payload = await service.get('oddset');
 	return normalizeOddsetRowsPayload(payload);
 }
 
@@ -170,11 +163,15 @@ function upsertOddsRow(oddsByPlayers, { oneName, twoName, oneOdds, twoOdds, stat
 }
 
 async function fetchLiveOddsetOddsByPlayers() {
-	const rows = await fetchOddsetRows({ states: ['STARTED'] });
+	const rows = await fetchOddsetRows();
 	const oddsByPlayers = {};
 
 	for (const row of rows) {
 		if (!row || typeof row !== 'object') {
+			continue;
+		}
+
+		if (row.state !== 'STARTED') {
 			continue;
 		}
 
