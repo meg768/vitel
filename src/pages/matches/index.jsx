@@ -144,13 +144,55 @@ function getHeadToHeadValue(playerA, playerB, headToHeadByPair) {
 	return `${playerAWins}-${playerBWins}`;
 }
 
-function MatchesTable({ rows }) {
+function groupRowsByTournament(rows, getTournamentName) {
+	const groups = [];
+	const groupsByTournament = new Map();
+
+	for (const row of rows) {
+		const tournamentName = String(getTournamentName(row) || '').trim() || 'Övrigt';
+		const existingGroup = groupsByTournament.get(tournamentName);
+
+		if (existingGroup) {
+			existingGroup.rows.push(row);
+			continue;
+		}
+
+		const group = {
+			name: tournamentName,
+			rows: [row]
+		};
+
+		groupsByTournament.set(tournamentName, group);
+		groups.push(group);
+	}
+
+	return groups;
+}
+
+function TournamentGroups({ rows, getTournamentName, renderTable }) {
+	const groups = groupRowsByTournament(rows, getTournamentName);
+
+	return (
+		<div className='space-y-6'>
+			{groups.map(group => (
+				<div key={group.name} className='space-y-2'>
+					<Page.Title level={3}>{group.name}</Page.Title>
+					{renderTable(group.rows)}
+				</div>
+			))}
+		</div>
+	);
+}
+
+function MatchesTable({ rows, groupedByTournament = false }) {
 	return (
 		<Table rows={rows}>
-			<Table.Column id='event'>
-				<Table.Title>Turnering</Table.Title>
-				<Table.Cell>{({ row, value }) => (row.eventId ? <Link to={`/event/${row.eventId}`}>{value}</Link> : value)}</Table.Cell>
-			</Table.Column>
+			{!groupedByTournament ? (
+				<Table.Column id='event'>
+					<Table.Title>Turnering</Table.Title>
+					<Table.Cell>{({ row, value }) => (row.eventId ? <Link to={`/event/${row.eventId}`}>{value}</Link> : value)}</Table.Cell>
+				</Table.Column>
+			) : null}
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
@@ -168,13 +210,15 @@ function MatchesTable({ rows }) {
 	);
 }
 
-function FinishedMatchesTable({ rows }) {
+function FinishedMatchesTable({ rows, groupedByTournament = false }) {
 	return (
 		<Table rows={rows}>
-			<Table.Column id='event'>
-				<Table.Title>Turnering</Table.Title>
-				<Table.Cell>{({ row, value }) => (row.eventId ? <Link to={`/event/${row.eventId}`}>{value}</Link> : value)}</Table.Cell>
-			</Table.Column>
+			{!groupedByTournament ? (
+				<Table.Column id='event'>
+					<Table.Title>Turnering</Table.Title>
+					<Table.Cell>{({ row, value }) => (row.eventId ? <Link to={`/event/${row.eventId}`}>{value}</Link> : value)}</Table.Cell>
+				</Table.Column>
+			) : null}
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
@@ -192,16 +236,18 @@ function UpcomingPlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} suffix={row.headToHead ? `[${row.headToHead}]` : null} />;
 }
 
-function UpcomingMatchesTable({ rows }) {
+function UpcomingMatchesTable({ rows, groupedByTournament = false }) {
 	return (
 		<Table rows={rows}>
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
 			</Table.Column>
 
-			<Table.Column id='turnering'>
-				<Table.Title>Turnering</Table.Title>
-			</Table.Column>
+			{!groupedByTournament ? (
+				<Table.Column id='turnering'>
+					<Table.Title>Turnering</Table.Title>
+				</Table.Column>
+			) : null}
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
@@ -427,7 +473,11 @@ function Component() {
 									<Page.Title level={2}>Pågående matcher</Page.Title>
 									{activeMatches.length > 0 ? (
 										<>
-											<MatchesTable rows={activeMatches} />
+											<TournamentGroups
+												rows={activeMatches}
+												getTournamentName={row => row.event}
+												renderTable={rows => <MatchesTable rows={rows} groupedByTournament={true} />}
+											/>
 											<div className='flex justify-center pt-4'>
 												<Button link='/scoreboard'>Visa scoreboard</Button>
 											</div>
@@ -440,7 +490,11 @@ function Component() {
 								<section className='space-y-2'>
 									<Page.Title level={2}>Nyligen avslutade</Page.Title>
 									{finishedMatches.length > 0 ? (
-										<FinishedMatchesTable rows={finishedMatches} />
+										<TournamentGroups
+											rows={finishedMatches}
+											getTournamentName={row => row.event}
+											renderTable={rows => <FinishedMatchesTable rows={rows} groupedByTournament={true} />}
+										/>
 									) : (
 										<Page.Information>Inga nyligen avslutade matcher just nu</Page.Information>
 									)}
@@ -453,7 +507,11 @@ function Component() {
 									) : !oddsetRows ? (
 										<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
 									) : upcomingMatches.length > 0 ? (
-										<UpcomingMatchesTable rows={upcomingMatches} />
+										<TournamentGroups
+											rows={upcomingMatches}
+											getTournamentName={row => row.turnering}
+											renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
+										/>
 									) : (
 										<Page.Information>Inga kommande matcher just nu</Page.Information>
 									)}
