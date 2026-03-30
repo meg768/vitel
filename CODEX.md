@@ -23,7 +23,9 @@ Nuvarande huvudbild:
 - Databasschema source of truth: `src/database/schema.sql`
 - Backendrepo: `meg768/atp-tennis`
 - Lokal backend i utveckling ligger i syskonmappen `../atp-tennis`
+- MCP-bryggan ligger i syskonmappen `../atp-tennis-mcp`
 - Oddset ska betraktas som backendägt: frontend får inte hämta Oddset/Kambi direkt utan ska gå via backendens `GET /api/oddset`
+- Den här Codex-tråden används nu som huvudkonversation för `vitel`, `atp-tennis` och `atp-tennis-mcp`, så sammanhängande ändringar kan koordineras i ett och samma samtal.
 
 ## Nuvarande produktbild
 
@@ -232,11 +234,14 @@ Det som är viktigt att komma ihåg framåt:
 - `/trial` ska betraktas som en aktiv intern testsida och får finnas kvar även om den inte är produktnavigation för slutanvändare.
 - Det finns fortfarande några äldre sidkataloger kvar i trädet, men de är inte del av den aktiva routingen.
 - Menyn är medvetet kort och ska hållas enkel.
+- Spelaruppslag i den kringliggande backend/MCP-kedjan håller på att flyttas från gamla `/api/search-player` till nya `/api/player-search` och `/api/player-lookup`.
 - `AUTHOR.md` ska inte återintroduceras i Git eller blandas in i versionsstyrd projektkontext.
 - Lokal `AUTHOR.md` kan vara en symlink till `~/.codex/shared/AUTHOR.md` för att dela samma personliga utvecklarkontext mellan flera projekt.
 - Om ny projektkunskap uppstår ska den läggas här i stället för att splittras över flera minnesfiler.
 
 ## Ändringslogg
+
+- 2026-03-30: Gemensam tvärrepo-kontext sparades här. Den här Codex-tråden används nu som huvudkonversation för `vitel`, `atp-tennis` och `atp-tennis-mcp`, och spelaruppslag i backend/MCP-kedjan flyttas från gamla `/api/search-player` till `/api/player-search` och `/api/player-lookup`.
 
 - 2026-03-26: `CODEX.md` synkades med aktuellt läge. `/trial` dokumenteras nu uttryckligen som aktiv intern testsida, `/ranking` som borttagen route och söksidan som förenklad till ett renare sökflöde utan jämförfunktion.
 - 2026-03-26: Söksidan förenklades. Historiken begränsades till sex senaste sökningar, jämförflödet togs bort, text/styling justerades och sidan ska nu läsas som en ren spelarsökning snarare än ett sekundärt head-to-head-verktyg.
