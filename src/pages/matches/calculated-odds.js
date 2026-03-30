@@ -56,7 +56,7 @@ async function fetchCalculatedOddsForRow(row) {
 	}
 
 	const surface = resolveSurface(row);
-	const path = `odds/${encodeURIComponent(row.playerA.id)}/${encodeURIComponent(row.playerB.id)}?surface=${encodeURIComponent(surface)}`;
+	const path = `players/odds/${encodeURIComponent(row.playerA.id)}/${encodeURIComponent(row.playerB.id)}?surface=${encodeURIComponent(surface)}`;
 
 	try {
 		const payload = await service.get(path);
