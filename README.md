@@ -58,7 +58,7 @@ VITE_API_URL=http://localhost:3004/api
 
 `VITE_API_URL` is required. The frontend uses it for backend calls like:
 
-- `GET {VITE_API_URL}/live`
+- `GET {VITE_API_URL}/matches/live`
 - `GET {VITE_API_URL}/oddset`
 - `POST {VITE_API_URL}/query`
 

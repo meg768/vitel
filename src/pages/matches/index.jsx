@@ -288,7 +288,7 @@ function splitMatchesByStatus(matches) {
 
 function Component() {
 	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
-		path: 'live',
+		path: 'matches/live',
 		method: 'GET',
 		cache: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
