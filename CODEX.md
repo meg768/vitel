@@ -241,6 +241,7 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-03-30: Backendens `/api/ping` utökades till att returnera `version`, backendversionen bumpades till `1.0.1`, och `atp-service` deployades om på `pi-kato`. Detta kan användas som enkel verifiering från frontend/MCP-sidan att rätt backendkod körs live.
 - 2026-03-30: Gemensam tvärrepo-kontext sparades här. Den här Codex-tråden används nu som huvudkonversation för `vitel`, `atp-tennis` och `atp-tennis-mcp`, och spelaruppslag i backend/MCP-kedjan flyttas från gamla `/api/search-player` till `/api/player-search` och `/api/player-lookup`.
 
 - 2026-03-26: `CODEX.md` synkades med aktuellt läge. `/trial` dokumenteras nu uttryckligen som aktiv intern testsida, `/ranking` som borttagen route och söksidan som förenklad till ett renare sökflöde utan jämförfunktion.
