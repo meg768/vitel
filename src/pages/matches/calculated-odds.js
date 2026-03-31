@@ -43,20 +43,26 @@ function resolveSurface(row) {
 }
 
 function createMatchKey(row) {
-	if (!row?.playerA?.id || !row?.playerB?.id) {
+	const playerAId = row?.playerA?.id ?? row?.player?.id ?? null;
+	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? null;
+
+	if (!playerAId || !playerBId) {
 		return null;
 	}
 
-	return [row.playerA.id, row.playerB.id, resolveSurface(row)].join('::');
+	return [playerAId, playerBId, resolveSurface(row)].join('::');
 }
 
 async function fetchCalculatedOddsForRow(row) {
-	if (!row?.playerA?.id || !row?.playerB?.id) {
+	const playerAId = row?.playerA?.id ?? row?.player?.id ?? null;
+	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? null;
+
+	if (!playerAId || !playerBId) {
 		return '-';
 	}
 
 	const surface = resolveSurface(row);
-	const path = `players/odds/${encodeURIComponent(row.playerA.id)}/${encodeURIComponent(row.playerB.id)}?surface=${encodeURIComponent(surface)}`;
+	const path = `players/odds/${encodeURIComponent(playerAId)}/${encodeURIComponent(playerBId)}?surface=${encodeURIComponent(surface)}`;
 
 	try {
 		const payload = await service.get(path);

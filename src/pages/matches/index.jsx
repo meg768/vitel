@@ -203,6 +203,16 @@ function MatchesTable({ rows, groupedByTournament = false }) {
 				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
+			<Table.Column>
+				<Table.Title>Vitel</Table.Title>
+				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>Tips</Table.Title>
+				<Table.Value>{({ row }) => row.recommendation ?? '-'}</Table.Value>
+			</Table.Column>
+
 			<Table.Column id='score'>
 				<Table.Title>Ställning</Table.Title>
 			</Table.Column>
@@ -329,6 +339,16 @@ function Component() {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
 		return { ...row, playerA, playerB };
 	});
+	const calculatedOddsRows = React.useMemo(
+		() => [
+			...((matches ?? []).filter(match => !match.winner).map(match => ({
+				player: match.player,
+				opponent: match.opponent
+			}))),
+			...resolvedUpcomingRows
+		],
+		[matches, resolvedUpcomingRows]
+	);
 	const headToHeadRows = React.useMemo(() => {
 		const upcomingMatches = resolvedUpcomingRows.map(row => ({
 			player: row.playerA,
@@ -349,13 +369,13 @@ function Component() {
 		placeholderData: previousData => previousData
 	});
 	const { data: calculatedOddsByMatch = {} } = useQuery({
-		queryKey: [CALCULATED_ODDS_QUERY_KEY, resolvedUpcomingRows.map(row => [row.playerA?.id, row.playerB?.id, row._startTimestamp ?? null])],
-		queryFn: () => fetchCalculatedOddsForMatches(resolvedUpcomingRows),
+		queryKey: [CALCULATED_ODDS_QUERY_KEY, calculatedOddsRows.map(row => [row.playerA?.id ?? row.player?.id ?? null, row.playerB?.id ?? row.opponent?.id ?? null, row._startTimestamp ?? null])],
+		queryFn: () => fetchCalculatedOddsForMatches(calculatedOddsRows),
 		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 		refetchOnWindowFocus: false,
 		retry: 0,
-		enabled: resolvedUpcomingRows.length > 0
+		enabled: calculatedOddsRows.length > 0
 	});
 
 	if (liveError) {
@@ -423,7 +443,15 @@ function Component() {
 		])
 	);
 	const rows = (matches ?? [])
-		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
+		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
+		.map(match => ({
+			...match,
+			myOdds: getCalculatedOddsForMatch(match, calculatedOddsByMatch)
+		}))
+		.map(match => ({
+			...match,
+			recommendation: getRecommendationFromOdds(match.odds, match.myOdds)
+		}));
 	const { activeMatches, finishedMatches } = splitMatchesByStatus(rows);
 	const activeMatchKeys = new Set(
 		activeMatches

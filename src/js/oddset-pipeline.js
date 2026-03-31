@@ -25,6 +25,24 @@ function createPlayersKey(playerAName, playerBName) {
 	return [playerA, playerB].sort().join('::');
 }
 
+function createPlayersIdKey(playerAId, playerBId) {
+	const playerA = String(playerAId || '').trim().toUpperCase();
+	const playerB = String(playerBId || '').trim().toUpperCase();
+
+	if (!playerA || !playerB) {
+		return null;
+	}
+
+	return [playerA, playerB].sort().join('::');
+}
+
+function createPlayersIdentityKeys({ playerAId, playerBId, playerAName, playerBName }) {
+	return [...new Set([
+		createPlayersIdKey(playerAId, playerBId),
+		createPlayersKey(playerAName, playerBName)
+	].filter(Boolean))];
+}
+
 function formatOddsValue(odds) {
 	if (typeof odds !== 'number') {
 		return '-';
@@ -41,6 +59,17 @@ function formatState(state) {
 			return 'Kommande';
 		default:
 			return state || '-';
+	}
+}
+
+function getStatePriority(state) {
+	switch (state) {
+		case 'STARTED':
+			return 2;
+		case 'NOT_STARTED':
+			return 1;
+		default:
+			return 0;
 	}
 }
 
@@ -95,6 +124,37 @@ async function fetchOddsetRows() {
 	return normalizeOddsetRowsPayload(payload);
 }
 
+async function fetchPlayerLookupId(name) {
+	const term = String(name || '').trim();
+
+	if (!term) {
+		return null;
+	}
+
+	try {
+		const payload = await service.get(`player/lookup?term=${encodeURIComponent(term)}`);
+		return Array.isArray(payload) ? payload[0]?.id ?? null : null;
+	} catch {
+		return null;
+	}
+}
+
+async function attachPlayerLookupIds(rows = []) {
+	const uniqueNames = [...new Set(
+		rows.flatMap(row => [row?.playerA?.name, row?.playerB?.name].map(name => String(name || '').trim())).filter(Boolean)
+	)];
+	const lookupEntries = await Promise.all(
+		uniqueNames.map(async name => [name, await fetchPlayerLookupId(name)])
+	);
+	const playerIdByName = Object.fromEntries(lookupEntries);
+
+	return rows.map(row => ({
+		...row,
+		playerAId: playerIdByName[String(row.playerA?.name || '').trim()] ?? null,
+		playerBId: playerIdByName[String(row.playerB?.name || '').trim()] ?? null
+	}));
+}
+
 function normalizeOddsetRowsPayload(payload) {
 	if (!Array.isArray(payload)) {
 		throw new Error('Oddset endpoint returnerade inte en array');
@@ -130,6 +190,8 @@ function toUiRow(row) {
 		turnering: row.tournament ?? '-',
 		playerAName: playerAName || '-',
 		playerBName: playerBName || '-',
+		playerAId: row.playerAId ?? null,
+		playerBId: row.playerBId ?? null,
 		odds: `${formatOddsValue(oddsA)} - ${formatOddsValue(oddsB)}`,
 		liveScore: liveScore || '-',
 		status: formatState(rawState),
@@ -146,24 +208,60 @@ function toSortedUiRows(rows = []) {
 
 async function fetchOddsetPipelineMatches() {
 	const rows = await fetchOddsetRows();
-	return toSortedUiRows(rows);
+	const rowsWithIds = await attachPlayerLookupIds(rows);
+	return toSortedUiRows(rowsWithIds);
 }
 
-function upsertOddsRow(oddsByPlayers, { oneName, twoName, oneOdds, twoOdds, state }) {
-	const key = createPlayersKey(oneName, twoName);
-	if (!key) {
+function shouldReplaceOddsRow(current, next) {
+	if (!current) {
+		return true;
+	}
+
+	const currentPriority = getStatePriority(current._state);
+	const nextPriority = getStatePriority(next._state);
+
+	if (nextPriority !== currentPriority) {
+		return nextPriority > currentPriority;
+	}
+
+	const currentHasOdds = current._hasOdds ?? false;
+	const nextHasOdds = next._hasOdds ?? false;
+
+	if (currentHasOdds !== nextHasOdds) {
+		return nextHasOdds;
+	}
+
+	return false;
+}
+
+function upsertOddsRow(oddsByPlayers, { oneId, twoId, oneName, twoName, oneOdds, twoOdds, state }) {
+	const keys = createPlayersIdentityKeys({
+		playerAId: oneId,
+		playerBId: twoId,
+		playerAName: oneName,
+		playerBName: twoName
+	});
+
+	if (keys.length === 0) {
 		return;
 	}
 
-	oddsByPlayers[key] = {
+	const nextRow = {
 		[normalizeName(oneName)]: formatOddsValue(oneOdds),
 		[normalizeName(twoName)]: formatOddsValue(twoOdds),
-		_state: state ?? null
+		_state: state ?? null,
+		_hasOdds: typeof oneOdds === 'number' || typeof twoOdds === 'number'
 	};
+
+	for (const key of keys) {
+		if (shouldReplaceOddsRow(oddsByPlayers[key], nextRow)) {
+			oddsByPlayers[key] = nextRow;
+		}
+	}
 }
 
 async function fetchLiveOddsetOddsByPlayers() {
-	const rows = await fetchOddsetRows();
+	const rows = await attachPlayerLookupIds(await fetchOddsetRows());
 	const oddsByPlayers = {};
 
 	for (const row of rows) {
@@ -171,11 +269,13 @@ async function fetchLiveOddsetOddsByPlayers() {
 			continue;
 		}
 
-		if (row.state !== 'STARTED') {
+		if (row.state !== 'STARTED' && row.state !== 'NOT_STARTED') {
 			continue;
 		}
 
 		upsertOddsRow(oddsByPlayers, {
+			oneId: row.playerAId,
+			twoId: row.playerBId,
 			oneName: row.playerA?.name,
 			twoName: row.playerB?.name,
 			oneOdds: row.playerA?.odds,
@@ -187,13 +287,26 @@ async function fetchLiveOddsetOddsByPlayers() {
 	return oddsByPlayers;
 }
 
-function formatLiveOddsetOddsForMatch(match, oddsByPlayers) {
-	const key = createPlayersKey(match.player?.name, match.opponent?.name);
-	if (!key) {
-		return '-';
+function getOddsEntryForMatch(match, oddsByPlayers) {
+	const keys = createPlayersIdentityKeys({
+		playerAId: match.player?.id,
+		playerBId: match.opponent?.id,
+		playerAName: match.player?.name,
+		playerBName: match.opponent?.name
+	});
+
+	for (const key of keys) {
+		const entry = oddsByPlayers?.[key];
+		if (entry) {
+			return entry;
+		}
 	}
 
-	const oddsForMatch = oddsByPlayers?.[key];
+	return null;
+}
+
+function formatLiveOddsetOddsForMatch(match, oddsByPlayers) {
+	const oddsForMatch = getOddsEntryForMatch(match, oddsByPlayers);
 	if (!oddsForMatch) {
 		return '-';
 	}
@@ -209,12 +322,7 @@ function formatLiveOddsetOddsForMatch(match, oddsByPlayers) {
 }
 
 function getLiveOddsetOddsStateForMatch(match, oddsByPlayers) {
-	const key = createPlayersKey(match.player?.name, match.opponent?.name);
-	if (!key) {
-		return null;
-	}
-
-	return oddsByPlayers?.[key]?._state ?? null;
+	return getOddsEntryForMatch(match, oddsByPlayers)?._state ?? null;
 }
 
 function buildPlayerDetailsByName(rows = []) {
@@ -241,21 +349,22 @@ function buildRanksByPlayerId(rows = []) {
 	return Object.fromEntries(rows.map((player, index) => [player.id, index + 1]));
 }
 
-function resolvePlayer(name, playerDetailsByName, ranksByPlayerId) {
+function resolvePlayer(name, playerId, playerDetailsByName, ranksByPlayerId) {
 	const playerDetails = playerDetailsByName[normalizeName(name)] || {};
+	const id = playerId ?? playerDetails.id ?? null;
 
 	return {
-		id: playerDetails.id ?? null,
+		id,
 		name: name || '-',
 		country: playerDetails.country ?? null,
-		rank: playerDetails.id ? ranksByPlayerId[playerDetails.id] ?? null : null
+		rank: id ? ranksByPlayerId[id] ?? null : null
 	};
 }
 
 function resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId) {
 	return {
-		playerA: resolvePlayer(row.playerAName, playerDetailsByName, ranksByPlayerId),
-		playerB: resolvePlayer(row.playerBName, playerDetailsByName, ranksByPlayerId)
+		playerA: resolvePlayer(row.playerAName, row.playerAId, playerDetailsByName, ranksByPlayerId),
+		playerB: resolvePlayer(row.playerBName, row.playerBId, playerDetailsByName, ranksByPlayerId)
 	};
 }
 
