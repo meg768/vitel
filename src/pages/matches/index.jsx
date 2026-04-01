@@ -208,11 +208,6 @@ function MatchesTable({ rows, groupedByTournament = false }) {
 				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
 			</Table.Column>
 
-			<Table.Column>
-				<Table.Title>Tips</Table.Title>
-				<Table.Value>{({ row }) => row.recommendation ?? '-'}</Table.Value>
-			</Table.Column>
-
 			<Table.Column id='score'>
 				<Table.Title>Ställning</Table.Title>
 			</Table.Column>
