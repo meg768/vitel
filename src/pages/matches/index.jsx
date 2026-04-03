@@ -7,7 +7,7 @@ import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { CALCULATED_ODDS_QUERY_KEY, fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from './calculated-odds.js';
+import { fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from './calculated-odds.js';
 import { addRankingAndDisplayFields, buildHeadToHeadQuery } from '../../js/live-match-rows.js';
 import {
 	LIVE_ODDSET_QUERY_KEY,
@@ -55,6 +55,41 @@ function createPlayersIdentityKey(playerA, playerB) {
 	}
 
 	return createPlayersKey(playerA?.name, playerB?.name);
+}
+
+function createArchivedMatchKey({ eventId, eventName, playerA, playerB, playerAId, playerBId }) {
+	const playersKey = playerAId && playerBId
+		? [String(playerAId).trim().toUpperCase(), String(playerBId).trim().toUpperCase()].sort().join('::')
+		: createPlayersKey(playerA, playerB);
+
+	if (!playersKey) {
+		return null;
+	}
+
+	const eventKey = String(eventId || eventName || '').trim().toUpperCase();
+	return eventKey ? `${eventKey}::${playersKey}` : playersKey;
+}
+
+function createArchivedMatchKeyForLiveRow(row) {
+	return createArchivedMatchKey({
+		eventId: row?.eventId ?? row?.event ?? null,
+		eventName: row?.event ?? null,
+		playerA: row?.player?.name,
+		playerB: row?.opponent?.name,
+		playerAId: row?.player?.id,
+		playerBId: row?.opponent?.id
+	});
+}
+
+function createArchivedMatchKeyForUpcomingRow(row) {
+	return createArchivedMatchKey({
+		eventId: row?.eventId ?? null,
+		eventName: row?.turnering ?? row?.tournament ?? null,
+		playerA: row?.playerA?.name,
+		playerB: row?.playerB?.name,
+		playerAId: row?.playerA?.id ?? row?.playerAId ?? null,
+		playerBId: row?.playerB?.id ?? row?.playerBId ?? null
+	});
 }
 
 function parseOddsValue(value) {
@@ -230,6 +265,15 @@ function FinishedMatchesTable({ rows, groupedByTournament = false }) {
 				<Table.Value>{({ row }) => <PlayersCell row={row} showHeadToHead={true} />}</Table.Value>
 			</Table.Column>
 
+			<Table.Column id='odds'>
+				<Table.Title>Oddset</Table.Title>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>Vitel</Table.Title>
+				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+			</Table.Column>
+
 			<Table.Column id='score'>
 				<Table.Title>Resultat</Table.Title>
 			</Table.Column>
@@ -291,7 +335,45 @@ function splitMatchesByStatus(matches) {
 	return { activeMatches, finishedMatches };
 }
 
+function createLiveCalculatedOddsRows(matches = []) {
+	return matches.map(match => ({
+			player: match.player,
+			opponent: match.opponent
+		}));
+}
+
+function createCalculatedOddsRowsKey(rows = []) {
+	return rows.map(row => [
+		row.playerA?.id ?? row.player?.id ?? null,
+		row.playerB?.id ?? row.opponent?.id ?? null,
+		row._startTimestamp ?? null
+	]);
+}
+
+async function fetchLiveOddsSnapshot(rows = []) {
+	const [oddsByPlayers, calculatedOddsByMatch] = await Promise.all([
+		fetchLiveOddsetOddsByPlayers(),
+		fetchCalculatedOddsForMatches(rows)
+	]);
+
+	return {
+		oddsByPlayers,
+		calculatedOddsByMatch
+	};
+}
+
+async function fetchUpcomingMatchesSnapshot() {
+	const oddsetRows = await fetchOddsetPipelineMatches();
+	const calculatedOddsByMatch = await fetchCalculatedOddsForMatches(oddsetRows);
+
+	return {
+		oddsetRows,
+		calculatedOddsByMatch
+	};
+}
+
 function Component() {
+	const archivedFinishedOddsByMatchRef = React.useRef(new Map());
 	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
 		path: 'matches/live',
 		method: 'GET',
@@ -300,24 +382,6 @@ function Component() {
 		refetchIntervalInBackground: true,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false
-	});
-	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
-		queryKey: LIVE_ODDSET_QUERY_KEY,
-		queryFn: fetchLiveOddsetOddsByPlayers,
-		staleTime: LIVE_REFRESH_INTERVAL_MS,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
-		retry: 0
-	});
-	const { data: oddsetRows, error: oddsetPipelineError } = useQuery({
-		queryKey: ODDSET_PIPELINE_QUERY_KEY,
-		queryFn: fetchOddsetPipelineMatches,
-		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchOnWindowFocus: false,
-		retry: 0
 	});
 	const { data: playerRows, error: playerError } = useSQL({
 		sql: 'SELECT id, name, country FROM players',
@@ -330,20 +394,36 @@ function Component() {
 	});
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsByName = buildPlayerDetailsByName(playerRows ?? []);
-	const resolvedUpcomingRows = (oddsetRows ?? []).map(row => {
+	const liveCalculatedOddsRows = React.useMemo(() => createLiveCalculatedOddsRows(matches ?? []), [matches]);
+	const { data: liveOddsSnapshot, error: oddsError } = useQuery({
+		queryKey: [LIVE_ODDSET_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
+		queryFn: () => fetchLiveOddsSnapshot(liveCalculatedOddsRows),
+		staleTime: LIVE_REFRESH_INTERVAL_MS,
+		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		retry: 0,
+		enabled: liveCalculatedOddsRows.length > 0,
+		placeholderData: previousData => previousData
+	});
+	const { data: upcomingSnapshot, error: oddsetPipelineError } = useQuery({
+		queryKey: ODDSET_PIPELINE_QUERY_KEY,
+		queryFn: fetchUpcomingMatchesSnapshot,
+		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchOnWindowFocus: false,
+		retry: 0,
+		placeholderData: previousData => previousData
+	});
+	const oddsByPlayers = liveOddsSnapshot?.oddsByPlayers ?? {};
+	const activeCalculatedOddsByMatch = liveOddsSnapshot?.calculatedOddsByMatch ?? {};
+	const oddsetRows = upcomingSnapshot?.oddsetRows ?? [];
+	const upcomingCalculatedOddsByMatch = upcomingSnapshot?.calculatedOddsByMatch ?? {};
+	const resolvedUpcomingRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
 		return { ...row, playerA, playerB };
 	});
-	const calculatedOddsRows = React.useMemo(
-		() => [
-			...((matches ?? []).filter(match => !match.winner).map(match => ({
-				player: match.player,
-				opponent: match.opponent
-			}))),
-			...resolvedUpcomingRows
-		],
-		[matches, resolvedUpcomingRows]
-	);
 	const headToHeadRows = React.useMemo(() => {
 		const upcomingMatches = resolvedUpcomingRows.map(row => ({
 			player: row.playerA,
@@ -362,15 +442,6 @@ function Component() {
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		placeholderData: previousData => previousData
-	});
-	const { data: calculatedOddsByMatch = {} } = useQuery({
-		queryKey: [CALCULATED_ODDS_QUERY_KEY, calculatedOddsRows.map(row => [row.playerA?.id ?? row.player?.id ?? null, row.playerB?.id ?? row.opponent?.id ?? null, row._startTimestamp ?? null])],
-		queryFn: () => fetchCalculatedOddsForMatches(calculatedOddsRows),
-		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchOnWindowFocus: false,
-		retry: 0,
-		enabled: calculatedOddsRows.length > 0
 	});
 
 	if (liveError) {
@@ -437,17 +508,17 @@ function Component() {
 			}
 		])
 	);
-	const rows = (matches ?? [])
-		.map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
+	const rows = (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
+	const { activeMatches: rawActiveMatches, finishedMatches } = splitMatchesByStatus(rows);
+	const activeMatches = rawActiveMatches
 		.map(match => ({
 			...match,
-			myOdds: getCalculatedOddsForMatch(match, calculatedOddsByMatch)
+			myOdds: getCalculatedOddsForMatch(match, activeCalculatedOddsByMatch)
 		}))
 		.map(match => ({
 			...match,
 			recommendation: getRecommendationFromOdds(match.odds, match.myOdds)
 		}));
-	const { activeMatches, finishedMatches } = splitMatchesByStatus(rows);
 	const activeMatchKeys = new Set(
 		activeMatches
 			.map(match => createPlayersIdentityKey(match.player, match.opponent))
@@ -460,15 +531,37 @@ function Component() {
 		})
 		.map(row => ({
 			...row,
-			myOdds: getCalculatedOddsForMatch(row, calculatedOddsByMatch),
+			myOdds: getCalculatedOddsForMatch(row, upcomingCalculatedOddsByMatch),
 			headToHead: getHeadToHeadValue(row.playerA, row.playerB, headToHeadByPair)
 		}));
+	for (const row of upcomingRows) {
+		const archivedKey = createArchivedMatchKeyForUpcomingRow(row);
+		if (!archivedKey) {
+			continue;
+		}
+
+		archivedFinishedOddsByMatchRef.current.set(archivedKey, {
+			odds: row.odds ?? '-',
+			myOdds: row.myOdds ?? '-'
+		});
+	}
+	const finishedMatchesWithOdds = finishedMatches.map(match => {
+		const archivedKey = createArchivedMatchKeyForLiveRow(match);
+		const archivedOdds = archivedKey ? archivedFinishedOddsByMatchRef.current.get(archivedKey) : null;
+		const calculatedOdds = getCalculatedOddsForMatch(match, activeCalculatedOddsByMatch);
+
+		return {
+			...match,
+			odds: archivedOdds?.odds ?? '-',
+			myOdds: archivedOdds?.myOdds ?? calculatedOdds
+		};
+	});
 	const upcomingRowsWithRecommendation = upcomingRows.map(row => ({
 		...row,
 		recommendation: getRecommendationFromOdds(row.odds, row.myOdds)
 	}));
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRowsWithRecommendation);
-	const hasNoMatches = activeMatches.length === 0 && finishedMatches.length === 0 && upcomingMatches.length === 0;
+	const hasNoMatches = activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -512,9 +605,9 @@ function Component() {
 
 								<section className='space-y-2'>
 									<Page.Title level={2}>Nyligen avslutade</Page.Title>
-									{finishedMatches.length > 0 ? (
+									{finishedMatchesWithOdds.length > 0 ? (
 										<TournamentGroups
-											rows={finishedMatches}
+											rows={finishedMatchesWithOdds}
 											getTournamentName={row => row.event}
 											renderTable={rows => <FinishedMatchesTable rows={rows} groupedByTournament={true} />}
 										/>

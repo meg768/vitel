@@ -43,8 +43,8 @@ function resolveSurface(row) {
 }
 
 function createMatchKey(row) {
-	const playerAId = row?.playerA?.id ?? row?.player?.id ?? null;
-	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? null;
+	const playerAId = row?.playerA?.id ?? row?.player?.id ?? row?.playerAId ?? null;
+	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? row?.playerBId ?? null;
 
 	if (!playerAId || !playerBId) {
 		return null;
@@ -54,8 +54,8 @@ function createMatchKey(row) {
 }
 
 async function fetchCalculatedOddsForRow(row) {
-	const playerAId = row?.playerA?.id ?? row?.player?.id ?? null;
-	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? null;
+	const playerAId = row?.playerA?.id ?? row?.player?.id ?? row?.playerAId ?? null;
+	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? row?.playerBId ?? null;
 
 	if (!playerAId || !playerBId) {
 		return '-';
