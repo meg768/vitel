@@ -15,7 +15,7 @@ function Component({ className, ...props }) {
 
 const statusBoxClassName = [
 	'border rounded-sm border-primary-300 bg-primary-50! text-primary-900 p-3',
-	'dark:border-primary-700 dark:bg-primary-950! dark:text-primary-100',
+	'dark:border-primary-700 dark:bg-primary-800! dark:text-primary-100',
 	'flex items-center gap-3'
 ];
 
@@ -26,7 +26,7 @@ Component.Title = function ({ className, level = 1, ...props }) {
 	switch (level) {
 		case 1: {
 			className = clsx('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700! p-3', className);
-			className = clsx('text-[150%]', 'dark:bg-primary-800! ', className);
+			className = clsx('text-[150%]', 'dark:border-primary-700 dark:bg-primary-800! ', className);
 			break;
 		}
 		case 2: {

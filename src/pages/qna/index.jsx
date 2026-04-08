@@ -12,11 +12,19 @@ export default function QnAPage() {
 
 	function QueryLink({ name, title = null, description = '-', ...props }) {
 		const link = `/query/${name}`;
+		const summary = description?.trim() || 'Öppna frågan för att se SQL och resultat.';
 
 		return (
-			<Link hover={false} to={link} className='mb-3 block rounded-md border p-4 transition-colors hover:bg-primary-50 dark:hover:bg-primary-900' {...props}>
+			<Link
+				hover={false}
+				to={link}
+				className='mb-3 block rounded-md border border-primary-300 bg-primary-50 p-4 transition-colors duration-150 hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900 dark:hover:bg-primary-800'
+				{...props}
+			>
 				<div className='text-2xl'>{title}</div>
-				<Markdown className='mt-1'>{description}</Markdown>
+				<Markdown className='mt-2 text-sm leading-6 text-primary-700 prose-p:text-primary-700 prose-strong:text-primary-800 prose-li:text-primary-700 prose-li:marker:text-primary-500 dark:text-primary-300 dark:prose-p:text-primary-300 dark:prose-strong:text-primary-100 dark:prose-li:text-primary-300 dark:prose-li:marker:text-primary-400'>
+					{summary}
+				</Markdown>
 			</Link>
 		);
 	}
