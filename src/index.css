@@ -115,15 +115,15 @@
 
 .clay {
 	--color-primary-50: #fdf7f4;
-	--color-primary-100: #fceee6;
-	--color-primary-200: #f8d6c4;
-	--color-primary-300: #f1b499;
-	--color-primary-400: #e78e6c;
-	--color-primary-500: #d96b47;
-	--color-primary-600: #b6523b;
-	--color-primary-700: #924131;
-	--color-primary-800: #703328;
-	--color-primary-900: #50241c;
+	--color-primary-100: #faeee6;
+	--color-primary-200: #f3ddd0;
+	--color-primary-300: #e9c3ad;
+	--color-primary-400: #dba182;
+	--color-primary-500: #c97d5d;
+	--color-primary-600: #a9654b;
+	--color-primary-700: #87503d;
+	--color-primary-800: #673a2c;
+	--color-primary-900: #4a241b;
 	--color-primary-950: #34160f;
   }
 
