@@ -5,13 +5,14 @@ import { useParams } from 'react-router';
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
-import { addRankingAndDisplayFields, buildHeadToHeadQuery, selectMonitorMatches } from '../../js/live-match-rows.js';
+import { addRankingAndDisplayFields, fetchHeadToHeadByMatches, selectMonitorMatches } from '../../js/live-match-rows.js';
 import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/oddset-pipeline.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const ODDSET_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
+const HEAD_TO_HEAD_QUERY_KEY = ['head-to-head', 'scoreboard'];
 
 function ErrorPage({ message }) {
 	return (
@@ -75,30 +76,26 @@ function Component() {
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
-	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(matches ?? []), [matches]);
-	const { data: meetingRows, error: meetingError } = useSQL({
-		sql: headToHeadQuery.sql,
-		format: headToHeadQuery.format,
+	const headToHeadPairsKey = React.useMemo(
+		() => (matches ?? []).map(match => [match.player?.id ?? null, match.opponent?.id ?? null]),
+		[matches]
+	);
+	const { data: headToHeadByPair = {}, error: meetingError } = useQuery({
+		queryKey: [HEAD_TO_HEAD_QUERY_KEY, headToHeadPairsKey],
+		queryFn: () => fetchHeadToHeadByMatches(matches ?? []),
 		cache: 0,
+		staleTime: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		retry: 0,
 		placeholderData: previousData => previousData
 	});
 
-	const hasLoadedCoreData = Boolean(matches && rankingRows && meetingRows);
+	const hasLoadedCoreData = Boolean(matches && rankingRows);
 	const ranksByPlayerId = hasLoadedCoreData
 		? Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]))
-		: {};
-	const headToHeadByPair = hasLoadedCoreData
-		? Object.fromEntries(
-			meetingRows.map(row => [
-				`${row.player_a_id}:${row.player_b_id}`,
-				{
-					[row.player_a_id]: row.wins_for_player_a,
-					[row.player_b_id]: row.wins_for_player_b
-				}
-			])
-		)
 		: {};
 	const monitorRows = hasLoadedCoreData
 		? (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
@@ -158,10 +155,6 @@ function Component() {
 		return <ErrorPage message={`Misslyckades med att läsa in ranking - ${rankError.message}`} />;
 	}
 
-	if (meetingError) {
-		return <ErrorPage message={`Misslyckades med att läsa in head-to-head - ${meetingError.message}`} />;
-	}
-
 	if (!hasLoadedCoreData) {
 		return <LoadingPage />;
 	}
@@ -199,6 +192,7 @@ function Component() {
 							</Page.Title>
 						)}
 						{focusMode || !oddsError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div>}
+						{focusMode || !meetingError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div>}
 
 						{focusedMatch ? (
 							<div className='fixed inset-0 z-40 bg-primary-50 dark:bg-primary-900'>

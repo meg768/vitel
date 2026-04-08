@@ -7,8 +7,14 @@ import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
 import Link from '../../components/ui/link';
-import { fetchCalculatedOddsForMatches, getCalculatedOddsForMatch } from './calculated-odds.js';
-import { addRankingAndDisplayFields, buildHeadToHeadQuery } from '../../js/live-match-rows.js';
+import {
+	CALCULATED_ODDS_QUERY_KEY,
+	TENNIS_ABSTRACT_ODDS_QUERY_KEY,
+	fetchCalculatedOddsForMatches,
+	fetchTennisAbstractOddsForMatches,
+	getCalculatedOddsForMatch
+} from './calculated-odds.js';
+import { addRankingAndDisplayFields, fetchHeadToHeadByMatches } from '../../js/live-match-rows.js';
 import {
 	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
@@ -24,6 +30,7 @@ import { useRequest, useSQL } from '../../js/vitel.js';
 const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
+const HEAD_TO_HEAD_QUERY_KEY = ['head-to-head', 'matches'];
 
 function normalizeName(name = '') {
 	return String(name)
@@ -235,6 +242,11 @@ function MatchesTable({ rows, groupedByTournament = false }) {
 			</Table.Column>
 
 			<Table.Column id='odds'>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
+			</Table.Column>
+
+			<Table.Column id='odds'>
 				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
@@ -263,6 +275,11 @@ function FinishedMatchesTable({ rows, groupedByTournament = false }) {
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
 				<Table.Value>{({ row }) => <PlayersCell row={row} showHeadToHead={true} />}</Table.Value>
+			</Table.Column>
+
+			<Table.Column id='odds'>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='odds'>
@@ -301,6 +318,11 @@ function UpcomingMatchesTable({ rows, groupedByTournament = false }) {
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
 				<Table.Value>{({ row }) => <UpcomingPlayersCell row={row} />}</Table.Value>
+			</Table.Column>
+
+			<Table.Column>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='odds'>
@@ -351,24 +373,30 @@ function createCalculatedOddsRowsKey(rows = []) {
 }
 
 async function fetchLiveOddsSnapshot(rows = []) {
-	const [oddsByPlayers, calculatedOddsByMatch] = await Promise.all([
+	const [oddsByPlayers, calculatedOddsByMatch, tennisAbstractOddsByMatch] = await Promise.all([
 		fetchLiveOddsetOddsByPlayers(),
-		fetchCalculatedOddsForMatches(rows)
+		fetchCalculatedOddsForMatches(rows),
+		fetchTennisAbstractOddsForMatches(rows)
 	]);
 
 	return {
 		oddsByPlayers,
-		calculatedOddsByMatch
+		calculatedOddsByMatch,
+		tennisAbstractOddsByMatch
 	};
 }
 
 async function fetchUpcomingMatchesSnapshot() {
 	const oddsetRows = await fetchOddsetPipelineMatches();
-	const calculatedOddsByMatch = await fetchCalculatedOddsForMatches(oddsetRows);
+	const [calculatedOddsByMatch, tennisAbstractOddsByMatch] = await Promise.all([
+		fetchCalculatedOddsForMatches(oddsetRows),
+		fetchTennisAbstractOddsForMatches(oddsetRows)
+	]);
 
 	return {
 		oddsetRows,
-		calculatedOddsByMatch
+		calculatedOddsByMatch,
+		tennisAbstractOddsByMatch
 	};
 }
 
@@ -396,7 +424,7 @@ function Component() {
 	const playerDetailsByName = buildPlayerDetailsByName(playerRows ?? []);
 	const liveCalculatedOddsRows = React.useMemo(() => createLiveCalculatedOddsRows(matches ?? []), [matches]);
 	const { data: liveOddsSnapshot, error: oddsError } = useQuery({
-		queryKey: [LIVE_ODDSET_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
+		queryKey: [LIVE_ODDSET_QUERY_KEY, CALCULATED_ODDS_QUERY_KEY, TENNIS_ABSTRACT_ODDS_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
 		queryFn: () => fetchLiveOddsSnapshot(liveCalculatedOddsRows),
 		staleTime: LIVE_REFRESH_INTERVAL_MS,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
@@ -418,8 +446,10 @@ function Component() {
 	});
 	const oddsByPlayers = liveOddsSnapshot?.oddsByPlayers ?? {};
 	const activeCalculatedOddsByMatch = liveOddsSnapshot?.calculatedOddsByMatch ?? {};
+	const activeTennisAbstractOddsByMatch = liveOddsSnapshot?.tennisAbstractOddsByMatch ?? {};
 	const oddsetRows = upcomingSnapshot?.oddsetRows ?? [];
 	const upcomingCalculatedOddsByMatch = upcomingSnapshot?.calculatedOddsByMatch ?? {};
+	const upcomingTennisAbstractOddsByMatch = upcomingSnapshot?.tennisAbstractOddsByMatch ?? {};
 	const resolvedUpcomingRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
 		return { ...row, playerA, playerB };
@@ -432,15 +462,20 @@ function Component() {
 
 		return [...(matches ?? []), ...upcomingMatches];
 	}, [matches, resolvedUpcomingRows]);
-	const headToHeadQuery = React.useMemo(() => buildHeadToHeadQuery(headToHeadRows), [headToHeadRows]);
-	const { data: meetingRows, error: meetingError } = useSQL({
-		sql: headToHeadQuery.sql,
-		format: headToHeadQuery.format,
+	const headToHeadPairsKey = React.useMemo(
+		() => headToHeadRows.map(match => [match.player?.id ?? null, match.opponent?.id ?? null]),
+		[headToHeadRows]
+	);
+	const { data: headToHeadByPair = {}, error: meetingError } = useQuery({
+		queryKey: [HEAD_TO_HEAD_QUERY_KEY, headToHeadPairsKey],
+		queryFn: () => fetchHeadToHeadByMatches(headToHeadRows),
 		cache: 0,
+		staleTime: 0,
 		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
+		retry: 0,
 		placeholderData: previousData => previousData
 	});
 
@@ -477,18 +512,7 @@ function Component() {
 		);
 	}
 
-	if (meetingError) {
-		return (
-			<Page id='matches-page'>
-				<Page.Menu />
-				<Page.Content>
-					<Page.Error>Misslyckades med att läsa in head-to-head - {meetingError.message}</Page.Error>
-				</Page.Content>
-			</Page>
-		);
-	}
-
-	if (!matches || !rankingRows || !meetingRows || !playerRows) {
+	if (!matches || !rankingRows || !playerRows) {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
@@ -499,21 +523,13 @@ function Component() {
 		);
 	}
 
-	const headToHeadByPair = Object.fromEntries(
-		meetingRows.map(row => [
-			`${row.player_a_id}:${row.player_b_id}`,
-			{
-				[row.player_a_id]: row.wins_for_player_a,
-				[row.player_b_id]: row.wins_for_player_b
-			}
-		])
-	);
 	const rows = (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair));
 	const { activeMatches: rawActiveMatches, finishedMatches } = splitMatchesByStatus(rows);
 	const activeMatches = rawActiveMatches
 		.map(match => ({
 			...match,
-			myOdds: getCalculatedOddsForMatch(match, activeCalculatedOddsByMatch)
+			myOdds: getCalculatedOddsForMatch(match, activeCalculatedOddsByMatch),
+			taOdds: getCalculatedOddsForMatch(match, activeTennisAbstractOddsByMatch)
 		}))
 		.map(match => ({
 			...match,
@@ -532,6 +548,7 @@ function Component() {
 		.map(row => ({
 			...row,
 			myOdds: getCalculatedOddsForMatch(row, upcomingCalculatedOddsByMatch),
+			taOdds: getCalculatedOddsForMatch(row, upcomingTennisAbstractOddsByMatch),
 			headToHead: getHeadToHeadValue(row.playerA, row.playerB, headToHeadByPair)
 		}));
 	for (const row of upcomingRows) {
@@ -542,7 +559,8 @@ function Component() {
 
 		archivedFinishedOddsByMatchRef.current.set(archivedKey, {
 			odds: row.odds ?? '-',
-			myOdds: row.myOdds ?? '-'
+			myOdds: row.myOdds ?? '-',
+			taOdds: row.taOdds ?? '-'
 		});
 	}
 	const finishedMatchesWithOdds = finishedMatches.map(match => {
@@ -553,7 +571,8 @@ function Component() {
 		return {
 			...match,
 			odds: archivedOdds?.odds ?? '-',
-			myOdds: archivedOdds?.myOdds ?? calculatedOdds
+			myOdds: archivedOdds?.myOdds ?? calculatedOdds,
+			taOdds: archivedOdds?.taOdds ?? getCalculatedOddsForMatch(match, activeTennisAbstractOddsByMatch)
 		};
 	});
 	const upcomingRowsWithRecommendation = upcomingRows.map(row => ({
@@ -580,6 +599,7 @@ function Component() {
 				</Page.Title>
 				<Page.Container>
 					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
+					{meetingError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div> : null}
 					{hasNoMatches ? (
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
 					) : (

@@ -2,6 +2,7 @@ import { theme } from '../../js/theme.js';
 import { service } from '../../js/vitel.js';
 
 const CALCULATED_ODDS_QUERY_KEY = ['odds', 'calculated', 'matches'];
+const TENNIS_ABSTRACT_ODDS_QUERY_KEY = ['odds', 'tennis-abstract', 'matches'];
 
 function normalizeKeyPart(value) {
 	return String(value || '')
@@ -77,7 +78,7 @@ function createMatchKey(row) {
 	return [normalizeKeyPart(playerATerm), normalizeKeyPart(playerBTerm), resolveSurface(row)].join('::');
 }
 
-async function fetchCalculatedOddsForRow(row) {
+async function fetchOddsForRow(row, endpoint = 'players/odds') {
 	const playerATerm = resolvePlayerTerm(row, 'A');
 	const playerBTerm = resolvePlayerTerm(row, 'B');
 
@@ -91,7 +92,7 @@ async function fetchCalculatedOddsForRow(row) {
 		playerB: String(playerBTerm).trim(),
 		surface
 	});
-	const path = `players/odds?${query.toString()}`;
+	const path = `${endpoint}?${query.toString()}`;
 
 	try {
 		const payload = await service.get(path);
@@ -114,7 +115,23 @@ async function fetchCalculatedOddsForMatches(rows = []) {
 				return null;
 			}
 
-			const odds = await fetchCalculatedOddsForRow(row);
+			const odds = await fetchOddsForRow(row, 'players/odds');
+			return [key, odds];
+		})
+	);
+
+	return Object.fromEntries(entries.filter(Boolean));
+}
+
+async function fetchTennisAbstractOddsForMatches(rows = []) {
+	const entries = await Promise.all(
+		rows.map(async row => {
+			const key = createMatchKey(row);
+			if (!key) {
+				return null;
+			}
+
+			const odds = await fetchOddsForRow(row, 'tennis-abstract/odds');
 			return [key, odds];
 		})
 	);
@@ -131,4 +148,10 @@ function getCalculatedOddsForMatch(row, calculatedOddsByMatch) {
 	return calculatedOddsByMatch?.[key] ?? '-';
 }
 
-export { CALCULATED_ODDS_QUERY_KEY, fetchCalculatedOddsForMatches, getCalculatedOddsForMatch };
+export {
+	CALCULATED_ODDS_QUERY_KEY,
+	TENNIS_ABSTRACT_ODDS_QUERY_KEY,
+	fetchCalculatedOddsForMatches,
+	fetchTennisAbstractOddsForMatches,
+	getCalculatedOddsForMatch
+};
