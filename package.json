@@ -12,7 +12,7 @@
 		"git-delete-backup": "branch=$(git branch --show-current) && git push origin --delete \"backup/$branch\" && git fetch origin --prune",
 		"git-restore": "branch=$(git branch --show-current) && git fetch origin && git reset --hard origin/backup/$branch && git push --force-with-lease origin \"$branch\"",
 		"goto GitHub": "open https://github.com/meg768/vitel",
-		"upload": "vite build && scp -r ./dist/* root@router.egelberg.se:/var/www/html/vitel"
+		"upload": "vite build && scp -r ./dist/* root@pi-kato:/var/www/html/vitel"
 	},
 	"dependencies": {
 		"@radix-ui/themes": "^3.2.1",

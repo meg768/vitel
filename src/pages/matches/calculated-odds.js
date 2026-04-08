@@ -3,6 +3,12 @@ import { service } from '../../js/vitel.js';
 
 const CALCULATED_ODDS_QUERY_KEY = ['odds', 'calculated', 'matches'];
 
+function normalizeKeyPart(value) {
+	return String(value || '')
+		.trim()
+		.toLowerCase();
+}
+
 function formatOddsValue(odds) {
 	if (typeof odds === 'number' && Number.isFinite(odds)) {
 		return odds.toFixed(2);
@@ -42,27 +48,50 @@ function resolveSurface(row) {
 	return toSurfaceLabel(theme.getAutomaticSurface(new Date(timestamp)));
 }
 
-function createMatchKey(row) {
-	const playerAId = row?.playerA?.id ?? row?.player?.id ?? row?.playerAId ?? null;
-	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? row?.playerBId ?? null;
+function resolvePlayerTerm(row, side = 'A') {
+	if (side === 'A') {
+		return row?.playerA?.id
+			?? row?.player?.id
+			?? row?.playerAId
+			?? row?.playerA?.name
+			?? row?.player?.name
+			?? null;
+	}
 
-	if (!playerAId || !playerBId) {
+	return row?.playerB?.id
+		?? row?.opponent?.id
+		?? row?.playerBId
+		?? row?.playerB?.name
+		?? row?.opponent?.name
+		?? null;
+}
+
+function createMatchKey(row) {
+	const playerATerm = resolvePlayerTerm(row, 'A');
+	const playerBTerm = resolvePlayerTerm(row, 'B');
+
+	if (!playerATerm || !playerBTerm) {
 		return null;
 	}
 
-	return [playerAId, playerBId, resolveSurface(row)].join('::');
+	return [normalizeKeyPart(playerATerm), normalizeKeyPart(playerBTerm), resolveSurface(row)].join('::');
 }
 
 async function fetchCalculatedOddsForRow(row) {
-	const playerAId = row?.playerA?.id ?? row?.player?.id ?? row?.playerAId ?? null;
-	const playerBId = row?.playerB?.id ?? row?.opponent?.id ?? row?.playerBId ?? null;
+	const playerATerm = resolvePlayerTerm(row, 'A');
+	const playerBTerm = resolvePlayerTerm(row, 'B');
 
-	if (!playerAId || !playerBId) {
+	if (!playerATerm || !playerBTerm) {
 		return '-';
 	}
 
 	const surface = resolveSurface(row);
-	const path = `players/odds/${encodeURIComponent(playerAId)}/${encodeURIComponent(playerBId)}?surface=${encodeURIComponent(surface)}`;
+	const query = new URLSearchParams({
+		playerA: String(playerATerm).trim(),
+		playerB: String(playerBTerm).trim(),
+		surface
+	});
+	const path = `players/odds?${query.toString()}`;
 
 	try {
 		const payload = await service.get(path);
