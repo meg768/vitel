@@ -131,38 +131,39 @@ function formatEdgePercent(value) {
 		return null;
 	}
 
-	return String(Math.round(value));
+	return `+${Math.round(value)}%`;
 }
 
-function getRecommendationFromOdds(bookmakerOdds, myOdds) {
+function formatOddsWithPositiveEdge(bookmakerOdds, modelOdds) {
 	const [bookmakerA, bookmakerB] = parseOddsPair(bookmakerOdds);
-	const [myA, myB] = parseOddsPair(myOdds);
-	const candidates = [
-		{ offeredOdds: bookmakerA, myOdds: myA },
-		{ offeredOdds: bookmakerB, myOdds: myB }
-	]
-		.map(candidate => {
-			if (!candidate.offeredOdds || !candidate.myOdds) {
-				return null;
-			}
+	const [modelA, modelB] = parseOddsPair(modelOdds);
 
-			return {
-				offeredOdds: candidate.offeredOdds,
-				edgePercent: ((1 / candidate.myOdds) - (1 / candidate.offeredOdds)) * 100
-			};
-		})
-		.filter(Boolean)
-		.filter(candidate => candidate.edgePercent > 0)
-		.sort((a, b) => b.edgePercent - a.edgePercent);
-
-	const bestCandidate = candidates[0];
-
-	if (!bestCandidate) {
-		return '-';
+	if (modelA == null && modelB == null) {
+		return modelOdds ?? '-';
 	}
 
-	const edgePercent = formatEdgePercent(bestCandidate.edgePercent);
-	return `${bestCandidate.offeredOdds.toFixed(2)} (${edgePercent}%)`;
+	function formatSide(modelValue, bookmakerValue) {
+		if (modelValue == null) {
+			return '-';
+		}
+
+		const value = modelValue.toFixed(2);
+
+		if (bookmakerValue == null) {
+			return value;
+		}
+
+		const edgePercent = ((1 / modelValue) - (1 / bookmakerValue)) * 100;
+		const formattedEdge = formatEdgePercent(edgePercent);
+
+		if (edgePercent > 0 && formattedEdge != null) {
+			return `${value} (${formattedEdge})`;
+		}
+
+		return value;
+	}
+
+	return `${formatSide(modelA, bookmakerA)} - ${formatSide(modelB, bookmakerB)}`;
 }
 
 function PlayersCell({ row, showHeadToHead = false }) {
@@ -242,17 +243,17 @@ function MatchesTable({ rows, groupedByTournament = false }) {
 			</Table.Column>
 
 			<Table.Column id='odds'>
-				<Table.Title>TA</Table.Title>
-				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
+				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
 			<Table.Column id='odds'>
-				<Table.Title>Oddset</Table.Title>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.taOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column>
 				<Table.Title>Vitel</Table.Title>
-				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.myOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='score'>
@@ -278,17 +279,17 @@ function FinishedMatchesTable({ rows, groupedByTournament = false }) {
 			</Table.Column>
 
 			<Table.Column id='odds'>
-				<Table.Title>TA</Table.Title>
-				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
+				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
 			<Table.Column id='odds'>
-				<Table.Title>Oddset</Table.Title>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.taOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column>
 				<Table.Title>Vitel</Table.Title>
-				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.myOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='score'>
@@ -320,23 +321,18 @@ function UpcomingMatchesTable({ rows, groupedByTournament = false }) {
 				<Table.Value>{({ row }) => <UpcomingPlayersCell row={row} />}</Table.Value>
 			</Table.Column>
 
-			<Table.Column>
-				<Table.Title>TA</Table.Title>
-				<Table.Value>{({ row }) => row.taOdds ?? '-'}</Table.Value>
-			</Table.Column>
-
 			<Table.Column id='odds'>
 				<Table.Title>Oddset</Table.Title>
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>Vitel</Table.Title>
-				<Table.Value>{({ row }) => row.myOdds ?? '-'}</Table.Value>
+				<Table.Title>TA</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.taOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>Tips</Table.Title>
-				<Table.Value>{({ row }) => row.recommendation ?? '-'}</Table.Value>
+				<Table.Title>Vitel</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.myOdds)}</Table.Value>
 			</Table.Column>
 		</Table>
 	);
@@ -530,10 +526,6 @@ function Component() {
 			...match,
 			myOdds: getCalculatedOddsForMatch(match, activeCalculatedOddsByMatch),
 			taOdds: getCalculatedOddsForMatch(match, activeTennisAbstractOddsByMatch)
-		}))
-		.map(match => ({
-			...match,
-			recommendation: getRecommendationFromOdds(match.odds, match.myOdds)
 		}));
 	const activeMatchKeys = new Set(
 		activeMatches
@@ -575,11 +567,7 @@ function Component() {
 			taOdds: archivedOdds?.taOdds ?? getCalculatedOddsForMatch(match, activeTennisAbstractOddsByMatch)
 		};
 	});
-	const upcomingRowsWithRecommendation = upcomingRows.map(row => ({
-		...row,
-		recommendation: getRecommendationFromOdds(row.odds, row.myOdds)
-	}));
-	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRowsWithRecommendation);
+	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
 	const hasNoMatches = activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
 
 	return (
