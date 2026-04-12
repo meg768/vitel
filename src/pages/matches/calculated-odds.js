@@ -78,7 +78,7 @@ function createMatchKey(row) {
 	return [normalizeKeyPart(playerATerm), normalizeKeyPart(playerBTerm), resolveSurface(row)].join('::');
 }
 
-async function fetchOddsForRow(row, endpoint = 'players/odds') {
+async function fetchOddsForRow(row, endpoint = 'odds') {
 	const playerATerm = resolvePlayerTerm(row, 'A');
 	const playerBTerm = resolvePlayerTerm(row, 'B');
 
@@ -115,7 +115,7 @@ async function fetchCalculatedOddsForMatches(rows = []) {
 				return null;
 			}
 
-			const odds = await fetchOddsForRow(row, 'players/odds');
+			const odds = await fetchOddsForRow(row, 'odds');
 			return [key, odds];
 		})
 	);
