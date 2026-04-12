@@ -54,36 +54,28 @@ async function fetchHeadToHeadByMatches(matches = []) {
 	const pairIds = matches
 		.map(match => [match.player?.id, match.opponent?.id].filter(Boolean).sort())
 		.filter(pair => pair.length === 2);
-	const uniquePairs = [...new Map(pairIds.map(pair => [`${pair[0]}:${pair[1]}`, pair])).values()];
 
-	if (uniquePairs.length === 0) {
+	if (pairIds.length === 0) {
 		return {};
 	}
 
-	const entries = await Promise.all(
-		uniquePairs.map(async ([playerAId, playerBId]) => {
-			try {
-				const query = new URLSearchParams({
-					playerA: playerAId,
-					playerB: playerBId,
-					limit: '1'
-				});
-				const payload = await service.get(`players/head-to-head?${query.toString()}`);
-				const resolvedA = payload?.playerA?.id ?? playerAId;
-				const resolvedB = payload?.playerB?.id ?? playerBId;
-				const pairKey = [resolvedA, resolvedB].sort().join(':');
+	const query = buildHeadToHeadQuery(matches);
+	const rows = await service.query(query);
+
+	return Object.fromEntries(
+		rows
+			.filter(row => row?.player_a_id && row?.player_b_id)
+			.map(row => {
+				const playerAId = String(row.player_a_id);
+				const playerBId = String(row.player_b_id);
+				const pairKey = [playerAId, playerBId].sort().join(':');
 
 				return [pairKey, {
-					[resolvedA]: Number(payload?.overall?.winsA ?? 0),
-					[resolvedB]: Number(payload?.overall?.winsB ?? 0)
+					[playerAId]: Number(row.wins_for_player_a ?? 0),
+					[playerBId]: Number(row.wins_for_player_b ?? 0)
 				}];
-			} catch {
-				return null;
-			}
-		})
+			})
 	);
-
-	return Object.fromEntries(entries.filter(Boolean));
 }
 
 function addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair) {
