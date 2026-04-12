@@ -124,37 +124,6 @@ async function fetchOddsetRows() {
 	return normalizeOddsetRowsPayload(payload);
 }
 
-async function fetchPlayerLookupId(name) {
-	const term = String(name || '').trim();
-
-	if (!term) {
-		return null;
-	}
-
-	try {
-		const payload = await service.get(`player/lookup?term=${encodeURIComponent(term)}`);
-		return Array.isArray(payload) ? payload[0]?.id ?? null : null;
-	} catch {
-		return null;
-	}
-}
-
-async function attachPlayerLookupIds(rows = []) {
-	const uniqueNames = [...new Set(
-		rows.flatMap(row => [row?.playerA?.name, row?.playerB?.name].map(name => String(name || '').trim())).filter(Boolean)
-	)];
-	const lookupEntries = await Promise.all(
-		uniqueNames.map(async name => [name, await fetchPlayerLookupId(name)])
-	);
-	const playerIdByName = Object.fromEntries(lookupEntries);
-
-	return rows.map(row => ({
-		...row,
-		playerAId: playerIdByName[String(row.playerA?.name || '').trim()] ?? null,
-		playerBId: playerIdByName[String(row.playerB?.name || '').trim()] ?? null
-	}));
-}
-
 function normalizeOddsetRowsPayload(payload) {
 	if (!Array.isArray(payload)) {
 		throw new Error('Oddset endpoint returnerade inte en array');
@@ -190,8 +159,8 @@ function toUiRow(row) {
 		turnering: row.tournament ?? '-',
 		playerAName: playerAName || '-',
 		playerBName: playerBName || '-',
-		playerAId: row.playerAId ?? null,
-		playerBId: row.playerBId ?? null,
+		playerAId: row.playerA?.id ?? null,
+		playerBId: row.playerB?.id ?? null,
 		odds: `${formatOddsValue(oddsA)} - ${formatOddsValue(oddsB)}`,
 		liveScore: liveScore || '-',
 		status: formatState(rawState),
@@ -207,9 +176,7 @@ function toSortedUiRows(rows = []) {
 }
 
 async function fetchOddsetPipelineMatches() {
-	const rows = await fetchOddsetRows();
-	const rowsWithIds = await attachPlayerLookupIds(rows);
-	return toSortedUiRows(rowsWithIds);
+	return toSortedUiRows(await fetchOddsetRows());
 }
 
 function shouldReplaceOddsRow(current, next) {
@@ -261,7 +228,7 @@ function upsertOddsRow(oddsByPlayers, { oneId, twoId, oneName, twoName, oneOdds,
 }
 
 async function fetchLiveOddsetOddsByPlayers() {
-	const rows = await attachPlayerLookupIds(await fetchOddsetRows());
+	const rows = await fetchOddsetRows();
 	const oddsByPlayers = {};
 
 	for (const row of rows) {
@@ -325,33 +292,34 @@ function getLiveOddsetOddsStateForMatch(match, oddsByPlayers) {
 	return getOddsEntryForMatch(match, oddsByPlayers)?._state ?? null;
 }
 
-function buildPlayerDetailsByName(rows = []) {
-	const detailsByPlayerName = {};
+function buildPlayerDetailsById(rows = []) {
+	const detailsByPlayerId = {};
 
 	for (const row of rows) {
-		const key = normalizeName(row.name);
+		const key = String(row.id || '').trim().toUpperCase();
 		if (!key) {
 			continue;
 		}
 
-		if (!detailsByPlayerName[key]) {
-			detailsByPlayerName[key] = {
+		if (!detailsByPlayerId[key]) {
+			detailsByPlayerId[key] = {
 				id: row.id || null,
 				country: row.country || null
 			};
 		}
 	}
 
-	return detailsByPlayerName;
+	return detailsByPlayerId;
 }
 
 function buildRanksByPlayerId(rows = []) {
 	return Object.fromEntries(rows.map((player, index) => [player.id, index + 1]));
 }
 
-function resolvePlayer(name, playerId, playerDetailsByName, ranksByPlayerId) {
-	const playerDetails = playerDetailsByName[normalizeName(name)] || {};
-	const id = playerId ?? playerDetails.id ?? null;
+function resolvePlayer(name, playerId, playerDetailsById, ranksByPlayerId) {
+	const normalizedId = String(playerId || '').trim().toUpperCase();
+	const playerDetails = normalizedId ? (playerDetailsById[normalizedId] || {}) : {};
+	const id = normalizedId || null;
 
 	return {
 		id,
@@ -361,10 +329,10 @@ function resolvePlayer(name, playerId, playerDetailsByName, ranksByPlayerId) {
 	};
 }
 
-function resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId) {
+function resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId) {
 	return {
-		playerA: resolvePlayer(row.playerAName, row.playerAId, playerDetailsByName, ranksByPlayerId),
-		playerB: resolvePlayer(row.playerBName, row.playerBId, playerDetailsByName, ranksByPlayerId)
+		playerA: resolvePlayer(row.playerAName, row.playerAId, playerDetailsById, ranksByPlayerId),
+		playerB: resolvePlayer(row.playerBName, row.playerBId, playerDetailsById, ranksByPlayerId)
 	};
 }
 
@@ -387,7 +355,7 @@ export {
 	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-	buildPlayerDetailsByName,
+	buildPlayerDetailsById,
 	buildRanksByPlayerId,
 	fetchOddsetPipelineMatches,
 	fetchLiveOddsetOddsByPlayers,

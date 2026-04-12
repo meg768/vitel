@@ -19,7 +19,7 @@ import {
 	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-	buildPlayerDetailsByName,
+	buildPlayerDetailsById,
 	fetchOddsetPipelineMatches,
 	fetchLiveOddsetOddsByPlayers,
 	resolveMatchPlayers,
@@ -417,7 +417,7 @@ function Component() {
 		cache: 5 * 60 * 1000
 	});
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
-	const playerDetailsByName = buildPlayerDetailsByName(playerRows ?? []);
+	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const liveCalculatedOddsRows = React.useMemo(() => createLiveCalculatedOddsRows(matches ?? []), [matches]);
 	const { data: liveOddsSnapshot, error: oddsError } = useQuery({
 		queryKey: [LIVE_ODDSET_QUERY_KEY, CALCULATED_ODDS_QUERY_KEY, TENNIS_ABSTRACT_ODDS_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
@@ -447,7 +447,7 @@ function Component() {
 	const upcomingCalculatedOddsByMatch = upcomingSnapshot?.calculatedOddsByMatch ?? {};
 	const upcomingTennisAbstractOddsByMatch = upcomingSnapshot?.tennisAbstractOddsByMatch ?? {};
 	const resolvedUpcomingRows = oddsetRows.map(row => {
-		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
+		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 		return { ...row, playerA, playerB };
 	});
 	const headToHeadRows = React.useMemo(() => {

@@ -76,8 +76,8 @@ Expected response: JSON array where each row has nested `playerA`/`playerB`.
     "start": "2026-03-12T01:00:00Z",
     "tournament": "Indian Wells",
     "score": null,
-    "playerA": { "name": "Novak Djokovic", "odds": 1.71 },
-    "playerB": { "name": "Jack Draper", "odds": 2.18 }
+    "playerA": { "id": "D643", "name": "Novak Djokovic", "odds": 1.71 },
+    "playerB": { "id": "DA81", "name": "Jack Draper", "odds": 2.18 }
   }
 ]
 ```
@@ -85,6 +85,7 @@ Expected response: JSON array where each row has nested `playerA`/`playerB`.
 Notes:
 
 - `/oddset` currently expects this nested shape.
+- `playerA.id` and `playerB.id` are used directly by `/matches`, `/oddset` and `/scoreboard`, so the frontend no longer needs a separate `player/lookup` round-trip per Oddset name.
 - `score` is used to infer live/upcoming grouping (`score != null` => live).
 - The same endpoint is also used by `/matches` and `/scoreboard`, which now filter live rows in the frontend instead of sending a separate state filter.
 
@@ -204,4 +205,4 @@ Important files:
 - `/oddset` error:
   - Verify `GET /api/oddset` returns HTTP 200 and the nested `playerA`/`playerB` shape above.
 - Missing player links/flags/rank on `/oddset`:
-  - Name matching against DB is normalization-based; unmatched names will not resolve to `id/country/rank`.
+  - Verify backend `/api/oddset` includes resolved `playerA.id` and `playerB.id`.

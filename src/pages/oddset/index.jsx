@@ -9,7 +9,7 @@ import Table from '../../components/ui/data-table';
 import {
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-	buildPlayerDetailsByName,
+	buildPlayerDetailsById,
 	buildRanksByPlayerId,
 	fetchOddsetPipelineMatches,
 	resolveMatchPlayers,
@@ -94,15 +94,15 @@ function Component() {
 		cache: PLAYERS_COUNTRY_CACHE_MS
 	});
 
-	const playerDetailsByName = React.useMemo(() => buildPlayerDetailsByName(playerRows), [playerRows]);
+	const playerDetailsById = React.useMemo(() => buildPlayerDetailsById(playerRows), [playerRows]);
 	const ranksByPlayerId = React.useMemo(() => buildRanksByPlayerId(rankingRows), [rankingRows]);
 	const enrichedRows = React.useMemo(
 		() =>
 			(rows ?? []).map(row => {
-				const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsByName, ranksByPlayerId);
+				const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 				return { ...row, playerA, playerB };
 			}),
-		[rows, playerDetailsByName, ranksByPlayerId]
+		[rows, playerDetailsById, ranksByPlayerId]
 	);
 	const { liveMatches, upcomingMatches } = React.useMemo(() => splitOddsetRowsByStatus(enrichedRows), [enrichedRows]);
 	let content = null;
