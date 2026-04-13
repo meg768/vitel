@@ -1,9 +1,9 @@
 import { Link } from 'react-router';
 
 import AtpLogo from '../assets/logos/atp-logo.svg?react';
-import FileTextIcon from '../assets/radix-icons/file-text.svg?react';
 import GearIcon from '../assets/radix-icons/gear.svg?react';
 import SearchIcon from '../assets/radix-icons/magnifying-glass.svg?react';
+import ReaderIcon from '../assets/radix-icons/reader.svg?react';
 import Button from './ui/button';
 
 
@@ -14,7 +14,9 @@ function Component() {
 		return (
 			<div className='flex items-center'>
 				<Link to={props.link}>
-					<Button className={menuButtonClass}>{props.children}</Button>
+					<Button className={menuButtonClass} title={props.title} aria-label={props.title}>
+						{props.children}
+					</Button>
 				</Link>
 			</div>
 		);
@@ -49,15 +51,15 @@ function Component() {
 					<MenuItem link='/qna'>Q&A</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center'>
-					<MenuItem link='/search'>
+					<MenuItem link='/search' title='Sök spelare'>
 						<SearchIcon className='w-6 h-6 ' />
 					</MenuItem>
-					<MenuItem link='/settings'>
+					<ExternalMenuItem href='https://tennis-daily.egelberg.se' title='Tennis Daily'>
+						<ReaderIcon className='w-6 h-6 ' />
+					</ExternalMenuItem>
+					<MenuItem link='/settings' title='Inställningar'>
 						<GearIcon className='w-6 h-6 ' />
 					</MenuItem>
-					<ExternalMenuItem href='https://tennis-daily.egelberg.se' title='Tennis Daily'>
-						<FileTextIcon className='w-6 h-6 ' />
-					</ExternalMenuItem>
 				</div>
 			</div>
 		</div>
