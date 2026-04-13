@@ -86,6 +86,7 @@ Nuvarande toppmeny:
 - `Matcher`
 - `Q&A`
 - inställningsikon
+- extern `Tennis Daily`-ikon längst ut till höger som öppnar `https://tennis-daily.egelberg.se` i ny flik
 
 Rollfördelning mellan matchsidorna:
 
@@ -241,6 +242,7 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-04-13: Toppmenyn fick en extern `Tennis Daily`-ikon längst ut till höger. Ikonen öppnar `https://tennis-daily.egelberg.se` i ny flik och använder `file-text.svg` för att läsas mer som nyhetssida än som allmän extern länk.
 - 2026-03-30: Backendens `/api/ping` utökades till att returnera `version`, backendversionen bumpades till `1.0.1`, och `atp-service` deployades om på `pi-kato`. Detta kan användas som enkel verifiering från frontend/MCP-sidan att rätt backendkod körs live.
 - 2026-03-30: Gemensam tvärrepo-kontext sparades här. Den här Codex-tråden används nu som huvudkonversation för `vitel`, `atp-tennis` och `atp-tennis-mcp`, och spelaruppslag i backend/MCP-kedjan flyttas från gamla `/api/search-player` till `/api/player/search` och `/api/player/lookup`.
 

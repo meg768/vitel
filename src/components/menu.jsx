@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import AtpLogo from '../assets/logos/atp-logo.svg?react';
+import FileTextIcon from '../assets/radix-icons/file-text.svg?react';
 import GearIcon from '../assets/radix-icons/gear.svg?react';
 import SearchIcon from '../assets/radix-icons/magnifying-glass.svg?react';
 import Button from './ui/button';
@@ -15,6 +16,22 @@ function Component() {
 				<Link to={props.link}>
 					<Button className={menuButtonClass}>{props.children}</Button>
 				</Link>
+			</div>
+		);
+	}
+
+	function ExternalMenuItem(props) {
+		return (
+			<div className='flex items-center'>
+				<Button
+					className={menuButtonClass}
+					title={props.title}
+					aria-label={props.title}
+					onClick={() => window.open(props.href, '_blank', 'noopener,noreferrer')}
+					type='button'
+				>
+					{props.children}
+				</Button>
 			</div>
 		);
 	}
@@ -38,6 +55,9 @@ function Component() {
 					<MenuItem link='/settings'>
 						<GearIcon className='w-6 h-6 ' />
 					</MenuItem>
+					<ExternalMenuItem href='https://tennis-daily.egelberg.se' title='Tennis Daily'>
+						<FileTextIcon className='w-6 h-6 ' />
+					</ExternalMenuItem>
 				</div>
 			</div>
 		</div>
