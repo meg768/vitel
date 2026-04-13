@@ -85,7 +85,7 @@ Nuvarande toppmeny:
 - `Turneringar`
 - `Matcher`
 - `Q&A`
-- extern `Tennis Daily`-ikon längst ut till höger som öppnar `https://tennis-daily.egelberg.se` i ny flik
+- `Nyheter` som textlänk i huvudmenyn, öppnas i ny flik mot `https://tennis-daily.egelberg.se` och skickar med vitels aktuella färg-/underlagstema i querystring
 - inställningsikon längst till höger
 
 Rollfördelning mellan matchsidorna:
@@ -242,6 +242,9 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-04-13: `Nyheter`-länken i toppmenyn började skicka med vitels aktiva, resolverade tema till `tennis-daily.egelberg.se`, så nyhetssidan kan öppnas i samma dark/light- och hard/clay/grass-läge som frontenden visar just då.
+- 2026-04-13: Menylabeln för den externa länken till `https://tennis-daily.egelberg.se` byttes från `Tennis Daily` till `Nyheter`, men länken ligger kvar på samma plats i huvudmenyn och öppnas fortsatt i ny flik.
+- 2026-04-13: `Tennis Daily` flyttades från ikon till riktig textlänk i huvudmenyn. Tanken är att sidan är tillräckligt central för att förtjäna en tydlig menylabel i stället för en diskret ikon.
 - 2026-04-13: Toppmenyn fick en extern `Tennis Daily`-ikon längst ut till höger. Ikonen öppnar `https://tennis-daily.egelberg.se` i ny flik och använder `reader.svg` för att kännas mer som en tidnings- eller läsarvy än som ett dokument.
 - 2026-04-13: Menyordningen finjusterades så att `inställningar` åter ligger längst till höger, med `Tennis Daily`-ikonen precis före.
 - 2026-03-30: Backendens `/api/ping` utökades till att returnera `version`, backendversionen bumpades till `1.0.1`, och `atp-service` deployades om på `pi-kato`. Detta kan användas som enkel verifiering från frontend/MCP-sidan att rätt backendkod körs live.
