@@ -57,13 +57,13 @@ export default function SearchPage() {
 		let triggerClassName = '';
 		triggerClassName = clsx(triggerClassName, 'flex cursor-pointer items-center rounded-sm py-2.5 px-4 text-inherit border gap-3');
 		triggerClassName = clsx(triggerClassName, 'border-primary-200 bg-primary-50/85');
-		triggerClassName = clsx(triggerClassName, 'dark:border-primary-800 dark:bg-primary-950/92');
+		triggerClassName = clsx(triggerClassName, 'dark:border-primary-600 dark:bg-primary-800/95');
 		triggerClassName = clsx(triggerClassName, 'w-full');
 
 		return (
 			<PlayerPicker className='' onChange={onPlayerChange} players={players}>
 				<div className={triggerClassName}>
-					<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary-200/80 text-primary-600 dark:bg-primary-900 dark:text-primary-300'>
+					<div className='flex h-9 w-9 items-center justify-center rounded-full bg-primary-200/80 text-primary-600 dark:bg-primary-700 dark:text-primary-100'>
 						<SearchIcon className='w-5 h-5 bg-transparent' />
 					</div>
 						<div className='flex-1 bg-transparent text-left'>
@@ -88,7 +88,7 @@ export default function SearchPage() {
 						<Page.Title level={4} className='py-0'>Tidigare sökningar</Page.Title>
 							<button
 								type='button'
-								className='shrink-0 flex h-6 w-6 items-center justify-center rounded-sm border border-primary-200 bg-primary-100 text-primary-600 hover:bg-primary-200 hover:text-primary-800 dark:border-primary-800 dark:bg-primary-900 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+								className='shrink-0 flex h-6 w-6 items-center justify-center rounded-sm border border-primary-200 bg-primary-100 text-primary-600 hover:bg-primary-200 hover:text-primary-800 dark:border-primary-600 dark:bg-primary-700 dark:text-primary-100 dark:hover:bg-primary-600 dark:hover:text-primary-50'
 								onClick={clearSearchHistory}
 								title='Rensa tidigare sökningar'
 								aria-label='Rensa tidigare sökningar'
@@ -96,11 +96,11 @@ export default function SearchPage() {
 							<Cross2Icon className='h-3 w-3 bg-transparent' />
 						</button>
 				</div>
-				<div className='overflow-hidden rounded-md border border-primary-200 bg-primary-50/80 dark:border-primary-800 dark:bg-primary-950/80'>
+				<div className='overflow-hidden rounded-md border border-primary-200 bg-primary-50/80 divide-y divide-primary-200/80 dark:border-primary-600 dark:bg-primary-800/92 dark:divide-primary-700/70'>
 						{searchHistory.map(player => {
 							let rowClassName = '';
 							rowClassName = clsx(rowClassName, 'flex items-center gap-3 px-4 py-3');
-							rowClassName = clsx(rowClassName, 'transition-colors hover:bg-primary-200/75 dark:hover:bg-primary-900/80');
+							rowClassName = clsx(rowClassName, 'transition-colors hover:bg-primary-200/75 dark:hover:bg-primary-700/85');
 
 							return (
 								<div key={player.id} className={rowClassName}>
