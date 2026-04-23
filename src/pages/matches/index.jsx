@@ -491,7 +491,7 @@ function Component() {
 		);
 	}
 
-	if (!matches || !rankingRows || !playerRows) {
+	if (!matches || !rankingRows || !playerRows || (!hasLoadedOddsSnapshot && !oddsError)) {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
@@ -551,7 +551,7 @@ function Component() {
 		};
 	});
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
-	const hasNoMatches = hasLoadedOddsSnapshot && activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
+	const hasNoMatches = activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -607,22 +607,20 @@ function Component() {
 									)}
 								</section>
 
-								{oddsError || hasLoadedOddsSnapshot ? (
-									<section className='space-y-2'>
-										<Page.Title level={2}>Kommande matcher</Page.Title>
-										{oddsError ? (
-											<Page.Error>Misslyckades med att läsa kommande matcher - {oddsError.message}</Page.Error>
-										) : upcomingMatches.length > 0 ? (
-											<TournamentGroups
-												rows={upcomingMatches}
-												getTournamentName={row => row.turnering}
-												renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
-											/>
-										) : (
-											<Page.Information>Inga kommande matcher just nu</Page.Information>
-										)}
-									</section>
-								) : null}
+								<section className='space-y-2'>
+									<Page.Title level={2}>Kommande matcher</Page.Title>
+									{oddsError ? (
+										<Page.Error>Misslyckades med att läsa kommande matcher - {oddsError.message}</Page.Error>
+									) : upcomingMatches.length > 0 ? (
+										<TournamentGroups
+											rows={upcomingMatches}
+											getTournamentName={row => row.turnering}
+											renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
+										/>
+									) : (
+										<Page.Information>Inga kommande matcher just nu</Page.Information>
+									)}
+								</section>
 							</div>
 
 							<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
