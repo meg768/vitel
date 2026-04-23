@@ -1,8 +1,7 @@
 import { theme } from '../../js/theme.js';
 import { service } from '../../js/vitel.js';
 
-const CALCULATED_ODDS_QUERY_KEY = ['odds', 'calculated', 'matches'];
-const TENNIS_ABSTRACT_ODDS_QUERY_KEY = ['odds', 'tennis-abstract', 'matches'];
+const MATCH_ODDS_QUERY_KEY = ['odds', 'matches'];
 
 function normalizeKeyPart(value) {
 	return String(value || '')
@@ -78,12 +77,21 @@ function createMatchKey(row) {
 	return [normalizeKeyPart(playerATerm), normalizeKeyPart(playerBTerm), resolveSurface(row)].join('::');
 }
 
-async function fetchOddsForRow(row, endpoint = 'odds') {
+function formatOddsPair(odds) {
+	if (!Array.isArray(odds) || odds.length < 2) {
+		return '-';
+	}
+
+	const [playerAOdds, playerBOdds] = odds;
+	return `${formatOddsValue(playerAOdds)} - ${formatOddsValue(playerBOdds)}`;
+}
+
+async function fetchOddsForRow(row) {
 	const playerATerm = resolvePlayerTerm(row, 'A');
 	const playerBTerm = resolvePlayerTerm(row, 'B');
 
 	if (!playerATerm || !playerBTerm) {
-		return '-';
+		return { computedOdds: '-', tennisAbstractOdds: '-' };
 	}
 
 	const surface = resolveSurface(row);
@@ -92,22 +100,20 @@ async function fetchOddsForRow(row, endpoint = 'odds') {
 		playerB: String(playerBTerm).trim(),
 		surface
 	});
-	const path = `${endpoint}?${query.toString()}`;
+	const path = `odds?${query.toString()}`;
 
 	try {
 		const payload = await service.get(path);
-		if (!Array.isArray(payload) || payload.length < 2) {
-			return '-';
-		}
-
-		const [playerAOdds, playerBOdds] = payload;
-		return `${formatOddsValue(playerAOdds)} - ${formatOddsValue(playerBOdds)}`;
+		return {
+			computedOdds: formatOddsPair(payload?.computedOdds),
+			tennisAbstractOdds: formatOddsPair(payload?.tennisAbstractOdds)
+		};
 	} catch {
-		return '-';
+		return { computedOdds: '-', tennisAbstractOdds: '-' };
 	}
 }
 
-async function fetchCalculatedOddsForMatches(rows = []) {
+async function fetchMatchOddsForMatches(rows = []) {
 	const entries = await Promise.all(
 		rows.map(async row => {
 			const key = createMatchKey(row);
@@ -115,7 +121,7 @@ async function fetchCalculatedOddsForMatches(rows = []) {
 				return null;
 			}
 
-			const odds = await fetchOddsForRow(row, 'odds');
+			const odds = await fetchOddsForRow(row);
 			return [key, odds];
 		})
 	);
@@ -123,35 +129,17 @@ async function fetchCalculatedOddsForMatches(rows = []) {
 	return Object.fromEntries(entries.filter(Boolean));
 }
 
-async function fetchTennisAbstractOddsForMatches(rows = []) {
-	const entries = await Promise.all(
-		rows.map(async row => {
-			const key = createMatchKey(row);
-			if (!key) {
-				return null;
-			}
-
-			const odds = await fetchOddsForRow(row, 'tennis-abstract/odds');
-			return [key, odds];
-		})
-	);
-
-	return Object.fromEntries(entries.filter(Boolean));
-}
-
-function getCalculatedOddsForMatch(row, calculatedOddsByMatch) {
+function getMatchOddsForRow(row, matchOddsByKey) {
 	const key = createMatchKey(row);
 	if (!key) {
-		return '-';
+		return { computedOdds: '-', tennisAbstractOdds: '-' };
 	}
 
-	return calculatedOddsByMatch?.[key] ?? '-';
+	return matchOddsByKey?.[key] ?? { computedOdds: '-', tennisAbstractOdds: '-' };
 }
 
 export {
-	CALCULATED_ODDS_QUERY_KEY,
-	TENNIS_ABSTRACT_ODDS_QUERY_KEY,
-	fetchCalculatedOddsForMatches,
-	fetchTennisAbstractOddsForMatches,
-	getCalculatedOddsForMatch
+	MATCH_ODDS_QUERY_KEY,
+	fetchMatchOddsForMatches,
+	getMatchOddsForRow
 };

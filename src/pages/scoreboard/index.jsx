@@ -5,14 +5,102 @@ import { useParams } from 'react-router';
 import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
-import { addRankingAndDisplayFields, fetchHeadToHeadByMatches, selectMonitorMatches } from '../../js/live-match-rows.js';
-import { LIVE_ODDSET_QUERY_KEY, fetchLiveOddsetOddsByPlayers } from '../../js/oddset-pipeline.js';
+import { fetchHeadToHeadByMatches, selectMonitorMatches } from '../../js/live-match-rows.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const LIVE_REFRESH_INTERVAL_MS = 10 * 1000;
 const ODDSET_REFRESH_INTERVAL_MS = 10 * 1000;
 const LIVE_COUNTDOWN_STEPS = 5;
 const HEAD_TO_HEAD_QUERY_KEY = ['head-to-head', 'scoreboard'];
+
+function formatOddsValue(value) {
+	if (typeof value === 'number' && Number.isFinite(value)) {
+		return value.toFixed(2);
+	}
+
+	return '-';
+}
+
+function buildPlayerQuery(matches = []) {
+	const playerIds = [...new Set(
+		matches.flatMap(match => [match?.playerA?.id, match?.playerB?.id].filter(Boolean))
+	)];
+
+	if (playerIds.length === 0) {
+		return {
+			sql: 'SELECT id, country, rank FROM players WHERE 1 = 0',
+			format: []
+		};
+	}
+
+	return {
+		sql: `SELECT id, country, rank FROM players WHERE id IN (${playerIds.map(() => '?').join(', ')})`,
+		format: playerIds
+	};
+}
+
+function buildPlayerDetailsById(rows = []) {
+	return Object.fromEntries(
+		rows
+			.filter(row => row?.id)
+			.map(row => [
+				String(row.id).trim().toUpperCase(),
+				{
+					id: row.id,
+					country: row.country ?? null,
+					rank: row.rank ?? null
+				}
+			])
+	);
+}
+
+function toHeadToHeadPairKey(playerId, opponentId) {
+	return [playerId, opponentId].filter(Boolean).sort().join(':');
+}
+
+function buildHeadToHeadMatches(rows = []) {
+	return rows.map(row => ({
+		player: { id: row?.playerA?.id ?? null },
+		opponent: { id: row?.playerB?.id ?? null }
+	}));
+}
+
+function buildMonitorRows(rows = [], playerDetailsById = {}, headToHeadByPair = {}) {
+	return rows.map(row => {
+		const playerId = String(row?.playerA?.id || '').trim().toUpperCase() || null;
+		const opponentId = String(row?.playerB?.id || '').trim().toUpperCase() || null;
+		const playerDetails = playerId ? (playerDetailsById[playerId] || {}) : {};
+		const opponentDetails = opponentId ? (playerDetailsById[opponentId] || {}) : {};
+		const pairKey = toHeadToHeadPairKey(playerId, opponentId);
+		const record = pairKey ? headToHeadByPair[pairKey] : null;
+		const playerWins = record?.[playerId] ?? 0;
+		const opponentWins = record?.[opponentId] ?? 0;
+
+		return {
+			event: row.tournament ?? '',
+			name: row.tournament ?? '',
+			score: row.score ?? '',
+			comment: null,
+			server: row.serve ?? null,
+			winner: null,
+			odds: `${formatOddsValue(row?.playerA?.odds)} - ${formatOddsValue(row?.playerB?.odds)}`,
+			oddsState: row.state ?? null,
+			player: {
+				id: playerId,
+				name: row?.playerA?.name ?? '-',
+				country: playerDetails.country ?? null,
+				rank: playerDetails.rank ?? null
+			},
+			opponent: {
+				id: opponentId,
+				name: row?.playerB?.name ?? '-',
+				country: opponentDetails.country ?? null,
+				rank: opponentDetails.rank ?? null
+			},
+			headToHead: `${playerWins}-${opponentWins}`,
+			opponentHeadToHead: `${opponentWins}-${playerWins}`
+		};
+	});
+}
 
 function ErrorPage({ message }) {
 	return (
@@ -54,51 +142,45 @@ function Component() {
 
 	const routeParams = useParams();
 	const [focusedMatchKey, setFocusedMatchKey] = React.useState(null);
-	const { data: matches, error: liveError, dataUpdatedAt, isFetching } = useRequest({
-		path: 'matches/live',
+	const { data: oddsetRows, error: oddsetError, dataUpdatedAt, isFetching } = useRequest({
+		path: 'oddset',
 		method: 'GET',
 		cache: 0,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: true
 	});
-	const { data: oddsByPlayers = {}, error: oddsError } = useQuery({
-		queryKey: LIVE_ODDSET_QUERY_KEY,
-		queryFn: fetchLiveOddsetOddsByPlayers,
-		staleTime: ODDSET_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
-		retry: 0
-	});
-	const rankingSql = 'SELECT id FROM players WHERE rank IS NOT NULL ORDER BY rank ASC, name ASC';
-	const { data: rankingRows, error: rankError } = useSQL({
-		sql: rankingSql,
+	const liveRows = React.useMemo(
+		() => (oddsetRows ?? []).filter(row => row?.state === 'live'),
+		[oddsetRows]
+	);
+	const playerQuery = React.useMemo(() => buildPlayerQuery(liveRows), [liveRows]);
+	const { data: playerRows, error: playerError } = useSQL({
+		sql: playerQuery.sql,
+		format: playerQuery.format,
 		cache: 5 * 60 * 1000
 	});
+	const headToHeadMatches = React.useMemo(() => buildHeadToHeadMatches(liveRows), [liveRows]);
 	const headToHeadPairsKey = React.useMemo(
-		() => (matches ?? []).map(match => [match.player?.id ?? null, match.opponent?.id ?? null]),
-		[matches]
+		() => headToHeadMatches.map(match => [match.player?.id ?? null, match.opponent?.id ?? null]),
+		[headToHeadMatches]
 	);
 	const { data: headToHeadByPair = {}, error: meetingError } = useQuery({
 		queryKey: [HEAD_TO_HEAD_QUERY_KEY, headToHeadPairsKey],
-		queryFn: () => fetchHeadToHeadByMatches(matches ?? []),
+		queryFn: () => fetchHeadToHeadByMatches(headToHeadMatches),
 		cache: 0,
-		staleTime: 0,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true,
+		staleTime: 5 * 60 * 1000,
+		refetchInterval: false,
+		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retry: 0,
 		placeholderData: previousData => previousData
 	});
 
-	const hasLoadedCoreData = Boolean(matches && rankingRows);
-	const ranksByPlayerId = hasLoadedCoreData
-		? Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]))
-		: {};
+	const hasLoadedCoreData = Boolean(oddsetRows && playerRows);
+	const playerDetailsById = hasLoadedCoreData ? buildPlayerDetailsById(playerRows ?? []) : {};
 	const monitorRows = hasLoadedCoreData
-		? (matches ?? []).map(match => addRankingAndDisplayFields(match, ranksByPlayerId, oddsByPlayers, headToHeadByPair))
+		? buildMonitorRows(liveRows, playerDetailsById, headToHeadByPair)
 		: [];
 	const selection = hasLoadedCoreData
 		? selectMonitorMatches(monitorRows, routeParams)
@@ -147,12 +229,12 @@ function Component() {
 		return () => window.removeEventListener('keydown', onKeyDown);
 	}, [focusMode]);
 
-	if (liveError) {
-		return <ErrorPage message={`Misslyckades med att läsa in scoreboard - ${liveError.message}`} />;
+	if (oddsetError) {
+		return <ErrorPage message={`Misslyckades med att läsa in scoreboard - ${oddsetError.message}`} />;
 	}
 
-	if (rankError) {
-		return <ErrorPage message={`Misslyckades med att läsa in ranking - ${rankError.message}`} />;
+	if (playerError) {
+		return <ErrorPage message={`Misslyckades med att läsa in spelardata - ${playerError.message}`} />;
 	}
 
 	if (!hasLoadedCoreData) {
@@ -173,7 +255,7 @@ function Component() {
 			<Page.Content className='flex flex-col pb-4'>
 				{singleMatchMode ? (
 					<>
-						{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
+						{meetingError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div> : null}
 						<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' showFocusToggle={false} />
 					</>
 				) : (
@@ -184,14 +266,13 @@ function Component() {
 								<Countdown
 									dataUpdatedAt={dataUpdatedAt}
 									isFetching={isFetching}
-									intervalMs={LIVE_REFRESH_INTERVAL_MS}
+									intervalMs={ODDSET_REFRESH_INTERVAL_MS}
 									steps={LIVE_COUNTDOWN_STEPS}
 									labelUpdating='Uppdaterar scoreboard-sidan'
 									inline={true}
 								/>
 							</Page.Title>
 						)}
-						{focusMode || !oddsError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div>}
 						{focusMode || !meetingError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div>}
 
 						{focusedMatch ? (

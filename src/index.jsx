@@ -7,7 +7,6 @@ import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
 import HeadToHeadDetails from './pages/head-to-head-details';
-import Live from './pages/live';
 import Log from './pages/log';
 import MarketScannerDaily from './pages/market-scanner-daily';
 import Matches from './pages/matches';
@@ -183,7 +182,6 @@ class WebApp {
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
 						<Route path='/search' element={<Search />} />
-						<Route path='/live' element={<Live />} />
 						<Route path='/oddset' element={<Oddset />} />
 						<Route path='/matches' element={<Matches />} />
 						<Route path='/scoreboard' element={<Scoreboard />} />
