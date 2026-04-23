@@ -51,26 +51,43 @@ function formatOddsValue(odds) {
 	return odds.toFixed(2);
 }
 
-function formatState(state) {
+function normalizeOddsetState(state, fallbackState = null) {
 	switch (state) {
-		case 'STARTED':
-			return 'Live';
-		case 'NOT_STARTED':
-			return 'Kommande';
+		case 'live':
+			return 'live';
+		case 'upcoming':
+			return 'upcoming';
 		default:
-			return state || '-';
+			return fallbackState;
 	}
 }
 
-function getStatePriority(state) {
-	switch (state) {
-		case 'STARTED':
-			return 2;
-		case 'NOT_STARTED':
-			return 1;
-		default:
-			return 0;
+function formatState(state) {
+	const normalizedState = normalizeOddsetState(state);
+
+	if (normalizedState === 'live') {
+		return 'Live';
 	}
+
+	if (normalizedState === 'upcoming') {
+		return 'Kommande';
+	}
+
+	return state || '-';
+}
+
+function getStatePriority(state) {
+	const normalizedState = normalizeOddsetState(state);
+
+	if (normalizedState === 'live') {
+		return 2;
+	}
+
+	if (normalizedState === 'upcoming') {
+		return 1;
+	}
+
+	return 0;
 }
 
 function formatStart(value) {
@@ -152,7 +169,7 @@ function toUiRow(row) {
 	const oddsA = row.playerA?.odds;
 	const oddsB = row.playerB?.odds;
 	const liveScore = row.score ?? null;
-	const rawState = row.state ?? (liveScore ? 'STARTED' : 'NOT_STARTED');
+	const rawState = normalizeOddsetState(row.state, liveScore ? 'live' : 'upcoming');
 
 	return {
 		id: row.id ?? `${playerAName ?? '-'}-${playerBName ?? '-'}-${row.start ?? '-'}`,
@@ -227,8 +244,7 @@ function upsertOddsRow(oddsByPlayers, { oneId, twoId, oneName, twoName, oneOdds,
 	}
 }
 
-async function fetchLiveOddsetOddsByPlayers() {
-	const rows = await fetchOddsetRows();
+function buildOddsByPlayers(rows = []) {
 	const oddsByPlayers = {};
 
 	for (const row of rows) {
@@ -236,22 +252,36 @@ async function fetchLiveOddsetOddsByPlayers() {
 			continue;
 		}
 
-		if (row.state !== 'STARTED' && row.state !== 'NOT_STARTED') {
+		const normalizedState = normalizeOddsetState(row.state, row.score ? 'live' : 'upcoming');
+
+		if (!normalizedState) {
 			continue;
 		}
 
 		upsertOddsRow(oddsByPlayers, {
-			oneId: row.playerAId,
-			twoId: row.playerBId,
+			oneId: row.playerA?.id,
+			twoId: row.playerB?.id,
 			oneName: row.playerA?.name,
 			twoName: row.playerB?.name,
 			oneOdds: row.playerA?.odds,
 			twoOdds: row.playerB?.odds,
-			state: row.state
+			state: normalizedState
 		});
 	}
 
 	return oddsByPlayers;
+}
+
+async function fetchLiveOddsetOddsByPlayers() {
+	return buildOddsByPlayers(await fetchOddsetRows());
+}
+
+async function fetchOddsetPipelineSnapshot() {
+	const rows = await fetchOddsetRows();
+	return {
+		oddsetRows: toSortedUiRows(rows),
+		oddsByPlayers: buildOddsByPlayers(rows)
+	};
 }
 
 function getOddsEntryForMatch(match, oddsByPlayers) {
@@ -357,6 +387,8 @@ export {
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 	buildPlayerDetailsById,
 	buildRanksByPlayerId,
+	buildOddsByPlayers,
+	fetchOddsetPipelineSnapshot,
 	fetchOddsetPipelineMatches,
 	fetchLiveOddsetOddsByPlayers,
 	formatLiveOddsetOddsForMatch,

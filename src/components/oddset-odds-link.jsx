@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 
 function toOddsPhaseLabel(state) {
-	if (state === 'STARTED') {
+	if (state === 'live') {
 		return 'LIVE';
 	}
 
-	if (state === 'NOT_STARTED') {
+	if (state === 'upcoming') {
 		return 'PRE';
 	}
 

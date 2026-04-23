@@ -16,12 +16,10 @@ import {
 } from './calculated-odds.js';
 import { addRankingAndDisplayFields, fetchHeadToHeadByMatches } from '../../js/live-match-rows.js';
 import {
-	LIVE_ODDSET_QUERY_KEY,
 	ODDSET_PIPELINE_QUERY_KEY,
 	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 	buildPlayerDetailsById,
-	fetchOddsetPipelineMatches,
-	fetchLiveOddsetOddsByPlayers,
+	fetchOddsetPipelineSnapshot,
 	resolveMatchPlayers,
 	splitOddsetRowsByStatus
 } from '../../js/oddset-pipeline.js';
@@ -368,31 +366,25 @@ function createCalculatedOddsRowsKey(rows = []) {
 	]);
 }
 
-async function fetchLiveOddsSnapshot(rows = []) {
-	const [oddsByPlayers, calculatedOddsByMatch, tennisAbstractOddsByMatch] = await Promise.all([
-		fetchLiveOddsetOddsByPlayers(),
-		fetchCalculatedOddsForMatches(rows),
-		fetchTennisAbstractOddsForMatches(rows)
+async function fetchMatchesOddsSnapshot(rows = []) {
+	const oddsetSnapshotPromise = fetchOddsetPipelineSnapshot();
+	const activeCalculatedOddsPromise = fetchCalculatedOddsForMatches(rows);
+	const activeTennisAbstractOddsPromise = fetchTennisAbstractOddsForMatches(rows);
+	const oddsetSnapshot = await oddsetSnapshotPromise;
+	const [activeCalculatedOddsByMatch, activeTennisAbstractOddsByMatch, upcomingCalculatedOddsByMatch, upcomingTennisAbstractOddsByMatch] = await Promise.all([
+		activeCalculatedOddsPromise,
+		activeTennisAbstractOddsPromise,
+		fetchCalculatedOddsForMatches(oddsetSnapshot.oddsetRows),
+		fetchTennisAbstractOddsForMatches(oddsetSnapshot.oddsetRows)
 	]);
 
 	return {
-		oddsByPlayers,
-		calculatedOddsByMatch,
-		tennisAbstractOddsByMatch
-	};
-}
-
-async function fetchUpcomingMatchesSnapshot() {
-	const oddsetRows = await fetchOddsetPipelineMatches();
-	const [calculatedOddsByMatch, tennisAbstractOddsByMatch] = await Promise.all([
-		fetchCalculatedOddsForMatches(oddsetRows),
-		fetchTennisAbstractOddsForMatches(oddsetRows)
-	]);
-
-	return {
-		oddsetRows,
-		calculatedOddsByMatch,
-		tennisAbstractOddsByMatch
+		oddsByPlayers: oddsetSnapshot.oddsByPlayers,
+		activeCalculatedOddsByMatch,
+		activeTennisAbstractOddsByMatch,
+		oddsetRows: oddsetSnapshot.oddsetRows,
+		upcomingCalculatedOddsByMatch,
+		upcomingTennisAbstractOddsByMatch
 	};
 }
 
@@ -419,33 +411,24 @@ function Component() {
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const liveCalculatedOddsRows = React.useMemo(() => createLiveCalculatedOddsRows(matches ?? []), [matches]);
-	const { data: liveOddsSnapshot, error: oddsError } = useQuery({
-		queryKey: [LIVE_ODDSET_QUERY_KEY, CALCULATED_ODDS_QUERY_KEY, TENNIS_ABSTRACT_ODDS_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
-		queryFn: () => fetchLiveOddsSnapshot(liveCalculatedOddsRows),
-		staleTime: LIVE_REFRESH_INTERVAL_MS,
-		refetchInterval: LIVE_REFRESH_INTERVAL_MS,
+	const { data: oddsSnapshot, error: oddsError } = useQuery({
+		queryKey: [ODDSET_PIPELINE_QUERY_KEY, CALCULATED_ODDS_QUERY_KEY, TENNIS_ABSTRACT_ODDS_QUERY_KEY, createCalculatedOddsRowsKey(liveCalculatedOddsRows)],
+		queryFn: () => fetchMatchesOddsSnapshot(liveCalculatedOddsRows),
+		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retry: 0,
-		enabled: liveCalculatedOddsRows.length > 0,
 		placeholderData: previousData => previousData
 	});
-	const { data: upcomingSnapshot, error: oddsetPipelineError } = useQuery({
-		queryKey: ODDSET_PIPELINE_QUERY_KEY,
-		queryFn: fetchUpcomingMatchesSnapshot,
-		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchOnWindowFocus: false,
-		retry: 0,
-		placeholderData: previousData => previousData
-	});
-	const oddsByPlayers = liveOddsSnapshot?.oddsByPlayers ?? {};
-	const activeCalculatedOddsByMatch = liveOddsSnapshot?.calculatedOddsByMatch ?? {};
-	const activeTennisAbstractOddsByMatch = liveOddsSnapshot?.tennisAbstractOddsByMatch ?? {};
-	const oddsetRows = upcomingSnapshot?.oddsetRows ?? [];
-	const upcomingCalculatedOddsByMatch = upcomingSnapshot?.calculatedOddsByMatch ?? {};
-	const upcomingTennisAbstractOddsByMatch = upcomingSnapshot?.tennisAbstractOddsByMatch ?? {};
+	const oddsByPlayers = oddsSnapshot?.oddsByPlayers ?? {};
+	const activeCalculatedOddsByMatch = oddsSnapshot?.activeCalculatedOddsByMatch ?? {};
+	const activeTennisAbstractOddsByMatch = oddsSnapshot?.activeTennisAbstractOddsByMatch ?? {};
+	const oddsetRows = oddsSnapshot?.oddsetRows ?? [];
+	const upcomingCalculatedOddsByMatch = oddsSnapshot?.upcomingCalculatedOddsByMatch ?? {};
+	const upcomingTennisAbstractOddsByMatch = oddsSnapshot?.upcomingTennisAbstractOddsByMatch ?? {};
+	const hasLoadedOddsSnapshot = Boolean(oddsSnapshot);
 	const resolvedUpcomingRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 		return { ...row, playerA, playerB };
@@ -568,7 +551,7 @@ function Component() {
 		};
 	});
 	const { upcomingMatches } = splitOddsetRowsByStatus(upcomingRows);
-	const hasNoMatches = activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
+	const hasNoMatches = hasLoadedOddsSnapshot && activeMatches.length === 0 && finishedMatchesWithOdds.length === 0 && upcomingMatches.length === 0;
 
 	return (
 		<Page id='matches-page'>
@@ -624,22 +607,22 @@ function Component() {
 									)}
 								</section>
 
-								<section className='space-y-2'>
-									<Page.Title level={2}>Kommande matcher</Page.Title>
-									{oddsetPipelineError ? (
-										<Page.Error>Misslyckades med att läsa kommande matcher - {oddsetPipelineError.message}</Page.Error>
-									) : !oddsetRows ? (
-										<div className='py-3 text-primary-700 dark:text-primary-300'>Läser in kommande matcher...</div>
-									) : upcomingMatches.length > 0 ? (
-										<TournamentGroups
-											rows={upcomingMatches}
-											getTournamentName={row => row.turnering}
-											renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
-										/>
-									) : (
-										<Page.Information>Inga kommande matcher just nu</Page.Information>
-									)}
-								</section>
+								{oddsError || hasLoadedOddsSnapshot ? (
+									<section className='space-y-2'>
+										<Page.Title level={2}>Kommande matcher</Page.Title>
+										{oddsError ? (
+											<Page.Error>Misslyckades med att läsa kommande matcher - {oddsError.message}</Page.Error>
+										) : upcomingMatches.length > 0 ? (
+											<TournamentGroups
+												rows={upcomingMatches}
+												getTournamentName={row => row.turnering}
+												renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
+											/>
+										) : (
+											<Page.Information>Inga kommande matcher just nu</Page.Information>
+										)}
+									</section>
+								) : null}
 							</div>
 
 							<div className='pt-4 text-center text-sm italic text-primary-700 dark:text-primary-300'>
