@@ -320,7 +320,7 @@ function Component() {
 			<Page.Menu />
 			<Page.Content>
 				<Page.Title className='flex items-center justify-between gap-3'>
-					<span className='bg-transparent'>Matcher idag</span>
+					<span className='bg-transparent'>Matcher</span>
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
 						isFetching={isFetching}
