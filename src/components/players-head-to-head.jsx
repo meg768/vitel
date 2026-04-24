@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TriangleRightIcon from '../assets/radix-icons/triangle-right.svg?react';
+import StatisticsIcon from '../assets/custom-icons/statistics.svg?react';
 import Flag from './flag';
 import Link from './ui/link';
 
@@ -38,23 +38,29 @@ function ComparePlayersLink({ playerA = {}, playerB = {} }) {
 	return (
 		<Link
 			to={compareLink}
-			className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-current text-primary-900 dark:text-primary-100'
+			className='flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border border-primary-500 text-primary-900 dark:border-primary-500 dark:text-primary-100'
 			aria-label={ariaLabel}
 			title='Jämför spelare'
 		>
-			<TriangleRightIcon className='block h-full w-full' />
+			<StatisticsIcon className='block h-3.5 w-3.5 bg-transparent' />
 		</Link>
 	);
 }
 
-function PlayersHeadToHead({ playerA = {}, playerB = {}, suffix = null }) {
+function PlayersHeadToHead({ playerA = {}, playerB = {}, playerASuffix = null, playerBSuffix = null, suffix = null }) {
 	return (
 		<div className='flex items-center gap-2 bg-transparent'>
 			{playerA.country ? <Flag className='w-5! h-5! border-primary-800 dark:border-primary-200' country={playerA.country} /> : null}
-			{renderPlayerName(playerA)}
+			<div className='flex items-center gap-1 bg-transparent'>
+				{renderPlayerName(playerA)}
+				{playerASuffix ? <span>{playerASuffix}</span> : null}
+			</div>
 			<span>vs</span>
 			{playerB.country ? <Flag className='w-5! h-5! border-primary-800 dark:border-primary-200' country={playerB.country} /> : null}
-			{renderPlayerName(playerB)}
+			<div className='flex items-center gap-1 bg-transparent'>
+				{renderPlayerName(playerB)}
+				{playerBSuffix ? <span>{playerBSuffix}</span> : null}
+			</div>
 			{suffix ? <span>{suffix}</span> : null}
 			<ComparePlayersLink playerA={playerA} playerB={playerB} />
 		</div>

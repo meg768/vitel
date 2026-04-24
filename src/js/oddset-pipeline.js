@@ -180,6 +180,7 @@ function toUiRow(row) {
 		playerBId: row.playerB?.id ?? null,
 		odds: `${formatOddsValue(oddsA)} - ${formatOddsValue(oddsB)}`,
 		liveScore: liveScore || '-',
+		serve: row.serve ?? null,
 		status: formatState(rawState),
 		start: formatStart(row.start),
 		_startTimestamp: Number.isFinite(row._startTimestamp) ? row._startTimestamp : parseStartTimestamp(row.start)

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import BarChartIcon from '../assets/radix-icons/bar-chart.svg?react';
+import StatisticsIcon from '../assets/custom-icons/statistics.svg?react';
 import EnterFullScreenIcon from '../assets/radix-icons/enter-full-screen.svg?react';
 import ExitFullScreenIcon from '../assets/radix-icons/exit-full-screen.svg?react';
 import Avatar from './avatar';
@@ -153,7 +153,7 @@ function LiveMatchMonitor({
 						aria-label='Jämför spelare'
 						title='Jämför spelare'
 					>
-						<BarChartIcon className='h-4 w-4 bg-transparent' />
+						<StatisticsIcon className='h-4 w-4 bg-transparent' />
 					</Link>
 				) : null}
 				{showFocusToggle ? (

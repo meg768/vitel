@@ -135,6 +135,17 @@ function UpcomingPlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} />;
 }
 
+function LivePlayersCell({ row }) {
+	return (
+		<PlayersHeadToHead
+			playerA={row.playerA}
+			playerB={row.playerB}
+			playerASuffix={row.serve === 'player' ? <span className='text-xs leading-none' aria-hidden='true'>🎾</span> : null}
+			playerBSuffix={row.serve === 'opponent' ? <span className='text-xs leading-none' aria-hidden='true'>🎾</span> : null}
+		/>
+	);
+}
+
 function LiveOddsetMatchesTable({ rows, groupedByTournament = false }) {
 	return (
 		<Table rows={rows}>
@@ -150,7 +161,7 @@ function LiveOddsetMatchesTable({ rows, groupedByTournament = false }) {
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
-				<Table.Value>{({ row }) => <UpcomingPlayersCell row={row} />}</Table.Value>
+				<Table.Value>{({ row }) => <LivePlayersCell row={row} />}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='odds'>
