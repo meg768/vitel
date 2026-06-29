@@ -19,6 +19,10 @@ Nuvarande huvudbild:
 - Routing: `HashRouter`
 - Data/cache: TanStack Query
 - Backend-bas: `VITE_API_URL`
+- Production API URL: `https://tennis.egelberg.se/api`
+- Production static root: `/var/www/html/vitel` on `pi-kato`
+- Apache on `tennis.egelberg.se` serves the static frontend and reverse proxies
+  `/api` to `http://localhost:3004/api`
 - Backendkontrakt som används i frontenden: `GET /live`, `GET /oddset`, `POST /query`
 - Databasschema source of truth: `src/database/schema.sql`
 - Backendrepo: `meg768/atp-tennis`
@@ -122,6 +126,9 @@ Viktiga scripts i `package.json`:
 - `npm run git-restore`
 - `npm run upload`
 - `npm run "goto GitHub"`
+
+`npm run upload` builds the frontend and uploads `dist/*` to
+`root@pi-kato:/var/www/html/vitel`.
 
 ## Viktiga filer
 
@@ -242,6 +249,10 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-06-30: Projektkontexten uppdaterades med aktuell produktionsbild:
+  frontendens statiska root är `/var/www/html/vitel` på `pi-kato`,
+  `tennis.egelberg.se/api` reverse-proxyar till backendens
+  `http://localhost:3004/api`, och `npm run upload` deployar dit via `scp`.
 - 2026-04-13: `Nyheter`-länken i toppmenyn började skicka med vitels aktiva, resolverade tema till `tennis-daily.egelberg.se`, så nyhetssidan kan öppnas i samma dark/light- och hard/clay/grass-läge som frontenden visar just då.
 - 2026-04-13: Menylabeln för den externa länken till `https://tennis-daily.egelberg.se` byttes från `Tennis Daily` till `Nyheter`, men länken ligger kvar på samma plats i huvudmenyn och öppnas fortsatt i ny flik.
 - 2026-04-13: `Tennis Daily` flyttades från ikon till riktig textlänk i huvudmenyn. Tanken är att sidan är tillräckligt central för att förtjäna en tydlig menylabel i stället för en diskret ikon.

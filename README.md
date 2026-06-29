@@ -196,7 +196,7 @@ Important files:
 
 - The app uses `HashRouter`, which is suitable for static hosting without server-side route rewrites.
 - Build output is generated in `dist/`.
-- The included `upload` script deploys static assets to `router.egelberg.se`.
+- The included `upload` script deploys static assets to `root@pi-kato:/var/www/html/vitel`.
 
 ## Troubleshooting
 
