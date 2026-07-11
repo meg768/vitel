@@ -249,6 +249,11 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-12: Matchsidans tidigare `Vitel`-odds pensionerades och ersattes av
+  `CODEX`. Backendkontraktet `/api/odds` använder nu `codexOdds` tillsammans
+  med `tennisAbstractOdds`. Den kanoniska modellen ligger i `atp-tennis`
+  `PLAYER_WIN_FACTOR` och motsvarar Match Points TA-kalibrerade sexfeaturesmodell.
+
 - 2026-06-30: Projektkontexten uppdaterades med aktuell produktionsbild:
   frontendens statiska root är `/var/www/html/vitel` på `pi-kato`,
   `tennis.egelberg.se/api` reverse-proxyar till backendens

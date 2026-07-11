@@ -91,7 +91,7 @@ async function fetchOddsForRow(row) {
 	const playerBTerm = resolvePlayerTerm(row, 'B');
 
 	if (!playerATerm || !playerBTerm) {
-		return { computedOdds: '-', tennisAbstractOdds: '-' };
+		return { codexOdds: '-', tennisAbstractOdds: '-' };
 	}
 
 	const surface = resolveSurface(row);
@@ -105,11 +105,11 @@ async function fetchOddsForRow(row) {
 	try {
 		const payload = await service.get(path);
 		return {
-			computedOdds: formatOddsPair(payload?.computedOdds),
+			codexOdds: formatOddsPair(payload?.codexOdds),
 			tennisAbstractOdds: formatOddsPair(payload?.tennisAbstractOdds)
 		};
 	} catch {
-		return { computedOdds: '-', tennisAbstractOdds: '-' };
+		return { codexOdds: '-', tennisAbstractOdds: '-' };
 	}
 }
 
@@ -132,10 +132,10 @@ async function fetchMatchOddsForMatches(rows = []) {
 function getMatchOddsForRow(row, matchOddsByKey) {
 	const key = createMatchKey(row);
 	if (!key) {
-		return { computedOdds: '-', tennisAbstractOdds: '-' };
+		return { codexOdds: '-', tennisAbstractOdds: '-' };
 	}
 
-	return matchOddsByKey?.[key] ?? { computedOdds: '-', tennisAbstractOdds: '-' };
+	return matchOddsByKey?.[key] ?? { codexOdds: '-', tennisAbstractOdds: '-' };
 }
 
 export {

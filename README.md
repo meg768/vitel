@@ -2,6 +2,9 @@
 
 Vitel is a React + Vite web application for ATP tennis stats, live match monitoring, and odds overview.
 
+The match overview compares Oddset with Tennis Abstract and the server-side
+TA-calibrated CODEX model. The former Vitel odds model has been retired.
+
 The frontend is statically served and talks to a backend API for SQL data, live match data, and Oddset data.
 
 ## Highlights
