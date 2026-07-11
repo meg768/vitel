@@ -251,8 +251,10 @@ Det som är viktigt att komma ihåg framåt:
 - 2026-07-12: `Nyheter` och den externa kopplingen till det nedlagda
   Tennis Daily-projektet togs bort från huvudmenyn.
 
+- 2026-07-12: Oddsmodellen och klientkolumnen bytte namn från `CODEX` till
+  `GPT`; backendkontraktet `/api/odds` använder nu `gptOdds`.
 - 2026-07-12: Matchsidans tidigare `Vitel`-odds pensionerades och ersattes av
-  `CODEX`. Backendkontraktet `/api/odds` använder nu `codexOdds` tillsammans
+  GPT-modellen. Backendkontraktet `/api/odds` använder `gptOdds` tillsammans
   med `tennisAbstractOdds`. Den kanoniska modellen ligger i `atp-tennis`
   `PLAYER_WIN_FACTOR` och motsvarar Match Points TA-kalibrerade sexfeaturesmodell.
 

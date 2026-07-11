@@ -174,8 +174,8 @@ function LiveOddsetMatchesTable({ rows, groupedByTournament = false }) {
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>CODEX</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.codexOdds)}</Table.Value>
+				<Table.Title>GPT</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.gptOdds)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='liveScore'>
@@ -213,8 +213,8 @@ function UpcomingMatchesTable({ rows, groupedByTournament = false }) {
 			</Table.Column>
 
 			<Table.Column>
-				<Table.Title>CODEX</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.codexOdds)}</Table.Value>
+				<Table.Title>GPT</Table.Title>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.gptOdds)}</Table.Value>
 			</Table.Column>
 		</Table>
 	);
@@ -308,7 +308,7 @@ function Component() {
 			const matchOdds = getMatchOddsForRow(row, upcomingMatchOddsByMatch);
 			return {
 				...row,
-				codexOdds: matchOdds.codexOdds,
+				gptOdds: matchOdds.gptOdds,
 				tennisAbstractOdds: matchOdds.tennisAbstractOdds
 			};
 		});
