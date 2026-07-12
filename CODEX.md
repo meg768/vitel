@@ -248,6 +248,14 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-12: Vitel är åter primär klient att förbättra; native-projektet
+  `match-point` är pausat. TA och GPT utgår båda från samma dagligen importerade
+  Tennis Abstract-Elo i MariaDB. TA är ren Elo medan GPT kommer från backendens
+  `PLAYER_ODDS` / `PLAYER_WIN_FACTOR`. Vitel ska endast konsumera `/api/odds`
+  och aldrig hämta Tennis Abstract direkt; endast `atp-import` äger
+  TA-nätberoendet. Backend `atp-tennis` commit `9523622` tog bort TA-anrop från
+  `atp-service`.
+
 - 2026-07-12: `Nyheter` och den externa kopplingen till det nedlagda
   Tennis Daily-projektet togs bort från huvudmenyn.
 
