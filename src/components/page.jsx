@@ -126,25 +126,11 @@ Component.Content = function (props) {
 };
 
 
-Component.Loading = function ({ children, progress }) {
+Component.Loading = function ({ children }) {
 	return (
 		<div className='flex min-h-[40vh] flex-col items-center justify-center text-lg'>
 			<TennisBall ping={true} />
 			{children ? <div className='mt-2 text-sm font-semibold text-primary-700 dark:text-primary-300'>{children}</div> : null}
-			{Number.isFinite(progress) ? (
-				<div className='mt-3 w-full max-w-64 bg-transparent'>
-					<div
-						className='h-2 overflow-hidden rounded-full border border-primary-300 bg-primary-100 dark:border-primary-600 dark:bg-primary-900'
-						role='progressbar'
-						aria-valuemin='0'
-						aria-valuemax='100'
-						aria-valuenow={progress}
-					>
-						<div className='h-full rounded-full bg-primary-600 transition-[width] duration-300 dark:bg-primary-400' style={{ width: `${progress}%` }} />
-					</div>
-					<div className='mt-1 text-center text-xs text-primary-600 dark:text-primary-400'>{progress}%</div>
-				</div>
-			) : null}
 		</div>
 	);
 };

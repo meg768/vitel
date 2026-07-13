@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import Countdown from '../../components/countdown';
@@ -184,17 +183,6 @@ function createCalculatedOddsRowsKey(rows = []) {
 	]);
 }
 
-async function fetchMatchesSnapshot() {
-	const oddsetSnapshot = await fetchOddsetPipelineSnapshot();
-	const upcomingMatchOddsByMatch = await fetchMatchOddsForMatches(oddsetSnapshot.oddsetRows);
-
-	return {
-		oddsByPlayers: oddsetSnapshot.oddsByPlayers,
-		oddsetRows: oddsetSnapshot.oddsetRows,
-		upcomingMatchOddsByMatch
-	};
-}
-
 function Component() {
 	const { data: playerRows, error: playerError } = useSQL({
 		sql: 'SELECT id, name, country FROM players',
@@ -205,9 +193,14 @@ function Component() {
 		sql: rankingSql,
 		cache: 5 * 60 * 1000
 	});
-	const { data: oddsSnapshot, error: oddsError, dataUpdatedAt, isFetching } = useQuery({
-		queryKey: [ODDSET_PIPELINE_QUERY_KEY, MATCH_ODDS_QUERY_KEY],
-		queryFn: fetchMatchesSnapshot,
+	const {
+		data: oddsetSnapshot,
+		error: oddsetError,
+		dataUpdatedAt,
+		isFetching: isFetchingOddset
+	} = useQuery({
+		queryKey: [ODDSET_PIPELINE_QUERY_KEY],
+		queryFn: fetchOddsetPipelineSnapshot,
 		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 		refetchIntervalInBackground: false,
@@ -216,36 +209,33 @@ function Component() {
 		retry: 0,
 		placeholderData: previousData => previousData
 	});
+	const oddsetRows = oddsetSnapshot?.oddsetRows ?? [];
+	const calculatedOddsRowsKey = createCalculatedOddsRowsKey(oddsetRows);
+	const {
+		data: upcomingMatchOddsByMatch = {},
+		error: oddsError,
+		isFetching: isFetchingOdds
+	} = useQuery({
+		queryKey: [MATCH_ODDS_QUERY_KEY, calculatedOddsRowsKey],
+		queryFn: () => fetchMatchOddsForMatches(oddsetRows),
+		enabled: oddsetRows.length > 0,
+		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		retry: 0,
+		placeholderData: previousData => previousData
+	});
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
-	const oddsetRows = oddsSnapshot?.oddsetRows ?? [];
-	const upcomingMatchOddsByMatch = oddsSnapshot?.upcomingMatchOddsByMatch ?? {};
-	const hasLoadedOddsSnapshot = Boolean(oddsSnapshot);
-	const completedLoadSteps = [rankingRows, playerRows, hasLoadedOddsSnapshot].filter(Boolean).length;
-	const [estimatedProgress, setEstimatedProgress] = React.useState(8);
-
-	React.useEffect(() => {
-		if (hasLoadedOddsSnapshot || oddsError) {
-			return;
-		}
-
-		const progressCeilings = [25, 50, 95];
-		const ceiling = progressCeilings[Math.min(completedLoadSteps, 2)];
-		const timer = window.setInterval(() => {
-			setEstimatedProgress(current => Math.min(current + 1, ceiling));
-		}, 350);
-
-		return () => window.clearInterval(timer);
-	}, [completedLoadSteps, hasLoadedOddsSnapshot, oddsError]);
-
+	const hasLoadedOddsetSnapshot = Boolean(oddsetSnapshot);
 	let loadingMessage = 'Läser spelare och ranking…';
 
 	if (rankingRows && !playerRows) {
 		loadingMessage = 'Läser spelare…';
 	} else if (!rankingRows && playerRows) {
 		loadingMessage = 'Läser ranking…';
-	} else if (rankingRows && playerRows && !hasLoadedOddsSnapshot) {
-		loadingMessage = 'Hämtar matcher och beräknar odds…';
+	} else if (rankingRows && playerRows && !hasLoadedOddsetSnapshot) {
+		loadingMessage = 'Hämtar matcher…';
 	}
 
 	const resolvedOddsetRows = oddsetRows.map(row => {
@@ -275,12 +265,23 @@ function Component() {
 		);
 	}
 
-	if (!rankingRows || !playerRows || (!hasLoadedOddsSnapshot && !oddsError)) {
+	if (oddsetError && !hasLoadedOddsetSnapshot) {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
-					<Page.Loading progress={estimatedProgress}>{loadingMessage}</Page.Loading>
+					<Page.Error>Misslyckades med att läsa in matcher - {oddsetError.message}</Page.Error>
+				</Page.Content>
+			</Page>
+		);
+	}
+
+	if (!rankingRows || !playerRows || !hasLoadedOddsetSnapshot) {
+		return (
+			<Page id='matches-page'>
+				<Page.Menu />
+				<Page.Content>
+					<Page.Loading>{loadingMessage}</Page.Loading>
 				</Page.Content>
 			</Page>
 		);
@@ -306,7 +307,7 @@ function Component() {
 					<span className='bg-transparent'>Matcher</span>
 					<Countdown
 						dataUpdatedAt={dataUpdatedAt}
-						isFetching={isFetching}
+						isFetching={isFetchingOddset}
 						intervalMs={ODDSET_PIPELINE_REFRESH_INTERVAL_MS}
 						steps={LIVE_COUNTDOWN_STEPS}
 						labelUpdating='Uppdaterar matches-sidan'
@@ -314,7 +315,9 @@ function Component() {
 					/>
 				</Page.Title>
 				<Page.Container>
-					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa odds just nu.</div> : null}
+					{isFetchingOdds ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Beräknar TA- och GPT-odds…</div> : null}
+					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte beräkna TA- och GPT-odds just nu.</div> : null}
+					{oddsetError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte uppdatera matchlistan just nu.</div> : null}
 					{hasNoMatches ? (
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
 					) : (
@@ -322,9 +325,7 @@ function Component() {
 							<div className='space-y-6'>
 								<section className='space-y-1'>
 									<Page.Title level={2}>Pågående matcher</Page.Title>
-									{oddsError ? (
-										<Page.Error>Misslyckades med att läsa pågående matcher - {oddsError.message}</Page.Error>
-									) : liveMatches.length > 0 ? (
+									{liveMatches.length > 0 ? (
 										<>
 											<LiveOddsetMatchesTable rows={liveMatches} />
 											<div className='flex justify-center pt-4'>
@@ -338,9 +339,7 @@ function Component() {
 
 								<section className='space-y-1'>
 									<Page.Title level={2}>Kommande matcher</Page.Title>
-									{oddsError ? (
-										<Page.Error>Misslyckades med att läsa kommande matcher - {oddsError.message}</Page.Error>
-									) : upcomingMatches.length > 0 ? (
+									{upcomingMatches.length > 0 ? (
 										<UpcomingMatchesTable rows={upcomingMatches} />
 									) : (
 										<Page.Information>Inga kommande matcher just nu</Page.Information>

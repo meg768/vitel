@@ -249,6 +249,10 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-13: Den uppskattade progressbaren och procentlogiken togs bort från `/matches`-laddningen. Tennisboll och aktuell laddningstext behålls.
+
+- 2026-07-13: `/matches` renderar nu Oddset-matchlistan så snart den är tillgänglig. TA/GPT-batchen körs i en separat bakgrundsquery och fyller oddskolumnerna när den är klar; ett oddsfel döljer inte längre matcherna.
+
 - 2026-07-13: Spelarsökfältets border i light mode använder nu samma `primary-500`-ton både med och utan fokus. Fokusringen finns kvar som separat tillgänglighetsmarkering.
 
 - 2026-07-13: Den gamla separata `/search`-sidan, menyns sökikon och F4-sökgenvägen togs bort. Spelarsökning finns nu endast direkt i `/players`-sidans titel.
