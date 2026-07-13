@@ -3,15 +3,28 @@ import { useSearchParams } from 'react-router';
 
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
+import StarFilledIcon from '../../assets/radix-icons/star-filled.svg?react';
+import Flag from '../../components/flag';
 import Page from '../../components/page';
 import Players from '../../components/players';
+import Button from '../../components/ui/button';
 import Input from '../../components/ui/input';
+import Link from '../../components/ui/link';
+import LocalStorage from '../../js/local-storage';
 import { useSQL } from '../../js/vitel.js';
+
+const FAVORITES_STORAGE_KEY = 'vitel';
+const FAVORITES_KEY = 'favorite-player-ids';
 
 export default function PlayersPage() {
 	const [searchParams] = useSearchParams();
 	const [searchTerm, setSearchTerm] = React.useState('');
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState('');
+	const [favoritePlayerIds, setFavoritePlayerIds] = React.useState(() => {
+		const storedIds = new LocalStorage({ key: FAVORITES_STORAGE_KEY }).get(FAVORITES_KEY, []);
+		return Array.isArray(storedIds) ? storedIds : [];
+	});
+	const [selectedFavoriteIds, setSelectedFavoriteIds] = React.useState([]);
 	const searchInputRef = React.useRef(null);
 	let query = searchParams.get('query') || {};
 
@@ -52,6 +65,92 @@ export default function PlayersPage() {
 		format,
 		placeholderData: previousPlayers => previousPlayers
 	});
+	const favoritePlaceholders = favoritePlayerIds.map(() => '?').join(', ');
+	const { data: favoritePlayers = [], error: favoriteError } = useSQL({
+		sql: favoritePlayerIds.length
+			? `SELECT * FROM players WHERE id IN (${favoritePlaceholders})`
+			: 'SELECT * FROM players WHERE 1 = 0',
+		format: favoritePlayerIds
+	});
+	const orderedFavoritePlayers = favoritePlayerIds
+		.map(playerId => favoritePlayers.find(player => player.id === playerId))
+		.filter(Boolean);
+
+	function removeFavorite(playerId) {
+		const nextFavoritePlayerIds = favoritePlayerIds.filter(id => id !== playerId);
+		new LocalStorage({ key: FAVORITES_STORAGE_KEY }).set(FAVORITES_KEY, nextFavoritePlayerIds);
+		setFavoritePlayerIds(nextFavoritePlayerIds);
+		setSelectedFavoriteIds(current => current.filter(id => id !== playerId));
+	}
+
+	function toggleSelectedFavorite(playerId) {
+		setSelectedFavoriteIds(current => {
+			if (current.includes(playerId)) {
+				return current.filter(id => id !== playerId);
+			}
+
+			return current.length < 2 ? [...current, playerId] : [current[1], playerId];
+		});
+	}
+
+	function Favorites() {
+		if (!favoritePlayerIds.length) {
+			return null;
+		}
+
+		const compareLink = selectedFavoriteIds.length === 2
+			? `/head-to-head/${selectedFavoriteIds[0]}/${selectedFavoriteIds[1]}`
+			: null;
+
+		return (
+			<section className='mb-5'>
+				<Page.Title level={2}>Favoriter</Page.Title>
+				{favoriteError ? (
+					<Page.Warning>Kunde inte läsa in favoriterna just nu.</Page.Warning>
+				) : (
+					<div className='overflow-hidden rounded-lg border border-primary-300 dark:border-primary-700'>
+						{orderedFavoritePlayers.map(player => {
+							const isSelected = selectedFavoriteIds.includes(player.id);
+
+							return (
+								<div
+									key={player.id}
+									className='flex items-center gap-3 border-b border-primary-300 px-3 py-2 last:border-b-0 dark:border-primary-700'
+								>
+									<input
+										type='checkbox'
+										checked={isSelected}
+										onChange={() => toggleSelectedFavorite(player.id)}
+										aria-label={`Välj ${player.name} för jämförelse`}
+										className='h-4 w-4 accent-primary-700'
+									/>
+									<Flag className='w-6! h-6! border-1! border-current' country={player.country} />
+									<Link className='min-w-0 flex-1 font-semibold' to={`/player/${player.id}`}>
+										{player.name}
+										{player.country ? <span className='ml-2 text-sm font-normal text-primary-700 dark:text-primary-300'>({player.country})</span> : null}
+									</Link>
+									<button
+										type='button'
+										onClick={() => removeFavorite(player.id)}
+										aria-label={`Ta bort ${player.name} från favoriter`}
+										className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-primary-400 text-primary-700 hover:bg-primary-100 dark:border-primary-600 dark:text-primary-300 dark:hover:bg-primary-800'
+									>
+										<StarFilledIcon className='h-4 w-4 bg-transparent' />
+									</button>
+								</div>
+							);
+						})}
+					</div>
+				)}
+				<div className='mt-3 flex items-center justify-between gap-3'>
+					<span className='text-sm text-primary-700 dark:text-primary-300'>
+						{selectedFavoriteIds.length === 2 ? 'Två spelare valda.' : 'Välj två spelare att jämföra.'}
+					</span>
+					<Button link={compareLink || undefined} disabled={!compareLink}>Jämför spelare</Button>
+				</div>
+			</section>
+		);
+	}
 	let statusBarStatus = 'ready';
 	let statusBarMessage = players
 		? `Visar ${players.length} rankade spelare.`
@@ -111,6 +210,7 @@ export default function PlayersPage() {
 					</label>
 				</Page.Title>
 				<Page.Container>
+					<Favorites />
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>
 					) : !players ? (

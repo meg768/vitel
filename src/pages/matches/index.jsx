@@ -114,6 +114,7 @@ function LiveOddsetMatchesTable({ rows }) {
 
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
+				<Table.SortValue>{({ row }) => row._startTimestamp}</Table.SortValue>
 			</Table.Column>
 
 			<Table.Column>
@@ -151,6 +152,7 @@ function UpcomingMatchesTable({ rows }) {
 
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
+				<Table.SortValue>{({ row }) => row._startTimestamp}</Table.SortValue>
 			</Table.Column>
 
 			<Table.Column>
@@ -271,9 +273,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
-					<div className='flex min-h-[40vh] items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300'>
-						Hämtar matcher…
-					</div>
+					<Page.Loading>Hämtar matcher…</Page.Loading>
 				</Page.Content>
 			</Page>
 		);

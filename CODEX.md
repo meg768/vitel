@@ -249,7 +249,11 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
-- 2026-07-13: Den numera mycket korta initialladdningen på `/matches` visar endast den lugna texten `Hämtar matcher…`; tennisbollsanimation och delstegsmeddelanden togs bort från just denna sida. Statusbaren efter att matcherna visas behålls.
+- 2026-07-13: `Start` i båda matchtabellerna använder nu `Table.SortValue` med radens `_startTimestamp`. Cellen behåller sitt relativa svenska visningsvärde, exempelvis `I morgon 19:30`, medan sorteringen sker kronologiskt.
+
+- 2026-07-13: `/players` visar nu lokalt sparade favoritspelare i en kompakt sektion ovanför spelartabellen. Favoriter kan öppnas eller tas bort direkt, två spelare kan markeras för den befintliga head-to-head-vyn och ingen ny route eller meny lades till.
+
+- 2026-07-13: Den numera mycket korta initialladdningen på `/matches` visar den pulserande tennisbollen med endast den fasta texten `Hämtar matcher…` undertill. Progressbar och växlande delstegsmeddelanden är borta; statusbaren efter att matcherna visas behålls.
 
 - 2026-07-13: Favoritstjärnan på spelarsidan uppdateras nu utan att montera om sidans innehåll. Lokala `Content` och `Title` används som renderhjälpare i stället för nya React-komponenttyper vid varje favoritklick.
 
