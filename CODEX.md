@@ -249,6 +249,12 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-13: Den numera mycket korta initialladdningen på `/matches` visar endast den lugna texten `Hämtar matcher…`; tennisbollsanimation och delstegsmeddelanden togs bort från just denna sida. Statusbaren efter att matcherna visas behålls.
+
+- 2026-07-13: Favoritstjärnan på spelarsidan uppdateras nu utan att montera om sidans innehåll. Lokala `Content` och `Title` används som renderhjälpare i stället för nya React-komponenttyper vid varje favoritklick.
+
+- 2026-07-13: En minimal lokal favoritfunktion lades till på `/player/:id`. En högerjusterad konturstjärna i spelartiteln växlar till en temafärgad fylld stjärna och sparar endast spelar-id:n i `vitel`-lagringens `favorite-player-ids`. Ingen favoritlista, filtrering eller annan följdfunktion har lagts till ännu.
+
 - 2026-07-13: `/players` och `/events` kopplar nu explicit in `Page.StatusBar`. De visar antal standardrader, aktuell sökning och antal träffar samt laddnings- och fellägen utan att ersätta tabellinnehållet.
 
 - 2026-07-13: Återanvändbara `Page.StatusBar` lades till som ett explicit flexbarn på de sidor som behöver den, inte globalt och utan overlay. `/matches` visar antal live/kommande matcher samt TA/GPT-status där, och `/scoreboard` visar liveantal, uppdatering och diskreta varningar. Light mode använder sidans ljusa bakgrund med en diskret överkant; dark mode använder en mörk statusbar. Tidigare lösa statusrader i sidinnehållet togs bort.

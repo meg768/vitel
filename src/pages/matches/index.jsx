@@ -228,16 +228,6 @@ function Component() {
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const hasLoadedOddsetSnapshot = Boolean(oddsetSnapshot);
-	let loadingMessage = 'Läser spelare och ranking…';
-
-	if (rankingRows && !playerRows) {
-		loadingMessage = 'Läser spelare…';
-	} else if (!rankingRows && playerRows) {
-		loadingMessage = 'Läser ranking…';
-	} else if (rankingRows && playerRows && !hasLoadedOddsetSnapshot) {
-		loadingMessage = 'Hämtar matcher…';
-	}
-
 	const resolvedOddsetRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 		return { ...row, playerA, playerB };
@@ -281,7 +271,9 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
-					<Page.Loading>{loadingMessage}</Page.Loading>
+					<div className='flex min-h-[40vh] items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300'>
+						Hämtar matcher…
+					</div>
 				</Page.Content>
 			</Page>
 		);
