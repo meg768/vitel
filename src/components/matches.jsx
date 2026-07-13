@@ -116,12 +116,12 @@ function Component({ matches, owner, hide = [] }) {
 
 				<Table.Column className='justify-center'>
 					<Table.Title><span className='sr-only'>Jämför spelare</span></Table.Title>
-					<Table.Cell className=''>
+					<Table.Cell className='text-center'>
 						{({ row, value }) => {
 							return (
 								<Link
 									to={`/head-to-head/${row.winner_id}/${row.loser_id}`}
-									className='flex h-7 w-7 items-center justify-center rounded-sm border border-primary-500 text-primary-900 transition-colors hover:bg-primary-100 dark:border-primary-500 dark:text-primary-100 dark:hover:bg-primary-800'
+									className='mx-auto flex h-7 w-7 items-center justify-center rounded-sm border border-primary-500 text-primary-900 transition-colors hover:bg-primary-100 dark:border-primary-500 dark:text-primary-100 dark:hover:bg-primary-800'
 									aria-label={`Jämför ${row.winner} mot ${row.loser}`}
 									title='Jämför spelare'
 								>

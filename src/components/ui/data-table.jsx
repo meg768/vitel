@@ -72,19 +72,27 @@ class Column {
         return false;
     }
 
-    getCell({ row, index }) {
+    getCell({ row, index, rowIndex, selected, highlightSelectedRows }) {
         let value = this.getValueFn ? this.getValueFn({ row }) : undefined;
         let props = {};
 
         if (this.cell && this.cell.props) {
             let { children, ...cellProps } = this.cell.props;
-            value = children ? children({ value: value, row: row }) : value;
+            value = children ? children({ value: value, row: row, selected: selected }) : value;
             props = cellProps;
         }
 
         let { className, ...others } = props;
 
-        className = clsx(className, 'px-2 py-1.5 border-r border-b whitespace-nowrap');
+        className = clsx(
+            className,
+            'px-2 py-1.5 border-r border-b border-primary-300 whitespace-nowrap dark:border-primary-700',
+            selected && highlightSelectedRows
+                ? 'bg-primary-400/55 group-hover:bg-primary-400/55 dark:bg-primary-500/45 dark:group-hover:bg-primary-500/45'
+                : rowIndex % 2 === 0
+                    ? 'bg-primary-100 group-hover:bg-primary-200 dark:bg-primary-800 dark:group-hover:bg-primary-600/75'
+                    : 'bg-primary-50 group-hover:bg-primary-200 dark:bg-primary-900 dark:group-hover:bg-primary-600/75'
+        );
 
         return (
             <td className={className} {...others} key={index}>
@@ -94,7 +102,7 @@ class Column {
     }
 }
 
-function Table({ rows, className, children, ...props }) {
+function Table({ rows, className, children, rowKey, isRowSelected, onRowClick, highlightSelectedRows = true, ...props }) {
     let [sort, setSort] = React.useState(null);
     let [columns, setColumns] = React.useState(null);
 
@@ -187,18 +195,40 @@ function Table({ rows, className, children, ...props }) {
     }
 
     function Row({ row, index, ...props }) {
-        let className = '';
+        const selected = isRowSelected ? isRowSelected(row) : false;
+        const isInteractive = Boolean(onRowClick);
+        const className = clsx('group', isInteractive && 'cursor-pointer');
 
-        className = clsx(className, 'hover:bg-primary-500/30 bg-primary-50 odd:bg-primary-100 ');
-        className = clsx(className, 'dark:hover:bg-primary-500/30 dark:bg-primary-900 dark:odd:bg-primary-800');
-        className = clsx(className, '');
+        function selectRow(event) {
+            if (!isInteractive || event.target.closest('a, button, input, select, textarea')) {
+                return;
+            }
 
-        let items = columns.map((column, index) => {
-            return column.getCell({ row, index });
+            onRowClick(row);
+        }
+
+        function selectRowWithKeyboard(event) {
+            if (!isInteractive || (event.key !== 'Enter' && event.key !== ' ')) {
+                return;
+            }
+
+            event.preventDefault();
+            onRowClick(row);
+        }
+
+        let items = columns.map((column, columnIndex) => {
+            return column.getCell({ row, index: columnIndex, rowIndex: index, selected, highlightSelectedRows });
         });
 
         return (
-            <tr className={className} {...props}>
+            <tr
+                className={className}
+                onClick={selectRow}
+                onKeyDown={selectRowWithKeyboard}
+                tabIndex={isInteractive ? 0 : undefined}
+                aria-selected={isInteractive ? selected : undefined}
+                {...props}
+            >
                 {items}
             </tr>
         );
@@ -242,7 +272,13 @@ function Table({ rows, className, children, ...props }) {
         }
 
         return rows.map((row, index) => {
-            return <Row row={row} index={index} key={index}></Row>;
+            const key = typeof rowKey === 'function'
+                ? rowKey(row)
+                : rowKey
+                    ? row[rowKey]
+                    : index;
+
+            return <Row row={row} index={index} key={key}></Row>;
         });
     }
 
@@ -251,8 +287,8 @@ function Table({ rows, className, children, ...props }) {
     }
 
     return (
-        <div className='data-table-frame rounded-lg border border-primary-300 dark:border-primary-700 overflow-hidden'>
-            <div className='overflow-auto'>
+        <div className='data-table-frame w-full min-w-0 max-w-full rounded-lg border border-primary-300 dark:border-primary-700 overflow-hidden'>
+            <div className='w-full min-w-0 overflow-auto'>
                 <table className={className} {...props}>
                     <Head />
                     <Body>

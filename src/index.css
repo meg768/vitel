@@ -160,6 +160,16 @@
 		font-family: lato, sans-serif;
 	}
 
+	html,
+	body {
+		background-color: var(--color-primary-50);
+	}
+
+	html.dark,
+	body.dark {
+		background-color: var(--color-primary-900);
+	}
+
 	button,
 	[role='button'] {
 		cursor: pointer;

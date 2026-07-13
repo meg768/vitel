@@ -117,7 +117,7 @@ Component.Warning = function ({ className, ...props }) {
 
 Component.Content = function (props) {
 	let { className, ...other } = props;
-	className = clsx('py-3 px-3 lg:px-10', className);
+	className = clsx('min-w-0 overflow-x-hidden overscroll-y-contain py-3 px-3 lg:px-10', className);
 	className = clsx('overflow-y-auto flex-1', className);
 
 	return (

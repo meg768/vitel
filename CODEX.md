@@ -249,9 +249,33 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-13: Menyposten `Favoriter` flyttades till direkt efter `Matcher`.
+
+- 2026-07-13: Spelarnamn och sekundär land/ranking-text på `/favorites` använder nu samma typografiska behandling som spelarraderna på `/players`: normal namnvikt och mindre sekundärtext.
+
+- 2026-07-13: Cellrenderaren i `data-table` får nu radens aktuella `selected`-status. Favoritsidans radioplutt uppdateras därför omedelbart vid radklick även om tabellens kolumndefinitioner är cachade från första renderingen.
+
+- 2026-07-13: `/favorites` använder nu små radioliknande pluppar i spelarcellen för tvåspelarurval i stället för markerad radbakgrund. Raderna är fortsatt klickbara och ett tredje val ersätter det äldsta. `data-table` fick den valfria inställningen `highlightSelectedRows` så andra användningar kan behålla bakgrundsmarkering.
+
+- 2026-07-13: Direkt borttagning av favoriter togs bort från `/favorites`. Sidan fokuserar på översikt och tvåspelarjämförelse; en favorit avmarkeras i stället via stjärnan på spelarens egen profilsida.
+
+- 2026-07-13: Valda `data-table`-rader använder `primary-400/55` i light mode och `primary-500/45` i dark mode. Det skiljer valbakgrunden från tabellens ordinarie `primary-300`/`primary-700`-border så att även intilliggande valda rader behåller synliga cellgränser.
+
+- 2026-07-13: En ny sida `/favorites` och menyposten `Favoriter` lades till. Sidan läser lokalt sparade spelar-id:n, visar spelarna i `data-table` med flagga, namn, land, ranking och kompakt statistik samt låter användaren ta bort favoriter direkt. Två favoriter väljs genom att klicka på raderna och kan öppnas i befintlig head-to-head via `Jämför valda`; ett tredje radklick ersätter det äldsta valet och statusbaren guidar urvalet. Tomt läge ingår.
+
+- 2026-07-13: Gemensamma `data-table` stöder nu valfria klickbara och tangentbordsaktiverade rader via `rowKey`, `isRowSelected` och `onRowClick`. Valda rader får bestående temamarkering, medan länkar, knappar och formulärkontroller i raden behåller sina egna klick.
+
+- 2026-07-13: Jämförelseikonen i den gemensamma matchtabellens sista kolumn centreras nu i cellen, bland annat på `/event/:id`.
+
+- 2026-07-13: Tema- och underlagsklasser speglas nu från React-roten `body` till `html`, och båda dokumentnivåerna har sidans temabakgrund. `Page.Content` begränsar dessutom vertikal scrollkedja. Därmed blottas inte längre en vit webbläsarbakgrund när en intern sida, exempelvis head-to-head, når eller överskrollar nederkanten.
+
+- 2026-07-13: `Page.Content` begränsar nu horisontellt overflow och `data-table` håller sin bredd inom sidytan med intern scrollning. Breda tabeller skapar därför inte längre en vit, sidövergripande horisontell scrollbar som kan täcka nederdelen av innehållet.
+
+- 2026-07-13: `data-table` lägger nu randning och hoverfärg direkt på samtliga celler i raden. Det undviker att den globala bakgrundsärvningen staplar halvtransparenta färger olika per kolumn och gör hela raden visuellt enhetlig. Dark-mode-hover använder en nedtonad `primary-600/75` medan tabellens opaka `primary-700`-border behålls, så markeringen blir mörkare utan att rutnätet försvinner.
+
 - 2026-07-13: `Start` i båda matchtabellerna använder nu `Table.SortValue` med radens `_startTimestamp`. Cellen behåller sitt relativa svenska visningsvärde, exempelvis `I morgon 19:30`, medan sorteringen sker kronologiskt.
 
-- 2026-07-13: `/players` visar nu lokalt sparade favoritspelare i en kompakt sektion ovanför spelartabellen. Favoriter kan öppnas eller tas bort direkt, två spelare kan markeras för den befintliga head-to-head-vyn och ingen ny route eller meny lades till.
+- 2026-07-13: En kompakt favoritsektion med tvåspelarurval provades på `/players` men togs bort igen. Stjärnan och den lokala favoritlagringen på `/player/:id` behålls medan en bättre användning utvärderas.
 
 - 2026-07-13: Den numera mycket korta initialladdningen på `/matches` visar den pulserande tennisbollen med endast den fasta texten `Hämtar matcher…` undertill. Progressbar och växlande delstegsmeddelanden är borta; statusbaren efter att matcherna visas behålls.
 
