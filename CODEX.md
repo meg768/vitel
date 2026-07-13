@@ -249,6 +249,14 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-13: `/players` och `/events` kopplar nu explicit in `Page.StatusBar`. De visar antal standardrader, aktuell sökning och antal träffar samt laddnings- och fellägen utan att ersätta tabellinnehållet.
+
+- 2026-07-13: Återanvändbara `Page.StatusBar` lades till som ett explicit flexbarn på de sidor som behöver den, inte globalt och utan overlay. `/matches` visar antal live/kommande matcher samt TA/GPT-status där, och `/scoreboard` visar liveantal, uppdatering och diskreta varningar. Light mode använder sidans ljusa bakgrund med en diskret överkant; dark mode använder en mörk statusbar. Tidigare lösa statusrader i sidinnehållet togs bort.
+
+- 2026-07-13: `/events` fick samma responsiva sökfält i sidtiteln som `/players`. Sökningen går över hela turneringshistoriken och matchar namn, plats, typ och underlag, inklusive svenska underlagsord. Den använder 350 ms debounce och behåller tidigare tabellresultat under hämtning.
+
+- 2026-07-13: `/scoreboard` renderar nu livekort direkt från Oddset-data. Land, flagga, ranking och head-to-head fylls på progressivt; fel i spelar- eller head-to-head-data döljer inte längre fungerande livematcher. Tidigare data behålls också under uppdateringar.
+
 - 2026-07-13: Den uppskattade progressbaren och procentlogiken togs bort från `/matches`-laddningen. Tennisboll och aktuell laddningstext behålls.
 
 - 2026-07-13: `/matches` renderar nu Oddset-matchlistan så snart den är tillgänglig. TA/GPT-batchen körs i en separat bakgrundsquery och fyller oddskolumnerna när den är klar; ett oddsfel döljer inte längre matcherna.

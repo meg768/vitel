@@ -47,11 +47,29 @@ export default function PlayersPage() {
 		sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
 	}
 
-	const { data: players, error } = useSQL({
+	const { data: players, error, isFetching } = useSQL({
 		sql,
 		format,
 		placeholderData: previousPlayers => previousPlayers
 	});
+	let statusBarStatus = 'ready';
+	let statusBarMessage = players
+		? `Visar ${players.length} rankade spelare.`
+		: 'Läser in rankade spelare…';
+
+	if (error) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Kunde inte läsa in spelare just nu.';
+	} else if (isFetching) {
+		statusBarStatus = 'loading';
+		statusBarMessage = isSearching
+			? `Söker efter “${debouncedSearchTerm}”…`
+			: 'Läser in rankade spelare…';
+	} else if (isSearching) {
+		statusBarMessage = `Hittade ${players?.length ?? 0} spelare för “${debouncedSearchTerm}”.`;
+	} else if (query.title) {
+		statusBarMessage = `Visar ${players?.length ?? 0} spelare i det valda urvalet.`;
+	}
 
 	function Content() {
 		return (
@@ -113,6 +131,7 @@ export default function PlayersPage() {
 			<Page.Content>
 				{Content()}
 			</Page.Content>
+			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>
 		</Page>
 	);
 }

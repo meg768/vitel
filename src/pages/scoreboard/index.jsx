@@ -147,24 +147,26 @@ function Component() {
 		method: 'GET',
 		cache: 0,
 		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
-		refetchIntervalInBackground: true
+		refetchIntervalInBackground: true,
+		placeholderData: previousRows => previousRows
 	});
 	const liveRows = React.useMemo(
 		() => (oddsetRows ?? []).filter(row => row?.state === 'live'),
 		[oddsetRows]
 	);
 	const playerQuery = React.useMemo(() => buildPlayerQuery(liveRows), [liveRows]);
-	const { data: playerRows, error: playerError } = useSQL({
+	const { data: playerRows, error: playerError, isFetching: isFetchingPlayers } = useSQL({
 		sql: playerQuery.sql,
 		format: playerQuery.format,
-		cache: 5 * 60 * 1000
+		cache: 5 * 60 * 1000,
+		placeholderData: previousRows => previousRows
 	});
 	const headToHeadMatches = React.useMemo(() => buildHeadToHeadMatches(liveRows), [liveRows]);
 	const headToHeadPairsKey = React.useMemo(
 		() => headToHeadMatches.map(match => [match.player?.id ?? null, match.opponent?.id ?? null]),
 		[headToHeadMatches]
 	);
-	const { data: headToHeadByPair = {}, error: meetingError } = useQuery({
+	const { data: headToHeadByPair = {}, error: meetingError, isFetching: isFetchingMeetings } = useQuery({
 		queryKey: [HEAD_TO_HEAD_QUERY_KEY, headToHeadPairsKey],
 		queryFn: () => fetchHeadToHeadByMatches(headToHeadMatches),
 		cache: 0,
@@ -177,12 +179,12 @@ function Component() {
 		placeholderData: previousData => previousData
 	});
 
-	const hasLoadedCoreData = Boolean(oddsetRows && playerRows);
-	const playerDetailsById = hasLoadedCoreData ? buildPlayerDetailsById(playerRows ?? []) : {};
-	const monitorRows = hasLoadedCoreData
+	const hasLoadedMatchData = Boolean(oddsetRows);
+	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
+	const monitorRows = hasLoadedMatchData
 		? buildMonitorRows(liveRows, playerDetailsById, headToHeadByPair)
 		: [];
-	const selection = hasLoadedCoreData
+	const selection = hasLoadedMatchData
 		? selectMonitorMatches(monitorRows, routeParams)
 		: { selectedMatches: [], error: null };
 	const selectedMatches = selection.selectedMatches;
@@ -197,6 +199,24 @@ function Component() {
 	const hidePageMenu = focusMode || singleMatchMode;
 	const dashboardMatchCount = !singleMatchMode ? selectedMatches.length : 0;
 	const useCompactCards = dashboardMatchCount > 4;
+	let statusBarStatus = 'ready';
+	let statusBarMessage = singleMatchMode
+		? 'Livematchen är laddad.'
+		: `Visar ${selectedMatches.length} livematcher.`;
+
+	if (oddsetError) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Visar tidigare livedata, men kunde inte uppdatera matcherna just nu.';
+	} else if (playerError) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Livematcherna visas, men all spelardata kunde inte läsas in.';
+	} else if (meetingError) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Livematcherna visas, men all head-to-head-data kunde inte läsas in.';
+	} else if (isFetching || isFetchingPlayers || isFetchingMeetings) {
+		statusBarStatus = 'loading';
+		statusBarMessage = 'Uppdaterar scoreboard…';
+	}
 
 	React.useEffect(() => {
 		if (singleMatchMode) {
@@ -229,15 +249,11 @@ function Component() {
 		return () => window.removeEventListener('keydown', onKeyDown);
 	}, [focusMode]);
 
-	if (oddsetError) {
+	if (oddsetError && !hasLoadedMatchData) {
 		return <ErrorPage message={`Misslyckades med att läsa in scoreboard - ${oddsetError.message}`} />;
 	}
 
-	if (playerError) {
-		return <ErrorPage message={`Misslyckades med att läsa in spelardata - ${playerError.message}`} />;
-	}
-
-	if (!hasLoadedCoreData) {
+	if (!hasLoadedMatchData) {
 		return <LoadingPage />;
 	}
 
@@ -255,7 +271,6 @@ function Component() {
 			<Page.Content className='flex flex-col pb-4'>
 				{singleMatchMode ? (
 					<>
-						{meetingError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div> : null}
 						<LiveMatchMonitor match={selectedMatches[0]} className='flex-1' showFocusToggle={false} />
 					</>
 				) : (
@@ -273,8 +288,6 @@ function Component() {
 								/>
 							</Page.Title>
 						)}
-						{focusMode || !meetingError ? null : <div className='pt-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte läsa in allt head-to-head just nu.</div>}
-
 						{focusedMatch ? (
 							<div className='fixed inset-0 z-40 bg-primary-50 dark:bg-primary-900'>
 								<LiveMatchMonitor
@@ -304,6 +317,7 @@ function Component() {
 					</>
 				)}
 			</Page.Content>
+			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>
 		</Page>
 	);
 }

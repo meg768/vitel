@@ -298,6 +298,22 @@ function Component() {
 		});
 	const { liveMatches, upcomingMatches } = splitOddsetRowsByStatus(oddsetMatchRows);
 	const hasNoMatches = liveMatches.length === 0 && upcomingMatches.length === 0;
+	let statusBarStatus = 'ready';
+	let statusBarMessage = `Laddade ${liveMatches.length} live och ${upcomingMatches.length} kommande matcher.`;
+
+	if (oddsetError) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Visar tidigare matcher, men kunde inte uppdatera matchlistan just nu.';
+	} else if (oddsError) {
+		statusBarStatus = 'warning';
+		statusBarMessage = 'Matcherna visas, men alla TA- och GPT-odds kunde inte beräknas.';
+	} else if (isFetchingOdds) {
+		statusBarStatus = 'loading';
+		statusBarMessage = `Laddade ${liveMatches.length} live och ${upcomingMatches.length} kommande matcher. Beräknar TA- och GPT-odds…`;
+	} else if (isFetchingOddset) {
+		statusBarStatus = 'loading';
+		statusBarMessage = 'Uppdaterar matchlistan…';
+	}
 
 	return (
 		<Page id='matches-page'>
@@ -315,9 +331,6 @@ function Component() {
 					/>
 				</Page.Title>
 				<Page.Container>
-					{isFetchingOdds ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Beräknar TA- och GPT-odds…</div> : null}
-					{oddsError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte beräkna TA- och GPT-odds just nu.</div> : null}
-					{oddsetError ? <div className='pb-3 text-sm text-primary-700 dark:text-primary-300'>Kunde inte uppdatera matchlistan just nu.</div> : null}
 					{hasNoMatches ? (
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
 					) : (
@@ -354,6 +367,7 @@ function Component() {
 					)}
 				</Page.Container>
 			</Page.Content>
+			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>
 		</Page>
 	);
 }

@@ -1,8 +1,10 @@
 import clsx from 'clsx';
 
+import CheckCircledIcon from '../assets/radix-icons/check-circled.svg?react';
 import CrossCircledIcon from '../assets/radix-icons/cross-circled.svg?react';
 import ExclamationTriangleIcon from '../assets/radix-icons/exclamation-triangle.svg?react';
 import InfoCircledIcon from '../assets/radix-icons/info-circled.svg?react';
+import UpdateIcon from '../assets/radix-icons/update.svg?react';
 import Layout from './layout';
 import Menu from './menu';
 
@@ -121,6 +123,34 @@ Component.Content = function (props) {
 	return (
 		<div className={className} {...other}>
 			{props.children}
+		</div>
+	);
+};
+
+Component.StatusBar = function ({ className, status = 'ready', children, ...props }) {
+	const iconClassName = 'h-5 w-5 shrink-0 bg-transparent';
+	let icon = <CheckCircledIcon className={iconClassName} />;
+
+	if (status === 'loading') {
+		icon = <UpdateIcon className={clsx(iconClassName, 'animate-spin')} />;
+	} else if (status === 'warning') {
+		icon = <ExclamationTriangleIcon className={iconClassName} />;
+	} else if (status === 'error') {
+		icon = <CrossCircledIcon className={iconClassName} />;
+	} else if (status === 'info') {
+		icon = <InfoCircledIcon className={iconClassName} />;
+	}
+
+	className = clsx(
+		'flex min-h-12 flex-none items-center gap-3 border-t border-primary-300 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-900',
+		'dark:border-primary-700 dark:bg-primary-900 dark:text-primary-100',
+		className
+	);
+
+	return (
+		<div className={className} role='status' aria-live='polite' {...props}>
+			{icon}
+			<div className='min-w-0 bg-transparent'>{children}</div>
 		</div>
 	);
 };
