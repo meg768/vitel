@@ -91,10 +91,10 @@ function parseSourceEntry(line) {
 function Card({ title, children, className = '' }) {
 	return (
 		<section className={`border-t border-primary-400 pt-4 dark:border-primary-600 ${className}`.trim()}>
-			<div className='font-["Georgia","Times_New_Roman",serif] text-[0.75rem] font-semibold uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300'>
+			<div className='font-["Georgia","Times_New_Roman",serif] text-xs font-semibold uppercase tracking-[0.18em] text-primary-700 dark:text-primary-300'>
 				{title}
 			</div>
-			<div className='mt-3 space-y-3 font-["Georgia","Times_New_Roman",serif] text-[1.02rem] leading-7 text-primary-900 dark:text-primary-100'>
+			<div className='mt-3 space-y-3 font-["Georgia","Times_New_Roman",serif] text-base leading-7 text-primary-900 dark:text-primary-100'>
 				{children}
 			</div>
 		</section>
@@ -126,7 +126,7 @@ function Sources({ lines }) {
 	}
 
 	return (
-		<ul className='space-y-3 text-[0.96rem] leading-7'>
+		<ul className='space-y-3 text-base leading-7'>
 			{entries.map(entry => (
 				<li key={entry.url} className='flex gap-3'>
 					<span className='mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-700 dark:bg-primary-300' />
@@ -184,16 +184,16 @@ function Component() {
 	return (
 		<div className='min-h-screen bg-primary-100/40 px-4 py-6 text-primary-900 dark:bg-primary-950 dark:text-primary-100'>
 			<div className='space-y-8'>
-				<div className='mx-auto max-w-4xl border border-primary-300 bg-primary-50 px-5 py-6 shadow-sm dark:border-primary-700 dark:bg-primary-950 sm:px-8'>
+				<div className='mx-auto max-w-4xl rounded-lg border border-primary-300 bg-primary-50 px-5 py-6 shadow-sm dark:border-primary-700 dark:bg-primary-950 sm:px-8'>
 					<header className='border-b-3 border-primary-900 pb-4 dark:border-primary-100'>
 						<div className='text-center'>
-							<div className='font-["Georgia","Times_New_Roman",serif] text-[0.72rem] uppercase tracking-[0.35em] text-primary-700 dark:text-primary-300'>
+							<div className='font-["Georgia","Times_New_Roman",serif] text-xs uppercase tracking-[0.35em] text-primary-700 dark:text-primary-300'>
 								Global Market Change Monitor
 							</div>
 							<h1 className='mt-3 font-["Georgia","Times_New_Roman",serif] text-4xl font-bold leading-none text-primary-950 dark:text-primary-50 sm:text-5xl'>
 								{report.title || 'Market Scanner Daily'}
 							</h1>
-							<div className='mt-4 border-t border-primary-400 pt-3 text-[0.8rem] uppercase tracking-[0.2em] text-primary-700 dark:border-primary-600 dark:text-primary-300'>
+							<div className='mt-4 border-t border-primary-400 pt-3 text-xs uppercase tracking-[0.2em] text-primary-700 dark:border-primary-600 dark:text-primary-300'>
 								{dateLine ? <span>{dateLine}</span> : null}
 								{dateLine && editionLine ? <span className='mx-3'>•</span> : null}
 								{editionLine ? <span>{editionLine}</span> : null}

@@ -59,10 +59,10 @@ export default function EventPage() {
 				</Page.Title>
 
 				<Page.Container>
-					<Page.Title level={2}>Översikt</Page.Title>
+					<Page.Title level={4}>Översikt</Page.Title>
 					<EventSummary event={event} matches={matches} />
 
-					<Page.Title level={2}>Matcher</Page.Title>
+					<Page.Title level={4}>Matcher</Page.Title>
 					<Matches matches={matches} owner={id} hide={['event_date', 'event_name', 'event_surface']} />
 				</Page.Container>
 			</>

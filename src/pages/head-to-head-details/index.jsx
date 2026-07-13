@@ -90,7 +90,7 @@ function QueryDescriptionDialog({ query, onClose }) {
 			aria-label={`Beskrivning för ${query.title}`}
 		>
 			<div
-				className='fixed top-[33dvh] left-1/2 w-[min(calc(100vw-2rem),36rem)] -translate-x-1/2 -translate-y-1/2 rounded-sm border border-primary-300 bg-primary-100 p-4 shadow-xl dark:border-primary-600 dark:bg-primary-800'
+				className='fixed top-[33dvh] left-1/2 w-[min(calc(100vw-2rem),36rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-primary-300 bg-primary-100 p-4 shadow-xl dark:border-primary-600 dark:bg-primary-800'
 				onClick={event => event.stopPropagation()}
 			>
 				<div className='flex items-start justify-between gap-3'>

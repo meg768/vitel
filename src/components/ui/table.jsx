@@ -43,7 +43,7 @@ Table.Cell = React.forwardRef((properties, ref) => {
 Table.Head = React.forwardRef((properties, ref) => {
 	let { className, ...props } = properties;
 
-	className = clsx('', className);
+	className = clsx('text-xs font-semibold uppercase tracking-[0.08em] text-primary-700 dark:text-primary-300', className);
 
 	return <th className={className} ref={ref} {...props} />;
 });

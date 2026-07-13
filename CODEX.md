@@ -8,6 +8,7 @@ Den här filen är den kanoniska, versionsstyrda minnesfilen för `vitel`.
 - `AUTHOR.md` är fortsatt en lokal, personlig fil och ska inte lagras i GitHub.
 - `CODEX.md` är den enda versionsstyrda minnesfilen för projektet.
 - Lägg nya uppdateringar längst upp i `## Ändringslogg`.
+- Efter varje färdig kod- eller designändring ska Vitel byggas och laddas upp till produktion med `npm run upload`, om Magnus inte uttryckligen säger något annat.
 
 ## Projektöversikt
 
@@ -141,7 +142,7 @@ Viktiga scripts i `package.json`:
 - `src/pages/head-to-head-details/index.jsx` - SQL-driven head-to-head-sida med jämförande frågor
 - `src/pages/head-to-head-details/queries.js` - laddar och kompilerar lokala frågor för head-to-head-detaljsidan
 - `src/pages/query/index.jsx` - SQL-querysida
-- `src/pages/search/index.jsx` - enkel spelarsökning med lokal historik
+- `src/pages/players/index.jsx` - rankinglista med integrerad spelarsökning i sidtiteln
 - `src/pages/trial/index.jsx` - intern testsida för UI-/komponentexperiment
 - `src/components/player-title.jsx` - gemensam spelartitel för spelarsidor och head-to-head
 - `src/js/service.js` - låg nivå för API-anrop
@@ -237,7 +238,7 @@ Det som är viktigt att komma ihåg framåt:
 - Liveodds i `/matches` och `/scoreboard` hämtas också via backendens `GET /oddset`, och filtreras på `state === 'STARTED'` i frontend.
 - `/matches` och `/scoreboard` är de namn som gäller nu; äldre `live-matches-*` lever bara som redirects.
 - `/ranking` är borttagen som egen sida och route; ranking används fortfarande som data i flera vyer men inte som separat destinationssida.
-- Söksidan är medvetet förenklad: sök, öppna spelare, visa/rensa senaste sökningar. Jämförflödet togs bort därifrån för att hålla sidan rak.
+- Spelarsökningen är integrerad i `/players`; den gamla separata `/search`-sidan och dess lokala sökhistorik är borttagna.
 - `/trial` ska betraktas som en aktiv intern testsida och får finnas kvar även om den inte är produktnavigation för slutanvändare.
 - Det finns fortfarande några äldre sidkataloger kvar i trädet, men de är inte del av den aktiva routingen.
 - Menyn är medvetet kort och ska hållas enkel.
@@ -247,6 +248,32 @@ Det som är viktigt att komma ihåg framåt:
 - Om ny projektkunskap uppstår ska den läggas här i stället för att splittras över flera minnesfiler.
 
 ## Ändringslogg
+
+- 2026-07-13: Spelarsökfältets border i light mode använder nu samma `primary-500`-ton både med och utan fokus. Fokusringen finns kvar som separat tillgänglighetsmarkering.
+
+- 2026-07-13: Den gamla separata `/search`-sidan, menyns sökikon och F4-sökgenvägen togs bort. Spelarsökning finns nu endast direkt i `/players`-sidans titel.
+
+- 2026-07-13: Spelarsökfältets light mode tonades ned från nästan vitt till `primary-700`, med `primary-800`-kant och ljus text, ikon och placeholder. Dark mode behölls.
+
+- 2026-07-13: Spelarsökningens debounce justerades till 350 ms och föregående tabellresultat ligger kvar medan nästa sökning hämtas. Det minskar flimmer under snabb inmatning utan att sökningen känns långsam.
+
+- 2026-07-13: Spelarsökfältet behåller nu fokus när sökresultaten kommer tillbaka. Den lokala `Content`-funktionen anropas som renderhjälp i stället för att behandlas som en ny React-komponenttyp vid varje render.
+
+- 2026-07-13: Spelarsökningen i `/players` gjordes aktiv från första tecknet. Browserns extra sökkryss togs bort genom ett vanligt textfält, formen blev helt pillrund och den gamla globala artificiella minimitiden på 1,5 sekunder per API-anrop togs bort ur `service.js`.
+
+- 2026-07-13: `/players` fick ett responsivt spelarsökfält i sidtiteln. Utan sökning visas topp 100; vid sökning visas upp till 25 fullständiga spelarträffar.
+
+- 2026-07-13: Sista kolumnen i spelarsidans matchtabell fick samma stapelikon och lilla rundade ram för spelarjämförelse som övriga jämförelselänkar. Den synliga kolumnrubriken togs bort men behölls skärmläsarvänligt.
+
+- 2026-07-13: Vanliga pillformade knappar fick en synlig `primary-500`-border även i viloläge. Huvudmenyn behåller sin transparenta border genom sin separata override.
+
+- 2026-07-13: Laddningsbollens och huvudmenyns underkomponenter flyttades till stabila komponentdefinitioner. Progressuppdateringarna på `/matches` startar därmed inte längre om bollanimationen eller återställer menyns hoverläge.
+
+- 2026-07-13: `/matches` hämtar nu TA- och GPT-odds för alla matcher genom ett enda `POST /api/odds/matches` i stället för ett separat HTTP-anrop per match.
+
+- 2026-07-13: `/matches` förenklades till två tabellsektioner, `Pågående matcher` och `Kommande matcher`. Den tidigare grupperingen per turnering togs bort och `Turnering` visas nu som första kolumn i båda tabellerna.
+
+- 2026-07-12: Arbetsflödet ändrades så att varje färdig ändring i Vitel byggs och laddas upp direkt med `npm run upload`, om inget annat anges.
 
 - 2026-07-12: Vitel är åter primär klient att förbättra; native-projektet
   `match-point` är pausat. TA och GPT utgår båda från samma dagligen importerade

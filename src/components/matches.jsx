@@ -1,5 +1,5 @@
 
-import ChevronRightIcon from '../assets/radix-icons/chevron-right.svg?react';
+import StatisticsIcon from '../assets/custom-icons/statistics.svg?react';
 import Table from './ui/data-table';
 import Link  from './../components/ui/link';
 
@@ -115,12 +115,17 @@ function Component({ matches, owner, hide = [] }) {
 				</Table.Column>
 
 				<Table.Column className='justify-center'>
-					<Table.Title className=''>♨︎</Table.Title>
+					<Table.Title><span className='sr-only'>Jämför spelare</span></Table.Title>
 					<Table.Cell className=''>
 						{({ row, value }) => {
 							return (
-								<Link to={`/head-to-head/${row.winner_id}/${row.loser_id}`}>
-									<ChevronRightIcon className='block m-auto' />
+								<Link
+									to={`/head-to-head/${row.winner_id}/${row.loser_id}`}
+									className='flex h-7 w-7 items-center justify-center rounded-sm border border-primary-500 text-primary-900 transition-colors hover:bg-primary-100 dark:border-primary-500 dark:text-primary-100 dark:hover:bg-primary-800'
+									aria-label={`Jämför ${row.winner} mot ${row.loser}`}
+									title='Jämför spelare'
+								>
+									<StatisticsIcon className='block h-4 w-4 bg-transparent' />
 								</Link>
 							);
 						}}

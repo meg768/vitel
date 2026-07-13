@@ -79,7 +79,7 @@ function ScoreCell({ score, winner, server, comment, compact = false }) {
 		<div className='relative flex flex-col items-center'>
 			<div
 				className={clsx(
-					'relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-sm border border-primary-300 bg-primary-50 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900',
+					'relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-lg border border-primary-300 bg-primary-50 text-center shadow-sm dark:border-primary-600 dark:bg-primary-900',
 					compact ? 'h-[11rem] px-2 py-4 sm:px-3 sm:py-5' : 'h-[14rem] px-3 py-6 sm:px-6 sm:py-8'
 				)}
 			>
@@ -143,7 +143,7 @@ function LiveMatchMonitor({
 	const oddsetTennisLink = 'https://spela.svenskaspel.se/odds/tennis';
 
 	return (
-		<div className={clsx('relative flex flex-1 flex-col rounded-sm border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
+		<div className={clsx('relative flex flex-1 flex-col rounded-lg border border-primary-200 bg-primary-50 p-4 shadow-sm dark:border-primary-700 dark:bg-primary-900', className)}>
 			<OddsetOddsLink href={oddsetTennisLink} odds={match.odds ?? '-'} oddsState={match.oddsState ?? null} />
 			<div className='absolute top-3 right-3 z-10 flex items-center gap-2'>
 				{compareLink ? (

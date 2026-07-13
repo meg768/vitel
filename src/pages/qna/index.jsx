@@ -18,7 +18,7 @@ export default function QnAPage() {
 			<Link
 				hover={false}
 				to={link}
-				className='mb-3 block rounded-md border border-primary-300 bg-primary-50 p-4 transition-colors duration-150 hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900 dark:hover:bg-primary-800'
+				className='mb-3 block rounded-lg border border-primary-300 bg-primary-50 p-4 transition-colors duration-150 hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900 dark:hover:bg-primary-800'
 				{...props}
 			>
 				<div className='text-2xl'>{title}</div>

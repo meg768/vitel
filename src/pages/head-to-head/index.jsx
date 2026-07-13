@@ -79,7 +79,7 @@ let Component = () => {
 
 		return (
 			<>
-				<Page.Title level={2}>Ranking</Page.Title>
+				<Page.Title level={3}>Ranking</Page.Title>
 				<PlayerRankingComparisonChart className='' playerA={{ player: playerOne, matches: playerOneMatches }} playerB={{ player: playerTwo, matches: playerTwoMatches }} />
 			</>
 		);
@@ -103,7 +103,7 @@ let Component = () => {
 					<Summary matches={playerOneMatches} player={playerOne} />
 					<Summary matches={playerTwoMatches} player={playerTwo} />
 					<HeadToHeadRankingChart {...response} />
-					<Page.Title level={2}>Matcher</Page.Title>
+					<Page.Title level={3}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
 					<div className='flex justify-center pt-4'>
 						<Button link={`/head-to-head-details/${playerOne.id}/${playerTwo.id}`}>Visa mer statistik</Button>

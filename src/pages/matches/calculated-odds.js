@@ -86,47 +86,39 @@ function formatOddsPair(odds) {
 	return `${formatOddsValue(playerAOdds)} - ${formatOddsValue(playerBOdds)}`;
 }
 
-async function fetchOddsForRow(row) {
+function createOddsRequest(row) {
 	const playerATerm = resolvePlayerTerm(row, 'A');
 	const playerBTerm = resolvePlayerTerm(row, 'B');
+	const key = createMatchKey(row);
 
-	if (!playerATerm || !playerBTerm) {
-		return { gptOdds: '-', tennisAbstractOdds: '-' };
+	if (!key || !playerATerm || !playerBTerm) {
+		return null;
 	}
 
-	const surface = resolveSurface(row);
-	const query = new URLSearchParams({
+	return {
+		key,
 		playerA: String(playerATerm).trim(),
 		playerB: String(playerBTerm).trim(),
-		surface
-	});
-	const path = `odds?${query.toString()}`;
-
-	try {
-		const payload = await service.get(path);
-		return {
-			gptOdds: formatOddsPair(payload?.gptOdds),
-			tennisAbstractOdds: formatOddsPair(payload?.tennisAbstractOdds)
-		};
-	} catch {
-		return { gptOdds: '-', tennisAbstractOdds: '-' };
-	}
+		surface: resolveSurface(row)
+	};
 }
 
 async function fetchMatchOddsForMatches(rows = []) {
-	const entries = await Promise.all(
-		rows.map(async row => {
-			const key = createMatchKey(row);
-			if (!key) {
-				return null;
-			}
+	const matches = rows.map(createOddsRequest).filter(Boolean);
+	if (matches.length === 0) {
+		return {};
+	}
 
-			const odds = await fetchOddsForRow(row);
-			return [key, odds];
-		})
-	);
+	const payload = await service.post('odds/matches', { matches });
+	const entries = (Array.isArray(payload) ? payload : []).map(row => [
+		row.key,
+		{
+			gptOdds: formatOddsPair(row.gptOdds),
+			tennisAbstractOdds: formatOddsPair(row.tennisAbstractOdds)
+		}
+	]);
 
-	return Object.fromEntries(entries.filter(Boolean));
+	return Object.fromEntries(entries);
 }
 
 function getMatchOddsForRow(row, matchOddsByKey) {

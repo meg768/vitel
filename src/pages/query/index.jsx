@@ -68,7 +68,7 @@ function Component() {
 				<Title />
 				<Page.Container>
 					{/* Description */}
-					<Markdown className='border p-2 bg-primary-50 dark:bg-primary-900 rounded-md mb-3'>{query.description}</Markdown>
+					<Markdown className='border p-2 bg-primary-50 dark:bg-primary-900 rounded-lg mb-3'>{query.description}</Markdown>
 
 					{/* Table */}
 					<Table rows={data} className='striped hover'>

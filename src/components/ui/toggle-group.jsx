@@ -9,7 +9,7 @@ function Component({ defaultValue, onChange, children }) {
 	}
 
 	return (
-		<ToggleGroup.Root defaultValue={defaultValue} type='single' onValueChange={onValueChange} className='inline-flex border rounded-sm overflow-hidden'>
+		<ToggleGroup.Root defaultValue={defaultValue} type='single' onValueChange={onValueChange} className='inline-flex items-center gap-1 rounded-full border border-primary-300 bg-primary-100 p-1 dark:border-primary-600 dark:bg-primary-900'>
 			{children}
 		</ToggleGroup.Root>
 	);
@@ -18,17 +18,16 @@ function Component({ defaultValue, onChange, children }) {
 Component.Item = function Item({ value, className, children }) {
 
 	className = clsx(className, [
-		'px-4 py-2 text-sm cursor-pointer transition',
-		'not-first:border-l',
+		'rounded-full px-4 py-1.5 text-sm cursor-pointer transition-colors',
 
-		'bg-primary-100',
+		'bg-transparent',
 		'text-primary-950',
 		'hover:bg-primary-500',
 		'hover:text-primary-50',
 		'data-[state=on]:text-primary-50',
 		'data-[state=on]:bg-primary-600',
 
-		'dark:bg-primary-900',
+		'dark:bg-transparent',
 		'dark:text-primary-50',
 		'dark:data-[state=on]:bg-primary-700'
 	]);

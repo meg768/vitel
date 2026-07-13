@@ -7,25 +7,10 @@ class Service {
 		};
 	}
 
-	delay(ms) {
-		if (ms < 0) {
-			ms = 0;
-		}
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
-
 	async fetch(url, options) {
 
 		try {
-			const start = Date.now();
-	
 			let response = await fetch(url, options);
-	
-			const minimumResponseTime = 1500;
-			const elapsed = Date.now() - start;
-			const remaining = minimumResponseTime - elapsed;
-	
-			await this.delay(remaining);
 	
 			if (!response.ok) {
 				let message = response.statusText;

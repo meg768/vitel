@@ -91,46 +91,6 @@ function formatOddsWithPositiveEdge(bookmakerOdds, modelOdds) {
 	return `${formatSide(modelA, bookmakerA)} - ${formatSide(modelB, bookmakerB)}`;
 }
 
-function groupRowsByTournament(rows, getTournamentName) {
-	const groups = [];
-	const groupsByTournament = new Map();
-
-	for (const row of rows) {
-		const tournamentName = String(getTournamentName(row) || '').trim() || 'Övrigt';
-		const existingGroup = groupsByTournament.get(tournamentName);
-
-		if (existingGroup) {
-			existingGroup.rows.push(row);
-			continue;
-		}
-
-		const group = {
-			name: tournamentName,
-			rows: [row]
-		};
-
-		groupsByTournament.set(tournamentName, group);
-		groups.push(group);
-	}
-
-	return groups;
-}
-
-function TournamentGroups({ rows, getTournamentName, renderTable }) {
-	const groups = groupRowsByTournament(rows, getTournamentName);
-
-	return (
-		<div className='space-y-6'>
-			{groups.map(group => (
-				<div key={group.name} className='space-y-2'>
-					<Page.Title level={3}>{group.name}</Page.Title>
-					{renderTable(group.rows)}
-				</div>
-			))}
-		</div>
-	);
-}
-
 function UpcomingPlayersCell({ row }) {
 	return <PlayersHeadToHead playerA={row.playerA} playerB={row.playerB} />;
 }
@@ -146,18 +106,16 @@ function LivePlayersCell({ row }) {
 	);
 }
 
-function LiveOddsetMatchesTable({ rows, groupedByTournament = false }) {
+function LiveOddsetMatchesTable({ rows }) {
 	return (
 		<Table rows={rows}>
+			<Table.Column id='turnering'>
+				<Table.Title>Turnering</Table.Title>
+			</Table.Column>
+
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
 			</Table.Column>
-
-			{!groupedByTournament ? (
-				<Table.Column id='turnering'>
-					<Table.Title>Turnering</Table.Title>
-				</Table.Column>
-			) : null}
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
@@ -185,18 +143,16 @@ function LiveOddsetMatchesTable({ rows, groupedByTournament = false }) {
 	);
 }
 
-function UpcomingMatchesTable({ rows, groupedByTournament = false }) {
+function UpcomingMatchesTable({ rows }) {
 	return (
 		<Table rows={rows}>
+			<Table.Column id='turnering'>
+				<Table.Title>Turnering</Table.Title>
+			</Table.Column>
+
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
 			</Table.Column>
-
-			{!groupedByTournament ? (
-				<Table.Column id='turnering'>
-					<Table.Title>Turnering</Table.Title>
-				</Table.Column>
-			) : null}
 
 			<Table.Column>
 				<Table.Title>Spelare</Table.Title>
@@ -265,6 +221,33 @@ function Component() {
 	const oddsetRows = oddsSnapshot?.oddsetRows ?? [];
 	const upcomingMatchOddsByMatch = oddsSnapshot?.upcomingMatchOddsByMatch ?? {};
 	const hasLoadedOddsSnapshot = Boolean(oddsSnapshot);
+	const completedLoadSteps = [rankingRows, playerRows, hasLoadedOddsSnapshot].filter(Boolean).length;
+	const [estimatedProgress, setEstimatedProgress] = React.useState(8);
+
+	React.useEffect(() => {
+		if (hasLoadedOddsSnapshot || oddsError) {
+			return;
+		}
+
+		const progressCeilings = [25, 50, 95];
+		const ceiling = progressCeilings[Math.min(completedLoadSteps, 2)];
+		const timer = window.setInterval(() => {
+			setEstimatedProgress(current => Math.min(current + 1, ceiling));
+		}, 350);
+
+		return () => window.clearInterval(timer);
+	}, [completedLoadSteps, hasLoadedOddsSnapshot, oddsError]);
+
+	let loadingMessage = 'Läser spelare och ranking…';
+
+	if (rankingRows && !playerRows) {
+		loadingMessage = 'Läser spelare…';
+	} else if (!rankingRows && playerRows) {
+		loadingMessage = 'Läser ranking…';
+	} else if (rankingRows && playerRows && !hasLoadedOddsSnapshot) {
+		loadingMessage = 'Hämtar matcher och beräknar odds…';
+	}
+
 	const resolvedOddsetRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 		return { ...row, playerA, playerB };
@@ -297,7 +280,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu />
 				<Page.Content>
-					<Page.Loading>Läser in matcher...</Page.Loading>
+					<Page.Loading progress={estimatedProgress}>{loadingMessage}</Page.Loading>
 				</Page.Content>
 			</Page>
 		);
@@ -336,18 +319,14 @@ function Component() {
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
 					) : (
 						<>
-							<div className='space-y-10'>
-								<section className='space-y-2'>
+							<div className='space-y-6'>
+								<section className='space-y-1'>
 									<Page.Title level={2}>Pågående matcher</Page.Title>
 									{oddsError ? (
 										<Page.Error>Misslyckades med att läsa pågående matcher - {oddsError.message}</Page.Error>
 									) : liveMatches.length > 0 ? (
 										<>
-											<TournamentGroups
-												rows={liveMatches}
-												getTournamentName={row => row.turnering}
-												renderTable={rows => <LiveOddsetMatchesTable rows={rows} groupedByTournament={true} />}
-											/>
+											<LiveOddsetMatchesTable rows={liveMatches} />
 											<div className='flex justify-center pt-4'>
 												<Button link='/scoreboard'>Visa scoreboard</Button>
 											</div>
@@ -357,16 +336,12 @@ function Component() {
 									)}
 								</section>
 
-								<section className='space-y-2'>
+								<section className='space-y-1'>
 									<Page.Title level={2}>Kommande matcher</Page.Title>
 									{oddsError ? (
 										<Page.Error>Misslyckades med att läsa kommande matcher - {oddsError.message}</Page.Error>
 									) : upcomingMatches.length > 0 ? (
-										<TournamentGroups
-											rows={upcomingMatches}
-											getTournamentName={row => row.turnering}
-											renderTable={rows => <UpcomingMatchesTable rows={rows} groupedByTournament={true} />}
-										/>
+										<UpcomingMatchesTable rows={upcomingMatches} />
 									) : (
 										<Page.Information>Inga kommande matcher just nu</Page.Information>
 									)}

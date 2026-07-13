@@ -6,6 +6,17 @@ import InfoCircledIcon from '../assets/radix-icons/info-circled.svg?react';
 import Layout from './layout';
 import Menu from './menu';
 
+function TennisBall({ ping }) {
+	const animation = ping ? 'animate-ping bg-[#cddc39]' : 'animate-none bg-transparent';
+
+	return (
+		<div className='relative flex items-center justify-center w-20 h-20'>
+			<span className={`absolute inline-flex h-13 w-13 rounded-full opacity-50 ${animation}`}></span>
+			<span className='relative text-6xl bg-transparent'>🎾</span>
+		</div>
+	);
+}
+
 
 function Component({ className, ...props }) {
 	className = clsx(className, 'flex flex-col h-screen');
@@ -14,7 +25,7 @@ function Component({ className, ...props }) {
 }
 
 const statusBoxClassName = [
-	'border rounded-sm border-primary-300 bg-primary-50! text-primary-900 p-3',
+	'border rounded-lg border-primary-300 bg-primary-50! text-primary-900 p-3',
 	'dark:border-primary-700 dark:bg-primary-800! dark:text-primary-100',
 	'flex items-center gap-3'
 ];
@@ -23,25 +34,27 @@ const statusBoxClassName = [
 Component.Title = function ({ className, level = 1, ...props }) {
 	className = clsx('', className);
 
+
 	switch (level) {
 		case 1: {
-			className = clsx('border rounded-sm  border-primary-800 text-primary-100 bg-primary-700! p-3', className);
-			className = clsx('text-[150%]', 'dark:border-primary-700 dark:bg-primary-800! ', className);
+			className = clsx('border rounded-lg font-semibold border-primary-800 text-primary-100 bg-primary-700! px-4 py-3', className);
+			className = clsx('text-xl', 'dark:border-primary-700 dark:bg-primary-800! ', className);
 			break;
 		}
 		case 2: {
-			className = clsx('py-2', className);
-			className = clsx('text-[125%]', className);
+			className = clsx('pt-3 pb-1 text-lg  text-primary-700 dark:text-primary-300', className);
 			break;
 		}
 		case 3: {
-			className = clsx('py-2', className);
-			className = clsx('text-[110%]', className);
+			className = clsx('pt-3 pb-1 text-sm font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300', className);
 			break;
 		}
 		case 4: {
-			className = clsx('py-2', className);
-			className = clsx('text-[100%]', className);
+			className = clsx('pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300', className);
+			break;
+		}
+		case 5: {
+			className = clsx('pt-3 pb-1 text-xxs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300', className);
 			break;
 		}
 	}
@@ -113,23 +126,25 @@ Component.Content = function (props) {
 };
 
 
-Component.Loading = function (props) {
-	function TennisBall({ ping }) {
-		const animation = ping ? 'animate-ping bg-[#cddc39]' : 'animate-none bg-transparent';
-
-		return (
-			<div className='relative flex items-center justify-center w-20 h-20'>
-				{/* Ping effect */}
-				<span className={`absolute inline-flex h-13 w-13 rounded-full opacity-50 ${animation}`}></span>
-
-				<span className='relative text-6xl bg-transparent'>🎾</span>
-			</div>
-		);
-	}
-
+Component.Loading = function ({ children, progress }) {
 	return (
-		<div className='flex min-h-[40vh] items-center justify-center gap-4 text-lg'>
+		<div className='flex min-h-[40vh] flex-col items-center justify-center text-lg'>
 			<TennisBall ping={true} />
+			{children ? <div className='mt-2 text-sm font-semibold text-primary-700 dark:text-primary-300'>{children}</div> : null}
+			{Number.isFinite(progress) ? (
+				<div className='mt-3 w-full max-w-64 bg-transparent'>
+					<div
+						className='h-2 overflow-hidden rounded-full border border-primary-300 bg-primary-100 dark:border-primary-600 dark:bg-primary-900'
+						role='progressbar'
+						aria-valuemin='0'
+						aria-valuemax='100'
+						aria-valuenow={progress}
+					>
+						<div className='h-full rounded-full bg-primary-600 transition-[width] duration-300 dark:bg-primary-400' style={{ width: `${progress}%` }} />
+					</div>
+					<div className='mt-1 text-center text-xs text-primary-600 dark:text-primary-400'>{progress}%</div>
+				</div>
+			) : null}
 		</div>
 	);
 };

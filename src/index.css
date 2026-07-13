@@ -17,6 +17,11 @@
 
 
 @theme {
+
+    /* Extra text sizes */
+    --text-xxs: 0.6rem;
+	--text-xxs--line-height: 1rem;
+
 	--color-primary-50: #f5f8fb;
 	--color-primary-100: #edf3f8;
 	--color-primary-200: #dce6ef;
@@ -154,9 +159,46 @@
 	body {
 		font-family: lato, sans-serif;
 	}
+
+	button,
+	[role='button'] {
+		cursor: pointer;
+	}
+
+	input,
+	select,
+	textarea {
+		border-radius: 0.75rem;
+	}
 	body * {
 		background-color: inherit;
 		color: inherit;
 		border-color: inherit;
 	}
+}
+
+.data-table-frame {
+	border-radius: 0.5rem !important;
+}
+
+.data-table-frame th:last-child,
+.data-table-frame td:last-child {
+	border-right-width: 0;
+}
+
+.data-table-frame tbody tr:last-child td {
+	border-bottom-width: 0;
+}
+
+.summary-table-frame {
+	border-radius: 0.5rem !important;
+}
+
+.summary-table-frame td:last-child {
+	border-right-width: 0;
+}
+
+.summary-table-frame tr:last-child td,
+.summary-table-frame td[rowspan] {
+	border-bottom-width: 0;
 }

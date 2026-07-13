@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from 'react-router';
 
 import Matches from '../../components/matches';
@@ -9,6 +10,17 @@ import Tabs from '../../components/ui/tabs';
 import { useSQL } from '../../js/vitel';
 
 function PlayerMatchTabs({ matches, player }) {
+	const contentRef = React.useRef(null);
+	const [contentMinHeight, setContentMinHeight] = React.useState(0);
+
+	function preserveContentHeight() {
+		if (!contentRef.current) {
+			return;
+		}
+
+		setContentMinHeight(current => Math.max(current, contentRef.current.offsetHeight));
+	}
+
 	let grandSlamsWins = matches.filter(match => {
 		return match.round == 'F' && match.event_type == 'Grand Slam' && match.winner == player.name;
 	});
@@ -49,7 +61,7 @@ function PlayerMatchTabs({ matches, player }) {
 	}
 
 	return (
-		<Tabs.Root className='' defaultValue='Karriär'>
+		<Tabs.Root className='' defaultValue='Karriär' onValueChange={preserveContentHeight}>
 			<Tabs.List className='flex '>
 				<MatchTab title='Karriär' matches={matches} />
 				<MatchTab title='Vinster' matches={wins} />
@@ -60,37 +72,39 @@ function PlayerMatchTabs({ matches, player }) {
 				<MatchTab title='ATP-250' matches={atp250Wins} />
 			</Tabs.List>
 
-			<Tabs.Content value='Vinster' className='overflow-x-auto'>
-				<Matches player={player} matches={wins} owner={player.id} />
-			</Tabs.Content>
+			<div ref={contentRef} style={contentMinHeight ? { minHeight: contentMinHeight } : undefined}>
+				<Tabs.Content value='Vinster' className='overflow-x-auto'>
+					<Matches player={player} matches={wins} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='Finaler' className='overflow-x-auto'>
-				<Matches player={player} matches={finals} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='Finaler' className='overflow-x-auto'>
+					<Matches player={player} matches={finals} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='Karriär' className='overflow-x-auto'>
-				<Matches player={player} matches={matches} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='Karriär' className='overflow-x-auto'>
+					<Matches player={player} matches={matches} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='Titlar' className='overflow-x-auto'>
-				<Matches player={player} matches={titles} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='Titlar' className='overflow-x-auto'>
+					<Matches player={player} matches={titles} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='Grand Slams' className='overflow-x-auto'>
-				<Matches player={player} matches={grandSlamsWins} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='Grand Slams' className='overflow-x-auto'>
+					<Matches player={player} matches={grandSlamsWins} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='Masters' className='overflow-x-auto'>
-				<Matches player={player} matches={mastersWins} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='Masters' className='overflow-x-auto'>
+					<Matches player={player} matches={mastersWins} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='ATP-500' className='overflow-x-auto'>
-				<Matches player={player} matches={atp500Wins} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='ATP-500' className='overflow-x-auto'>
+					<Matches player={player} matches={atp500Wins} owner={player.id} />
+				</Tabs.Content>
 
-			<Tabs.Content value='ATP-250' className='overflow-x-auto'>
-				<Matches player={player} matches={atp250Wins} owner={player.id} />
-			</Tabs.Content>
+				<Tabs.Content value='ATP-250' className='overflow-x-auto'>
+					<Matches player={player} matches={atp250Wins} owner={player.id} />
+				</Tabs.Content>
+			</div>
 		</Tabs.Root>
 	);
 }
@@ -139,15 +153,15 @@ function Component () {
 			<>
 				<Title player={player} />
 				<Page.Container>
-					<Page.Title level={2}>Översikt</Page.Title>
+					<Page.Title level={4}>Översikt</Page.Title>
 					<div className='overflow-x-auto'>
 						<PlayerSummary player={player} matches={matches} />
 					</div>
 
-					<Page.Title level={2}>Ranking</Page.Title>
+					<Page.Title level={4}>Ranking</Page.Title>
 					<PlayerRankingChart className='' player={player} matches={matches} />
 
-					<Page.Title level={2}>Matcher</Page.Title>
+					<Page.Title level={4}>Matcher</Page.Title>
 					<PlayerMatchTabs player={player} matches={matches} />
 				</Page.Container>
 			</>

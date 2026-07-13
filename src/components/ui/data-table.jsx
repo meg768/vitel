@@ -1,6 +1,9 @@
 import clsx from 'clsx';
 import React from 'react';
 
+import ChevronDownIcon from '../../assets/radix-icons/chevron-down.svg?react';
+import ChevronUpIcon from '../../assets/radix-icons/chevron-up.svg?react';
+
 class Column {
     constructor(child, index) {
         this.props = child.props;
@@ -81,7 +84,7 @@ class Column {
 
         let { className, ...others } = props;
 
-        className = clsx(className, 'px-2 py-1.5 border-1 whitespace-nowrap');
+        className = clsx(className, 'px-2 py-1.5 border-r border-b whitespace-nowrap');
 
         return (
             <td className={className} {...others} key={index}>
@@ -100,7 +103,7 @@ function Table({ rows, className, children, ...props }) {
         rows = [];
     }
 
-    className = clsx(className, `ui data-table w-full border-1 text-[90%]`);
+    className = clsx(className, `ui data-table w-full border-collapse text-sm`);
 
     if (columns == null) {
 
@@ -141,33 +144,33 @@ function Table({ rows, className, children, ...props }) {
         }
 
         function Arrow({ column }) {
-            let className = '';
-
-            className = clsx(className, 'text-[50%] ');
+            const className = 'h-3 w-3 shrink-0 text-primary-700 dark:text-primary-300';
 
             if (!column.isSortable()) {
                 return;
             }
 
             if (sort && sort.index == column.index) {
-                return <span className={className}>{sort.order}</span>;
+                return sort.order == '▲'
+                    ? <ChevronUpIcon className={className} />
+                    : <ChevronDownIcon className={className} />;
             }
 
-            return <div className={clsx(className, 'opacity-0')}>{'▲'}</div>;
+            return <ChevronUpIcon className={clsx(className, 'opacity-0')} />;
         }
 
         function Title(props) {
             let { className, ...other } = props;
 
             // Add no wrap as default
-            className = clsx(className, 'whitespace-nowrap');
+            className = clsx(className, 'whitespace-nowrap text-xxs py-[0.1em] font-semibold uppercase tracking-[0.08em] text-primary-700 dark:text-primary-300');
 
             return <div className={className} {...other} />;
         }
 
         let items = columns.map((column, index) => {
             return (
-                <th key={index} className={'px-2 py-1 border-1 bg-transparent dark:bg-primary-900'}>
+                <th key={index} className={'px-2 py-1 border-r border-b bg-transparent dark:bg-primary-900'}>
                     <div className={clsx(column.props.className, 'flex gap-1 items-center cursor-pointer')} onClick={onSort.bind(null, column)}>
                         <Title {...column.title.props}></Title>
                         <Arrow column={column} />
@@ -248,13 +251,15 @@ function Table({ rows, className, children, ...props }) {
     }
 
     return (
-        <div className='overflow-auto'>
-            <table className={className} {...props}>
-                <Head />
-                <Body>
-                    <Rows />
-                </Body>
-            </table>
+        <div className='data-table-frame rounded-lg border border-primary-300 dark:border-primary-700 overflow-hidden'>
+            <div className='overflow-auto'>
+                <table className={className} {...props}>
+                    <Head />
+                    <Body>
+                        <Rows />
+                    </Body>
+                </table>
+            </div>
         </div>
     );
 }

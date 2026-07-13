@@ -30,7 +30,7 @@ function PlayersCell({ row }) {
 
 function EmptyLiveState() {
 	return (
-		<div className='rounded-sm border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
+		<div className='rounded-lg border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
 			<div className='text-base font-semibold text-primary-900 dark:text-primary-100'>Inga pågående matcher just nu</div>
 		</div>
 	);
@@ -38,7 +38,7 @@ function EmptyLiveState() {
 
 function EmptyUpcomingState() {
 	return (
-		<div className='rounded-sm border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
+		<div className='rounded-lg border border-primary-300 bg-primary-50 p-4 text-center text-primary-800 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-200'>
 			<div className='text-base font-semibold text-primary-900 dark:text-primary-100'>Inga kommande matcher just nu</div>
 		</div>
 	);
