@@ -1,19 +1,13 @@
 import React from 'react';
 import { useParams } from 'react-router';
 
-import StarIcon from '../../assets/radix-icons/star.svg?react';
-import StarFilledIcon from '../../assets/radix-icons/star-filled.svg?react';
 import Matches from '../../components/matches';
 import Page from '../../components/page';
 import { PlayerRankingChart } from '../../components/player-ranking-charts';
 import PlayerSummary from '../../components/player-summary';
 import PlayerTitle from '../../components/player-title';
 import Tabs from '../../components/ui/tabs';
-import LocalStorage from '../../js/local-storage';
 import { useSQL } from '../../js/vitel';
-
-const FAVORITES_STORAGE_KEY = 'vitel';
-const FAVORITES_KEY = 'favorite-player-ids';
 
 function PlayerMatchTabs({ matches, player }) {
 	const contentRef = React.useRef(null);
@@ -117,20 +111,6 @@ function PlayerMatchTabs({ matches, player }) {
 
 function Component () {
 	const { id } = useParams();
-	const [favoritePlayerIds, setFavoritePlayerIds] = React.useState(() => {
-		const storedIds = new LocalStorage({ key: FAVORITES_STORAGE_KEY }).get(FAVORITES_KEY, []);
-		return Array.isArray(storedIds) ? storedIds : [];
-	});
-	const isFavorite = favoritePlayerIds.includes(id);
-
-	function toggleFavorite() {
-		const nextFavoritePlayerIds = isFavorite
-			? favoritePlayerIds.filter(playerId => playerId !== id)
-			: [...favoritePlayerIds, id];
-
-		new LocalStorage({ key: FAVORITES_STORAGE_KEY }).set(FAVORITES_KEY, nextFavoritePlayerIds);
-		setFavoritePlayerIds(nextFavoritePlayerIds);
-	}
 
 	let sql = '';
 	sql += `SELECT * FROM flatly `;
@@ -146,24 +126,9 @@ function Component () {
 	const { data: response, error } = useSQL({ sql, format });
 
 	function Title({ player }) {
-		const favoriteLabel = isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
-
 		return (
-			<Page.Title className='flex items-center justify-between gap-3'>
+			<Page.Title>
 				<PlayerTitle player={player} />
-				<button
-					type='button'
-					onClick={toggleFavorite}
-					className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary-400 bg-transparent text-primary-200 transition-colors hover:border-primary-200 hover:bg-primary-600 hover:text-primary-50 dark:border-primary-500 dark:text-primary-300 dark:hover:border-primary-300 dark:hover:bg-primary-700 dark:hover:text-primary-100'
-					aria-label={favoriteLabel}
-					aria-pressed={isFavorite}
-				>
-					{isFavorite ? (
-						<StarFilledIcon className='h-5 w-5 bg-transparent text-primary-50 dark:text-primary-100' />
-					) : (
-						<StarIcon className='h-5 w-5 bg-transparent' />
-					)}
-				</button>
 			</Page.Title>
 		);
 	}

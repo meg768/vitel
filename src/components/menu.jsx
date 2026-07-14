@@ -29,7 +29,6 @@ function Component() {
 					<MenuItem link='/players'>Spelare</MenuItem>
 					<MenuItem link='/events'>Turneringar</MenuItem>
 					<MenuItem link='/matches'>Matcher</MenuItem>
-					<MenuItem link='/favorites'>Favoriter</MenuItem>
 					<MenuItem link='/qna'>Q&A</MenuItem>
 				</div>
 				<div className='flex space-x-1 items-center'>

@@ -249,6 +249,48 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-14: Den debouncade spelarsökningen sparas nu som `search` i `/players` URL med `replace`, så ett profilbesök följt av Browser Back återställer både söktext och träfflista utan att varje tangenttryckning fyller historiken.
+
+- 2026-07-14: Jämförelserutan på `/players` har fått ett litet kryss längst till höger. Det rensar hela spelarurvalet, återfokuserar sökfältet och låter rutan animeras ihop.
+
+- 2026-07-14: Jämförelserutans höjdanimation använder nu en symmetrisk CSS-gridövergång mellan `0fr` och `1fr` med `ease-in-out`. Det ersätter `max-height`, som gjorde öppningen synligt snabbare än stängningen eftersom maxhöjden översteg innehållets faktiska höjd.
+
+- 2026-07-14: Jämförelserutans öppnings- och stängningsanimation har saktats ned från 200 till 350 ms för en tydligare och lugnare övergång.
+
+- 2026-07-14: Jämförelserutan renderas nu som stabilt innehåll i `/players` i stället för som en ommonterad lokal komponent. Därmed kan webbläsaren faktiskt interpolera dess höjd, opacitet och position när rutan öppnas och stängs.
+
+- 2026-07-14: Jämförelserutan på `/players` är nu dold tills första spelaren väljs via stapelikonen. Den fälls diskret ned med 200 ms toning och en liten vertikal rörelse, och animeras bort när sista valet tas bort.
+
+- 2026-07-14: Favoritfunktionen har tagits bort helt eftersom snabbjämförelsen nu täcker behovet: menypost, `/favorites`-route och sida samt stjärna och lokal favoritlagring på spelarprofilen är borttagna.
+
+- 2026-07-14: Pågående spelarval för jämförelse sparas nu i `sessionStorage`. Valen återställs därför även när användaren navigerar bort och senare öppnar `Spelare` via menyn; URL-parametern används fortsatt för historik och delbar navigering.
+
+- 2026-07-14: När en spelare läggs till för jämförelse töms och fokuseras sökfältet fortfarande, men den aktuella träfflistan ligger kvar tills nästa sökning skrivs. Topp-100 visas därför inte kortvarigt mellan de två spelarvalen.
+
+- 2026-07-14: `Jämför`-pillen har fått mer horisontellt utrymme runt texten (`px-4`) utan att ändra den gemensamma höjden med spelarchipsen.
+
+- 2026-07-14: Spelarchipsen och `Jämför`-pillen i spelarurvalet har nu samma explicita höjd på `2rem`; knappens mindre versaltext behålls.
+
+- 2026-07-14: Texten i den kompakta `Jämför`-pillen använder åter knappens mindre standardstorlek, medan pillmått och versaler behålls.
+
+- 2026-07-14: Den kompakta `Jämför`-pillen i spelarurvalet behåller knappens versaler och typografiska knappstil, men har fortsatt samma höjd och padding som spelarchipsen.
+
+- 2026-07-14: `Jämför`-knappen i spelarurvalet använder nu samma pillstorlek som spelarchipsen: `px-2.5`, `py-1`, normal textstorlek, normal vikt och normal skiftläge. Färg och disabled-beteende behålls.
+
+- 2026-07-14: Disabled och enabled `Jämför` ligger nu på samma inlineposition efter spelarvalen. `ml-auto` togs bort eftersom enabled-knappens länk-wrapper och disabled-knappens direkta flexplacering annars gav olika positioner.
+
+- 2026-07-14: Knappen `Jämför` visas nu redan när en spelare är vald på `/players`, men är inaktiverad tills spelare två har valts. Tomläget visar fortsatt endast instruktionen.
+
+- 2026-07-14: Jämförelsepanelen på `/players` har nu en stabil minsta höjd på `3.5rem`, så tominstruktion, namnchips och den villkorliga `Jämför`-knappen inte får panelen att hoppa vertikalt. Panelen kan fortfarande växa vid radbrytning på smala skärmar.
+
+- 2026-07-14: Jämförelsepanelen på `/players` använder instruktionen `Klicka på [stapelikon] för att jämföra två spelare` som tomläge. Instruktionen ersätts av namnchips när spelare väljs, och först när två är valda visas den högersställda knappen `Jämför`. Ingen automatisk navigering sker.
+
+- 2026-07-14: Flimmer efter jämförelseval på `/players` minskades. Den klickade spelarens data läggs omedelbart i en lokal cache så namnchipset inte väntar på URL-baserad återhämtning, och återgång från sökresultat till standardlistan väntar upp till 900 ms medan nästa namn börjar skrivas. Icke-tomma sökningar använder fortsatt 350 ms debounce.
+
+- 2026-07-14: Snabbjämförelsen på `/players` väljs nu via samma lilla stapelikon som används för jämförelse på `/matches`, inte genom radklick. Spelarnamnet har därmed entydigt beteende och öppnar alltid profilen. Valda spelar-id:n sparas i URL-parametern `compare`, så profilnavigering följd av browser-Back återställer jämförelseurvalet.
+
+- 2026-07-13: `/players` fick ett snabbt tvåspelarflöde för jämförelse. Ett radklick väljer spelaren, tömmer sökningen och återfokuserar fältet; nästa sökning kan därför skrivas direkt. Två val visas som borttagbara namnchips ovanför tabellen och aktiverar `Jämför spelare`, medan ett tredje val ersätter det äldsta. Klick på spelarens namnlänk öppnar fortfarande profilen utan att välja raden.
+
 - 2026-07-13: Menyposten `Favoriter` flyttades till direkt efter `Matcher`.
 
 - 2026-07-13: Spelarnamn och sekundär land/ranking-text på `/favorites` använder nu samma typografiska behandling som spelarraderna på `/players`: normal namnvikt och mindre sekundärtext.

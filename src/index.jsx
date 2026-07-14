@@ -5,7 +5,6 @@ import { HashRouter, Routes, Route } from 'react-router';
 import App from './pages/app';
 import Event from './pages/event';
 import Events from './pages/events';
-import Favorites from './pages/favorites';
 import HeadToHead from './pages/head-to-head';
 import HeadToHeadDetails from './pages/head-to-head-details';
 import Log from './pages/log';
@@ -179,7 +178,6 @@ class WebApp {
 						<Route path='/event/:id' element={<Event />} />
 						<Route path='/player/:id' element={<Player />} />
 						<Route path='/events' element={<Events />} />
-						<Route path='/favorites' element={<Favorites />} />
 						<Route path='/players' element={<Players />} />
 						<Route path='/oddset' element={<Oddset />} />
 						<Route path='/matches' element={<Matches />} />

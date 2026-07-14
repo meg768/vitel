@@ -1,8 +1,9 @@
+import StatisticsIcon from '../assets/custom-icons/statistics.svg?react';
 import Flag from './flag';
 import Table from './ui/data-table';
 import Link from '../components/ui/link';
 
-function Component({ players, rankFirst = false }) {
+function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowClick, highlightSelectedRows, onComparePlayer }) {
 	function Content() {
 		function cash(value) {
 			return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
@@ -20,18 +21,35 @@ function Component({ players, rankFirst = false }) {
 		);
 
 		return (
-			<Table rows={players} className='striped hover'>
+			<Table
+				rows={players}
+				className='striped hover'
+				rowKey={rowKey}
+				isRowSelected={isRowSelected}
+				onRowClick={onRowClick}
+				highlightSelectedRows={highlightSelectedRows}
+			>
 				{rankFirst ? rankColumn : null}
 
 				<Table.Column id='name' className=''>
 					<Table.Title className=''>Namn</Table.Title>
 					<Table.Cell>
-						{({ row, value }) => {
+						{({ row, value, selected }) => {
 							return (
 								<div className='flex items-center gap-2 whitespace-nowrap bg-transparent'>
 									<Flag className='w-5! h-5! border-1! border-current' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
 									{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>({row.country})</span> : null}
+									{onComparePlayer ? (
+										<button
+											type='button'
+											onClick={() => onComparePlayer(row)}
+											className={`flex h-6 w-6 items-center justify-center rounded-sm border border-primary-500 text-primary-900 transition-colors hover:bg-primary-200 dark:border-primary-500 dark:text-primary-100 dark:hover:bg-primary-700 ${selected ? 'bg-primary-200 dark:bg-primary-700' : 'bg-transparent'}`}
+											aria-label={`${selected ? 'Ta bort' : 'Välj'} ${row.name} ${selected ? 'från' : 'för'} jämförelse`}
+										>
+											<StatisticsIcon className='h-3.5 w-3.5 bg-transparent' />
+										</button>
+									) : null}
 								</div>
 							);
 						}}

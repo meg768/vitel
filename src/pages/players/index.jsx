@@ -5,23 +5,65 @@ import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
 import Page from '../../components/page';
 import Players from '../../components/players';
+import Button from '../../components/ui/button';
 import Input from '../../components/ui/input';
 import { useSQL } from '../../js/vitel.js';
 
+const comparisonStorageKey = 'vitel-player-comparison';
+
 export default function PlayersPage() {
-	const [searchParams] = useSearchParams();
-	const [searchTerm, setSearchTerm] = React.useState('');
-	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState('');
+	const [searchParams, setSearchParams] = useSearchParams();
+	const initialSearchTerm = searchParams.get('search') || '';
+	const [searchTerm, setSearchTerm] = React.useState(initialSearchTerm);
+	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState(initialSearchTerm);
+	const [comparisonPlayerCache, setComparisonPlayerCache] = React.useState({});
 	const searchInputRef = React.useRef(null);
+	const comparisonSelectionRef = React.useRef(false);
+	const comparisonPlayerIdsRef = React.useRef([]);
 	let query = searchParams.get('query') || {};
+	const comparisonParam = searchParams.get('compare');
+	const storedComparison = window.sessionStorage.getItem(comparisonStorageKey) || '';
+	const comparisonPlayerIds = (comparisonParam ?? storedComparison)
+		.split(',')
+		.map(value => value.trim())
+		.filter(Boolean)
+		.slice(-2);
+	comparisonPlayerIdsRef.current = comparisonPlayerIds;
 
 	React.useEffect(() => {
+		if (comparisonParam !== null) {
+			if (comparisonPlayerIds.length) {
+				window.sessionStorage.setItem(comparisonStorageKey, comparisonPlayerIds.join(','));
+			} else {
+				window.sessionStorage.removeItem(comparisonStorageKey);
+			}
+		}
+	}, [comparisonParam, comparisonPlayerIds.join(',')]);
+
+	React.useEffect(() => {
+		if (comparisonSelectionRef.current && searchTerm.trim() === '') {
+			comparisonSelectionRef.current = false;
+			return undefined;
+		}
+
 		const timer = window.setTimeout(() => {
-			setDebouncedSearchTerm(searchTerm.trim());
+			const nextSearchTerm = searchTerm.trim();
+			setDebouncedSearchTerm(nextSearchTerm);
+			setSearchParams(currentParams => {
+				const nextParams = new URLSearchParams(currentParams);
+
+				if (nextSearchTerm) {
+					nextParams.set('search', nextSearchTerm);
+				} else {
+					nextParams.delete('search');
+				}
+
+				return nextParams;
+			}, { replace: true });
 		}, 350);
 
 		return () => window.clearTimeout(timer);
-	}, [searchTerm]);
+	}, [searchTerm, setSearchParams]);
 
 	if (query) {
 		try {
@@ -52,6 +94,77 @@ export default function PlayersPage() {
 		format,
 		placeholderData: previousPlayers => previousPlayers
 	});
+	const comparisonPlaceholders = comparisonPlayerIds.map(() => '?').join(', ');
+	const { data: comparisonRows = [] } = useSQL({
+		sql: comparisonPlayerIds.length
+			? `SELECT * FROM players WHERE id IN (${comparisonPlaceholders})`
+			: 'SELECT * FROM players WHERE 1 = 0',
+		format: comparisonPlayerIds
+	});
+	const comparisonPlayers = comparisonPlayerIds
+		.map(playerId => comparisonPlayerCache[playerId] ?? comparisonRows.find(player => player.id === playerId))
+		.filter(Boolean);
+
+	React.useEffect(() => {
+		if (!comparisonRows.length) {
+			return;
+		}
+
+		setComparisonPlayerCache(current => {
+			const next = { ...current };
+			comparisonRows.forEach(player => {
+				next[player.id] = player;
+			});
+			return next;
+		});
+	}, [comparisonRows]);
+
+	function updateComparison(nextPlayerIds) {
+		if (nextPlayerIds.length) {
+			window.sessionStorage.setItem(comparisonStorageKey, nextPlayerIds.join(','));
+		} else {
+			window.sessionStorage.removeItem(comparisonStorageKey);
+		}
+
+		setSearchParams(currentParams => {
+			const nextParams = new URLSearchParams(currentParams);
+
+			if (nextPlayerIds.length) {
+				nextParams.set('compare', nextPlayerIds.join(','));
+			} else {
+				nextParams.delete('compare');
+			}
+
+			return nextParams;
+		});
+	}
+
+	function toggleComparisonPlayer(player) {
+		setComparisonPlayerCache(current => ({ ...current, [player.id]: player }));
+		const currentIds = comparisonPlayerIdsRef.current;
+		const playerWasSelected = currentIds.includes(player.id);
+		const nextIds = playerWasSelected
+			? currentIds.filter(playerId => playerId !== player.id)
+			: currentIds.length < 2
+				? [...currentIds, player.id]
+				: [currentIds[1], player.id];
+
+		updateComparison(nextIds);
+		comparisonSelectionRef.current = true;
+		setSearchTerm('');
+		window.requestAnimationFrame(() => searchInputRef.current?.focus());
+	}
+
+	function removeComparisonPlayer(playerId) {
+		updateComparison(comparisonPlayerIds.filter(id => id !== playerId));
+		window.requestAnimationFrame(() => searchInputRef.current?.focus());
+	}
+
+	function closeComparison() {
+		updateComparison([]);
+		window.requestAnimationFrame(() => searchInputRef.current?.focus());
+	}
+
 	let statusBarStatus = 'ready';
 	let statusBarMessage = players
 		? `Visar ${players.length} rankade spelare.`
@@ -69,6 +182,61 @@ export default function PlayersPage() {
 		statusBarMessage = `Hittade ${players?.length ?? 0} spelare för “${debouncedSearchTerm}”.`;
 	} else if (query.title) {
 		statusBarMessage = `Visar ${players?.length ?? 0} spelare i det valda urvalet.`;
+	} else if (comparisonPlayers.length === 1) {
+		statusBarStatus = 'info';
+		statusBarMessage = `${comparisonPlayers[0].name} är vald. Sök efter en spelare till.`;
+	} else if (comparisonPlayers.length === 2) {
+		statusBarMessage = `${comparisonPlayers[0].name} och ${comparisonPlayers[1].name} är redo att jämföras.`;
+	}
+
+	function ComparisonSelection() {
+		const compareLink = comparisonPlayerIds.length === 2
+			? `/head-to-head/${comparisonPlayerIds[0]}/${comparisonPlayerIds[1]}`
+			: null;
+		const isVisible = comparisonPlayers.length > 0;
+
+		return (
+			<div
+				className={`grid transition-[grid-template-rows,opacity,transform,margin-bottom] duration-350 ease-in-out ${isVisible
+					? 'mb-3 grid-rows-[1fr] translate-y-0 opacity-100'
+					: 'pointer-events-none mb-0 grid-rows-[0fr] -translate-y-1 opacity-0'}`}
+				aria-hidden={!isVisible}
+			>
+				<div className='min-h-0 overflow-hidden'>
+				<div className='flex min-h-14 flex-wrap items-center gap-2 rounded-lg border border-primary-300 bg-primary-100 px-3 py-2 dark:border-primary-700 dark:bg-primary-800'>
+				{comparisonPlayers.map(player => (
+					<button
+						key={player.id}
+						type='button'
+						onClick={() => removeComparisonPlayer(player.id)}
+						className='flex h-8 items-center gap-1 rounded-full border border-primary-400 bg-primary-50 px-2.5 py-1 text-sm text-primary-900 transition-colors hover:bg-primary-200 dark:border-primary-600 dark:bg-primary-900 dark:text-primary-100 dark:hover:bg-primary-700'
+						aria-label={`Ta bort ${player.name} från jämförelsen`}
+					>
+						<span className='bg-transparent'>{player.name}</span>
+						<Cross2Icon className='h-3.5 w-3.5 bg-transparent' />
+					</button>
+				))}
+				{comparisonPlayers.length > 0 ? (
+					<Button
+						className='h-8 px-4! py-1!'
+						link={compareLink || undefined}
+						disabled={!compareLink}
+					>
+						Jämför
+					</Button>
+				) : null}
+				<button
+					type='button'
+					onClick={closeComparison}
+					className='ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-600 transition-colors hover:bg-primary-200 hover:text-primary-900 dark:text-primary-400 dark:hover:bg-primary-700 dark:hover:text-primary-100'
+					aria-label='Stäng jämförelse'
+				>
+					<Cross2Icon className='h-4 w-4 bg-transparent' />
+				</button>
+				</div>
+				</div>
+			</div>
+		);
 	}
 
 	function Content() {
@@ -111,6 +279,7 @@ export default function PlayersPage() {
 					</label>
 				</Page.Title>
 				<Page.Container>
+					{ComparisonSelection()}
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>
 					) : !players ? (
@@ -118,7 +287,14 @@ export default function PlayersPage() {
 					) : isSearching && players.length === 0 ? (
 						<Page.Information>Inga spelare matchar “{debouncedSearchTerm}”</Page.Information>
 					) : (
-						<Players players={players} rankFirst />
+						<Players
+							players={players}
+							rankFirst
+							rowKey='id'
+							isRowSelected={row => comparisonPlayerIds.includes(row.id)}
+							highlightSelectedRows={false}
+							onComparePlayer={toggleComparisonPlayer}
+						/>
 					)}
 				</Page.Container>
 			</>
