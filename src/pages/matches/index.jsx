@@ -128,12 +128,12 @@ function LiveOddsetMatchesTable({ rows }) {
 
 			<Table.Column>
 				<Table.Title>TA</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.tennisAbstractOdds)}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.TA)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column>
 				<Table.Title>GPT</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.gptOdds)}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.GPT)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column id='liveScore'>
@@ -166,12 +166,12 @@ function UpcomingMatchesTable({ rows }) {
 
 			<Table.Column>
 				<Table.Title>TA</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.tennisAbstractOdds)}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.TA)}</Table.Value>
 			</Table.Column>
 
 			<Table.Column>
 				<Table.Title>GPT</Table.Title>
-				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.gptOdds)}</Table.Value>
+				<Table.Value>{({ row }) => formatOddsWithPositiveEdge(row.odds, row.GPT)}</Table.Value>
 			</Table.Column>
 		</Table>
 	);
@@ -284,8 +284,8 @@ function Component() {
 			const matchOdds = getMatchOddsForRow(row, upcomingMatchOddsByMatch);
 			return {
 				...row,
-				gptOdds: matchOdds.gptOdds,
-				tennisAbstractOdds: matchOdds.tennisAbstractOdds
+				TA: matchOdds.TA,
+				GPT: matchOdds.GPT
 			};
 		});
 	const { liveMatches, upcomingMatches } = splitOddsetRowsByStatus(oddsetMatchRows);

@@ -3,10 +3,13 @@ import { useSearchParams } from 'react-router';
 
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
+import StarIcon from '../../assets/radix-icons/star.svg?react';
+import StarFilledIcon from '../../assets/radix-icons/star-filled.svg?react';
 import Page from '../../components/page';
 import Players from '../../components/players';
 import Button from '../../components/ui/button';
 import Input from '../../components/ui/input';
+import { getFavoritePlayerIds } from '../../js/player-favorites';
 import { useSQL } from '../../js/vitel.js';
 
 const comparisonStorageKey = 'vitel-player-comparison';
@@ -16,11 +19,13 @@ export default function PlayersPage() {
 	const initialSearchTerm = searchParams.get('search') || '';
 	const [searchTerm, setSearchTerm] = React.useState(initialSearchTerm);
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState(initialSearchTerm);
+	const [favoritePlayerIds] = React.useState(getFavoritePlayerIds);
 	const [comparisonPlayerCache, setComparisonPlayerCache] = React.useState({});
 	const searchInputRef = React.useRef(null);
 	const comparisonSelectionRef = React.useRef(false);
 	const comparisonPlayerIdsRef = React.useRef([]);
 	let query = searchParams.get('query') || {};
+	const showFavorites = searchParams.get('favorites') === '1';
 	const comparisonParam = searchParams.get('compare');
 	const storedComparison = window.sessionStorage.getItem(comparisonStorageKey) || '';
 	const comparisonPlayerIds = (comparisonParam ?? storedComparison)
@@ -76,15 +81,31 @@ export default function PlayersPage() {
 	let { sql, format } = query;
 	const isSearching = debouncedSearchTerm.length >= 1;
 
-	if (isSearching) {
+	if (isSearching || showFavorites) {
+		const conditions = [];
+		format = [];
+
+		if (isSearching) {
+			conditions.push('(UPPER(id) = UPPER(?) OR LOWER(name) LIKE LOWER(?))');
+			format.push(debouncedSearchTerm, `%${debouncedSearchTerm}%`);
+		}
+
+		if (showFavorites) {
+			if (favoritePlayerIds.length) {
+				conditions.push(`id IN (${favoritePlayerIds.map(() => '?').join(', ')})`);
+				format.push(...favoritePlayerIds);
+			} else {
+				conditions.push('1 = 0');
+			}
+		}
+
 		sql = `
 			SELECT *
 			FROM players
-			WHERE UPPER(id) = UPPER(?) OR LOWER(name) LIKE LOWER(?)
+			WHERE ${conditions.join(' AND ')}
 			ORDER BY (active = 1) DESC, (rank IS NULL) ASC, rank ASC, name ASC
-			LIMIT 25
+			LIMIT ${isSearching ? 25 : 100}
 		`;
-		format = [debouncedSearchTerm, `%${debouncedSearchTerm}%`];
 	} else if (!sql) {
 		sql = `SELECT * FROM players WHERE NOT rank IS NULL ORDER BY rank LIMIT 100`;
 	}
@@ -165,6 +186,20 @@ export default function PlayersPage() {
 		window.requestAnimationFrame(() => searchInputRef.current?.focus());
 	}
 
+	function toggleFavorites() {
+		setSearchParams(currentParams => {
+			const nextParams = new URLSearchParams(currentParams);
+
+			if (showFavorites) {
+				nextParams.delete('favorites');
+			} else {
+				nextParams.set('favorites', '1');
+			}
+
+			return nextParams;
+		});
+	}
+
 	let statusBarStatus = 'ready';
 	let statusBarMessage = players
 		? `Visar ${players.length} rankade spelare.`
@@ -175,9 +210,15 @@ export default function PlayersPage() {
 		statusBarMessage = 'Kunde inte läsa in spelare just nu.';
 	} else if (isFetching) {
 		statusBarStatus = 'loading';
-		statusBarMessage = isSearching
-			? `Söker efter “${debouncedSearchTerm}”…`
-			: 'Läser in rankade spelare…';
+		statusBarMessage = showFavorites
+			? 'Läser in favoritspelare…'
+			: isSearching
+				? `Söker efter “${debouncedSearchTerm}”…`
+				: 'Läser in rankade spelare…';
+	} else if (showFavorites && isSearching) {
+		statusBarMessage = `Hittade ${players?.length ?? 0} favoriter för “${debouncedSearchTerm}”.`;
+	} else if (showFavorites) {
+		statusBarMessage = `Visar ${players?.length ?? 0} favoritspelare.`;
 	} else if (isSearching) {
 		statusBarMessage = `Hittade ${players?.length ?? 0} spelare för “${debouncedSearchTerm}”.`;
 	} else if (query.title) {
@@ -243,8 +284,23 @@ export default function PlayersPage() {
 		return (
 			<>
 				<Page.Title className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
-					<span className='bg-transparent'>{query.title ? query.title : 'Spelare'}</span>
-					<label className='relative block w-full bg-transparent sm:w-80'>
+					<div className='flex items-center gap-3 bg-transparent'>
+						<span className='bg-transparent'>{query.title ? query.title : 'Spelare'}</span>
+						<button
+							type='button'
+							onClick={toggleFavorites}
+							className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary-400 bg-transparent text-primary-100 transition-colors hover:border-primary-200 hover:bg-primary-600 hover:text-primary-50 dark:border-primary-500 dark:hover:border-primary-300 dark:hover:bg-primary-700 ${showFavorites ? 'text-primary-50 dark:text-primary-100' : 'dark:text-primary-300'}`}
+							aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
+							aria-pressed={showFavorites}
+						>
+							{showFavorites ? (
+								<StarFilledIcon className='h-5 w-5 bg-transparent' />
+							) : (
+								<StarIcon className='h-5 w-5 bg-transparent' />
+							)}
+						</button>
+					</div>
+					<div className='relative block w-full bg-transparent sm:w-80'>
 						<span className='sr-only'>Sök spelare</span>
 						<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
 						<Input
@@ -259,6 +315,7 @@ export default function PlayersPage() {
 								}
 							}}
 							placeholder='Sök spelare'
+							aria-label='Sök spelare'
 							spellCheck={false}
 							className='w-full rounded-full border border-primary-500 bg-primary-700 py-2 pl-10 pr-10 text-sm font-normal normal-case tracking-normal text-primary-50 placeholder:text-primary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-400 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-50 dark:placeholder:text-primary-400'
 						/>
@@ -276,7 +333,7 @@ export default function PlayersPage() {
 								<Cross2Icon className='h-4 w-4 bg-transparent' />
 							</button>
 						) : null}
-					</label>
+					</div>
 				</Page.Title>
 				<Page.Container>
 					{ComparisonSelection()}
@@ -284,8 +341,12 @@ export default function PlayersPage() {
 						<Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>
 					) : !players ? (
 						<Page.Loading>Läser in spelare...</Page.Loading>
+					) : players.length === 0 && showFavorites ? (
+						<Page.Information>{isSearching
+							? `Inga favoriter matchar “${debouncedSearchTerm}”.`
+							: 'Du har inga favoritspelare ännu.'}</Page.Information>
 					) : isSearching && players.length === 0 ? (
-						<Page.Information>Inga spelare matchar “{debouncedSearchTerm}”</Page.Information>
+						<Page.Information>Inga spelare matchar “{debouncedSearchTerm}”.</Page.Information>
 					) : (
 						<Players
 							players={players}

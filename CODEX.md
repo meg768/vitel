@@ -249,6 +249,18 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-14: `/matches` konsumerar det nya modellbaserade oddsformatet från `atp-service`: `odds.TA` och `odds.GPT`. Interna rader använder nu samma korta modellnamn; visning och positiv edge-markering är oförändrade.
+
+- 2026-07-14: Favoritfiltrets stjärna har flyttats ut ur sökfältet och ligger nu med rund border direkt efter sidrubriken `Spelare`. Sökfältet innehåller åter endast sökikon, text och rensningskryss.
+
+- 2026-07-14: Favoritfiltrets stjärna ligger nu inne i sökfältets vänstra del, direkt efter sökikonen och före texten. Rensningskrysset ligger åter längst till höger.
+
+- 2026-07-14: Favoritfiltrets stjärna på `/players` ligger nu utan egen border inne i sökfältets högra kant. Sökfältet reserverar plats för ikonen och rensningskrysset flyttas åt vänster när söktext finns.
+
+- 2026-07-14: Stjärnknappen för favoritfiltret på `/players` ligger nu till höger om sökfältet.
+
+- 2026-07-14: Favoriter har återinförts som ett integrerat filter i stället för en separat sida. Spelarprofilens lokalt sparade stjärna är tillbaka och `/players` har en stjärnknapp bredvid sökfältet som växlar mellan alla spelare och favoriter. Favoritläget lagras som `favorites=1` i URL:en, sökning sker inom aktivt läge och statusbar/tomläge beskriver resultatet.
+
 - 2026-07-14: Den debouncade spelarsökningen sparas nu som `search` i `/players` URL med `replace`, så ett profilbesök följt av Browser Back återställer både söktext och träfflista utan att varje tangenttryckning fyller historiken.
 
 - 2026-07-14: Jämförelserutan på `/players` har fått ett litet kryss längst till höger. Det rensar hela spelarurvalet, återfokuserar sökfältet och låter rutan animeras ihop.

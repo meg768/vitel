@@ -113,8 +113,8 @@ async function fetchMatchOddsForMatches(rows = []) {
 	const entries = (Array.isArray(payload) ? payload : []).map(row => [
 		row.key,
 		{
-			gptOdds: formatOddsPair(row.gptOdds),
-			tennisAbstractOdds: formatOddsPair(row.tennisAbstractOdds)
+			TA: formatOddsPair(row.odds?.TA),
+			GPT: formatOddsPair(row.odds?.GPT)
 		}
 	]);
 
@@ -124,10 +124,10 @@ async function fetchMatchOddsForMatches(rows = []) {
 function getMatchOddsForRow(row, matchOddsByKey) {
 	const key = createMatchKey(row);
 	if (!key) {
-		return { gptOdds: '-', tennisAbstractOdds: '-' };
+		return { TA: '-', GPT: '-' };
 	}
 
-	return matchOddsByKey?.[key] ?? { gptOdds: '-', tennisAbstractOdds: '-' };
+	return matchOddsByKey?.[key] ?? { TA: '-', GPT: '-' };
 }
 
 export {
