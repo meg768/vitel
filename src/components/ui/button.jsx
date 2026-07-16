@@ -4,10 +4,11 @@ import { Link } from 'react-router';
 
 
 const Button = React.forwardRef((properties, ref) => {
-	let { children, className, link, disabled, ...props } = properties;
+	let { children, className, link, disabled, size = 'default', ...props } = properties;
 
 	className = clsx([
-		'rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wider',
+		'rounded-full border font-semibold uppercase',
+		size === 'compact' ? 'px-3 py-1 text-[11px] tracking-wide' : 'px-4 py-2 text-xs tracking-wider',
 		'transition-colors duration-150',
 		'border-primary-500 bg-primary-700 text-primary-50',
 		'hover:border-primary-300 hover:bg-primary-600',

@@ -108,13 +108,13 @@ function LivePlayersCell({ row }) {
 function LiveOddsetMatchesTable({ rows }) {
 	return (
 		<Table rows={rows}>
-			<Table.Column id='turnering'>
-				<Table.Title>Turnering</Table.Title>
-			</Table.Column>
-
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
 				<Table.SortValue>{({ row }) => row._startTimestamp}</Table.SortValue>
+			</Table.Column>
+
+			<Table.Column id='turnering'>
+				<Table.Title>Turnering</Table.Title>
 			</Table.Column>
 
 			<Table.Column>
@@ -146,13 +146,13 @@ function LiveOddsetMatchesTable({ rows }) {
 function UpcomingMatchesTable({ rows }) {
 	return (
 		<Table rows={rows}>
-			<Table.Column id='turnering'>
-				<Table.Title>Turnering</Table.Title>
-			</Table.Column>
-
 			<Table.Column id='start'>
 				<Table.Title>Start</Table.Title>
 				<Table.SortValue>{({ row }) => row._startTimestamp}</Table.SortValue>
+			</Table.Column>
+
+			<Table.Column id='turnering'>
+				<Table.Title>Turnering</Table.Title>
 			</Table.Column>
 
 			<Table.Column>
@@ -329,14 +329,14 @@ function Component() {
 						<>
 							<div className='space-y-6'>
 								<section className='space-y-1'>
-									<Page.Title level={2}>Pågående matcher</Page.Title>
+									<div className='flex items-center gap-2 py-2'>
+										<Page.Title level={2} className='p-0!'>Pågående matcher</Page.Title>
+										{liveMatches.length > 0 ? (
+											<Button link='/scoreboard' size='compact'>Scoreboard</Button>
+										) : null}
+									</div>
 									{liveMatches.length > 0 ? (
-										<>
-											<LiveOddsetMatchesTable rows={liveMatches} />
-											<div className='flex justify-center pt-4'>
-												<Button link='/scoreboard'>Visa scoreboard</Button>
-											</div>
-										</>
+										<LiveOddsetMatchesTable rows={liveMatches} />
 									) : (
 										<Page.Information>Inga pågående matcher just nu</Page.Information>
 									)}
