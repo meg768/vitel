@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
+import React from 'react';
 
 import Countdown from '../../components/countdown';
+import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
+import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
+import UpdateIcon from '../../assets/radix-icons/update.svg?react';
 import PlayersHeadToHead from '../../components/players-head-to-head';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
 import Table from '../../components/ui/data-table';
+import Input from '../../components/ui/input';
 import {
 	MATCH_ODDS_QUERY_KEY,
 	fetchMatchOddsForMatches,
@@ -186,6 +191,8 @@ function createCalculatedOddsRowsKey(rows = []) {
 }
 
 function Component() {
+	const [searchTerm, setSearchTerm] = React.useState('');
+	const searchInputRef = React.useRef(null);
 	const { data: playerRows, error: playerError } = useSQL({
 		sql: 'SELECT id, name, country FROM players',
 		cache: PLAYERS_COUNTRY_CACHE_MS
@@ -199,7 +206,8 @@ function Component() {
 		data: oddsetSnapshot,
 		error: oddsetError,
 		dataUpdatedAt,
-		isFetching: isFetchingOddset
+		isFetching: isFetchingOddset,
+		refetch: refetchOddset
 	} = useQuery({
 		queryKey: [ODDSET_PIPELINE_QUERY_KEY],
 		queryFn: fetchOddsetPipelineSnapshot,
@@ -216,7 +224,8 @@ function Component() {
 	const {
 		data: upcomingMatchOddsByMatch = {},
 		error: oddsError,
-		isFetching: isFetchingOdds
+		isFetching: isFetchingOdds,
+		refetch: refetchOdds
 	} = useQuery({
 		queryKey: [MATCH_ODDS_QUERY_KEY, calculatedOddsRowsKey],
 		queryFn: () => fetchMatchOddsForMatches(oddsetRows),
@@ -230,9 +239,8 @@ function Component() {
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const hasLoadedOddsetSnapshot = Boolean(oddsetSnapshot);
-	const Header = () => (
-		<Page.Header className='justify-between gap-3'>
-			<span className='bg-transparent'>Matcher</span>
+	const Tools = () => (
+		<>
 			<Countdown
 				dataUpdatedAt={dataUpdatedAt}
 				isFetching={isFetchingOddset}
@@ -241,7 +249,51 @@ function Component() {
 				labelUpdating='Uppdaterar matches-sidan'
 				inline={true}
 			/>
-		</Page.Header>
+			<button
+				type='button'
+				onClick={() => Promise.all([refetchOddset(), refetchOdds()])}
+				disabled={isFetchingOddset || isFetchingOdds}
+				className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100 transition-colors hover:bg-primary-700 hover:text-primary-50 disabled:cursor-wait disabled:opacity-60'
+				aria-label='Uppdatera matcher'
+				title='Uppdatera matcher'
+			>
+				<UpdateIcon className={`h-5 w-5 bg-transparent ${isFetchingOddset || isFetchingOdds ? 'animate-spin' : ''}`} />
+			</button>
+			<div className='relative block w-44 bg-transparent'>
+				<span className='sr-only'>Filtrera matcher</span>
+				<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
+				<Input
+					ref={searchInputRef}
+					type='text'
+					value={searchTerm}
+					onChange={event => setSearchTerm(event.target.value)}
+					onKeyDown={event => {
+						if (event.key === 'Escape') {
+							setSearchTerm('');
+							event.currentTarget.blur();
+						}
+					}}
+					placeholder='Sök'
+					aria-label='Filtrera matcher'
+					spellCheck={false}
+					className='w-full rounded-full border border-primary-500 bg-primary-700 py-2 pl-10 pr-10 text-sm font-normal normal-case tracking-normal text-primary-50 placeholder:text-primary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-400 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-50 dark:placeholder:text-primary-400'
+				/>
+				{searchTerm ? (
+					<button
+						type='button'
+						onClick={() => {
+							setSearchTerm('');
+							searchInputRef.current?.focus();
+						}}
+						className='absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-transparent text-primary-100 hover:bg-primary-600 hover:text-primary-50 dark:text-primary-500 dark:hover:bg-primary-800 dark:hover:text-primary-100'
+						aria-label='Rensa matchfilter'
+						title='Rensa filter'
+					>
+						<Cross2Icon className='h-4 w-4 bg-transparent' />
+					</button>
+				) : null}
+			</div>
+		</>
 	);
 	const resolvedOddsetRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
@@ -251,9 +303,9 @@ function Component() {
 	if (rankError) {
 		return (
 			<Page id='matches-page'>
-				<Page.Menu />
-				{Header()}
+				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
+					<Page.Title>Matcher</Page.Title>
 					<Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -263,9 +315,9 @@ function Component() {
 	if (playerError) {
 		return (
 			<Page id='matches-page'>
-				<Page.Menu />
-				{Header()}
+				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
+					<Page.Title>Matcher</Page.Title>
 					<Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -275,9 +327,9 @@ function Component() {
 	if (oddsetError && !hasLoadedOddsetSnapshot) {
 		return (
 			<Page id='matches-page'>
-				<Page.Menu />
-				{Header()}
+				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
+					<Page.Title>Matcher</Page.Title>
 					<Page.Error>Misslyckades med att läsa in matcher - {oddsetError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -287,9 +339,9 @@ function Component() {
 	if (!rankingRows || !playerRows || !hasLoadedOddsetSnapshot) {
 		return (
 			<Page id='matches-page'>
-				<Page.Menu />
-				{Header()}
+				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
+					<Page.Title>Matcher</Page.Title>
 					<Page.Loading>Hämtar matcher…</Page.Loading>
 				</Page.Content>
 			</Page>
@@ -305,10 +357,22 @@ function Component() {
 				GPT: matchOdds.GPT
 			};
 		});
-	const { liveMatches, upcomingMatches } = splitOddsetRowsByStatus(oddsetMatchRows);
+	const { liveMatches: allLiveMatches, upcomingMatches: allUpcomingMatches } = splitOddsetRowsByStatus(oddsetMatchRows);
+	const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase('sv-SE');
+	const matchesSearch = row => !normalizedSearchTerm || [
+		row.playerAName,
+		row.playerBName,
+		row.turnering,
+		row.start,
+		row.status
+	].some(value => String(value ?? '').toLocaleLowerCase('sv-SE').includes(normalizedSearchTerm));
+	const liveMatches = allLiveMatches.filter(matchesSearch);
+	const upcomingMatches = allUpcomingMatches.filter(matchesSearch);
 	const hasNoMatches = liveMatches.length === 0 && upcomingMatches.length === 0;
 	let statusBarStatus = 'ready';
-	let statusBarMessage = `Laddade ${liveMatches.length} live och ${upcomingMatches.length} kommande matcher.`;
+	let statusBarMessage = normalizedSearchTerm
+		? `Visar ${liveMatches.length + upcomingMatches.length} av ${allLiveMatches.length + allUpcomingMatches.length} matcher för “${searchTerm.trim()}”.`
+		: `Laddade ${liveMatches.length} live och ${upcomingMatches.length} kommande matcher.`;
 
 	if (oddsetError) {
 		statusBarStatus = 'warning';
@@ -326,12 +390,12 @@ function Component() {
 
 	return (
 		<Page id='matches-page'>
-			<Page.Menu />
-			{Header()}
+			<Page.Menu>{Tools()}</Page.Menu>
 			<Page.Content>
+				<Page.Title>Matcher</Page.Title>
 				<Page.Container>
 					{hasNoMatches ? (
-						<Page.Emoji emoji='😢' message='Det finns inget att visa' />
+						<Page.Emoji emoji={normalizedSearchTerm ? '🔎' : '😢'} message={normalizedSearchTerm ? `Inga matcher matchar “${searchTerm.trim()}”` : 'Det finns inget att visa'} />
 					) : (
 						<>
 							<div className='space-y-6'>

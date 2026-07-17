@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from 'react-router';
 
 import Matches from '../../components/matches';
@@ -8,6 +9,30 @@ import Button from '../../components/ui/button';
 import PlayerTitle from '../../components/player-title';
 import Link from '../../components/ui/link';
 import { useSQL } from '../../js/vitel';
+import { getFavoritePlayerIds, setFavoritePlayerIds } from '../../js/player-favorites';
+
+function FavoritePlayerTitle({ player, ...props }) {
+	const [isFavorite, setIsFavorite] = React.useState(() => getFavoritePlayerIds().includes(player.id));
+
+	function toggleFavorite() {
+		const favoritePlayerIds = getFavoritePlayerIds();
+		const nextPlayerIds = isFavorite
+			? favoritePlayerIds.filter(id => id !== player.id)
+			: [...new Set([...favoritePlayerIds, player.id])];
+
+		setFavoritePlayerIds(nextPlayerIds);
+		setIsFavorite(!isFavorite);
+	}
+
+	return (
+		<PlayerTitle
+			player={player}
+			isFavorite={isFavorite}
+			onToggleFavorite={toggleFavorite}
+			{...props}
+		/>
+	);
+}
 
 let Component = () => {
 	const params = useParams();
@@ -67,7 +92,11 @@ let Component = () => {
 		return (
 			<div className=''>
 				<Page.Title level={2} className='mb-1 mt-1'>
-					<PlayerTitle player={player} nameTo={`/player/${player.id}`} nameTarget={null} />
+					<FavoritePlayerTitle
+						player={player}
+						nameTo={`/player/${player.id}`}
+						nameTarget={null}
+					/>
 				</Page.Title>
 				<PlayerSummary player={player} matches={matches} />
 			</div>
@@ -100,9 +129,9 @@ let Component = () => {
 			<>
 				<Title matches={matches} playerOne={playerOne} playerTwo={playerTwo} />
 				<Page.Container>
-					<Summary matches={playerOneMatches} player={playerOne} />
-					<Summary matches={playerTwoMatches} player={playerTwo} />
-					<HeadToHeadRankingChart {...response} />
+					{Summary({ matches: playerOneMatches, player: playerOne })}
+					{Summary({ matches: playerTwoMatches, player: playerTwo })}
+					{HeadToHeadRankingChart(response)}
 					<Page.Title level={3}>Matcher</Page.Title>
 					<Matches matches={matches} owner='head-to-head' />
 					<div className='flex justify-center pt-4'>

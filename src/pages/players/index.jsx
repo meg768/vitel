@@ -280,26 +280,20 @@ export default function PlayersPage() {
 		);
 	}
 
-	function Header() {
+	function Search() {
 		return (
-			<Page.Header className='flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between'>
-					<div className='flex items-center gap-3 bg-transparent'>
-						<span className='bg-transparent'>{query.title ? query.title : 'Spelare'}</span>
-						<button
-							type='button'
-							onClick={toggleFavorites}
-							className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary-400 bg-transparent text-primary-100 transition-colors hover:border-primary-200 hover:bg-primary-600 hover:text-primary-50 dark:border-primary-500 dark:hover:border-primary-300 dark:hover:bg-primary-700 ${showFavorites ? 'text-primary-50 dark:text-primary-100' : 'dark:text-primary-300'}`}
-							aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
-							aria-pressed={showFavorites}
-						>
-							{showFavorites ? (
-								<StarFilledIcon className='h-5 w-5 bg-transparent' />
-							) : (
-								<StarIcon className='h-5 w-5 bg-transparent' />
-							)}
-						</button>
-					</div>
-					<div className='relative block w-full bg-transparent sm:w-80'>
+			<>
+			<button
+				type='button'
+				onClick={toggleFavorites}
+				className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100 transition-colors hover:bg-primary-700 hover:text-primary-50 ${showFavorites ? 'bg-primary-700! text-primary-50' : ''}`}
+				aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
+				aria-pressed={showFavorites}
+				title={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
+			>
+				{showFavorites ? <StarFilledIcon className='h-5 w-5 bg-transparent' /> : <StarIcon className='h-5 w-5 bg-transparent' />}
+			</button>
+			<div className='relative block w-44 bg-transparent'>
 						<span className='sr-only'>Sök spelare</span>
 						<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
 						<Input
@@ -313,7 +307,7 @@ export default function PlayersPage() {
 									event.currentTarget.blur();
 								}
 							}}
-							placeholder='Sök spelare'
+							placeholder='Sök'
 							aria-label='Sök spelare'
 							spellCheck={false}
 							className='w-full rounded-full border border-primary-500 bg-primary-700 py-2 pl-10 pr-10 text-sm font-normal normal-case tracking-normal text-primary-50 placeholder:text-primary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-400 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-50 dark:placeholder:text-primary-400'
@@ -332,8 +326,8 @@ export default function PlayersPage() {
 								<Cross2Icon className='h-4 w-4 bg-transparent' />
 							</button>
 						) : null}
-					</div>
-			</Page.Header>
+			</div>
+			</>
 		);
 	}
 
@@ -367,9 +361,9 @@ export default function PlayersPage() {
 
 	return (
 		<Page>
-			<Page.Menu />
-			{Header()}
+			<Page.Menu>{Search()}</Page.Menu>
 			<Page.Content>
+				<Page.Title>{query.title ? query.title : 'Spelare'}</Page.Title>
 				{Content()}
 			</Page.Content>
 			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>

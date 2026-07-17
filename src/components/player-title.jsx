@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 
 import WikipediaLogo from '../assets/logos/wikipedia.svg?react';
+import StarIcon from '../assets/radix-icons/star.svg?react';
+import StarFilledIcon from '../assets/radix-icons/star-filled.svg?react';
 import Flag from './flag';
 import Link from './ui/link';
 
-function Component({ player, className, nameTo, nameTarget }) {
+function Component({ player, className, nameTo, nameTarget, isFavorite, onToggleFavorite }) {
 	if (!player) {
 		return null;
 	}
@@ -25,6 +27,18 @@ function Component({ player, className, nameTo, nameTarget }) {
 							</Link>
 							{`, ${player.country}`}
 						</div>
+						{onToggleFavorite ? (
+							<button
+								type='button'
+								onClick={onToggleFavorite}
+								className='inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-transparent text-inherit transition-colors hover:bg-primary-600 hover:text-primary-50 dark:hover:bg-primary-700 dark:hover:text-primary-100'
+								aria-label={isFavorite ? `Ta bort ${player.name} från favoriter` : `Lägg till ${player.name} i favoriter`}
+								aria-pressed={isFavorite}
+								title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
+							>
+								{isFavorite ? <StarFilledIcon className='h-4.5 w-4.5 bg-transparent' /> : <StarIcon className='h-4.5 w-4.5 bg-transparent' />}
+							</button>
+						) : null}
 						{hasWikipedia ? (
 							<Link
 								target='_blank'

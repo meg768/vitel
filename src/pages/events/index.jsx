@@ -88,11 +88,9 @@ function Component() {
 		statusBarMessage = `Visar ${events?.length ?? 0} turneringar i det valda urvalet.`;
 	}
 
-	function Header() {
+	function Search() {
 		return (
-			<Page.Header className='flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between'>
-					<span className='bg-transparent'>{query.title ? query.title : 'Turneringar'}</span>
-					<label className='relative block w-full bg-transparent sm:w-80'>
+			<label className='relative block w-44 bg-transparent'>
 						<span className='sr-only'>Sök turneringar</span>
 						<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
 						<Input
@@ -106,7 +104,7 @@ function Component() {
 									event.currentTarget.blur();
 								}
 							}}
-							placeholder='Sök turneringar'
+							placeholder='Sök'
 							spellCheck={false}
 							className='w-full rounded-full border border-primary-500 bg-primary-700 py-2 pl-10 pr-10 text-sm font-normal normal-case tracking-normal text-primary-50 placeholder:text-primary-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-400 dark:border-primary-500 dark:bg-primary-900 dark:text-primary-50 dark:placeholder:text-primary-400'
 						/>
@@ -124,8 +122,7 @@ function Component() {
 								<Cross2Icon className='h-4 w-4 bg-transparent' />
 							</button>
 						) : null}
-					</label>
-			</Page.Header>
+			</label>
 		);
 	}
 
@@ -147,9 +144,9 @@ function Component() {
 
 	return (
 		<Page id='events-page'>
-			<Page.Menu />
-			{Header()}
+			<Page.Menu>{Search()}</Page.Menu>
 			<Page.Content>
+				<Page.Title>{query.title ? query.title : 'Turneringar'}</Page.Title>
 				{Content()}
 			</Page.Content>
 			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>

@@ -63,17 +63,6 @@ Component.Title = function ({ className, level = 1, ...props }) {
 	return <div className={className} {...props}></div>;
 };
 
-Component.Header = function ({ className, ...props }) {
-	className = clsx(
-		'flex min-h-16 flex-none items-center border-b border-primary-800 bg-primary-700 px-4 py-3 text-xl font-semibold text-primary-100',
-		'dark:border-primary-700 dark:bg-primary-800 dark:text-primary-100',
-		'lg:px-10',
-		className
-	);
-
-	return <header className={className} {...props} />;
-};
-
 Component.Error = function ({ className, ...props }) {
 	className = clsx('', className);
 

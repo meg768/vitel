@@ -42,8 +42,8 @@ export default function QnAPage() {
 	return (
 		<Page id='qna-page'>
 			<Page.Menu />
-			<Page.Header>Q&A</Page.Header>
 			<Page.Content>
+				<Page.Title>Q&A</Page.Title>
 				<Page.Container>
 					<Intro />
 					<QueryList />

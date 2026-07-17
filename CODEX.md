@@ -249,6 +249,34 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-17: Favorit-state på `/head-to-head` är nu isolerat i en top-level `FavoritePlayerTitle` per caption. Ett stjärnklick rerenderar därmed endast den aktuella caption-komponenten och når inte sidkomponenten eller Recharts-grafernas renderträd. Favoritlistan läses på nytt från lagringen vid varje toggle för att de två isolerade kontrollerna inte ska skriva över varandra.
+
+- 2026-07-17: Grafer och sammanfattningar på `/head-to-head` monteras inte längre om när en favoritstjärna klickas. De lokalt definierade `Summary`- och `HeadToHeadRankingChart`-funktionerna renderas nu direkt i stället för som nya komponenttyper vid varje favorit-state-uppdatering, vilket bevarar grafkomponenternas identitet och animationstillstånd.
+
+- 2026-07-17: Favoritmarkering är nu en valfri del av den återanvändbara `PlayerTitle`-captionen. En liten borderlös stjärna visas direkt efter spelarens namnrad och är fylld eller ofylld efter favoritstatus. `/player/:id` använder caption-stjärnan i stället för en separat högerställd knapp, och båda spelarcaptions på `/head-to-head/:A/:B` kan nu markeras oberoende med samma komponent och lagring.
+
+- 2026-07-17: Huvudmenyn markerar inte längre aktiv route. All `useLocation`-logik, sidfamiljsmatchning, `aria-current` och aktiv pill-styling är borttagen. Menyn används enbart för navigation med hover/fokus, `Page.Title` visar var användaren befinner sig och endast den vyunika toolbaren visar aktiva states.
+
+- 2026-07-17: All sökfunktion har tagits bort från `/player/:id`. Spelarprofilens meny har inga vyunika verktyg och favoritmarkeringen ligger kvar i spelarens `Page.Title`. Spelarsökning finns endast på listvyn `/players`.
+
+- 2026-07-17: Sökningen i spelarprofilens toolbar navigerar nu automatiskt till `/players?search=…` efter 350 ms utan nya tangenttryckningar. Return och klick på förstoringsglaset navigerar fortfarande omedelbart; Escape tömmer värdet och avbryter den väntande timern genom effect-cleanup.
+
+- 2026-07-17: På `/player/:id` ligger favoritmarkeringen åter i spelarens `Page.Title`, eftersom den beskriver den aktuella profilen. Toolbaren innehåller endast områdessökningen som leder till `/players?search=…`. Favoritfilter i toolbaren finns fortsatt på listvyn `/players`, där det faktiskt styr hela vyn.
+
+- 2026-07-17: Spelarprofiler (`/player/:id`) har fått Spelare-områdets toolbar. Profilens borderlösa favoritknapp har flyttats från `Page.Title` till menyn och följs av ett kompakt sökfält. Enter eller klick på förstoringsglaset navigerar till `/players?search=…`, där den befintliga spelarlistan visar resultatet; ingen separat autocomplete eller profilsökning har införts.
+
+- 2026-07-17: Matcher har fått ett lokalt `Sök`-filter längst till höger i vy-toolbaren. Det filtrerar enbart redan laddade live- och kommande rader på spelarnamn, turnering, visad start och status, utan nya API-anrop eller historiksökning. Escape tömmer och lämnar fältet, kryss tömmer och behåller fokus, tomläge och statusbar beskriver aktivt filter.
+
+- 2026-07-17: I vyer utan sökfält avslutas toolbaren nu med den klickbara verktygsikonen längst till höger. På Matcher ligger nedräkningsstatus före den manuella uppdateringsikonen, så statuskomponenten inte längre reserverar osynligt utrymme efter knappen.
+
+- 2026-07-17: Den dynamiska högersidan i menyn fungerar nu som en vy-toolbar. Sökfälten är breddade från 6 till 11 rem. På Spelare ligger favoritknappen utan border före sökfältet. Matcher har fått en borderlös manuell uppdateringsikon före nedräkningen; den refetchar både Oddset-flödet och modelloddsen och roterar medan uppdateringen pågår.
+
+- 2026-07-17: Inställningsikonen är borttagen och ATP-loggan leder nu till `/#/settings`; `/about` finns kvar som dold route utan menylänk. Menyn har åter två tydliga zoner: all statisk navigation är vänsterställd och sidans dynamiska verktyg är högerställda. Sökfälten för Spelare och Turneringar förblir kompakt `Sök` även vid fokus och medan text matas in.
+
+- 2026-07-17: Den fasta menyn är nu helt vänsterställd i ordningen ATP, Matcher, Spelare, Turneringar, Q&A och Inställningar, följt av sidunika verktyg. `Page.Header` har tagits bort helt och huvudsidornas rubriker är åter scrollande `Page.Title`. Sökning på Spelare och Turneringar visas kompakt som förstoringsglas + `Sök`, expanderar vid fokus och ligger kvar utfälld när text finns. Spelarens favoritknapp ligger direkt efter sökningen.
+
+- 2026-07-17: `Page.Menu` kan nu ta emot sidunika verktyg på menyns högra sida före Inställningar. Sökfälten för Spelare och Turneringar har flyttats dit och förblir fasta tillsammans med menyn; deras `Page.Header` visar åter endast sidnamn och, för Spelare, favoritknappen. Sökfältens state och fokus bevaras eftersom innehållet renderas direkt, inte som lokalt definierade komponenttyper.
+
 - 2026-07-17: Sökfälten i Spelare och Turneringar behåller nu fokus medan man skriver. Orsaken var lokalt definierade `Header`-funktioner som renderades som komponenttyper (`<Header />`) och därför monterades om vid varje state-uppdatering. Headerinnehållet renderas nu direkt (`{Header()}`), vilket bevarar `Page.Header` och inputens identitet. Samma korrigering används för Matcher-headern.
 
 - 2026-07-17: Resterande huvudvyer i menyn använder nu den fasta `Page.Header`: Matcher, Spelare, Turneringar, Q&A och Inställningar. Matchernas uppdateringsindikator, spelarnas favoritknapp/sökfält och turneringarnas sökfält följer med i headern. Lokala rubriker som `Pågående matcher`, `Underlag` och `Felsökning` fortsätter använda `Page.Title`. Scoreboard och detaljsidor är tills vidare oförändrade.

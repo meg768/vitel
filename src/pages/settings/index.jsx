@@ -173,8 +173,8 @@ export default function SettingsPage() {
 	return (
 		<Page id='settings-page'>
 			<Page.Menu />
-			<Page.Header>Inställningar</Page.Header>
 			<Page.Content>
+				<Page.Title>Inställningar</Page.Title>
 				<Content />
 			</Page.Content>
 		</Page>
