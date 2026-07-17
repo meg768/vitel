@@ -88,10 +88,9 @@ function Component() {
 		statusBarMessage = `Visar ${events?.length ?? 0} turneringar i det valda urvalet.`;
 	}
 
-	function Content() {
+	function Header() {
 		return (
-			<>
-				<Page.Title className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+			<Page.Header className='flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between'>
 					<span className='bg-transparent'>{query.title ? query.title : 'Turneringar'}</span>
 					<label className='relative block w-full bg-transparent sm:w-80'>
 						<span className='sr-only'>Sök turneringar</span>
@@ -126,8 +125,13 @@ function Component() {
 							</button>
 						) : null}
 					</label>
-				</Page.Title>
-				<Page.Container>
+			</Page.Header>
+		);
+	}
+
+	function Content() {
+		return (
+			<Page.Container>
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>
 					) : !events ? (
@@ -137,14 +141,14 @@ function Component() {
 					) : (
 						<Events events={events} hide={['event_date']} />
 					)}
-				</Page.Container>
-			</>
+			</Page.Container>
 		);
 	}
 
 	return (
 		<Page id='events-page'>
 			<Page.Menu />
+			{Header()}
 			<Page.Content>
 				{Content()}
 			</Page.Content>

@@ -162,20 +162,18 @@ export default function SettingsPage() {
 
 	function Content() {
 		return (
-			<>
-				<Page.Title>Inställningar</Page.Title>
-				<Page.Container className='space-y-6'>
-					<ColorModeSelector />
-					<SurfaceSelector />
-					<LogButton />
-				</Page.Container>
-			</>
+			<Page.Container className='space-y-6'>
+				<ColorModeSelector />
+				<SurfaceSelector />
+				<LogButton />
+			</Page.Container>
 		);
 	}
 
 	return (
 		<Page id='settings-page'>
 			<Page.Menu />
+			<Page.Header>Inställningar</Page.Header>
 			<Page.Content>
 				<Content />
 			</Page.Content>

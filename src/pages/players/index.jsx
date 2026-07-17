@@ -280,10 +280,9 @@ export default function PlayersPage() {
 		);
 	}
 
-	function Content() {
+	function Header() {
 		return (
-			<>
-				<Page.Title className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+			<Page.Header className='flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between'>
 					<div className='flex items-center gap-3 bg-transparent'>
 						<span className='bg-transparent'>{query.title ? query.title : 'Spelare'}</span>
 						<button
@@ -334,8 +333,13 @@ export default function PlayersPage() {
 							</button>
 						) : null}
 					</div>
-				</Page.Title>
-				<Page.Container>
+			</Page.Header>
+		);
+	}
+
+	function Content() {
+		return (
+			<Page.Container>
 					{ComparisonSelection()}
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in spelare - {error.message}</Page.Error>
@@ -357,14 +361,14 @@ export default function PlayersPage() {
 							onComparePlayer={toggleComparisonPlayer}
 						/>
 					)}
-				</Page.Container>
-			</>
+			</Page.Container>
 		);
 	}
 
 	return (
 		<Page>
 			<Page.Menu />
+			{Header()}
 			<Page.Content>
 				{Content()}
 			</Page.Content>

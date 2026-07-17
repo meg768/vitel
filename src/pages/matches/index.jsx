@@ -230,6 +230,19 @@ function Component() {
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const hasLoadedOddsetSnapshot = Boolean(oddsetSnapshot);
+	const Header = () => (
+		<Page.Header className='justify-between gap-3'>
+			<span className='bg-transparent'>Matcher</span>
+			<Countdown
+				dataUpdatedAt={dataUpdatedAt}
+				isFetching={isFetchingOddset}
+				intervalMs={ODDSET_PIPELINE_REFRESH_INTERVAL_MS}
+				steps={LIVE_COUNTDOWN_STEPS}
+				labelUpdating='Uppdaterar matches-sidan'
+				inline={true}
+			/>
+		</Page.Header>
+	);
 	const resolvedOddsetRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
 		return { ...row, playerA, playerB };
@@ -239,6 +252,7 @@ function Component() {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
+				{Header()}
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>
 				</Page.Content>
@@ -250,6 +264,7 @@ function Component() {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
+				{Header()}
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>
 				</Page.Content>
@@ -261,6 +276,7 @@ function Component() {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
+				{Header()}
 				<Page.Content>
 					<Page.Error>Misslyckades med att läsa in matcher - {oddsetError.message}</Page.Error>
 				</Page.Content>
@@ -272,6 +288,7 @@ function Component() {
 		return (
 			<Page id='matches-page'>
 				<Page.Menu />
+				{Header()}
 				<Page.Content>
 					<Page.Loading>Hämtar matcher…</Page.Loading>
 				</Page.Content>
@@ -310,18 +327,8 @@ function Component() {
 	return (
 		<Page id='matches-page'>
 			<Page.Menu />
+			{Header()}
 			<Page.Content>
-				<Page.Title className='flex items-center justify-between gap-3'>
-					<span className='bg-transparent'>Matcher</span>
-					<Countdown
-						dataUpdatedAt={dataUpdatedAt}
-						isFetching={isFetchingOddset}
-						intervalMs={ODDSET_PIPELINE_REFRESH_INTERVAL_MS}
-						steps={LIVE_COUNTDOWN_STEPS}
-						labelUpdating='Uppdaterar matches-sidan'
-						inline={true}
-					/>
-				</Page.Title>
 				<Page.Container>
 					{hasNoMatches ? (
 						<Page.Emoji emoji='😢' message='Det finns inget att visa' />

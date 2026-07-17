@@ -249,6 +249,38 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-17: Sökfälten i Spelare och Turneringar behåller nu fokus medan man skriver. Orsaken var lokalt definierade `Header`-funktioner som renderades som komponenttyper (`<Header />`) och därför monterades om vid varje state-uppdatering. Headerinnehållet renderas nu direkt (`{Header()}`), vilket bevarar `Page.Header` och inputens identitet. Samma korrigering används för Matcher-headern.
+
+- 2026-07-17: Resterande huvudvyer i menyn använder nu den fasta `Page.Header`: Matcher, Spelare, Turneringar, Q&A och Inställningar. Matchernas uppdateringsindikator, spelarnas favoritknapp/sökfält och turneringarnas sökfält följer med i headern. Lokala rubriker som `Pågående matcher`, `Underlag` och `Felsökning` fortsätter använda `Page.Title`. Scoreboard och detaljsidor är tills vidare oförändrade.
+
+- 2026-07-17: Den nya återanvändbara `Page.Header` ligger direkt under `Page.Menu` och utanför den scrollande `Page.Content`. Den är en `flex-none`-del av sidramen och förblir därför alltid synlig medan innehållet rullar. `Page.Title` är oförändrad och finns kvar för rubriker inne i sidinnehållet. `/about` är första sidan som använder headern, med ATP Tour-logga och `Om Vitel`.
+
+- 2026-07-17: Rubriken på `/about` är vänsterställd. ATP Tour-loggan ligger i en `flex-none`-behållare med naturlig bredd så att SVG:n inte längre expanderar och skjuter `Om Vitel` till höger.
+
+- 2026-07-17: `Matcher` ligger nu direkt efter ATP-loggan i huvudmenyn. Aktiv menyindikering har rättats genom att aktiva och inaktiva bakgrundsklasser är ömsesidigt uteslutande; tidigare kunde `bg-transparent!` vinna över den aktiva bakgrunden trots korrekt route-matchning.
+
+- 2026-07-17: `Matcher` är tillbaka i huvudmenyn samtidigt som `/` fortsatt är matchvyn. Alla menypills visar nu aktiv sida, inklusive relevanta undersidor: Scoreboard hör till Matcher, spelar-/jämförelsesidor till Spelare, turneringsdetaljer till Turneringar och frågor till Q&A. ATP-loggan leder till nya `/#/about`, som följer Vitels vanliga sidformat och renderar sin dokumentation från den statiska Markdown-filen `src/pages/about/vitel.md`.
+
+- 2026-07-17: Matchvyn är nu Vitels huvudsida: `/` renderar samma `Matches`-komponent som `/matches`, utan redirect eller duplicerad kod. ATP-loggan leder därmed direkt till matcherna och `Matcher` är borttagen ur huvudmenyn. Den tidigare jämförelsestartsidan finns kvar oförändrad på den dolda routen `/#/compare`; `/matches` behålls som kompatibel alias för befintliga länkar.
+
+- 2026-07-17: `Översikt` har tagits bort ur huvudmenyn men experimentsidan och routen `/#/overview` finns kvar oförändrade som lekstuga för fortsatt utveckling.
+
+- 2026-07-17: Skrällrubriker använder inte längre ordet `chockade` för varje rankinggap över 100. Rubrikerna roterar mellan flera sakliga nyhetsvinklar – utslagen spelare, vinnarens ranking, avancemang, trotsad ranking och stoppad motståndare – medan rankingjämförelsen fortsatt visas i faktaraden.
+
+- 2026-07-17: Översikten är åter ett enspaltigt nyhetsflöde; `Skrällar` ligger under resultaten i stället för i en sidokolumn. Rubrikerna varierar redaktionellt utifrån händelsen: titelvinnare, rankinggap, sen turneringsrunda eller utslagen motståndare. Den upprepade formuleringen `X fällde Y` är borttagen och exakta fakta ligger kvar i underraden.
+
+- 2026-07-17: `/overview` har fått den redaktionella sektionen `Skrällar`. Den visar färska huvudtourmatcher där vinnaren låg minst 20 rankingplatser bakom förloraren, exkluderar Challenger och kvalrundor och beskriver rankinggap, resultat, turnering och datum. På bred skärm ligger skrällarna som en sportsajts sidospalt bredvid finalresultaten; på smal skärm fortsätter de i flödet.
+
+- 2026-07-17: Resultatflödet på `/overview` filtrerar bort turneringar med `event_type = 'Challenger'`. Översikten fokuserar därmed på ATP-touren, Masters, Grand Slam och övriga huvudtourstävlingar.
+
+- 2026-07-17: Översiktens rubrik använder nu ATP Tour-loggan tillsammans med `Tennisvärlden`; den missvisande äldre formuleringen `Statistik från ATP` används inte. Nyhetsflödet följer åter Vitels normala fullbredd och innehållsmarginaler i stället för en egen centrerad maxbredd.
+
+- 2026-07-17: `/overview` har gjorts om från en panelbaserad dashboard till ett sammanhängande, redaktionellt nyhetsflöde. Live/nästa matcher och senaste finalresultat visas nu som luftiga händelser med datum eller status i vänstermarginalen, tydliga rubriker och tunna avdelare. De tidigare kortpanelerna och länkkorten är borttagna.
+
+- 2026-07-17: `/overview` har fått sin första riktiga utformning som en snabb vy över tennisvärlden. Den visar live- eller nästkommande matcher från det befintliga Oddset-flödet, de sex senast avgjorda ATP-finalerna från lokal data samt tydliga vägar till hela matchvyn och ATP Tours egna nyheter. Nyheter bäddas inte in, så översikten förblir snabb och oberoende av extern sidskrapning.
+
+- 2026-07-17: En första försiktig `/overview`-sida lades till med Vitels vanliga Page-struktur, informationsyta och statusbar. `Översikt` finns i huvudmenyn för test, medan nuvarande startsida och ATP-loggans länk lämnas oförändrade.
+
 - 2026-07-14: `/matches` konsumerar det nya modellbaserade oddsformatet från `atp-service`: `odds.TA` och `odds.GPT`. Interna rader använder nu samma korta modellnamn; visning och positiv edge-markering är oförändrade.
 
 - 2026-07-14: Favoritfiltrets stjärna har flyttats ut ur sökfältet och ligger nu med rund border direkt efter sidrubriken `Spelare`. Sökfältet innehåller åter endast sökikon, text och rensningskryss.
