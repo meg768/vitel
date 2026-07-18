@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router';
 
+import BarChartIcon from '../../assets/radix-icons/bar-chart.svg?react';
 import Matches from '../../components/matches';
 import Page from '../../components/page';
 import { PlayerRankingComparisonChart } from '../../components/player-ranking-charts';
@@ -75,15 +76,12 @@ let Component = () => {
 		if (playerOne && playerTwo && playerOne.id && playerTwo.id) {
 			link = `https://www.atptour.com/en/players/atp-head-2-head/FOO/${playerOne.id}/${playerTwo.id}`;
 		}
-		if (link == '') {
-			return <Page.Title>{title}</Page.Title>;
-		}
+		const titleContent = link == '' ? title : <Link target='_blank' to={link}>{title}</Link>;
 
 		return (
-			<Page.Title>
-				<Link target='_blank' to={link}>
-					{title}
-				</Link>
+			<Page.Title className='gap-2'>
+				<BarChartIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+				<div className='min-w-0 bg-transparent'>{titleContent}</div>
 			</Page.Title>
 		);
 	}

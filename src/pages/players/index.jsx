@@ -282,17 +282,6 @@ export default function PlayersPage() {
 
 	function Search() {
 		return (
-			<>
-			<button
-				type='button'
-				onClick={toggleFavorites}
-				className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100 transition-colors hover:bg-primary-700 hover:text-primary-50 ${showFavorites ? 'bg-primary-700! text-primary-50' : ''}`}
-				aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
-				aria-pressed={showFavorites}
-				title={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
-			>
-				{showFavorites ? <StarFilledIcon className='h-5 w-5 bg-transparent' /> : <StarIcon className='h-5 w-5 bg-transparent' />}
-			</button>
 			<div className='relative block w-44 bg-transparent'>
 						<span className='sr-only'>Sök spelare</span>
 						<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
@@ -327,7 +316,21 @@ export default function PlayersPage() {
 							</button>
 						) : null}
 			</div>
-			</>
+		);
+	}
+
+	function FavoriteToggle() {
+		return (
+			<button
+				type='button'
+				onClick={toggleFavorites}
+				className='flex h-7 w-7 shrink-0 items-center justify-center bg-transparent text-primary-100 transition-colors hover:text-primary-300'
+				aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
+				aria-pressed={showFavorites}
+				title={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
+			>
+				{showFavorites ? <StarFilledIcon className='h-5 w-5 bg-transparent' /> : <StarIcon className='h-5 w-5 bg-transparent' />}
+			</button>
 		);
 	}
 
@@ -363,7 +366,10 @@ export default function PlayersPage() {
 		<Page>
 			<Page.Menu>{Search()}</Page.Menu>
 			<Page.Content>
-				<Page.Title>{query.title ? query.title : 'Spelare'}</Page.Title>
+				<Page.Title className='flex items-center gap-2'>
+					{FavoriteToggle()}
+					<span className='bg-transparent'>{query.title || 'Spelare'}</span>
+				</Page.Title>
 				{Content()}
 			</Page.Content>
 			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>

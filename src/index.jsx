@@ -2,18 +2,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router';
 
-import App from './pages/app';
-import About from './pages/about';
 import Event from './pages/event';
 import Events from './pages/events';
 import HeadToHead from './pages/head-to-head';
 import HeadToHeadDetails from './pages/head-to-head-details';
 import Log from './pages/log';
-import MarketScannerDaily from './pages/market-scanner-daily';
 import Matches from './pages/matches';
 import NotFound from './pages/not-found';
-import Oddset from './pages/oddset';
-import Overview from './pages/overview';
 import Player from './pages/player';
 import Players from './pages/players';
 import QnA from './pages/qna';
@@ -175,21 +170,16 @@ class WebApp {
 				<HashRouter>
 					<Routes>
 						<Route path='/' element={<Matches />} />
-						<Route path='/about' element={<About />} />
-						<Route path='/compare' element={<App />} />
 						<Route path='/head-to-head/:A/:B' element={<HeadToHead />} />
 						<Route path='/head-to-head-details/:A/:B' element={<HeadToHeadDetails />} />
 						<Route path='/event/:id' element={<Event />} />
 						<Route path='/player/:id' element={<Player />} />
 						<Route path='/events' element={<Events />} />
 						<Route path='/players' element={<Players />} />
-						<Route path='/oddset' element={<Oddset />} />
-						<Route path='/overview' element={<Overview />} />
 						<Route path='/matches' element={<Matches />} />
 						<Route path='/scoreboard' element={<Scoreboard />} />
 						<Route path='/scoreboard/:A/:B' element={<Scoreboard />} />
 						<Route path='/log' element={<Log />} />
-						<Route path='/market-scanner-daily' element={<MarketScannerDaily />} />
 						<Route path='/qna' element={<QnA />} />
 						<Route path='/trial' element={<Trial />} />
 						<Route path='/settings' element={<Settings />} />

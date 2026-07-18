@@ -4,7 +4,6 @@ import React from 'react';
 import Countdown from '../../components/countdown';
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
-import UpdateIcon from '../../assets/radix-icons/update.svg?react';
 import PlayersHeadToHead from '../../components/players-head-to-head';
 import Page from '../../components/page';
 import Button from '../../components/ui/button';
@@ -17,15 +16,14 @@ import {
 } from './calculated-odds.js';
 import {
 	ODDSET_PIPELINE_QUERY_KEY,
-	ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
 	buildPlayerDetailsById,
 	fetchOddsetPipelineSnapshot,
 	resolveMatchPlayers,
 	splitOddsetRowsByStatus
 } from '../../js/oddset-pipeline.js';
+import { useMatchesRefreshIntervalMs } from '../../js/refresh-settings.js';
 import { useSQL } from '../../js/vitel.js';
 
-const LIVE_COUNTDOWN_STEPS = 5;
 const PLAYERS_COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
 
 function parseOddsValue(value) {
@@ -191,6 +189,7 @@ function createCalculatedOddsRowsKey(rows = []) {
 }
 
 function Component() {
+	const matchesRefreshIntervalMs = useMatchesRefreshIntervalMs();
 	const [searchTerm, setSearchTerm] = React.useState('');
 	const searchInputRef = React.useRef(null);
 	const { data: playerRows, error: playerError } = useSQL({
@@ -211,8 +210,8 @@ function Component() {
 	} = useQuery({
 		queryKey: [ODDSET_PIPELINE_QUERY_KEY],
 		queryFn: fetchOddsetPipelineSnapshot,
-		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
-		refetchInterval: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		staleTime: matchesRefreshIntervalMs,
+		refetchInterval: matchesRefreshIntervalMs,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
@@ -230,7 +229,7 @@ function Component() {
 		queryKey: [MATCH_ODDS_QUERY_KEY, calculatedOddsRowsKey],
 		queryFn: () => fetchMatchOddsForMatches(oddsetRows),
 		enabled: oddsetRows.length > 0,
-		staleTime: ODDSET_PIPELINE_REFRESH_INTERVAL_MS,
+		staleTime: matchesRefreshIntervalMs,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retry: 0,
@@ -239,26 +238,24 @@ function Component() {
 	const ranksByPlayerId = Object.fromEntries((rankingRows ?? []).map((player, index) => [player.id, index + 1]));
 	const playerDetailsById = buildPlayerDetailsById(playerRows ?? []);
 	const hasLoadedOddsetSnapshot = Boolean(oddsetSnapshot);
-	const Tools = () => (
-		<>
+	const RefreshControl = () => (
 			<Countdown
 				dataUpdatedAt={dataUpdatedAt}
-				isFetching={isFetchingOddset}
-				intervalMs={ODDSET_PIPELINE_REFRESH_INTERVAL_MS}
-				steps={LIVE_COUNTDOWN_STEPS}
+				isFetching={isFetchingOddset || isFetchingOdds}
+				intervalMs={matchesRefreshIntervalMs}
 				labelUpdating='Uppdaterar matches-sidan'
 				inline={true}
-			/>
-			<button
-				type='button'
-				onClick={() => Promise.all([refetchOddset(), refetchOdds()])}
+				onRefresh={() => Promise.all([refetchOddset(), refetchOdds()])}
 				disabled={isFetchingOddset || isFetchingOdds}
-				className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100 transition-colors hover:bg-primary-700 hover:text-primary-50 disabled:cursor-wait disabled:opacity-60'
-				aria-label='Uppdatera matcher'
-				title='Uppdatera matcher'
-			>
-				<UpdateIcon className={`h-5 w-5 bg-transparent ${isFetchingOddset || isFetchingOdds ? 'animate-spin' : ''}`} />
-			</button>
+			/>
+	);
+	const MatchTitle = () => (
+		<Page.Title className='flex items-center gap-2'>
+			{RefreshControl()}
+			<span className='bg-transparent'>Matcher</span>
+		</Page.Title>
+	);
+	const Tools = () => (
 			<div className='relative block w-44 bg-transparent'>
 				<span className='sr-only'>Filtrera matcher</span>
 				<SearchIcon className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 bg-transparent text-primary-100 dark:text-primary-500' />
@@ -293,7 +290,6 @@ function Component() {
 					</button>
 				) : null}
 			</div>
-		</>
 	);
 	const resolvedOddsetRows = oddsetRows.map(row => {
 		const { playerA, playerB } = resolveMatchPlayers(row, playerDetailsById, ranksByPlayerId);
@@ -305,7 +301,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
-					<Page.Title>Matcher</Page.Title>
+					{MatchTitle()}
 					<Page.Error>Misslyckades med att läsa in ranking - {rankError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -317,7 +313,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
-					<Page.Title>Matcher</Page.Title>
+					{MatchTitle()}
 					<Page.Error>Misslyckades med att läsa in spelare - {playerError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -329,7 +325,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
-					<Page.Title>Matcher</Page.Title>
+					{MatchTitle()}
 					<Page.Error>Misslyckades med att läsa in matcher - {oddsetError.message}</Page.Error>
 				</Page.Content>
 			</Page>
@@ -341,7 +337,7 @@ function Component() {
 			<Page id='matches-page'>
 				<Page.Menu>{Tools()}</Page.Menu>
 				<Page.Content>
-					<Page.Title>Matcher</Page.Title>
+					{MatchTitle()}
 					<Page.Loading>Hämtar matcher…</Page.Loading>
 				</Page.Content>
 			</Page>
@@ -392,7 +388,7 @@ function Component() {
 		<Page id='matches-page'>
 			<Page.Menu>{Tools()}</Page.Menu>
 			<Page.Content>
-				<Page.Title>Matcher</Page.Title>
+				{MatchTitle()}
 				<Page.Container>
 					{hasNoMatches ? (
 						<Page.Emoji emoji={normalizedSearchTerm ? '🔎' : '😢'} message={normalizedSearchTerm ? `Inga matcher matchar “${searchTerm.trim()}”` : 'Det finns inget att visa'} />

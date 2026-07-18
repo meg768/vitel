@@ -65,8 +65,6 @@ Nuvarande huvudsidor i routing:
 - `/event/:id`
 - `/events`
 - `/players`
-- `/live`
-- `/oddset`
 - `/matches`
 - `/scoreboard`
 - `/scoreboard/:A/:B`
@@ -77,27 +75,29 @@ Nuvarande huvudsidor i routing:
 - `/query/:name`
 - `/not-found`
 
-Bakåtkompatibla redirects som fortfarande finns:
-
-- `/live-matches-overview` -> `/matches`
-- `/live-matches-detail` -> `/scoreboard`
-- `/live-matches-detail/:A/:B` -> `/scoreboard/:A/:B`
-
 Nuvarande toppmeny:
 
-- ATP-logga till startsidan
+- ATP-logga till inställningar
+- `Matcher`
 - `Spelare`
 - `Turneringar`
-- `Matcher`
 - `Q&A`
-- inställningsikon längst till höger
+- statisk navigation till vänster och vyunika verktyg till höger
+
+Nuvarande titelradssystem:
+
+- huvudrubriken är en gemensam `Page.Title` med samma höjd och vertikala centrering på alla sidor
+- varje aktiv sidtyp följer konceptet `ikon + text`; ikonen ligger direkt före rubriken
+- Matcher och Scoreboard använder den kombinerade uppdateringsringen som titelikon; den visar automatisk progress och roterar under hämtning, och på Matcher kan den klickas för manuell uppdatering
+- Spelare använder en fylld eller ofylld, border- och bakgrundslös favoritstjärna som titelikon; rubriktexten heter alltid `Spelare`
+- Inställningar använder kugghjul, Turneringar kalender, Q&A frågetecken, Logg aktivitetslogg, query-sidor läsikon, Head-to-head diagram och Tailwind-labbet trollstav
+- innehållsspecifika flaggor och turneringslogotyper behålls där de redan bär sidans identitet
+- vyunika sökfält ligger fortsatt i menyns högersida; titelrelaterade states och kontroller ska inte flyttas tillbaka dit
 
 Rollfördelning mellan matchsidorna:
 
 - `/matches` är den kompakta översikten för pågående, nyligen avslutade och kommande matcher
 - `/scoreboard` är den mer detaljerade live-monitorn
-- `/oddset` finns kvar som egen route
-- `/live` finns kvar som ATP-livevy
 - `/trial` är en aktiv, intern testsida för snabba UI-/komponentexperiment
 
 ## Körning
@@ -134,15 +134,12 @@ Viktiga scripts i `package.json`:
 
 - `src/index.jsx` - bootstrap, tema, routing
 - `src/components/menu.jsx` - toppmeny
-- `src/pages/app/index.jsx` - startsida
-- `src/pages/live/index.jsx` - ATP live-lista
-- `src/pages/oddset/index.jsx` - Oddset-sida
-- `src/pages/matches/index.jsx` - kompakt matchöversikt
+- `src/pages/matches/index.jsx` - startsida och kompakt matchöversikt
 - `src/pages/scoreboard/index.jsx` - detaljerad live monitor
 - `src/pages/head-to-head-details/index.jsx` - SQL-driven head-to-head-sida med jämförande frågor
 - `src/pages/head-to-head-details/queries.js` - laddar och kompilerar lokala frågor för head-to-head-detaljsidan
 - `src/pages/query/index.jsx` - SQL-querysida
-- `src/pages/players/index.jsx` - rankinglista med integrerad spelarsökning i sidtiteln
+- `src/pages/players/index.jsx` - rankinglista med integrerad spelarsökning i menyns vy-toolbar
 - `src/pages/trial/index.jsx` - intern testsida för UI-/komponentexperiment
 - `src/components/player-title.jsx` - gemensam spelartitel för spelarsidor och head-to-head
 - `src/js/service.js` - låg nivå för API-anrop
@@ -151,13 +148,6 @@ Viktiga scripts i `package.json`:
 - `src/js/oddset-pipeline.js` - delad logik för Oddset/live-odds
 - `src/database/schema.sql` - databasschema, views, funktioner och procedurer
 - `src/components/ui/markdown.jsx` - markdownrendering i UI
-
-Kataloger som fortfarande finns i `src/pages/` men inte är aktiva routes i `src/index.jsx`:
-
-- `src/pages/calendar`
-- `src/pages/more`
-- `src/pages/plj`
-- de ska behandlas som historiska/inaktiva tills de uttryckligen tas i bruk igen
 
 ## Query-system
 
@@ -248,6 +238,56 @@ Det som är viktigt att komma ihåg framåt:
 - Om ny projektkunskap uppstår ska den läggas här i stället för att splittras över flera minnesfiler.
 
 ## Ändringslogg
+
+- 2026-07-18: Uppdateringsringen i Matcher och Scoreboard använder nu samma princip som LAN Scanner: en komplett, alltid synlig ytterram i titelns förgrundsfärg med 45 procent opacitet och en stark progressdel ovanpå. Det ger tydlig border i samtliga ljusa, mörka och underlagsstyrda teman utan separata färgspecialfall.
+
+- 2026-07-18: Rankinggrafernas tidsväljare har fått alternativet `ALL`. Det använder spelarens verkliga första och sista rankingdatapunkt i stället för ett rullande ett- till femårsfönster, så hela den lagrade karriären kan visas även för spelare som Björn Borg vars sista datapunkter kommer från en sen comeback. Samma val finns i både den enskilda spelarens graf och head-to-head-jämförelsen.
+
+- 2026-07-18: Titelradens gemensamma språk `ikon + text` används nu på alla aktiva sidtyper. Turneringar och enskild turnering använder kalender, Q&A frågetecken, Logg aktivitetslogg, SQL-frågor läsikon, Head-to-head diagram och Tailwind-labbet trollstav. Scoreboards befintliga progresskontroll har flyttats framför titeltexten på samma sätt som på Matcher. Spelarsidor, turneringsdetaljer och jämförelsedetaljer behåller dessutom sina innehållsspecifika flaggor och logotyper.
+
+- 2026-07-18: Huvudrubriken på `/players` heter åter alltid `Spelare`. Den fyllda eller ofyllda stjärnan framför rubriken visar ensam om favoritfiltret är aktivt, så samma state inte uttrycks dubbelt.
+
+- 2026-07-18: Inställningssidans huvudrubrik visar nu en bakgrundslös kugghjulsikon direkt framför texten `Inställningar`, i samma titelbaserade visuella språk som favoritfiltret på Spelare och uppdateringskontrollen på Matcher.
+
+- 2026-07-18: `Page.Title` på nivå 1 har fått en gemensam minsta höjd och vertikal centrering. Alla huvudrubriker är därmed lika höga oavsett om de endast innehåller text eller även innehåller exempelvis favoritstjärnan eller matchsidans uppdateringskontroll.
+
+- 2026-07-18: Matchsidans kombinerade uppdateringsknapp och progressring har flyttats från menyn till sidtiteln direkt framför `Matcher`. Menyns vyverktyg innehåller nu enbart det lokala matchfiltret, medan uppdateringskontrollen behåller både manuell uppdatering, automatisk progress och laddningsanimation.
+
+- 2026-07-18: Favoritfiltret på `/players` har flyttats från menyn till sidtiteln, där den border- och bakgrundslösa stjärnan visas direkt framför `Spelare` eller `Favoriter`. Menyns vyverktyg innehåller nu enbart spelarsökningen.
+
+- 2026-07-18: Favoritfiltret på `/players` visas nu som en helt bakgrundslös stjärna även när det är aktivt. När filtret är aktivt byter sidtiteln samtidigt från `Spelare` till `Favoriter`.
+
+- 2026-07-17: Experimentet med en separat inre progressring återställdes efter visuell utvärdering. Ram och progress använder åter samma radie, vilket ger en renare och mindre plottrig uppdateringskontroll.
+
+- 2026-07-17: Uppdateringskontrollens fasta cirkel är nu en tydlig ytterram med radie 15, medan progressringen löper koncentriskt innanför ramen med radie 12,25. Progress och ram ligger därmed inte längre ovanpå samma linje, utan knappen behåller sin befintliga storlek på 36 × 36 px.
+
+- 2026-07-17: Progressringens riktning är återställd efter att nedräkningsvarianten upplevdes gå baklänges. Ringen börjar tom och fylls medurs fram till nästa uppdatering; de förbättrade, explicita kontrastfärgerna för light och dark mode behålls.
+
+- 2026-07-17: Den cirkulära uppdateringsindikatorn fungerar nu som en verklig nedräkningsring: den är full direkt efter en uppdatering och töms fram till nästa hämtning. Tidigare började den tom och var därför nästan osynlig i light mode under större delen av intervallets början. Light mode har samtidigt fått större kontrast mellan mörkt spår och ljus progressdel.
+
+- 2026-07-17: Progressringen runt uppdateringsikonen har fått explicita temafärger för dark mode. Bakgrundsspåret använder en dämpad primary-nyans medan den 2,5 px tjocka progressdelen använder en ljus primary-nyans; delarna är därför tydligt åtskilda i både ljust och mörkt läge utan att förlita sig på samma ärvda `currentColor`.
+
+- 2026-07-17: Uppdateringsprogressen är nu integrerad i själva uppdateringsikonen. En tunn SVG-ring runt pilen fylls kontinuerligt fram till nästa automatiska hämtning, och pilen roterar endast medan data hämtas. På Matcher är samma 36-pixelskontroll klickbar för manuell uppdatering; den tidigare separata fempluppsindikatorn och knappen är borttagna. Scoreboard använder samma kompakta visuella kontroll.
+
+- 2026-07-17: Uppdateringsintervallen är nu reaktiva via `useSyncExternalStore`, ett lokalt ändringsevent och browserns `storage`-event. Matcher och Scoreboard tar därför emot nya intervall utan browser-refresh, även mellan flikar. Båda erbjuder 10, 30 och 60 sekunder; standard är 30 sekunder för Matcher och 10 sekunder för Scoreboard. Tidigare sparade 25-sekundersvärden faller automatiskt tillbaka till den nya 30-sekundersstandarden.
+
+- 2026-07-17: Den kompakta sekunderklockan provades men återställdes efter visuell utvärdering. Matcher och Scoreboard använder åter den tidigare femstegsindikatorn med fyllda och ofyllda pluppar.
+
+- 2026-07-17: Den stegvisa prickanimationen för automatisk uppdatering är ersatt av en kompakt klockikon med nedräkning i sekunder. Under pågående hämtning visas ett streck; den separata uppdateringsknappen ansvarar fortsatt för rotationsanimationen.
+
+- 2026-07-17: `/trial` har byggts ut från en minimal testsida till ett fullskaligt visuellt Tailwind-showroom. Sidan demonstrerar hero-layout, livekort, nyckeltal, statusrutor, progress, pills, badges, sökfält, interaktiva states, färgskala, flikar och aktivitetsflöde inom Vitels befintliga Page-struktur och tema.
+
+- 2026-07-17: Den separata checkmark-ikonen efter `Rensa` är borttagen. Resultatet av loggrensningen visas fortsatt i radens beskrivning.
+
+- 2026-07-17: Inställningssidans innehåll följer nu exakt samma `Page.Title` + `Page.Container`-struktur som Matcher och övriga huvudsidor. De manuella padding-överskrivningarna och sektionstitlarnas extra horisontella indrag är borttagna.
+
+- 2026-07-17: Inställningssidans sektioner använder nu samma fulla innehållsbredd och sidmarginaler som sidtiteln. Den centrerade `max-w-5xl`-ytan och `Page.Container`-indraget är borttagna.
+
+- 2026-07-17: Matchsidans två kvarvarande `staleTime`-referenser använder nu det nya sparade matchintervallet. Detta rättar runtime-felet som uppstod efter att den gamla fasta `ODDSET_PIPELINE_REFRESH_INTERVAL_MS`-importen togs bort.
+
+- 2026-07-17: Inställningssidan har byggts om till en sammanhållen, responsiv inställningsvy med sektionerna Utseende, Uppdateringar och Diagnostik. Uppdateringsintervallen för Matcher och Scoreboard kan nu väljas separat mellan 10, 25 och 60 sekunder och sparas lokalt mellan körningar; standardvärdena är fortsatt 25 respektive 10 sekunder. Loggrensningen använder den nya explicita backend-endpointen `DELETE /api/log`, visar fel i stället för att ignorera dem och bekräftar hur många rader som raderades.
+
+- 2026-07-17: Död kod har rensats bort. De dolda och oanvända routarna `/compare`, `/about`, `/overview`, `/oddset` och `/market-scanner-daily` samt deras sidfiler är borttagna. `player-picker` togs bort eftersom den endast användes av `/compare`, och den oanvända ATP Tour-rubrikloggan togs bort. Tomma äldre sidkataloger för favorites/live/ranking/search innehöll inga versionsstyrda filer. Oanvända paket (`@radix-ui/themes`, `axios`, `classnames`, `jsonpath`, `react-router-dom`) togs bort ur manifest och lockfil. `/log` och `/trial` behålls eftersom de fortfarande nås från Inställningar.
 
 - 2026-07-17: Favorit-state på `/head-to-head` är nu isolerat i en top-level `FavoritePlayerTitle` per caption. Ett stjärnklick rerenderar därmed endast den aktuella caption-komponenten och når inte sidkomponenten eller Recharts-grafernas renderträd. Favoritlistan läses på nytt från lagringen vid varje toggle för att de två isolerade kontrollerna inte ska skriva över varandra.
 

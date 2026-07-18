@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router';
 
+import CalendarIcon from '../../assets/radix-icons/calendar.svg?react';
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
 import Events from '../../components/events';
@@ -146,7 +147,10 @@ function Component() {
 		<Page id='events-page'>
 			<Page.Menu>{Search()}</Page.Menu>
 			<Page.Content>
-				<Page.Title>{query.title ? query.title : 'Turneringar'}</Page.Title>
+				<Page.Title className='gap-2'>
+					<CalendarIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<span className='bg-transparent'>{query.title ? query.title : 'Turneringar'}</span>
+				</Page.Title>
 				{Content()}
 			</Page.Content>
 			<Page.StatusBar status={statusBarStatus}>{statusBarMessage}</Page.StatusBar>

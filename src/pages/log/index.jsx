@@ -1,3 +1,4 @@
+import ActivityLogIcon from '../../assets/radix-icons/activity-log.svg?react';
 import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
 import { useSQL } from '../../js/vitel';
@@ -44,7 +45,10 @@ export default function LogPage() {
 
 		return (
 			<>
-				<Page.Title>Logg senaste dygnet</Page.Title>
+				<Page.Title className='gap-2'>
+					<ActivityLogIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<span className='bg-transparent'>Logg senaste dygnet</span>
+				</Page.Title>
 				<Page.Container>
 					<LogTable rows={logRows} />
 				</Page.Container>

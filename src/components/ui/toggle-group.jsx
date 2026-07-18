@@ -1,7 +1,7 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import clsx from 'clsx';
 
-function Component({ defaultValue, onChange, children }) {
+function Component({ defaultValue, value, onChange, children }) {
 	function onValueChange(value) {
 		if (value && onChange) {
 			onChange(value);
@@ -9,7 +9,7 @@ function Component({ defaultValue, onChange, children }) {
 	}
 
 	return (
-		<ToggleGroup.Root defaultValue={defaultValue} type='single' onValueChange={onValueChange} className='inline-flex items-center gap-1 rounded-full border border-primary-300 bg-primary-100 p-1 dark:border-primary-600 dark:bg-primary-900'>
+		<ToggleGroup.Root defaultValue={defaultValue} value={value} type='single' onValueChange={onValueChange} className='inline-flex items-center gap-1 rounded-full border border-primary-300 bg-primary-100 p-1 dark:border-primary-600 dark:bg-primary-900'>
 			{children}
 		</ToggleGroup.Root>
 	);

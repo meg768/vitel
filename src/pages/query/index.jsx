@@ -1,5 +1,6 @@
 import { useParams } from 'react-router';
 
+import ReaderIcon from '../../assets/radix-icons/reader.svg?react';
 import Page from '../../components/page';
 import Table from '../../components/ui/data-table';
 import Markdown from '../../components/ui/markdown';
@@ -40,7 +41,12 @@ function Component() {
 	const query = queries.find(item => item.name === name);
 
 	function Title() {
-		return <Page.Title className='flex justify-left items-center gap-2'>{query.title || 'Query'}</Page.Title>;
+		return (
+			<Page.Title className='gap-2'>
+				<ReaderIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+				<span className='bg-transparent'>{query.title || 'Query'}</span>
+			</Page.Title>
+		);
 	}
 
 	function Content() {

@@ -38,8 +38,8 @@ Component.Title = function ({ className, level = 1, ...props }) {
 
 
 	switch (level) {
-		case 1: {
-			className = clsx('border rounded-lg font-semibold border-primary-800 text-primary-100 bg-primary-700! px-4 py-3', className);
+	case 1: {
+			className = clsx('flex min-h-15 items-center border rounded-lg font-semibold border-primary-800 text-primary-100 bg-primary-700! px-4 py-3', className);
 			className = clsx('text-xl', 'dark:border-primary-700 dark:bg-primary-800! ', className);
 			break;
 		}

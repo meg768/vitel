@@ -62,6 +62,10 @@ class Service {
 		return await this.request(path, {method: 'POST', body: JSON.stringify(data)});
 	}
 
+	async delete(path) {
+		return await this.request(path, { method: 'DELETE' });
+	}
+
 	async query(options) {
 		return await this.post('query', options);
 	}

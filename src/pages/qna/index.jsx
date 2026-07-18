@@ -1,4 +1,5 @@
 
+import QuestionIcon from '../../assets/radix-icons/question-mark-circled.svg?react';
 import Page from '../../components/page';
 import Link from '../../components/ui/link';
 import Markdown from '../../components/ui/markdown';
@@ -43,7 +44,10 @@ export default function QnAPage() {
 		<Page id='qna-page'>
 			<Page.Menu />
 			<Page.Content>
-				<Page.Title>Q&A</Page.Title>
+				<Page.Title className='gap-2'>
+					<QuestionIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<span className='bg-transparent'>Q&A</span>
+				</Page.Title>
 				<Page.Container>
 					<Intro />
 					<QueryList />

@@ -4,24 +4,31 @@ import React from 'react';
 import { LineChart, Line, Legend, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from 'recharts';
 import sprintf from 'yow/sprintf';
 
-const rankingRanges = [1, 2, 3, 4, 5];
+const rankingRanges = [
+	{ value: 1, label: '1Y' },
+	{ value: 2, label: '2Y' },
+	{ value: 3, label: '3Y' },
+	{ value: 4, label: '4Y' },
+	{ value: 5, label: '5Y' },
+	{ value: 'all', label: 'ALL' }
+];
 
 function RankingRangePicker({ value, onChange }) {
 	return (
 		<div className='flex justify-end gap-1 bg-transparent px-3 pt-3'>
-			{rankingRanges.map(years => (
+			{rankingRanges.map(range => (
 				<button
-					key={years}
+					key={range.value}
 					type='button'
-					onClick={() => onChange(years)}
+					onClick={() => onChange(range.value)}
 					className={clsx(
 						'rounded-full border px-3 py-1 text-xs font-semibold transition-colors',
-						value === years
+						value === range.value
 							? 'border-primary-500 bg-primary-700 text-primary-50 dark:bg-primary-600'
 							: 'border-primary-400 bg-transparent text-primary-700 hover:bg-primary-100 dark:text-primary-200 dark:hover:bg-primary-800'
 					)}
 				>
-					{years}Y
+					{range.label}
 				</button>
 			))}
 		</div>
@@ -82,7 +89,7 @@ function PlayerRankingChart({ className, style, player, matches, ...props }) {
 	function computeData() {
 		let { rankings, from, to } = getRankingPointsByMonth({ player, matches });
 
-		if (to) {
+		if (to && years !== 'all') {
 			from = rangeStart(to, years);
 		}
 
@@ -128,7 +135,9 @@ function PlayerRankingComparisonChart({ style, className, playerA, playerB, prop
 		let from = new Date(Math.min(fromA, fromB));
 		let to = new Date(Math.max(toA, toB));
 
-		from = rangeStart(to, years);
+		if (years !== 'all') {
+			from = rangeStart(to, years);
+		}
 
 		let data = [];
 

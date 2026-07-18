@@ -1,5 +1,6 @@
 import { useParams } from 'react-router';
 
+import CalendarIcon from '../../assets/radix-icons/calendar.svg?react';
 import EventLogo from '../../components/event-logo';
 import EventSummary from '../../components/event-summary';
 import Matches from '../../components/matches';
@@ -45,8 +46,9 @@ export default function EventPage() {
 
 		return (
 			<>
-				<Page.Title className='flex items-center'>
-					<div className='flex-none bg-transparent'>
+				<Page.Title className='gap-2'>
+					<CalendarIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<div className='min-w-0 flex-none bg-transparent'>
 						<Link target='_blank' to={event.url}>
 							{event.name}
 						</Link>{' '}

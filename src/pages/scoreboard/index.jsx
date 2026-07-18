@@ -6,10 +6,9 @@ import Countdown from '../../components/countdown';
 import LiveMatchMonitor from '../../components/live-match-monitor';
 import Page from '../../components/page';
 import { fetchHeadToHeadByMatches, selectMonitorMatches } from '../../js/live-match-rows.js';
+import { useScoreboardRefreshIntervalMs } from '../../js/refresh-settings.js';
 import { useRequest, useSQL } from '../../js/vitel.js';
 
-const ODDSET_REFRESH_INTERVAL_MS = 10 * 1000;
-const LIVE_COUNTDOWN_STEPS = 5;
 const HEAD_TO_HEAD_QUERY_KEY = ['head-to-head', 'scoreboard'];
 
 function formatOddsValue(value) {
@@ -136,6 +135,7 @@ function LoadingPage() {
 }
 
 function Component() {
+	const scoreboardRefreshIntervalMs = useScoreboardRefreshIntervalMs();
 	function getMatchKey(match) {
 		return `${match.player?.id}-${match.opponent?.id}`;
 	}
@@ -146,7 +146,7 @@ function Component() {
 		path: 'oddset',
 		method: 'GET',
 		cache: 0,
-		refetchInterval: ODDSET_REFRESH_INTERVAL_MS,
+		refetchInterval: scoreboardRefreshIntervalMs,
 		refetchIntervalInBackground: true,
 		placeholderData: previousRows => previousRows
 	});
@@ -276,16 +276,15 @@ function Component() {
 				) : (
 					<>
 						{focusMode ? null : (
-							<Page.Title className='flex items-center justify-between gap-3'>
-								<span className='bg-transparent'>Scoreboard</span>
+							<Page.Title className='gap-2'>
 								<Countdown
 									dataUpdatedAt={dataUpdatedAt}
 									isFetching={isFetching}
-									intervalMs={ODDSET_REFRESH_INTERVAL_MS}
-									steps={LIVE_COUNTDOWN_STEPS}
+									intervalMs={scoreboardRefreshIntervalMs}
 									labelUpdating='Uppdaterar scoreboard-sidan'
 									inline={true}
 								/>
+								<span className='bg-transparent'>Scoreboard</span>
 							</Page.Title>
 						)}
 						{focusedMatch ? (
