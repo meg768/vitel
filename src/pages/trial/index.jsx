@@ -74,7 +74,9 @@ export default function TrialPage() {
 			<Page.Content>
 				<Page.Title className='justify-between gap-3'>
 					<div className='flex items-center gap-2 bg-transparent'>
-						<MagicWandIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+						<Page.TitleIcon>
+							<MagicWandIcon className='h-5 w-5 bg-transparent' aria-hidden='true' />
+						</Page.TitleIcon>
 						<span className='bg-transparent'>Tailwind-labbet</span>
 					</div>
 					<Badge>Experimentyta</Badge>

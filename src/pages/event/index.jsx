@@ -47,7 +47,9 @@ export default function EventPage() {
 		return (
 			<>
 				<Page.Title className='gap-2'>
-					<CalendarIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<Page.TitleIcon>
+						<CalendarIcon className='h-5 w-5 bg-transparent' aria-hidden='true' />
+					</Page.TitleIcon>
 					<div className='min-w-0 flex-none bg-transparent'>
 						<Link target='_blank' to={event.url}>
 							{event.name}

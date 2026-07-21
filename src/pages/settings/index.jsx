@@ -147,7 +147,9 @@ export default function SettingsPage() {
 			<Page.Menu />
 			<Page.Content>
 				<Page.Title className='gap-2'>
-					<GearIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<Page.TitleIcon>
+						<GearIcon className='h-5 w-5 bg-transparent' aria-hidden='true' />
+					</Page.TitleIcon>
 					<span className='bg-transparent'>Inställningar</span>
 				</Page.Title>
 				<Page.Container className='space-y-7 pb-8!'>

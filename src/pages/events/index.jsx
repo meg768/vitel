@@ -159,7 +159,9 @@ function Component() {
 			<Page.Menu>{Search()}</Page.Menu>
 			<Page.Content>
 				<Page.Title className='gap-2'>
-					<CalendarIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<Page.TitleIcon>
+						<CalendarIcon className='h-5 w-5 bg-transparent' aria-hidden='true' />
+					</Page.TitleIcon>
 					<span className='bg-transparent'>{query.title ? query.title : 'Turneringar'}</span>
 				</Page.Title>
 				{Content()}

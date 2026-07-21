@@ -324,7 +324,7 @@ export default function PlayersPage() {
 			<button
 				type='button'
 				onClick={toggleFavorites}
-				className='flex h-7 w-7 shrink-0 items-center justify-center bg-transparent text-primary-100 transition-colors hover:text-primary-300'
+				className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary-100/45 bg-transparent text-primary-100 transition-colors hover:bg-primary-700 hover:text-primary-300'
 				aria-label={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}
 				aria-pressed={showFavorites}
 				title={showFavorites ? 'Visa alla spelare' : 'Visa favoritspelare'}

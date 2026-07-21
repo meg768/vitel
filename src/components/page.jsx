@@ -63,6 +63,15 @@ Component.Title = function ({ className, level = 1, ...props }) {
 	return <div className={className} {...props}></div>;
 };
 
+Component.TitleIcon = function ({ className, ...props }) {
+	className = clsx(
+		'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary-100/45 bg-transparent',
+		className
+	);
+
+	return <div className={className} {...props} />;
+};
+
 Component.Error = function ({ className, ...props }) {
 	className = clsx('', className);
 

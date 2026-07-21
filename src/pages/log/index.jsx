@@ -46,7 +46,9 @@ export default function LogPage() {
 		return (
 			<>
 				<Page.Title className='gap-2'>
-					<ActivityLogIcon className='h-7 w-7 shrink-0 bg-transparent' aria-hidden='true' />
+					<Page.TitleIcon>
+						<ActivityLogIcon className='h-5 w-5 bg-transparent' aria-hidden='true' />
+					</Page.TitleIcon>
 					<span className='bg-transparent'>Logg senaste dygnet</span>
 				</Page.Title>
 				<Page.Container>

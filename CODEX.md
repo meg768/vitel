@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: Huvudsidornas titelikon har fått en gemensam rund, lågkontrastad ram i samma storlek och linjeprincip som Matchers och Scoreboards uppdateringsring. Spelarens favoritknapp använder samma ram, och Q&A använder nu ett rent frågetecken inuti den gemensamma ringen i stället för en separat inbyggd cirkel.
+
 - 2026-07-22: Fliken `Turneringar` exkluderar nu alltid eventtypen `Challenger`. Filtret finns i standardsökningen, fritextsökningen och de interna urvalen för plats, typ och underlag; listvyn har dessutom ett sista defensivt filter för äldre eller handbyggda query-länkar.
 
 - 2026-07-18: Uppdateringsringen i Matcher och Scoreboard använder nu samma princip som LAN Scanner: en komplett, alltid synlig ytterram i titelns förgrundsfärg med 45 procent opacitet och en stark progressdel ovanpå. Det ger tydlig border i samtliga ljusa, mörka och underlagsstyrda teman utan separata färgspecialfall.
