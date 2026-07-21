@@ -201,7 +201,7 @@ export default function PlayersPage() {
 	}
 
 	function clearFavorites() {
-		if (!window.confirm(`Vill du rensa alla ${favoritePlayerIds.length} favoritspelare?`)) {
+		if (!window.confirm('Vill du rensa hela favoritlistan?')) {
 			return;
 		}
 

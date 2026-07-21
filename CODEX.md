@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: Bekräftelsen när favoritlistan rensas använder nu den antalssäkra formuleringen `Vill du rensa hela favoritlistan?` i stället för grammatiskt felaktiga formuleringar som `alla 1 favoritspelare`.
+
 - 2026-07-22: När favoritvyn på `/players` är aktiv och innehåller sparade spelare visas nu en högerställd `Rensa`-pill i titelraden. Efter bekräftelse tömmer den hela favoritlistan men lämnar favoritläget aktivt, så sidans befintliga tomläge visas direkt.
 
 - 2026-07-22: Huvudsidornas runda titelikonramar, inklusive Matcher/Scoreboards uppdateringsring och Spelares favoritstjärna, är nu `40 × 40 px` och matchar därmed storleken på flaggorna i spelartitlarna.
