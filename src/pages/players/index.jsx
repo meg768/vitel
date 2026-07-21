@@ -51,20 +51,21 @@ export default function PlayersPage() {
 			return undefined;
 		}
 
+		const nextSearchTerm = searchTerm.trim();
+		setSearchParams(currentParams => {
+			const nextParams = new URLSearchParams(currentParams);
+
+			if (nextSearchTerm) {
+				nextParams.set('search', nextSearchTerm);
+			} else {
+				nextParams.delete('search');
+			}
+
+			return nextParams;
+		}, { replace: true });
+
 		const timer = window.setTimeout(() => {
-			const nextSearchTerm = searchTerm.trim();
 			setDebouncedSearchTerm(nextSearchTerm);
-			setSearchParams(currentParams => {
-				const nextParams = new URLSearchParams(currentParams);
-
-				if (nextSearchTerm) {
-					nextParams.set('search', nextSearchTerm);
-				} else {
-					nextParams.delete('search');
-				}
-
-				return nextParams;
-			}, { replace: true });
 		}, 350);
 
 		return () => window.clearTimeout(timer);

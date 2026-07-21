@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: `Spelare` fungerar nu som en sessionsbevarad arbetsyta. Huvudmenyn minns den senaste fullständiga `/players?...`-adressen och återställer därmed sökning, favoritläge och jämförelseurval när användaren besöker en annan flik och sedan klickar på `Spelare`. Söktexten skrivs till URL:en direkt med `replace`, medan själva databasfrågan fortsatt väntar 350 ms, så snabb navigation tappar inte de sista tangenttryckningarna.
+
 - 2026-07-22: Bekräftelsen när favoritlistan rensas använder nu den antalssäkra formuleringen `Vill du rensa hela favoritlistan?` i stället för grammatiskt felaktiga formuleringar som `alla 1 favoritspelare`.
 
 - 2026-07-22: När favoritvyn på `/players` är aktiv och innehåller sparade spelare visas nu en högerställd `Rensa`-pill i titelraden. Efter bekräftelse tömmer den hela favoritlistan men lämnar favoritläget aktivt, så sidans befintliga tomläge visas direkt.
