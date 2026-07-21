@@ -52,16 +52,26 @@ function Component() {
 		sql = `
 			SELECT *
 			FROM events
-			WHERE LOWER(name) LIKE LOWER(?)
-				OR LOWER(location) LIKE LOWER(?)
-				OR LOWER(type) LIKE LOWER(?)
-				OR LOWER(surface) LIKE LOWER(?)
+			WHERE LOWER(TRIM(COALESCE(type, ''))) <> 'challenger'
+				AND (
+					LOWER(name) LIKE LOWER(?)
+					OR LOWER(location) LIKE LOWER(?)
+					OR LOWER(type) LIKE LOWER(?)
+					OR LOWER(surface) LIKE LOWER(?)
+				)
 			ORDER BY date DESC, name ASC
 			LIMIT 100
 		`;
 		format = [containsTerm, containsTerm, containsTerm, `%${surfaceTerm}%`];
 	} else if (!sql) {
-		sql = `SELECT * FROM events WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR ORDER BY date DESC LIMIT 100`;
+		sql = `
+			SELECT *
+			FROM events
+			WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR
+				AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger'
+			ORDER BY date DESC
+			LIMIT 100
+		`;
 		format = [];
 	}
 
@@ -70,9 +80,10 @@ function Component() {
 		format,
 		placeholderData: previousEvents => previousEvents
 	});
+	const visibleEvents = events?.filter(event => event.type?.trim().toLocaleLowerCase('en-US') !== 'challenger');
 	let statusBarStatus = 'ready';
-	let statusBarMessage = events
-		? `Visar ${events.length} turneringar från det senaste året.`
+	let statusBarMessage = visibleEvents
+		? `Visar ${visibleEvents.length} turneringar från det senaste året.`
 		: 'Läser in turneringar…';
 
 	if (error) {
@@ -84,9 +95,9 @@ function Component() {
 			? `Söker efter “${debouncedSearchTerm}”…`
 			: 'Läser in turneringar…';
 	} else if (isSearching) {
-		statusBarMessage = `Hittade ${events?.length ?? 0} turneringar för “${debouncedSearchTerm}”.`;
+		statusBarMessage = `Hittade ${visibleEvents?.length ?? 0} turneringar för “${debouncedSearchTerm}”.`;
 	} else if (query.title) {
-		statusBarMessage = `Visar ${events?.length ?? 0} turneringar i det valda urvalet.`;
+		statusBarMessage = `Visar ${visibleEvents?.length ?? 0} turneringar i det valda urvalet.`;
 	}
 
 	function Search() {
@@ -132,12 +143,12 @@ function Component() {
 			<Page.Container>
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>
-					) : !events ? (
+					) : !visibleEvents ? (
 						<Page.Loading>Läser in turneringar...</Page.Loading>
-					) : isSearching && events.length === 0 ? (
+					) : isSearching && visibleEvents.length === 0 ? (
 						<Page.Information>Inga turneringar matchar “{debouncedSearchTerm}”</Page.Information>
 					) : (
-						<Events events={events} hide={['event_date']} />
+						<Events events={visibleEvents} hide={['event_date']} />
 					)}
 			</Page.Container>
 		);

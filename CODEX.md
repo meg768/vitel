@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: Fliken `Turneringar` exkluderar nu alltid eventtypen `Challenger`. Filtret finns i standardsökningen, fritextsökningen och de interna urvalen för plats, typ och underlag; listvyn har dessutom ett sista defensivt filter för äldre eller handbyggda query-länkar.
+
 - 2026-07-18: Uppdateringsringen i Matcher och Scoreboard använder nu samma princip som LAN Scanner: en komplett, alltid synlig ytterram i titelns förgrundsfärg med 45 procent opacitet och en stark progressdel ovanpå. Det ger tydlig border i samtliga ljusa, mörka och underlagsstyrda teman utan separata färgspecialfall.
 
 - 2026-07-18: Rankinggrafernas tidsväljare har fått alternativet `ALL`. Det använder spelarens verkliga första och sista rankingdatapunkt i stället för ett rullande ett- till femårsfönster, så hela den lagrade karriären kan visas även för spelare som Björn Borg vars sista datapunkter kommer från en sen comeback. Samma val finns i både den enskilda spelarens graf och head-to-head-jämförelsen.

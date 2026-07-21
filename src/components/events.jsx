@@ -23,7 +23,7 @@ function Component({ events }) {
 	function Content() {
 		function getSurfaceEventsQuery(row) {
 			return {
-				sql: `SELECT * FROM events WHERE surface = ? ORDER BY date DESC`,
+				sql: `SELECT * FROM events WHERE surface = ? AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger' ORDER BY date DESC`,
 				format: [row.surface],
 				title: 'Turneringar på ' + row.surface
 			};
@@ -58,7 +58,7 @@ function Component({ events }) {
 						{({ row, value }) => {
 							function query() {
 								return {
-									sql: `SELECT * FROM events WHERE location = ? ORDER BY date DESC`,
+									sql: `SELECT * FROM events WHERE location = ? AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger' ORDER BY date DESC`,
 									format: [row.location],
 									title: `Turneringar - ${value}`
 								};
@@ -79,7 +79,7 @@ function Component({ events }) {
 						{({ row, value }) => {
 							function query() {
 								return {
-									sql: `SELECT * FROM events WHERE type = ? ORDER BY date DESC`,
+									sql: `SELECT * FROM events WHERE type = ? AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger' ORDER BY date DESC`,
 									format: [row.type],
 									title: `Turneringar - ${value}`
 								};
@@ -103,7 +103,7 @@ function Component({ events }) {
 
 							function query() {
 								return {
-									sql: `SELECT * FROM events WHERE surface = ? ORDER BY date DESC`,
+									sql: `SELECT * FROM events WHERE surface = ? AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger' ORDER BY date DESC`,
 									format: [row.surface],
 									title: `Turneringar - ${label}`
 								};
