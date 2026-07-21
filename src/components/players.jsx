@@ -42,8 +42,10 @@ function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowCli
 							return (
 								<div className='flex items-center gap-2 whitespace-nowrap bg-transparent'>
 									<Flag className='w-5! h-5! border-1! border-current' country={row.country}></Flag>
-									<Link to={`/player/${row.id}`}>{value}</Link>
-									{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>({row.country})</span> : null}
+									<div className='bg-transparent'>
+										<Link to={`/player/${row.id}`}>{value}</Link>
+										{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>, {row.country}</span> : null}
+									</div>
 									{onToggleFavorite ? (
 										<button
 											type='button'
