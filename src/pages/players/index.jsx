@@ -16,16 +16,18 @@ const comparisonStorageKey = 'vitel-player-comparison';
 
 export default function PlayersPage() {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const showFavorites = searchParams.get('favorites') === '1';
 	const initialSearchTerm = searchParams.get('search') || '';
 	const [searchTerm, setSearchTerm] = React.useState(initialSearchTerm);
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState(initialSearchTerm);
 	const [favoritePlayerIds, setFavoriteIds] = React.useState(getFavoritePlayerIds);
+	const [favoriteViewPlayerIds, setFavoriteViewPlayerIds] = React.useState(() => showFavorites ? getFavoritePlayerIds() : []);
 	const [comparisonPlayerCache, setComparisonPlayerCache] = React.useState({});
 	const searchInputRef = React.useRef(null);
 	const comparisonSelectionRef = React.useRef(false);
 	const comparisonPlayerIdsRef = React.useRef([]);
+	const previousShowFavoritesRef = React.useRef(showFavorites);
 	let query = searchParams.get('query') || {};
-	const showFavorites = searchParams.get('favorites') === '1';
 	const comparisonParam = searchParams.get('compare');
 	const storedComparison = window.sessionStorage.getItem(comparisonStorageKey) || '';
 	const comparisonPlayerIds = (comparisonParam ?? storedComparison)
@@ -34,6 +36,16 @@ export default function PlayersPage() {
 		.filter(Boolean)
 		.slice(-2);
 	comparisonPlayerIdsRef.current = comparisonPlayerIds;
+
+	React.useEffect(() => {
+		if (showFavorites && !previousShowFavoritesRef.current) {
+			setFavoriteViewPlayerIds(getFavoritePlayerIds());
+		} else if (!showFavorites && previousShowFavoritesRef.current) {
+			setFavoriteViewPlayerIds([]);
+		}
+
+		previousShowFavoritesRef.current = showFavorites;
+	}, [showFavorites]);
 
 	React.useEffect(() => {
 		if (comparisonParam !== null) {
@@ -92,9 +104,9 @@ export default function PlayersPage() {
 		}
 
 		if (showFavorites) {
-			if (favoritePlayerIds.length) {
-				conditions.push(`id IN (${favoritePlayerIds.map(() => '?').join(', ')})`);
-				format.push(...favoritePlayerIds);
+			if (favoriteViewPlayerIds.length) {
+				conditions.push(`id IN (${favoriteViewPlayerIds.map(() => '?').join(', ')})`);
+				format.push(...favoriteViewPlayerIds);
 			} else {
 				conditions.push('1 = 0');
 			}
@@ -188,6 +200,10 @@ export default function PlayersPage() {
 	}
 
 	function toggleFavorites() {
+		if (!showFavorites) {
+			setFavoriteViewPlayerIds(favoritePlayerIds);
+		}
+
 		setSearchParams(currentParams => {
 			const nextParams = new URLSearchParams(currentParams);
 
@@ -201,6 +217,15 @@ export default function PlayersPage() {
 		});
 	}
 
+	function toggleFavorite(player) {
+		const nextPlayerIds = favoritePlayerIds.includes(player.id)
+			? favoritePlayerIds.filter(playerId => playerId !== player.id)
+			: [...favoritePlayerIds, player.id];
+
+		setFavoritePlayerIds(nextPlayerIds);
+		setFavoriteIds(nextPlayerIds);
+	}
+
 	function clearFavorites() {
 		if (!window.confirm('Vill du rensa hela favoritlistan?')) {
 			return;
@@ -208,6 +233,7 @@ export default function PlayersPage() {
 
 		setFavoritePlayerIds([]);
 		setFavoriteIds([]);
+		setFavoriteViewPlayerIds([]);
 	}
 
 	let statusBarStatus = 'ready';
@@ -226,9 +252,11 @@ export default function PlayersPage() {
 				? `Söker efter “${debouncedSearchTerm}”…`
 				: 'Läser in rankade spelare…';
 	} else if (showFavorites && isSearching) {
-		statusBarMessage = `Hittade ${players?.length ?? 0} favoriter för “${debouncedSearchTerm}”.`;
+		const favoriteMatches = players?.filter(player => favoritePlayerIds.includes(player.id)).length ?? 0;
+		const favoriteLabel = favoriteMatches === 1 ? 'favorit' : 'favoriter';
+		statusBarMessage = `Hittade ${favoriteMatches} ${favoriteLabel} för “${debouncedSearchTerm}”.`;
 	} else if (showFavorites) {
-		statusBarMessage = `Visar ${players?.length ?? 0} favoritspelare.`;
+		statusBarMessage = `Visar ${favoritePlayerIds.length} favoritspelare.`;
 	} else if (isSearching) {
 		statusBarMessage = `Hittade ${players?.length ?? 0} spelare för “${debouncedSearchTerm}”.`;
 	} else if (query.title) {
@@ -366,6 +394,8 @@ export default function PlayersPage() {
 							isRowSelected={row => comparisonPlayerIds.includes(row.id)}
 							highlightSelectedRows={false}
 							onComparePlayer={toggleComparisonPlayer}
+							favoritePlayerIds={favoritePlayerIds}
+							onToggleFavorite={toggleFavorite}
 						/>
 					)}
 			</Page.Container>

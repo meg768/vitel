@@ -1,9 +1,11 @@
 import StatisticsIcon from '../assets/custom-icons/statistics.svg?react';
+import StarIcon from '../assets/radix-icons/star.svg?react';
+import StarFilledIcon from '../assets/radix-icons/star-filled.svg?react';
 import Flag from './flag';
 import Table from './ui/data-table';
 import Link from '../components/ui/link';
 
-function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowClick, highlightSelectedRows, onComparePlayer }) {
+function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowClick, highlightSelectedRows, onComparePlayer, favoritePlayerIds = [], onToggleFavorite }) {
 	function Content() {
 		function cash(value) {
 			return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
@@ -35,11 +37,25 @@ function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowCli
 					<Table.Title className=''>Namn</Table.Title>
 					<Table.Cell>
 						{({ row, value, selected }) => {
+							const isFavorite = favoritePlayerIds.includes(row.id);
+
 							return (
 								<div className='flex items-center gap-2 whitespace-nowrap bg-transparent'>
 									<Flag className='w-5! h-5! border-1! border-current' country={row.country}></Flag>
 									<Link to={`/player/${row.id}`}>{value}</Link>
 									{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>({row.country})</span> : null}
+									{onToggleFavorite ? (
+										<button
+											type='button'
+											onClick={() => onToggleFavorite(row)}
+											className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-700 transition-colors hover:bg-primary-200 hover:text-primary-900 dark:text-primary-300 dark:hover:bg-primary-700 dark:hover:text-primary-100'
+											aria-label={isFavorite ? `Ta bort ${row.name} från favoriter` : `Lägg till ${row.name} i favoriter`}
+											aria-pressed={isFavorite}
+											title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
+										>
+											{isFavorite ? <StarFilledIcon className='h-4.5 w-4.5 bg-transparent' /> : <StarIcon className='h-4.5 w-4.5 bg-transparent' />}
+										</button>
+									) : null}
 									{onComparePlayer ? (
 										<button
 											type='button'
