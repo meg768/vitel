@@ -31,13 +31,13 @@ function Countdown({
 		: `Nästa uppdatering inom ${Math.ceil(remainingMs / 1000)} sekunder`;
 	const rootClassName = inline ? 'flex justify-end py-0' : 'flex justify-center pt-4 pb-2';
 	const controlClassName = [
-		'relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100',
+		'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-transparent text-primary-100',
 		onRefresh ? 'transition-colors hover:bg-primary-700 disabled:cursor-wait disabled:opacity-60' : ''
 	].join(' ');
 
 	const content = (
 		<>
-			<svg className='absolute inset-0 h-9 w-9 -rotate-90 bg-transparent' viewBox='0 0 36 36' aria-hidden='true'>
+			<svg className='absolute inset-0 h-10 w-10 -rotate-90 bg-transparent' viewBox='0 0 36 36' aria-hidden='true'>
 				<circle cx='18' cy='18' r={RADIUS} fill='none' strokeWidth='1.5' className='stroke-current opacity-45' />
 				<circle
 					cx='18'
