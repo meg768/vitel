@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: När favoritvyn på `/players` är aktiv och innehåller sparade spelare visas nu en högerställd `Rensa`-pill i titelraden. Efter bekräftelse tömmer den hela favoritlistan men lämnar favoritläget aktivt, så sidans befintliga tomläge visas direkt.
+
 - 2026-07-22: Huvudsidornas runda titelikonramar, inklusive Matcher/Scoreboards uppdateringsring och Spelares favoritstjärna, är nu `40 × 40 px` och matchar därmed storleken på flaggorna i spelartitlarna.
 
 - 2026-07-22: Huvudsidornas titelikon har fått en gemensam rund, lågkontrastad ram i samma storlek och linjeprincip som Matchers och Scoreboards uppdateringsring. Spelarens favoritknapp använder samma ram, och Q&A använder nu ett rent frågetecken inuti den gemensamma ringen i stället för en separat inbyggd cirkel.

@@ -9,7 +9,7 @@ import Page from '../../components/page';
 import Players from '../../components/players';
 import Button from '../../components/ui/button';
 import Input from '../../components/ui/input';
-import { getFavoritePlayerIds } from '../../js/player-favorites';
+import { getFavoritePlayerIds, setFavoritePlayerIds } from '../../js/player-favorites';
 import { useSQL } from '../../js/vitel.js';
 
 const comparisonStorageKey = 'vitel-player-comparison';
@@ -19,7 +19,7 @@ export default function PlayersPage() {
 	const initialSearchTerm = searchParams.get('search') || '';
 	const [searchTerm, setSearchTerm] = React.useState(initialSearchTerm);
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState(initialSearchTerm);
-	const [favoritePlayerIds] = React.useState(getFavoritePlayerIds);
+	const [favoritePlayerIds, setFavoriteIds] = React.useState(getFavoritePlayerIds);
 	const [comparisonPlayerCache, setComparisonPlayerCache] = React.useState({});
 	const searchInputRef = React.useRef(null);
 	const comparisonSelectionRef = React.useRef(false);
@@ -200,6 +200,15 @@ export default function PlayersPage() {
 		});
 	}
 
+	function clearFavorites() {
+		if (!window.confirm(`Vill du rensa alla ${favoritePlayerIds.length} favoritspelare?`)) {
+			return;
+		}
+
+		setFavoritePlayerIds([]);
+		setFavoriteIds([]);
+	}
+
 	let statusBarStatus = 'ready';
 	let statusBarMessage = players
 		? `Visar ${players.length} rankade spelare.`
@@ -369,6 +378,16 @@ export default function PlayersPage() {
 				<Page.Title className='flex items-center gap-2'>
 					{FavoriteToggle()}
 					<span className='bg-transparent'>{query.title || 'Spelare'}</span>
+					{showFavorites && favoritePlayerIds.length > 0 ? (
+						<Button
+							type='button'
+							size='compact'
+							onClick={clearFavorites}
+							className='ml-auto'
+						>
+							Rensa
+						</Button>
+					) : null}
 				</Page.Title>
 				{Content()}
 			</Page.Content>
