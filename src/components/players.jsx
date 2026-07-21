@@ -44,7 +44,7 @@ function Component({ players, rankFirst = false, rowKey, isRowSelected, onRowCli
 									<Flag className='w-5! h-5! border-1! border-current' country={row.country}></Flag>
 									<div className='bg-transparent'>
 										<Link to={`/player/${row.id}`}>{value}</Link>
-										{rankFirst ? <span className='text-sm text-primary-700 dark:text-primary-300'>, {row.country}</span> : null}
+										{rankFirst ? <span className='text-sm'>, {row.country}</span> : null}
 									</div>
 									{onToggleFavorite ? (
 										<button

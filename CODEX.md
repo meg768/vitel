@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-22: Landskoden efter spelarnamnet i spelarlistan ärver nu samma textfärg som namnet, men behåller sin något mindre textstorlek.
+
 - 2026-07-22: Spelarlistans namnkolumn visar nu landet utan parenteser i formatet `[flagga] Namn, LAND [stjärna] [jämförelse]`, exempelvis `Alexander Zverev, GER`.
 
 - 2026-07-22: Spelarlistans namnkolumn har fått en snabb favoritstjärna efter landskoden och före jämförelseknappen. I normal vy uppdateras favoriten utan att raden flyttas. Favoritvyn fryser sitt radurval för det aktuella besöket, så en avmarkerad spelare ligger kvar med tom stjärna och kan återställas; när vyn lämnas och öppnas igen är avmarkerade spelare borta. Titelradens `Rensa` fortsätter däremot att tömma listan och visa tomläget omedelbart. Favoritsökningens statusrad böjer `favorit`/`favoriter` efter antal.
