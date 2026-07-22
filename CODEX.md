@@ -24,7 +24,7 @@ Nuvarande huvudbild:
 - Production static root: `/var/www/html/vitel` on `pi-kato`
 - Apache on `tennis.egelberg.se` serves the static frontend and reverse proxies
   `/api` to `http://localhost:3004/api`
-- Backendkontrakt som används i frontenden: `GET /live`, `GET /oddset`, `POST /query`
+- Backendkontrakt som används i frontenden: `GET /live`, `GET /oddset`, `GET /events/current`, `POST /query`
 - Databasschema source of truth: `src/database/schema.sql`
 - Backendrepo: `meg768/atp-tennis`
 - Lokal backend i utveckling ligger i syskonmappen `../atp-tennis`
@@ -238,6 +238,24 @@ Det som är viktigt att komma ihåg framåt:
 - Om ny projektkunskap uppstår ska den läggas här i stället för att splittras över flera minnesfiler.
 
 ## Ändringslogg
+
+- 2026-07-22: Aktiva turneringar visar nu de första 16 deltagarna direkt i stället för åtta. På bred skärm motsvarar det fyra kompletta rader, medan `Visa alla` fortsatt fäller ut hela startfältet.
+
+- 2026-07-22: Spelarnamn och ranking i aktiva turneringars deltagarlistor använder nu normal teckenvikt i stället för fetstil.
+
+- 2026-07-22: Aktiva turneringars kompakta översikt döljer `Namn`, som redan står i kortets rubrik, samt `Vinnare`, som saknas medan turneringen pågår. `EventSummary` har fått ett generellt `hide`-val så `/event` fortsatt kan visa alla sex fält medan listvyn visar fyra jämnt fördelade kolumner.
+
+- 2026-07-22: Deltagarlistans ranking visas nu som en del av namnlänken i formatet `Alexander Bublik (#11)`, med samma typsnitt, storlek och färg som spelarnamnet.
+
+- 2026-07-22: Aktiva turneringars rubrik och översiktsfält använder kontraktets `name` konsekvent. Backendkontraktet har därefter förenklats så att det tidigare slugvärdet är `name` (exempelvis `Kitzbuhel`) och något separat `slug`-fält inte längre finns.
+
+- 2026-07-22: Varje aktiv turnering på turneringslistan återanvänder nu samma `EventSummary`-översikt som `/event`, inklusive fälten datum, namn, plats, typ, underlag och vinnare. Den separata kompakta metaraden är borttagen och deltagarlistan har fått samma sektionsrubrik som detaljsidan.
+
+- 2026-07-22: Deltagarförhandsvisningen i aktiva turneringar går nu över till fyra kolumner redan på stora skärmar, så de åtta förhandsvisade spelarna bildar två kompletta rader utan en tom nionde cell.
+
+- 2026-07-22: Aktiva turneringar använder nu hela innehållsbredden och deltagarlistan växlar responsivt mellan en och fyra kolumner. Den överflödiga `Aktiv`-markeringen är borttagen. Varje deltagare visar aktuell ATP-ranking efter namnet och har en klickbar favoritstjärna som använder samma sparade favoritlista som resten av Vitel.
+
+- 2026-07-22: Turneringar visar nu backendens aktuella ATP-turneringar från `GET /api/events/current` överst, med underlag, plats, kategori och seedningssorterade deltagare. De första åtta spelarna visas direkt och hela startfältet kan fällas ut; spelarna länkar till sina Vitelsidor. Turneringssökningen filtrerar både aktiva och historiska turneringar utan att söka på spelarnamn, aktiva event dubbleras inte i historiken och turneringsdetaljen visar deltagarna så länge eventet är aktivt.
 
 - 2026-07-22: Landskoden efter spelarnamnet i spelarlistan ärver nu samma textfärg som namnet, men behåller sin något mindre textstorlek.
 

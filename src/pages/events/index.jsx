@@ -4,10 +4,11 @@ import { useSearchParams } from 'react-router';
 import CalendarIcon from '../../assets/radix-icons/calendar.svg?react';
 import Cross2Icon from '../../assets/radix-icons/cross-2.svg?react';
 import SearchIcon from '../../assets/radix-icons/magnifying-glass.svg?react';
+import CurrentEvents, { matchesCurrentEvent } from '../../components/current-events';
 import Events from '../../components/events';
 import Page from '../../components/page';
 import Input from '../../components/ui/input';
-import { useSQL } from '../../js/vitel.js';
+import { useRequest, useSQL } from '../../js/vitel.js';
 
 function Component() {
 	const [searchParams] = useSearchParams();
@@ -80,22 +81,36 @@ function Component() {
 		format,
 		placeholderData: previousEvents => previousEvents
 	});
-	const visibleEvents = events?.filter(event => event.type?.trim().toLocaleLowerCase('en-US') !== 'challenger');
+	const {
+		data: currentResponse,
+		error: currentError,
+		isFetching: isFetchingCurrent
+	} = useRequest({ path: 'events/current', method: 'GET', cache: 10 * 60 * 1000 });
+	const currentEvents = currentResponse?.events ?? [];
+	const currentEventIds = new Set(currentEvents.map(event => event.id));
+	const visibleEvents = events?.filter(event => (
+		event.type?.trim().toLocaleLowerCase('en-US') !== 'challenger'
+		&& !currentEventIds.has(event.id)
+	));
+	const visibleCurrentEvents = currentEvents.filter(event => matchesCurrentEvent(event, debouncedSearchTerm));
+	const totalCount = (visibleEvents?.length ?? 0) + visibleCurrentEvents.length;
 	let statusBarStatus = 'ready';
-	let statusBarMessage = visibleEvents
-		? `Visar ${visibleEvents.length} turneringar från det senaste året.`
+	let statusBarMessage = visibleEvents && currentResponse
+		? `Visar ${visibleCurrentEvents.length} aktiva och ${visibleEvents.length} tidigare turneringar.`
 		: 'Läser in turneringar…';
 
-	if (error) {
+	if (error || currentError) {
 		statusBarStatus = 'warning';
-		statusBarMessage = 'Kunde inte läsa in turneringar just nu.';
-	} else if (isFetching) {
+		statusBarMessage = error
+			? 'Kunde inte läsa in tidigare turneringar just nu.'
+			: `Aktiva turneringar kunde inte hämtas. Visar ${visibleEvents?.length ?? 0} tidigare turneringar.`;
+	} else if (isFetching || isFetchingCurrent) {
 		statusBarStatus = 'loading';
 		statusBarMessage = isSearching
 			? `Söker efter “${debouncedSearchTerm}”…`
 			: 'Läser in turneringar…';
 	} else if (isSearching) {
-		statusBarMessage = `Hittade ${visibleEvents?.length ?? 0} turneringar för “${debouncedSearchTerm}”.`;
+		statusBarMessage = `Hittade ${totalCount} turneringar för “${debouncedSearchTerm}” (${visibleCurrentEvents.length} aktiva).`;
 	} else if (query.title) {
 		statusBarMessage = `Visar ${visibleEvents?.length ?? 0} turneringar i det valda urvalet.`;
 	}
@@ -141,12 +156,27 @@ function Component() {
 	function Content() {
 		return (
 			<Page.Container>
+					{currentError ? (
+						<Page.Warning className='mb-3'>Aktiva turneringar kunde inte hämtas - {currentError.message}</Page.Warning>
+					) : null}
+					{isFetchingCurrent && !currentResponse ? (
+						<Page.Information className='mb-3'>Läser in aktiva turneringar…</Page.Information>
+					) : visibleCurrentEvents.length > 0 ? (
+						<>
+							<Page.Title level={3}>Aktiva turneringar</Page.Title>
+							<CurrentEvents events={visibleCurrentEvents} />
+						</>
+					) : isSearching && currentResponse ? (
+						<Page.Information className='mb-3'>Inga aktiva turneringar matchar “{debouncedSearchTerm}”</Page.Information>
+					) : null}
+
+					<Page.Title level={3}>Tidigare turneringar</Page.Title>
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>
 					) : !visibleEvents ? (
 						<Page.Loading>Läser in turneringar...</Page.Loading>
 					) : isSearching && visibleEvents.length === 0 ? (
-						<Page.Information>Inga turneringar matchar “{debouncedSearchTerm}”</Page.Information>
+						<Page.Information>Inga tidigare turneringar matchar “{debouncedSearchTerm}”</Page.Information>
 					) : (
 						<Events events={visibleEvents} hide={['event_date']} />
 					)}

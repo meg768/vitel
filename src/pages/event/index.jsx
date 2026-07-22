@@ -1,12 +1,13 @@
 import { useParams } from 'react-router';
 
 import CalendarIcon from '../../assets/radix-icons/calendar.svg?react';
+import CurrentEventPlayers from '../../components/current-event-players';
 import EventLogo from '../../components/event-logo';
 import EventSummary from '../../components/event-summary';
 import Matches from '../../components/matches';
 import Page from '../../components/page';
 import Link from '../../components/ui/link';
-import { useSQL } from '../../js/vitel';
+import { useRequest, useSQL } from '../../js/vitel';
 
 
 export default function EventPage() {
@@ -20,6 +21,8 @@ export default function EventPage() {
 	`;
 	const format = [id, id];
 	const { data: response, error } = useSQL({ sql, format });
+	const { data: currentResponse } = useRequest({ path: 'events/current', method: 'GET', cache: 10 * 60 * 1000 });
+	const currentEvent = currentResponse?.events?.find(event => event.id === id);
 
 	function Content() {
 		if (error) {
@@ -65,6 +68,13 @@ export default function EventPage() {
 				<Page.Container>
 					<Page.Title level={4}>Översikt</Page.Title>
 					<EventSummary event={event} matches={matches} />
+
+					{currentEvent ? (
+						<>
+							<Page.Title level={4}>Deltagare</Page.Title>
+							<CurrentEventPlayers players={currentEvent.players} />
+						</>
+					) : null}
 
 					<Page.Title level={4}>Matcher</Page.Title>
 					<Matches matches={matches} owner={id} hide={['event_date', 'event_name', 'event_surface']} />

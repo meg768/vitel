@@ -1,7 +1,7 @@
 
 import SummaryTable from './summary-table';
 
-function Component({ matches, event }) {
+function Component({ matches, event, hide = [] }) {
 
 	
 	function TourneyDate() {
@@ -33,12 +33,12 @@ function Component({ matches, event }) {
 	return (
 		<SummaryTable>
 			<SummaryTable.Row>
-				<TourneyDate />
-				<TourneyName />
-				<TourneyLocation />
-				<TourneyType />
-				<TourneySurface />
-				<TourneyWinner />
+				{hide.includes('date') ? null : <TourneyDate />}
+				{hide.includes('name') ? null : <TourneyName />}
+				{hide.includes('location') ? null : <TourneyLocation />}
+				{hide.includes('type') ? null : <TourneyType />}
+				{hide.includes('surface') ? null : <TourneySurface />}
+				{hide.includes('winner') ? null : <TourneyWinner />}
 			</SummaryTable.Row>
 		</SummaryTable>
 	);
