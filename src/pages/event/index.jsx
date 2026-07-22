@@ -72,7 +72,7 @@ export default function EventPage() {
 					{currentEvent ? (
 						<>
 							<Page.Title level={4}>Deltagare</Page.Title>
-							<CurrentEventPlayers players={currentEvent.players} />
+							<CurrentEventPlayers players={currentEvent.players} eventId={currentEvent.id} />
 						</>
 					) : null}
 

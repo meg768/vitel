@@ -239,7 +239,13 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
-- 2026-07-22: Aktiva turneringar visar nu de första 16 deltagarna direkt i stället för åtta. På bred skärm motsvarar det fyra kompletta rader, medan `Visa alla` fortsatt fäller ut hela startfältet.
+- 2026-07-22: Aktiva turneringar har nu plats för 32 deltagare utan expansion. Normala ATP 250-lottningar med 28 eller 32 spelare visas därmed i sin helhet och `Visa alla` förekommer bara om ett event innehåller fler än 32 deltagare.
+
+- 2026-07-22: Utslagen-markeringen i aktiva turneringar påverkar nu endast spelarnamnet inklusive rankingen. Seedning, flagga, favoritstjärna, entry-markering och cellbakgrund behåller sina vanliga färger.
+
+- 2026-07-22: Namnet på deltagare i aktiva turneringar visas med disabled-färg när deras ATP-id förekommer som `loser_id` i samma events importerade huvudturneringsmatcher. Kvalomgångarna `Q1`–`Q3` undantas för att en möjlig lucky loser inte ska felmarkeras. Markeringen används både på `/events` och `/event/:id`; spelarlänkar och favoritstjärnor förblir klickbara och tooltipen förklarar att statusen bygger på senaste import.
+
+- 2026-07-22: Aktiva turneringar utökades först från åtta till 16 synliga deltagare; gränsen höjdes senare till 32 för att rymma hela normala ATP 250-lottningen utan expansion.
 
 - 2026-07-22: Spelarnamn och ranking i aktiva turneringars deltagarlistor använder nu normal teckenvikt i stället för fetstil.
 

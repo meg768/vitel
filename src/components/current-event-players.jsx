@@ -9,9 +9,9 @@ import Link from './ui/link';
 import { getFavoritePlayerIds, setFavoritePlayerIds } from '../js/player-favorites';
 import { useSQL } from '../js/vitel';
 
-const DEFAULT_PLAYER_COUNT = 16;
+const DEFAULT_PLAYER_COUNT = 32;
 
-export default function CurrentEventPlayers({ players = [], collapsible = false }) {
+export default function CurrentEventPlayers({ players = [], eventId, collapsible = false }) {
 	const [expanded, setExpanded] = React.useState(false);
 	const [favoritePlayerIds, setFavoriteIds] = React.useState(getFavoritePlayerIds);
 	const playerIds = players.map(player => player.id).filter(Boolean);
@@ -22,7 +22,20 @@ export default function CurrentEventPlayers({ players = [], collapsible = false 
 			: 'SELECT id, rank FROM players WHERE 1 = 0',
 		format: playerIds
 	});
+	const { data: eliminatedRows = [] } = useSQL({
+		sql: eventId
+			? `
+				SELECT DISTINCT loser_id
+				FROM flatly
+				WHERE event_id = ?
+					AND loser_id IS NOT NULL
+					AND round NOT LIKE 'Q%'
+			`
+			: 'SELECT NULL AS loser_id WHERE 1 = 0',
+		format: eventId ? [eventId] : []
+	});
 	const ranks = new Map(playerRows.map(player => [player.id, player.rank]));
+	const eliminatedPlayerIds = new Set(eliminatedRows.map(row => row.loser_id));
 	const canExpand = collapsible && players.length > DEFAULT_PLAYER_COUNT;
 	const visiblePlayers = canExpand && !expanded ? players.slice(0, DEFAULT_PLAYER_COUNT) : players;
 
@@ -40,23 +53,28 @@ export default function CurrentEventPlayers({ players = [], collapsible = false 
 			<div className='grid gap-px bg-primary-200 sm:grid-cols-2 lg:grid-cols-4 dark:bg-primary-700'>
 				{visiblePlayers.map(player => {
 					const isFavorite = favoritePlayerIds.includes(player.id);
+					const isEliminated = eliminatedPlayerIds.has(player.id);
 					const rank = ranks.get(player.id);
 
 					return (
 					<div
 						key={player.id ?? `${player.name}-${player.seed}`}
 						className='flex min-w-0 items-center gap-2 bg-primary-50 px-3 py-2 text-sm dark:bg-primary-900'
+						title={isEliminated ? 'Utslagen enligt senaste import' : undefined}
 					>
 						<span className='w-6 shrink-0 text-center text-xs font-semibold text-primary-500 dark:text-primary-400'>
 							{player.seed ?? '–'}
 						</span>
 						<Flag className='h-5! w-5! shrink-0' country={player.country} />
 						{player.id ? (
-							<Link className='min-w-0 truncate text-primary-800 dark:text-primary-100' to={`/player/${player.id}`}>
+							<Link
+								className={`min-w-0 truncate ${isEliminated ? 'text-primary-400 dark:text-primary-500' : 'text-primary-800 dark:text-primary-100'}`}
+								to={`/player/${player.id}`}
+							>
 								{player.name}{rank ? ` (#${rank})` : ''}
 							</Link>
 						) : (
-							<span className='min-w-0 truncate text-primary-800 dark:text-primary-100'>
+							<span className={`min-w-0 truncate ${isEliminated ? 'text-primary-400 dark:text-primary-500' : 'text-primary-800 dark:text-primary-100'}`}>
 								{player.name}{rank ? ` (#${rank})` : ''}
 							</span>
 						)}

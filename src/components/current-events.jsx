@@ -43,7 +43,7 @@ export default function CurrentEvents({ events }) {
 					<Page.Title level={4}>Översikt</Page.Title>
 					<EventSummary event={event} matches={[]} hide={['name', 'winner']} />
 					<Page.Title level={4}>Deltagare</Page.Title>
-					<CurrentEventPlayers players={event.players} collapsible />
+					<CurrentEventPlayers players={event.players} eventId={event.id} collapsible />
 				</section>
 			))}
 		</div>
