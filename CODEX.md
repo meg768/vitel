@@ -239,6 +239,14 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-23: Deltagarlistorna för aktiva turneringar visar fortsatt de seedade spelarna först i sin befintliga ordning, men sorterar nu alla oseedade spelare stigande efter aktuell ATP-ranking. Oseedade spelare utan ranking placeras sist. Samma ordning används på både `/events` och `/event/:id`.
+
+- 2026-07-22: Tennis Abstract är uttryckligen source of truth för aktuella startfält, resultat, kommande matchningar och turneringsprognoser. ATP Tours JSON ska inte återinföras som alternativ källa. Nästa naturliga utbyggnad är att backendens `GET /api/events/current` normaliserar mer från den redan hämtade TA-sidan, främst spelarnas sannolikhet att nå kommande rundor och vinna turneringen, kommande matcher samt snabbare resultatstatus. Vitel ska fortsatt endast konsumera backendkontraktet och aldrig känna till TA:s HTML.
+
+- 2026-07-22: `/events` visar åter en liten historisk lista under liveinnehållet, nu begränsad till de 10 senaste turneringarna och rubricerad `Senaste turneringarna`. När användaren söker byter sektionen till `Tidigare turneringar` och visar upp till 100 matchande event, vilket gör sökfunktionens räckvidd tydlig utan att historiken tar över livesidan.
+
+- 2026-07-22: `/events` gjordes live-fokuserad med aktiva turneringar som huvudinformation. Historiken doldes först helt i normalläget men återinfördes därefter som en begränsad lista med de 10 senaste turneringarna för att göra sökningens räckvidd tydlig.
+
 - 2026-07-22: Aktiva turneringar har nu plats för 32 deltagare utan expansion. Normala ATP 250-lottningar med 28 eller 32 spelare visas därmed i sin helhet och `Visa alla` förekommer bara om ett event innehåller fler än 32 deltagare.
 
 - 2026-07-22: Utslagen-markeringen i aktiva turneringar påverkar nu endast spelarnamnet inklusive rankingen. Seedning, flagga, favoritstjärna, entry-markering och cellbakgrund behåller sina vanliga färger.

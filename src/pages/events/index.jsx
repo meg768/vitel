@@ -35,6 +35,7 @@ function Component() {
 
 	query = query || {};
 	let { sql, format } = query;
+	const hasCustomQuery = Boolean(sql);
 	const isSearching = debouncedSearchTerm.length >= 1;
 
 	if (isSearching) {
@@ -68,13 +69,14 @@ function Component() {
 		sql = `
 			SELECT *
 			FROM events
-			WHERE date >= CURRENT_DATE - INTERVAL 1 YEAR
-				AND LOWER(TRIM(COALESCE(type, ''))) <> 'challenger'
-			ORDER BY date DESC
-			LIMIT 100
+			WHERE LOWER(TRIM(COALESCE(type, ''))) <> 'challenger'
+			ORDER BY date DESC, name ASC
+			LIMIT 10
 		`;
 		format = [];
 	}
+
+	format = format || [];
 
 	const { data: events, error, isFetching } = useSQL({
 		sql,
@@ -95,23 +97,23 @@ function Component() {
 	const visibleCurrentEvents = currentEvents.filter(event => matchesCurrentEvent(event, debouncedSearchTerm));
 	const totalCount = (visibleEvents?.length ?? 0) + visibleCurrentEvents.length;
 	let statusBarStatus = 'ready';
-	let statusBarMessage = visibleEvents && currentResponse
-		? `Visar ${visibleCurrentEvents.length} aktiva och ${visibleEvents.length} tidigare turneringar.`
+	let statusBarMessage = currentResponse && visibleEvents
+		? `Visar ${visibleCurrentEvents.length} aktiva och ${visibleEvents.length} senaste turneringar.`
 		: 'Läser in turneringar…';
 
-	if (error || currentError) {
+	if (currentError || error) {
 		statusBarStatus = 'warning';
-		statusBarMessage = error
-			? 'Kunde inte läsa in tidigare turneringar just nu.'
-			: `Aktiva turneringar kunde inte hämtas. Visar ${visibleEvents?.length ?? 0} tidigare turneringar.`;
-	} else if (isFetching || isFetchingCurrent) {
+		statusBarMessage = currentError
+			? `Aktiva turneringar kunde inte hämtas. Visar ${visibleEvents?.length ?? 0} tidigare turneringar.`
+			: 'Kunde inte läsa in tidigare turneringar just nu.';
+	} else if (isFetchingCurrent || isFetching) {
 		statusBarStatus = 'loading';
 		statusBarMessage = isSearching
 			? `Söker efter “${debouncedSearchTerm}”…`
 			: 'Läser in turneringar…';
 	} else if (isSearching) {
 		statusBarMessage = `Hittade ${totalCount} turneringar för “${debouncedSearchTerm}” (${visibleCurrentEvents.length} aktiva).`;
-	} else if (query.title) {
+	} else if (hasCustomQuery) {
 		statusBarMessage = `Visar ${visibleEvents?.length ?? 0} turneringar i det valda urvalet.`;
 	}
 
@@ -170,7 +172,7 @@ function Component() {
 						<Page.Information className='mb-3'>Inga aktiva turneringar matchar “{debouncedSearchTerm}”</Page.Information>
 					) : null}
 
-					<Page.Title level={3}>Tidigare turneringar</Page.Title>
+					<Page.Title level={3}>{isSearching || hasCustomQuery ? 'Tidigare turneringar' : 'Senaste turneringarna'}</Page.Title>
 					{error ? (
 						<Page.Error>Misslyckades med att läsa in turneringar - {error.message}</Page.Error>
 					) : !visibleEvents ? (

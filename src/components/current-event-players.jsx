@@ -37,7 +37,24 @@ export default function CurrentEventPlayers({ players = [], eventId, collapsible
 	const ranks = new Map(playerRows.map(player => [player.id, player.rank]));
 	const eliminatedPlayerIds = new Set(eliminatedRows.map(row => row.loser_id));
 	const canExpand = collapsible && players.length > DEFAULT_PLAYER_COUNT;
-	const visiblePlayers = canExpand && !expanded ? players.slice(0, DEFAULT_PLAYER_COUNT) : players;
+	const sortedPlayers = players
+		.map((player, index) => ({ player, index }))
+		.sort((a, b) => {
+			const aIsSeeded = a.player.seed !== null && a.player.seed !== undefined && a.player.seed !== '';
+			const bIsSeeded = b.player.seed !== null && b.player.seed !== undefined && b.player.seed !== '';
+
+			if (aIsSeeded !== bIsSeeded) return aIsSeeded ? -1 : 1;
+			if (aIsSeeded) return a.index - b.index;
+
+			const aRank = Number(ranks.get(a.player.id));
+			const bRank = Number(ranks.get(b.player.id));
+			const comparableARank = Number.isFinite(aRank) && aRank > 0 ? aRank : Number.POSITIVE_INFINITY;
+			const comparableBRank = Number.isFinite(bRank) && bRank > 0 ? bRank : Number.POSITIVE_INFINITY;
+
+			return comparableARank - comparableBRank || a.index - b.index;
+		})
+		.map(({ player }) => player);
+	const visiblePlayers = canExpand && !expanded ? sortedPlayers.slice(0, DEFAULT_PLAYER_COUNT) : sortedPlayers;
 
 	function toggleFavorite(playerId) {
 		const nextPlayerIds = favoritePlayerIds.includes(playerId)
