@@ -60,50 +60,34 @@ function Component({ matches, owner, hide = [] }) {
 					<Table.Title className=''>Vinnare</Table.Title>
 					<Table.Cell>
 						{({ row, value }) => {
-							if (!row.winner_rank) {
-								if (owner == row.winner_id) {
-									return `${value}`;
-								}
-								return <Link to={`/player/${row.winner_id}`}>{value}</Link>;
-							}
-
 							if (owner == row.winner_id) {
-								return `${value} (${row.winner_rank})`;
+								return value;
 							}
 
-							return (
-								<>
-									<Link to={`/player/${row.winner_id}`}>{value}</Link>
-									<span className='bg-transparent'>{` (${row.winner_rank})`}</span>
-								</>
-							);
+							return <Link to={`/player/${row.winner_id}`}>{value}</Link>;
 						}}
 					</Table.Cell>
+				</Table.Column>
+
+				<Table.Column id='winner_rank'>
+					<Table.Title>#</Table.Title>
 				</Table.Column>
 
 				<Table.Column id='loser' className=''>
 					<Table.Title className=''>Förlorare</Table.Title>
 					<Table.Cell>
 						{({ row, value }) => {
-							if (!row.loser_rank) {
-								if (owner == row.loser_id) {
-									return `${value}`;
-								}
-
-								return <Link to={`/player/${row.loser_id}`}>{value}</Link>;
-							}
-
 							if (owner == row.loser_id) {
-								return `${value} (${row.loser_rank})`;
+								return value;
 							}
-							return (
-								<>
-									<Link to={`/player/${row.loser_id}`}>{value}</Link>
-									<span className='bg-transparent'>{` (${row.loser_rank})`}</span>
-								</>
-							);
+
+							return <Link to={`/player/${row.loser_id}`}>{value}</Link>;
 						}}
 					</Table.Cell>
+				</Table.Column>
+
+				<Table.Column id='loser_rank'>
+					<Table.Title>#</Table.Title>
 				</Table.Column>
 
 				<Table.Column id='score' className=''>

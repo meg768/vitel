@@ -239,6 +239,8 @@ Det som är viktigt att komma ihåg framåt:
 
 ## Ändringslogg
 
+- 2026-07-24: Den gemensamma matchtabellen visar nu vinnarnas och förlorarnas ranking vid matchtillfället i var sin sorteringsbar `#`-kolumn direkt efter respektive spelarnamn. Rankingen är samtidigt borttagen från parentesen efter namnen. Fliken `Vinster` behåller sin normala datumordning och kan nu sorteras uttryckligen på motståndarens ranking via kolumnen efter `Förlorare`.
+
 - 2026-07-23: Deltagarlistorna för aktiva turneringar visar fortsatt de seedade spelarna först i sin befintliga ordning, men sorterar nu alla oseedade spelare stigande efter aktuell ATP-ranking. Oseedade spelare utan ranking placeras sist. Samma ordning används på både `/events` och `/event/:id`.
 
 - 2026-07-22: Tennis Abstract är uttryckligen source of truth för aktuella startfält, resultat, kommande matchningar och turneringsprognoser. ATP Tours JSON ska inte återinföras som alternativ källa. Nästa naturliga utbyggnad är att backendens `GET /api/events/current` normaliserar mer från den redan hämtade TA-sidan, främst spelarnas sannolikhet att nå kommande rundor och vinna turneringen, kommande matcher samt snabbare resultatstatus. Vitel ska fortsatt endast konsumera backendkontraktet och aldrig känna till TA:s HTML.
